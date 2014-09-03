@@ -8,7 +8,7 @@ describe('Service: Permission', function () {
   var PermissionProvider;
 
   // Helpers
-  var resolveHelper, rejectHelper, defineRolesHelper;
+  var resolveHelper, rejectHelper, defineProviderRolesHelper, defineRolesHelper;
   beforeEach(function () {
     var user = {role: 'admin'};
     resolveHelper = function () {
@@ -23,7 +23,7 @@ describe('Service: Permission', function () {
       deferred.reject();
       return deferred.promise;
     };
-    defineRolesHelper = function () {
+    defineProviderRolesHelper = function () {
       PermissionProvider.defineRole('anonymous', function () {
         var deferred = $q.defer();
         if (!user) {
@@ -52,6 +52,35 @@ describe('Service: Permission', function () {
         return deferred.promise;
       });
     };
+    defineRolesHelper = function () {
+      Permission.defineRole('anonymous', function () {
+        var deferred = $q.defer();
+        if (!user) {
+          deferred.resolve();
+        } else {
+          deferred.reject();
+        }
+        return deferred.promise;
+      });
+      Permission.defineRole('user', function () {
+        var deferred = $q.defer();
+        if (user) {
+          deferred.resolve();
+        } else {
+          deferred.reject();
+        }
+        return deferred.promise;
+      });
+      Permission.defineRole('admin', function () {
+        var deferred = $q.defer();
+        if (user && user.role === 'admin') {
+          deferred.resolve();
+        } else {
+          deferred.reject();
+        }
+        return deferred.promise;
+      });
+    };
   });
 
   beforeEach(module('permission', function (_PermissionProvider_) {
@@ -65,11 +94,10 @@ describe('Service: Permission', function () {
   }));
 
   describe('PermissionProvider', function () {
-    describe('#defineRole', function () {
+    describe('#defineRole (provider version)', function () {
 
       it('should throw an exception on invalid role name', function () {
         var exception = new Error('Role name must be a string');
-        console.log(PermissionProvider);
         expect(function () {
           PermissionProvider.defineRole(123, function () {});
         }).toThrow(exception);
@@ -86,7 +114,7 @@ describe('Service: Permission', function () {
       it('should set a role validation method to the key defined', function () {
         var CustomPermission;
 
-        defineRolesHelper();
+        defineProviderRolesHelper();
 
         inject(function(_Permission_) {
           CustomPermission = _Permission_;
@@ -96,6 +124,28 @@ describe('Service: Permission', function () {
         expect(angular.isFunction(CustomPermission.roleValidations.user)).toBe(true);
         expect(angular.isFunction(CustomPermission.roleValidations.admin)).toBe(true);
       });
+    });
+  });
+
+  describe('#defineRole', function () {
+    it('should define roles on run stage', function () {
+      var fakeService = {
+        age: 12,
+        wise: true,
+        evenAge: function () {return this.age % 2 === 0;}
+      };
+      Permission.defineRole('noob', function () {
+        var deferred = $q.defer();
+        fakeService.wise ? deferred.reject() : deferred.resolve();
+        return deferred.promise;
+      });
+      Permission.defineRole('pair', function () {
+        var deferred = $q.defer();
+        fakeService.evenAge ? deferred.resolve() : deferred.reject();
+        return deferred.promise;
+      });
+      expect(angular.isFunction(Permission.roleValidations.noob)).toBe(true);
+      expect(angular.isFunction(Permission.roleValidations.pair)).toBe(true);
     });
   });
 

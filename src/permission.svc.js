@@ -4,16 +4,25 @@
   angular.module('permission')
     .provider('Permission', function () {
       var roleValidationConfig = {};
-
-      this.defineRole = function (roleName, validationFunction) {
+      var validateRoleDefinitionParams = function (roleName, validationFunction) {
         if (!angular.isString(roleName)) {
           throw new Error('Role name must be a string');
         }
         if (!angular.isFunction(validationFunction)) {
           throw new Error('Validation function not provided correctly');
         }
+      };
 
+      this.defineRole = function (roleName, validationFunction) {
+        /**
+          This method is only available in config-time, and cannot access services, as they are
+          not yet injected anywere which makes this kinda useless.
+          Should remove if we cannot find a use for it.
+        **/
+        validateRoleDefinitionParams(roleName, validationFunction);
         roleValidationConfig[roleName] = validationFunction;
+
+        return this;
       };
 
       this.$get = function ($q) {
@@ -57,6 +66,16 @@
             });
 
             return deferred.promise;
+          },
+          defineRole: function (roleName, validationFunction) {
+            /**
+              Service-available version of defineRole, the callback passed here lives in the
+              scope where it is defined and therefore can interact with other modules
+            **/
+            validateRoleDefinitionParams(roleName, validationFunction);
+            roleValidationConfig[roleName] = validationFunction;
+
+            return Permission;
           },
           resolveIfMatch: function (rolesArray) {
             var roles = angular.copy(rolesArray);
