@@ -37,7 +37,11 @@
             }
 
             var deferred = $q.defer();
-            value ? deferred.resolve() : deferred.reject();
+            if (value) {
+              deferred.resolve();
+            } else {
+              deferred.reject();
+            }
             return deferred.promise;
           },
           _validateRoleMap: function (roleMap) {
