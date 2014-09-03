@@ -82,8 +82,6 @@ module.exports = function(grunt) {
     'concat'
   ]);
   grunt.registerTask('test', [
-    'clean:server',
-    'connect:test',
     'karma'
   ]);
 
