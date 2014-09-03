@@ -7,7 +7,7 @@ Permission
 Permission is the gatekeeper for your routes
 --------------------------------------------
 Permission helps you gain control of your routes, by using simple concepts for you to decide who can access them.
-I've seen a lot of giant tutorials on access control implementation, and they can be quite overwhelming.
+I've seen plenty of big fat tutorials on access control implementations, and they can be quite overwhelming. So I bring you a simple, powerful, straightforward solution.
 
 
 Setting route permissions/roles
@@ -39,7 +39,7 @@ You can either set an `only` or an `except` array.
     });
 ```
 
-Another thing you can do is setting a redirect url to which unauthorized sessions will go to.
+Another thing you can do is set a redirect url to which unauthorized sessions will go to.
 
 ```javascript
   $routeProvider
@@ -58,7 +58,7 @@ Defining roles
 So, how do yo tell Permission what does 'anonymous', 'admin' or 'foo' mean and how to know if the current user belongs
 to those definitions?
 
-Well, Permission allows you to define different 'roles' along which the logic that determines if the current 
+Well, Permission allows you to define different 'roles' along with the logic that determines if the current 
 session belongs to them.
 
 ```javascript
@@ -86,38 +86,39 @@ session belongs to them.
 Sometimes you will need to call some a back-end api or some other asyncronous task to define the role
 For that you can use promises
 
-angular.module('barModule', ['permission', 'user'])
-  .run(function (Permission, User, $q) {
-    Permission
-      // Define user role calling back-end
-      .defineRole('user', function () {
-        // This time we will return a promise
-        // If the promise *resolves* then the user has the role, if it *rejects* (you guessed it)
-        
-        // Let's assume this returns a promise that resolves or rejects if session is active
-        return User.checkSession();
-      })
-      // A different example for admin
-      .defineRole('admin', function () {
-        var deferred = $q.defer();
-        
-        User.getAccessLevel().then(function (data) {
-          if (data.accessLevel === 'admin') {
-            deferred.resolve();
-          } else {
+```javascript 
+  angular.module('barModule', ['permission', 'user'])
+    .run(function (Permission, User, $q) {
+      Permission
+        // Define user role calling back-end
+        .defineRole('user', function () {
+          // This time we will return a promise
+          // If the promise *resolves* then the user has the role, if it *rejects* (you guessed it)
+          
+          // Let's assume this returns a promise that resolves or rejects if session is active
+          return User.checkSession();
+        })
+        // A different example for admin
+        .defineRole('admin', function () {
+          var deferred = $q.defer();
+          
+          User.getAccessLevel().then(function (data) {
+            if (data.accessLevel === 'admin') {
+              deferred.resolve();
+            } else {
+              deferred.reject();
+            }
+          }, function () {
+            // Error with request
             deferred.reject();
-          }
-        }, function () {
-          // Error with request
-          deferred.reject();
+          });
+          
+          return deferred.promise;
         });
-        
-        return deferred.promise;
-      });
-  });
-  
+    });
+```
 As you can see, Permission is useful wether you want a role-based access control or a permission-based one, as
-it allows you to define this behaviour however you wish.
+it allows you to define this behaviour however you want to.
 
 TODOS:
 -----
