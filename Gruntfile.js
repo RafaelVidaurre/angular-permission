@@ -9,21 +9,35 @@ module.exports = function(grunt) {
 
   // Configurable paths for the application
   var appConfig = {
-    app: require('./bower.json').appPath || 'app',
+    app: require('./bower.json').appPath || '',
     dist: 'dist'
   };
 
   // Project configuration.
   grunt.initConfig({
     pkg: grunt.file.readJSON('bower.json'),
+    appConfig: appConfig,
     meta: {
       banner: '/**\n' +
+      ' * <%= pkg.name %>\n' +
       ' * <%= pkg.description %>\n' +
       ' * @version v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\n' +
       ' * @link <%= pkg.homepage %>\n' +
       ' * @author <%= pkg.authors.join(", ") %>\n' +
       ' * @license MIT License, http://www.opensource.org/licenses/MIT\n' +
       ' */\n'
+    },
+    clean: {
+      dist: {
+        files: [{
+          dot: true,
+          src: [
+            '.tmp',
+            '<%= appConfig.dist %>/**/*',
+            '!<%= appConfig.dist %>/.git*'
+          ]
+        }]
+      }
     },
     watch: {
       bower: {
@@ -34,25 +48,25 @@ module.exports = function(grunt) {
         tasks: ['newer:jshint:all'],
       },
       jsTest: {
-        files: ['<%= appConfig.app %>/scripts/**/*.test.js', '<%= appConfig.app %>/../*.js'],
+        files: ['<%= appConfig.app %>/src/**/*.test.js'],
         tasks: ['newer:jshint:test', 'karma']
       },
       gruntfile: {
         files: ['Gruntfile.js']
+      }
+    },
+    concat: {
+      options: {
+        banner: '<%= meta.banner %>\n'
       },
-      concat: {
-        options: {
-          banner: '<%= meta.banner %>\n'
-        },
-        dist: {
-          files: {
-            'dist/<%= pkg.name %>.js': [
-              'src/**/*.mdl.js',
-              'src/**/*.svc.js'
-            ]
-          }
+      dist: {
+        files: {
+          'dist/<%= pkg.name %>.js': [
+            'src/**/*.mdl.js',
+            'src/**/*.svc.js'
+          ]
         }
-      },
+      }
     },
     karma: {
       unit: {
@@ -62,7 +76,7 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('default', ['build']);
+  grunt.registerTask('default', ['watch']);
   grunt.registerTask('build', [
     'clean:dist',
     'concat'
