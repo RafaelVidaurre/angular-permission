@@ -9,6 +9,11 @@ Permission is the gatekeeper for your routes
 Permission helps you gain control of your routes, by using simple concepts for you to decide who can access them.
 I've seen plenty of big fat tutorials on access control implementations, and they can be quite overwhelming. So I bring you a simple, powerful, straightforward solution.
 
+Install via bower
+-----------------
+```
+bower install angular-permission
+```
 
 Setting route permissions/roles
 -------------------------------
