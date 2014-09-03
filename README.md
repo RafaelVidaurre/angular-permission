@@ -1,3 +1,5 @@
+![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)
+
 Permission
 ==========
 *Role and permission based authentication on routes as simple as it can get.*
