@@ -1,9 +1,11 @@
 Permission
 ==========
-*Route permission and access control as simple as it can get.*
+*Role and permission based authentication on routes as simple as it can get.*
 
-- Requires you to use (ui-router)[] as your router module.
+- Requires you to use [ui-router](https://github.com/angular-ui/ui-router) as your router module.
 
+Permission is the gatekeeper for your routes
+--------------------------------------------
 Permission helps you gain control of your routes, by using simple concepts for you to decide who can access them.
 I've seen a lot of giant tutorials on access control implementation, and they can be quite overwhelming.
 
@@ -12,7 +14,8 @@ Setting route permissions/roles
 -------------------------------
 This is how simple Permission makes it for you to define a route which requires authorization.
 
-'''javascript
+```javascript
+
   // We define a route via ui-router's $routeProvider
   $routeProvider
     .state('staffpanel', {
@@ -21,7 +24,7 @@ This is how simple Permission makes it for you to define a route which requires 
         only: ['admin', 'moderator']
       }
     });
-'''
+```
 
 You can either set an `only` or an `except` array.
 
@@ -59,25 +62,25 @@ Well, Permission allows you to define different 'roles' along which the logic th
 session belongs to them.
 
 ```javascript
-// Let's imagine we have a User service which has information about the current user in the session
-// and is undefined if no session is active
-//
-// We will define the following roles:
-// anonymous: When there is not user currenly logged in
-// normal: A user with isAdmin = false
-// admin: A user with isAdmin = true
-
-angular.module('fooModule', ['permission', 'user'])
-  .run(function (Permission, User), {
-    // Define anonymous role
-    Permission.defineRole('anonymous', function () {
-      // If the returned value is *truthy* then the user has the role, otherwise they don't
-      if (!User) {
-        return true; // Is anonymous
-      }
-      return false;
+  // Let's imagine we have a User service which has information about the current user in the session
+  // and is undefined if no session is active
+  //
+  // We will define the following roles:
+  // anonymous: When there is not user currenly logged in
+  // normal: A user with isAdmin = false
+  // admin: A user with isAdmin = true
+  
+  angular.module('fooModule', ['permission', 'user'])
+    .run(function (Permission, User), {
+      // Define anonymous role
+      Permission.defineRole('anonymous', function () {
+        // If the returned value is *truthy* then the user has the role, otherwise they don't
+        if (!User) {
+          return true; // Is anonymous
+        }
+        return false;
+      });
     });
-  });
 ```
 
 Sometimes you will need to call some a back-end api or some other asyncronous task to define the role
@@ -115,6 +118,10 @@ angular.module('barModule', ['permission', 'user'])
   
 As you can see, Permission is useful wether you want a role-based access control or a permission-based one, as
 it allows you to define this behaviour however you wish.
+
+TODOS:
+-----
+- Passing state parameters on redirect and/or broadcasting events to allow better control and customization
 
 
 Contribute
