@@ -13,20 +13,21 @@
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
             // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
+            console.log("State change allowed");
             $state.go(toState.name, toParams, {notify: false}).then(function() {
               $rootScope
                 .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
             });
 
           }, function () {
-            // If not authorized, redirect to wherever the route has defined. If no redirect route
-            // is defined simply redirect to root url
-            var redirectTo = toState.permissions.redirectTo || 'dashboard';
-
-            $state.go(redirectTo, {}, {notify: false}).then(function() {
-              $rootScope
-                .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
-            });
+            // If not authorized, redirect to wherever the route has defined, if defined at all
+            var redirectTo = toState.permissions.redirectTo;
+            if (residectTo) {
+              $state.go(redirectTo, {}, {notify: false}).then(function() {
+                $rootScope
+                  .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
+              });
+            }
           });
         }
       });

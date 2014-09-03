@@ -27,6 +27,19 @@
 
       this.$get = function ($q) {
         var Permission = {
+          _promiseify: function (value) {
+            /**
+              Converts a value into a promise, if the value is truthy it resolves it, otherwise
+              it rejects it
+            **/
+            if (value && angular.isFunction(value.then)) {
+              return value;
+            }
+
+            var deferred = $q.defer();
+            value ? deferred.resolve() : deferred.reject();
+            return deferred.promise;
+          },
           _validateRoleMap: function (roleMap) {
             if (typeof(roleMap) !== 'object' || roleMap instanceof Array) {
               throw new Error('Role map has to be an object');
@@ -54,8 +67,15 @@
               deferred.reject();
               return deferred.promise;
             }
+            // Validate role definition exists
+            if (!angular.isFunction(Permission.roleValidations[currentRole])) {
+              throw new Error('undefined role or invalid role validation');
+            }
 
-            Permission.roleValidations[currentRole]().then(function () {
+            var validatingRole = Permission.roleValidations[currentRole]();
+            validatingRole = Permission._promiseify(validatingRole);
+
+            validatingRole.then(function () {
               deferred.resolve();
             }, function () {
               Permission._findMatchingRole(roles).then(function () {
