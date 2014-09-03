@@ -5,7 +5,7 @@
     "Rafael Vidaurre <narzerus@gmail.com>"
   ],
   "description": "Route permission and access control as simple as it can get",
-  "main": "dist/permission.js",
+  "main": "dist/angular-permission.js",
   "keywords": [
     "angular",
     "permissions",
