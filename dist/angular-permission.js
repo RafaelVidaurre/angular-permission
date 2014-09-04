@@ -15,10 +15,11 @@
       $rootScope.$on('$stateChangeStart',
       function (event, toState, toParams, fromState, fromParams) {
         // If there are permissions set then prevent default and attempt to authorize
-        if (toState.permissions) {
+        if (toState.data && toState.data.permissions) {
+          var permissions = toState.data.permissions;
           event.preventDefault();
 
-          Permission.authorize(toState.permissions).then(function () {
+          Permission.authorize(permissions).then(function () {
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
             // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
@@ -29,7 +30,7 @@
 
           }, function () {
             // If not authorized, redirect to wherever the route has defined, if defined at all
-            var redirectTo = toState.permissions.redirectTo;
+            var redirectTo = permissions.redirectTo;
             if (redirectTo) {
               $state.go(redirectTo, {}, {notify: false}).then(function() {
                 $rootScope
