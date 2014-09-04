@@ -31,8 +31,10 @@ This is how simple Permission makes it for you to define a route which requires 
   $routeProvider
     .state('staffpanel', {
       url: '...',
-      permissions: {
-        only: ['admin', 'moderator']
+      data: {
+        permissions: {
+          only: ['admin', 'moderator']
+        }
       }
     });
 ```
@@ -44,8 +46,10 @@ You can either set an `only` or an `except` array.
   $routeProvider
     .state('dashboard', {
       url: '...',
-      permissions: {
-        except: ['anonymous']
+      data: {
+        permissions: {
+          except: ['anonymous']
+        }
       }
     });
 ```
@@ -56,9 +60,11 @@ Another thing you can do is set a redirect url to which unauthorized sessions wi
   $routeProvider
     .state('dashboard', {
       url: '...',
-      permissions: {
-        except: ['anonymous'],
-        redirectTo: 'login'
+      data: {
+        permissions: {
+          except: ['anonymous'],
+          redirectTo: 'login'
+        }
       }
     });
 ```
