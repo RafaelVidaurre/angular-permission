@@ -11,6 +11,10 @@ Permission is the gatekeeper for your routes
 Permission helps you gain control of your routes, by using simple concepts for you to decide who can access them.
 I've seen plenty of big fat tutorials on access control implementations, and they can be quite overwhelming. So I bring you a simple, powerful, straightforward solution.
 
+Important
+---------
+Please remember this project is very new, I wouldn't recommend yet using this in a big project just yet as, like any new project, might drastically change over time.
+
 Install via bower
 -----------------
 ```
