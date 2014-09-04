@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.0.1 - 2014-09-02
+ * @version v0.1.0 - 2014-09-04
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -15,10 +15,24 @@
       $rootScope.$on('$stateChangeStart',
       function (event, toState, toParams, fromState, fromParams) {
         // If there are permissions set then prevent default and attempt to authorize
-        if (toState.permissions) {
+        var permissions;
+        if (toState.data && toState.data.permissions) {
+          permissions = toState.data.permissions;
+        } else if (toState.permissions) {
+          /**
+          * This way of defining permissions will be depracated in v1. Should use
+          * `data` key instead
+          */
+          console.log('Deprecation Warning: permissions should be set inside the `data` key ');
+          console.log('Setting permissions for a state outside `data` will be depracated in' +
+            ' version 1');
+          permissions = toState.permissions;
+        }
+
+        if (permissions) {
           event.preventDefault();
 
-          Permission.authorize(toState.permissions).then(function () {
+          Permission.authorize(permissions).then(function () {
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
             // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
@@ -29,7 +43,7 @@
 
           }, function () {
             // If not authorized, redirect to wherever the route has defined, if defined at all
-            var redirectTo = toState.permissions.redirectTo;
+            var redirectTo = permissions.redirectTo;
             if (redirectTo) {
               $state.go(redirectTo, {}, {notify: false}).then(function() {
                 $rootScope

@@ -78,6 +78,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('default', ['watch']);
   grunt.registerTask('build', [
+    'karma',
     'clean:dist',
     'concat'
   ]);
