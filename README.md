@@ -129,8 +129,10 @@ it allows you to define this behaviour however you want to.
 
 TODOS:
 -----
-- Passing state parameters on redirect and/or broadcasting events to allow better control and customization
-
+Help fill this list with your feature requests
+- More powerful redirection to allow passing state parameters and other useful stuff ui-router provides. Ideas anyone?
+- Inheritance (example: 'admin' inherits from 'user')
+- Role validation caching?
 
 Contribute
 ==========
@@ -140,8 +142,8 @@ for angular developers to use
 
 Author
 ======
-Rafael Vidaurre
-@narzerus
-I'm a full-stack developer currenly working as CTO and Co-Founder at [Finciero](http://www.finciero.com)
+- Rafael Vidaurre
+- @narzerus
+- I'm a full-stack developer currenly working as CTO and Co-Founder at [Finciero](http://www.finciero.com)
 
 
