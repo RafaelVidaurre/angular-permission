@@ -21,6 +21,12 @@ Install via bower
 bower install angular-permission
 ```
 
+Include to your dependencies
+----------------------------
+```javascript
+angular.module('yourModule', [..., 'permission']);
+```
+
 Setting route permissions/roles
 -------------------------------
 This is how simple Permission makes it for you to define a route which requires authorization.
