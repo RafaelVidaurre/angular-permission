@@ -6,8 +6,21 @@
       $rootScope.$on('$stateChangeStart',
       function (event, toState, toParams, fromState, fromParams) {
         // If there are permissions set then prevent default and attempt to authorize
+        var permissions;
         if (toState.data && toState.data.permissions) {
-          var permissions = toState.data.permissions;
+          permissions = toState.data.permissions;
+        } else if (toState.permissions) {
+          /**
+          * This way of defining permissions will be depracated in v1. Should use
+          * `data` key instead
+          */
+          console.log('Deprecation Warning: permissions should be set inside the `data` key ');
+          console.log('Setting permissions for a state outside `data` will be depracated in' +
+            ' version 1');
+          permissions = toState.permissions;
+        }
+
+        if (permissions) {
           event.preventDefault();
 
           Permission.authorize(permissions).then(function () {
