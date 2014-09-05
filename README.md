@@ -18,7 +18,7 @@ Please remember this project is very new, I wouldn't recommend yet using this in
 Install via bower
 -----------------
 ```
-bower install angular-permission
+bower install angular-permission --save
 ```
 
 Include to your dependencies
