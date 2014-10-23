@@ -33,8 +33,8 @@ This is how simple Permission makes it for you to define a route which requires 
 
 ```javascript
 
-  // We define a route via ui-router's $routeProvider
-  $routeProvider
+  // We define a route via ui-router's $stateProvider
+  $stateProvider
     .state('staffpanel', {
       url: '...',
       data: {
@@ -49,7 +49,7 @@ You can either set an `only` or an `except` array.
 
 ```javascript
   // Let's prevent anonymous users from looking at a dashboard
-  $routeProvider
+  $stateProvider
     .state('dashboard', {
       url: '...',
       data: {
@@ -63,7 +63,7 @@ You can either set an `only` or an `except` array.
 Another thing you can do is set a redirect url to which unauthorized sessions will go to.
 
 ```javascript
-  $routeProvider
+  $stateProvider
     .state('dashboard', {
       url: '...',
       data: {
