@@ -177,7 +177,7 @@ describe('Service: Permission', function () {
     });
 
     it('should throw an exception if only or except keys are not arrays', function () {
-      var exception = new Error('Array of roles excepted');
+      var exception = new Error('Array of roles expected');
 
       expect(function () {
         Permission._validateRoleMap({
