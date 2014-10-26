@@ -53,11 +53,11 @@
             }
             if (roleMap.only) {
               if (!(roleMap.only instanceof Array)) {
-                throw new Error('Array of roles excepted');
+                throw new Error('Array of roles expected');
               }
             } else if (roleMap.except) {
               if (!(roleMap.except instanceof Array)) {
-                throw new Error('Array of roles excepted');
+                throw new Error('Array of roles expected');
               }
             }
           },
