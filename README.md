@@ -143,6 +143,16 @@ For that you can use promises
 As you can see, Permission is useful wether you want a role-based access control or a permission-based one, as
 it allows you to define this behaviour however you want to.
 
+Events:
+-------
+*$stateChangePermissionAccepted*
+
+This event is broadcasted when one of the permissions has been accepted and the state changes successfully.
+
+*$stateChangePermissionDenied*
+
+This event is broadcasted when there is no suitable permission found and the state stays the same, or is changed based on the ```redirectTo``` option.
+
 TODOS:
 -----
 Help fill this list with your feature requests
