@@ -24,6 +24,8 @@
           event.preventDefault();
 
           Permission.authorize(permissions).then(function () {
+            $rootScope.$broadcast("$stateChangePermissionAccepted");
+
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
             // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
@@ -33,6 +35,8 @@
             });
 
           }, function () {
+            $rootScope.$broadcast("$stateChangePermissionDenied");
+
             // If not authorized, redirect to wherever the route has defined, if defined at all
             var redirectTo = permissions.redirectTo;
             if (redirectTo) {

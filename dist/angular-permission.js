@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.1.0 - 2014-09-04
+ * @version v0.1.1 - 2014-10-31
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -33,6 +33,8 @@
           event.preventDefault();
 
           Permission.authorize(permissions).then(function () {
+            $rootScope.$broadcast("$stateChangePermissionAccepted");
+
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
             // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
@@ -42,6 +44,8 @@
             });
 
           }, function () {
+            $rootScope.$broadcast("$stateChangePermissionDenied");
+
             // If not authorized, redirect to wherever the route has defined, if defined at all
             var redirectTo = permissions.redirectTo;
             if (redirectTo) {
@@ -111,11 +115,11 @@
             }
             if (roleMap.only) {
               if (!(roleMap.only instanceof Array)) {
-                throw new Error('Array of roles excepted');
+                throw new Error('Array of roles expected');
               }
             } else if (roleMap.except) {
               if (!(roleMap.except instanceof Array)) {
-                throw new Error('Array of roles excepted');
+                throw new Error('Array of roles expected');
               }
             }
           },
