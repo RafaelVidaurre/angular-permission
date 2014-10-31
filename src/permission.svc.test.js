@@ -1,7 +1,6 @@
 describe('Service: Permission', function () {
   'use strict';
 
-  var Session;
   var Permission;
   var $q;
   var $rootScope;
@@ -12,13 +11,11 @@ describe('Service: Permission', function () {
   beforeEach(function () {
     var user = {role: 'admin'};
     resolveHelper = function () {
-      console.log('Resolve helper called');
       var deferred = $q.defer();
       deferred.resolve();
       return deferred.promise;
     };
     rejectHelper = function () {
-      console.log('Reject helper called');
       var deferred = $q.defer();
       deferred.reject();
       return deferred.promise;
