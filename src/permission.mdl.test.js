@@ -44,6 +44,10 @@ describe('Module: Permission', function () {
       return false;
     });
 
+    PermissionProvider.defineRole('withParams', function(params) {
+      return params.isset === true;
+    });
+
 
     $stateProvider.state('home', {});
     $stateProvider.state('redirectToThisState', {});
@@ -71,6 +75,24 @@ describe('Module: Permission', function () {
         only: ['denied'],
         redirectTo: 'redirectToThisState'
       }
+      }
+    });
+
+    $stateProvider.state('onlyWithParams', {
+      url: ':isset',
+      data: {
+        permissions: {
+          only: ['withParams']
+        }
+      }
+    });
+
+    $stateProvider.state('exceptWithParams', {
+      url: ':isset',
+      data: {
+        permissions: {
+          except: ['withParams']
+        }
       }
     });
   });
@@ -106,6 +128,28 @@ describe('Module: Permission', function () {
 
       $rootScope.$digest();
       expect($state.current.name).toBe('redirectToThisState');
+      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied');
+    });
+
+    it('should pass state params (only)', function () {
+      initStateTo('home');
+      $state.go('onlyWithParams',{isset: true});
+      spyOn($rootScope, '$broadcast').andCallThrough();
+
+      $rootScope.$digest();
+      expect($state.current.name).toBe('onlyWithParams');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionAccepted');
+      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied');
+    });
+
+    it('should pass state params (except)', function () {
+      initStateTo('home');
+      $state.go('exceptWithParams',{isset: true});
+      spyOn($rootScope, '$broadcast').andCallThrough();
+
+      $rootScope.$digest();
+      expect($state.current.name).toBe('home');
       expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted');
       expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied');
     });

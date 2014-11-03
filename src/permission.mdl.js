@@ -23,7 +23,7 @@
         if (permissions) {
           event.preventDefault();
 
-          Permission.authorize(permissions).then(function () {
+          Permission.authorize(permissions, toParams).then(function () {
             $rootScope.$broadcast("$stateChangePermissionAccepted");
 
             // If authorized, use call state.go without triggering the event.
