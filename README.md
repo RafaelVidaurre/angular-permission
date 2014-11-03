@@ -156,11 +156,16 @@ Help fill this list with your feature requests
 - Inheritance (example: 'admin' inherits from 'user')
 - Role validation caching?
 
-Contribute
-==========
+Contributing 
+============
 This project is still in diapers and I would love your feedback / help in making this a great module
-for angular developers to use
+for angular developers to use.
 
+The correct way to contribute is:
+  1. Create a branch from the `development` branch
+  2. Implement your new feature
+  3. Submit a pull request to be merged in the `development` branch
+  4. Remember to run `grunt build` before your last commit
 
 Author
 ======
