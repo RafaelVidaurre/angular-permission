@@ -96,7 +96,7 @@ session belongs to them.
   angular.module('fooModule', ['permission', 'user'])
     .run(function (Permission, User), {
       // Define anonymous role
-      Permission.defineRole('anonymous', function () {
+      Permission.defineRole('anonymous', function (stateParams) {
         // If the returned value is *truthy* then the user has the role, otherwise they don't
         if (!User) {
           return true; // Is anonymous
@@ -114,7 +114,7 @@ For that you can use promises
     .run(function (Permission, User, $q) {
       Permission
         // Define user role calling back-end
-        .defineRole('user', function () {
+        .defineRole('user', function (stateParams) {
           // This time we will return a promise
           // If the promise *resolves* then the user has the role, if it *rejects* (you guessed it)
 
@@ -122,7 +122,7 @@ For that you can use promises
           return User.checkSession();
         })
         // A different example for admin
-        .defineRole('admin', function () {
+        .defineRole('admin', function (stateParams) {
           var deferred = $q.defer();
 
           User.getAccessLevel().then(function (data) {
@@ -156,7 +156,7 @@ Help fill this list with your feature requests
 - Inheritance (example: 'admin' inherits from 'user')
 - Role validation caching?
 
-Contributing 
+Contributing
 ============
 This project is still in diapers and I would love your feedback / help in making this a great module
 for angular developers to use.
