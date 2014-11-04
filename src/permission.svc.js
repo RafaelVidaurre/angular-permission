@@ -61,7 +61,7 @@
               }
             }
           },
-          _findMatchingRole: function (rolesArray) {
+          _findMatchingRole: function (rolesArray, toParams) {
             var roles = angular.copy(rolesArray);
             var deferred = $q.defer();
             var currentRole = roles.shift();
@@ -76,13 +76,13 @@
               throw new Error('undefined role or invalid role validation');
             }
 
-            var validatingRole = Permission.roleValidations[currentRole]();
+            var validatingRole = Permission.roleValidations[currentRole](toParams);
             validatingRole = Permission._promiseify(validatingRole);
 
             validatingRole.then(function () {
               deferred.resolve();
             }, function () {
-              Permission._findMatchingRole(roles).then(function () {
+              Permission._findMatchingRole(roles, toParams).then(function () {
                 deferred.resolve();
               }, function () {
                 deferred.reject();
@@ -101,10 +101,10 @@
 
             return Permission;
           },
-          resolveIfMatch: function (rolesArray) {
+          resolveIfMatch: function (rolesArray, toParams) {
             var roles = angular.copy(rolesArray);
             var deferred = $q.defer();
-            Permission._findMatchingRole(roles).then(function () {
+            Permission._findMatchingRole(roles, toParams).then(function () {
               // Found role match
               deferred.resolve();
             }, function () {
@@ -113,9 +113,9 @@
             });
             return deferred.promise;
           },
-          rejectIfMatch: function (roles) {
+          rejectIfMatch: function (roles, toParams) {
             var deferred = $q.defer();
-            Permission._findMatchingRole(roles).then(function () {
+            Permission._findMatchingRole(roles, toParams).then(function () {
               // Role found
               deferred.reject();
             }, function () {
@@ -125,16 +125,16 @@
             return deferred.promise;
           },
           roleValidations: roleValidationConfig,
-          authorize: function (roleMap) {
+          authorize: function (roleMap, toParams) {
             // Validate input
             Permission._validateRoleMap(roleMap);
 
             var authorizing;
 
             if (roleMap.only) {
-              authorizing = Permission.resolveIfMatch(roleMap.only);
+              authorizing = Permission.resolveIfMatch(roleMap.only, toParams);
             } else {
-              authorizing = Permission.rejectIfMatch(roleMap.except);
+              authorizing = Permission.rejectIfMatch(roleMap.except, toParams);
             }
 
             return authorizing;
