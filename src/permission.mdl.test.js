@@ -118,7 +118,7 @@ describe('Module: Permission', function () {
       $rootScope.$digest();
       expect($state.current.name).toBe('home');
       expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied',$state.get('denied'),{});
     });
 
     it('should not go to the denied state but redirect to the provided state', function () {
@@ -129,7 +129,7 @@ describe('Module: Permission', function () {
       $rootScope.$digest();
       expect($state.current.name).toBe('redirectToThisState');
       expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied',$state.get('deniedWithRedirect'),{});
     });
 
     it('should pass state params (only)', function () {
@@ -151,7 +151,7 @@ describe('Module: Permission', function () {
       $rootScope.$digest();
       expect($state.current.name).toBe('home');
       expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied',$state.get('exceptWithParams'),{isset: true});
     });
 
   });
