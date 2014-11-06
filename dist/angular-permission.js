@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.1.3 - 2014-11-04
+ * @version v0.1.4 - 2014-11-06
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -11,7 +11,7 @@
   'use strict';
 
   angular.module('permission', ['ui.router'])
-    .run(function ($rootScope, Permission, $state) {
+    .run(["$rootScope", "Permission", "$state", function ($rootScope, Permission, $state) {
       $rootScope.$on('$stateChangeStart',
       function (event, toState, toParams, fromState, fromParams) {
         // If there are permissions set then prevent default and attempt to authorize
@@ -57,7 +57,7 @@
           });
         }
       });
-    });
+    }]);
 }());
 
 (function () {
@@ -87,7 +87,7 @@
         return this;
       };
 
-      this.$get = function ($q) {
+      this.$get = ["$q", function ($q) {
         var Permission = {
           _promiseify: function (value) {
             /**
@@ -204,7 +204,7 @@
         };
 
         return Permission;
-      };
+      }];
     });
 
 }());
