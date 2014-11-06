@@ -24,7 +24,7 @@
           event.preventDefault();
 
           Permission.authorize(permissions, toParams).then(function () {
-            $rootScope.$broadcast("$stateChangePermissionAccepted");
+            $rootScope.$broadcast('$stateChangePermissionAccepted');
 
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
@@ -35,7 +35,7 @@
             });
 
           }, function () {
-            $rootScope.$broadcast("$stateChangePermissionDenied");
+            $rootScope.$broadcast('$stateChangePermissionDenied');
 
             // If not authorized, redirect to wherever the route has defined, if defined at all
             var redirectTo = permissions.redirectTo;
