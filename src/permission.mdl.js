@@ -24,26 +24,31 @@
           event.preventDefault();
 
           Permission.authorize(permissions, toParams).then(function () {
-            $rootScope.$broadcast('$stateChangePermissionAccepted');
-
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
             // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
-            $state.go(toState.name, toParams, {notify: false}).then(function() {
-              $rootScope
-                .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
-            });
+            
+            if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
+              $rootScope.$broadcast('$stateChangePermissionAccepted');
 
-          }, function () {
-            $rootScope.$broadcast('$stateChangePermissionDenied');
-
-            // If not authorized, redirect to wherever the route has defined, if defined at all
-            var redirectTo = permissions.redirectTo;
-            if (redirectTo) {
-              $state.go(redirectTo, {}, {notify: false}).then(function() {
+              $state.go(toState.name, toParams, {notify: false}).then(function() {
                 $rootScope
                   .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
               });
+            }
+
+          }, function () {
+            if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
+              $rootScope.$broadcast('$stateChangePermissionDenied');
+
+              // If not authorized, redirect to wherever the route has defined, if defined at all
+              var redirectTo = permissions.redirectTo;
+              if (redirectTo) {
+                $state.go(redirectTo, {}, {notify: false}).then(function() {
+                  $rootScope
+                    .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
+                });
+              }
             }
           });
         }

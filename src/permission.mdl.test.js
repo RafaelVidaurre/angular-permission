@@ -101,58 +101,149 @@ describe('Module: Permission', function () {
     it('should go to an accepted state', inject (function($rootScope) {
       initStateTo('home');
       $state.go('accepted');
-      spyOn($rootScope, '$broadcast');
+
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
+
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
+
 
       $rootScope.$digest();
       expect($state.current.name).toBe('accepted');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionAccepted');
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied');
+      expect(changePermissionAcceptedHasBeenCalled).toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
     }));
 
     it('should not go to the denied state', function () {
       initStateTo('home');
       $state.go('denied');
-      spyOn($rootScope, '$broadcast');
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
 
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
 
       $rootScope.$digest();
       expect($state.current.name).toBe('home');
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied');
+      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
 
     it('should not go to the denied state but redirect to the provided state', function () {
       initStateTo('home');
       $state.go('deniedWithRedirect');
-      spyOn($rootScope, '$broadcast');
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
 
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
       $rootScope.$digest();
       expect($state.current.name).toBe('redirectToThisState');
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied');
+      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
 
     it('should pass state params (only)', function () {
       initStateTo('home');
       $state.go('onlyWithParams',{isset: true});
-      spyOn($rootScope, '$broadcast').andCallThrough();
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
+
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
 
       $rootScope.$digest();
       expect($state.current.name).toBe('onlyWithParams');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionAccepted');
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied');
+      expect(changePermissionAcceptedHasBeenCalled).toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
     });
 
     it('should pass state params (except)', function () {
       initStateTo('home');
       $state.go('exceptWithParams',{isset: true});
-      spyOn($rootScope, '$broadcast').andCallThrough();
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
+
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
 
       $rootScope.$digest();
       expect($state.current.name).toBe('home');
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied');
+      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
+
+    it('should not go to a accepted state when $stateChangeStart has been cancelled', function () {
+      initStateTo('home');
+      
+      $rootScope.$on('$stateChangeStart', function (event) {
+        event.preventDefault();
+      });
+
+      $state.go('accepted');
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
+
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
+
+      $rootScope.$digest();
+      expect($state.current.name).toBe('home');
+      // neither of them should have been called because the event was aborted manually
+      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
+    });
+
+    it('should not go to a denied state when $stateChangeStart has been cancelled', function () {
+      initStateTo('home');
+      
+      $rootScope.$on('$stateChangeStart', function (event) {
+        event.preventDefault();
+      });
+
+      $state.go('denied');
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
+
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
+
+      $rootScope.$digest();
+      expect($state.current.name).toBe('home');
+      // neither of them should have been called because the event was aborted manually
+      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
+    });
+
 
   });
 
