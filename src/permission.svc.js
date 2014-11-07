@@ -25,7 +25,7 @@
         return this;
       };
 
-      this.$get = ["$q", function ($q) {
+      this.$get = ['$q', function ($q) {
         var Permission = {
           _promiseify: function (value) {
             /**

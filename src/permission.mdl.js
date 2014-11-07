@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('permission', ['ui.router'])
-    .run(["$rootScope", "Permission", "$state", function ($rootScope, Permission, $state) {
+    .run(['$rootScope', 'Permission', '$state', function ($rootScope, Permission, $state) {
       $rootScope.$on('$stateChangeStart',
       function (event, toState, toParams, fromState, fromParams) {
         // If there are permissions set then prevent default and attempt to authorize
