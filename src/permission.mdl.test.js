@@ -105,7 +105,7 @@ describe('Module: Permission', function () {
 
       $rootScope.$digest();
       expect($state.current.name).toBe('accepted');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionAccepted');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionAccepted',$state.get('accepted'),{});
       expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied');
     }));
 
@@ -139,7 +139,7 @@ describe('Module: Permission', function () {
 
       $rootScope.$digest();
       expect($state.current.name).toBe('onlyWithParams');
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionAccepted');
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionAccepted',$state.get('onlyWithParams'),{isset: true});
       expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied');
     });
 
