@@ -37,12 +37,19 @@
               });
             }
 
-          }, function () {
+          }, function (rejection) {
             if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
               $rootScope.$broadcast('$stateChangePermissionDenied');
 
-              // If not authorized, redirect to wherever the route has defined, if defined at all
-              var redirectTo = permissions.redirectTo;
+              var redirectTo;
+              if(rejection && rejection.redirectTo) {
+                redirectTo = rejection.redirectTo;
+              } 
+              else {                
+                // If not authorized, redirect to wherever the route has defined, if defined at all
+                redirectTo = permissions.redirectTo;
+              }
+
               if (redirectTo) {
                 $state.go(redirectTo, {}, {notify: false}).then(function() {
                   $rootScope
