@@ -196,7 +196,7 @@ describe('Module: Permission', function () {
 
     it('should not go to a accepted state when $stateChangeStart has been cancelled', function () {
       initStateTo('home');
-      
+
       $rootScope.$on('$stateChangeStart', function (event) {
         event.preventDefault();
       });
@@ -221,7 +221,7 @@ describe('Module: Permission', function () {
 
     it('should not go to a denied state when $stateChangeStart has been cancelled', function () {
       initStateTo('home');
-      
+
       $rootScope.$on('$stateChangeStart', function (event) {
         event.preventDefault();
       });
