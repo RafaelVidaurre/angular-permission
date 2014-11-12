@@ -327,26 +327,6 @@ describe('Module: Permission', function () {
       expect($state.current.name).toBe('redirectToThisState');
     });
 
-
-    it('should not resolve if one role rejects but go to the redirectTo state if provided by the rejecting role and favor this redirection over the one in the state', function () {
-      $stateProvider.state('denyCheckAllWithArrayAndRedirectInRejection', {
-        data: {
-          permissions: {
-            all: ['accepted', 'reject-with-redirect'],
-            redirectTo: 'redirectToThisState'
-          }
-        }
-      });
-
-      initStateTo('home');
-      $state.go('denyCheckAllWithArrayAndRedirectInRejection');
-
-      $rootScope.$digest();
-
-      expect($state.current.name).toBe('redirectToAnotherState');
-    });
-
-
     it('should not resolve if one role rejects but go to the redirectTo state provided in the configured state although a reason was provided with the rejection', function () {
       $stateProvider.state('denyCheckAllWithArrayAndNoRedirectInRejection', {
         data: {

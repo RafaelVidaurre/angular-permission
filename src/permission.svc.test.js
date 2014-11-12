@@ -91,12 +91,6 @@ describe('Service: Permission', function () {
         return deferred.promise;
       });
 
-      Permission.defineRole('reject-with-redirect', function () {
-        var deferred = $q.defer();
-        deferred.reject({redirectTo: 'redirect'});
-        return deferred.promise;
-      });
-
       Permission.defineRole('reject-with-object', function () {
         var deferred = $q.defer();
         deferred.reject({hello: 'world'});
@@ -369,9 +363,9 @@ describe('Service: Permission', function () {
       spyOn(callbacks, 'reject');
       spyOn(callbacks, 'resolve');
 
-      // test some permutations
+      // test the permutations
 
-      Permission.resolveIfAllMatch(['user', 'reject-with-redirect', 'reject-no-redirect']).then(callbacks.resolve, callbacks.reject);
+      Permission.resolveIfAllMatch(['user', 'reject-no-redirect']).then(callbacks.resolve, callbacks.reject);
       $rootScope.$digest();
 
       expect(callbacks.reject).toHaveBeenCalled();
@@ -381,17 +375,7 @@ describe('Service: Permission', function () {
       spyOn(callbacks, 'reject');
       spyOn(callbacks, 'resolve');
 
-      Permission.resolveIfAllMatch(['user', 'reject-no-redirect', 'reject-with-redirect']).then(callbacks.resolve, callbacks.reject);
-      $rootScope.$digest();
-
-      expect(callbacks.reject).toHaveBeenCalled();
-      expect(callbacks.resolve).not.toHaveBeenCalled();
-
-      callbacks = {reject: function () {}, resolve: function () {}};
-      spyOn(callbacks, 'reject');
-      spyOn(callbacks, 'resolve');
-
-      Permission.resolveIfAllMatch(['reject-no-redirect', 'user', 'reject-with-redirect']).then(callbacks.resolve, callbacks.reject);
+      Permission.resolveIfAllMatch(['reject-no-redirect', 'user']).then(callbacks.resolve, callbacks.reject);
       $rootScope.$digest();
 
       expect(callbacks.reject).toHaveBeenCalled();
@@ -403,49 +387,12 @@ describe('Service: Permission', function () {
       spyOn(callbacks, 'reject');
       spyOn(callbacks, 'resolve');
 
-      Permission.resolveIfAllMatch(['reject-with-object', 'reject-with-redirect', 'reject-no-redirect']).then(callbacks.resolve, callbacks.reject);
+      Permission.resolveIfAllMatch(['reject-with-object', 'reject-no-redirect']).then(callbacks.resolve, callbacks.reject);
       $rootScope.$digest();
 
       expect(callbacks.reject).toHaveBeenCalled();
       expect(callbacks.resolve).not.toHaveBeenCalled();
     });
-
-    it('should reject and forward the redirectTo property if available', function () {
-      var callbacks = {reject: function () {}, resolve: function () {}};
-      spyOn(callbacks, 'reject');
-      spyOn(callbacks, 'resolve');
-
-      Permission.resolveIfAllMatch(['admin', 'user', 'reject-with-redirect']).then(callbacks.resolve, callbacks.reject);
-      $rootScope.$digest();
-
-      expect(callbacks.reject).toHaveBeenCalledWith({redirectTo: 'redirect'});
-      expect(callbacks.resolve).not.toHaveBeenCalled();
-    });
-
-    it('should reject and not provide the redirectTo property if it is not available but another reason was given', function () {
-      var callbacks = {reject: function () {}, resolve: function () {}};
-      spyOn(callbacks, 'reject');
-      spyOn(callbacks, 'resolve');
-
-      Permission.resolveIfAllMatch(['admin', 'user', 'reject-with-object']).then(callbacks.resolve, callbacks.reject);
-      $rootScope.$digest();
-
-      expect(callbacks.reject).toHaveBeenCalledWith(undefined);
-      expect(callbacks.resolve).not.toHaveBeenCalled();
-    });
-
-   it('should reject and not provide the redirectTo property if it is not available and no reason was given', function () {
-      var callbacks = {reject: function () {}, resolve: function () {}};
-      spyOn(callbacks, 'reject');
-      spyOn(callbacks, 'resolve');
-
-      Permission.resolveIfAllMatch(['admin', 'user', 'reject-no-redirect']).then(callbacks.resolve, callbacks.reject);
-      $rootScope.$digest();
-
-      expect(callbacks.reject).toHaveBeenCalledWith(undefined);
-      expect(callbacks.resolve).not.toHaveBeenCalled();
-    });
-
 
   });
 
