@@ -139,13 +139,13 @@
                     deferred.resolve();
                   }
                 },
-                function rejected (reason) {
+                function rejected (response) {
                   // if the roles were provided in an object
                   if(angular.isObject(roles) && roles[role.name] && roles[role.name].redirectTo) {
-                    deferred.reject({role: role.name, reason: reason, redirectTo: roles[role.name].redirectTo});
+                    deferred.reject({role: role.name, response: response, redirectTo: roles[role.name].redirectTo});
                   }
                   else {
-                    deferred.reject({role: role.name, reason: reason});
+                    deferred.reject({role: role.name, response: response});
                   }
                 }
               );

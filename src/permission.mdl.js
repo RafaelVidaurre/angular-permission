@@ -42,7 +42,7 @@
               $rootScope.$broadcast('$stateChangePermissionDenied');
 
               rejection = rejection || {};
-              $rootScope.$broadcast('$stateChangePermissionDenied', toState.name, toParams, fromState.name, fromParams, rejection.role, rejection.reason);
+              $rootScope.$broadcast('$stateChangePermissionDenied', toState.name, toParams, fromState.name, fromParams, rejection.role, rejection.response);
 
               var redirectTo;
               if(rejection && rejection.redirectTo) {
