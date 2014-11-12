@@ -1,0 +1,28 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+  </head>
+  <body ng-app="demoApp">
+    
+    <div ng-controller="MessageInterceptorController as messageInterceptor">
+      <h1>{{::messageInterceptor.status}}</h1>
+      <pre>{{::messageInterceptor.message | json}}</pre>
+    </div>
+
+    <hr>
+
+    <div ui-view></div>
+
+
+    <script src="../bower_components/angular/angular.js"></script>
+    <script src="../bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="../src/permission.mdl.js"></script>
+    <script src="../src/permission.svc.js"></script>
+
+    <script src="DemoApp.js"></script>    <!-- endbuild -->
+</body>
+</html>

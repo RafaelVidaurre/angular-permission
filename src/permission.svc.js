@@ -105,7 +105,7 @@
                 }
 
                 return {
-                  role: role,
+                  name: role,
                   promise: Permission._promiseify(Permission.roleValidations[role](toParams))
                 };              
               };
@@ -133,41 +133,26 @@
             angular.forEach(rolesArray, function(role) {
               resolvedCounter = resolvedCounter + 1;
               role.promise.then(
-                function resolved () {
+                function resolved () { // TODO maybe add return resolution of all promises like $q.all
                   resolvedCounter = resolvedCounter - 1;
                   if(resolvedCounter === 0) {
                     deferred.resolve();
                   }
                 },
                 function rejected (reason) {
-                  /**
-                  * Keep in mind with this solution
-                  * 1.  first check if the promise was rejected and if there is a redirectTo statement, resolve and provide the
-                  *     redirectTo state if true
-                  * 2.  otherwise check if the roles were provided via an object
-                  *     check if a redirectTo was provided, resolve and provide the redirectTo state if true
-                  * 3.  resolve without a redirectTo information otherwise. In this case the redirectTo state from the 
-                  *     setting in the $stateProvider will be used if provided
-                  */
-                 
-                  // if a reason was provided when calling reject and the reason object has a property redirectTo
-                  if (reason && angular.isObject(reason) && reason.redirectTo) {
-                    deferred.reject(reason);                    
-                  } else {
-                    // if the roles were provided in an object
-                    if(angular.isObject(roles) && roles[role.role]) {
-                      deferred.reject(roles[role.role]);
-                    }
-                    else {
-                      deferred.reject();
-                    }
+                  // if the roles were provided in an object
+                  if(angular.isObject(roles) && roles[role.name] && roles[role.name].redirectTo) {
+                    deferred.reject({role: role.name, reason: reason, redirectTo: roles[role.name].redirectTo});
+                  }
+                  else {
+                    deferred.reject({role: role.name, reason: reason});
                   }
                 }
               );
             });
 
             if(resolvedCounter === 0) {
-              deferred.resolve();
+              deferred.resolve(); // no role provided, no role available
             }
 
             return deferred.promise;
@@ -201,8 +186,8 @@
             var deferred = $q.defer();
 
             Permission._checkIfAllRolesMatch(roles, toParams).then(
-              function resolved () {
-                deferred.resolve();
+              function resolved (resolution) {
+                deferred.resolve(resolution);
               },
               function rejected (rejection) {
                 deferred.reject(rejection);
