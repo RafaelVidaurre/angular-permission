@@ -39,15 +39,15 @@
 
           }, function (rejection) {
             if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
-              
+
               rejection = rejection || {};
               $rootScope.$broadcast('$stateChangePermissionDenied', toState.name, toParams, fromState.name, fromParams, rejection.role, rejection.reason);
 
               var redirectTo;
               if(rejection && rejection.redirectTo) {
                 redirectTo = rejection.redirectTo;
-              } 
-              else {                
+              }
+              else {
                 // If not authorized, redirect to wherever the route has defined, if defined at all
                 redirectTo = permissions.redirectTo;
               }
