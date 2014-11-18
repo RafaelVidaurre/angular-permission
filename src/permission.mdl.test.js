@@ -45,7 +45,7 @@ describe('Module: Permission', function () {
     });
 
     PermissionProvider.defineRole('withParams', function(params) {
-      return params.isset === true;
+      return params.isset === 'true';
     });
 
 
