@@ -39,8 +39,6 @@
 
           }, function (rejection) {
             if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
-              $rootScope.$broadcast('$stateChangePermissionDenied');
-
               rejection = rejection || {};
               $rootScope.$broadcast('$stateChangePermissionDenied', toState.name, toParams, fromState.name, fromParams, rejection.role, rejection.response);
 
