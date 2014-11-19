@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.1.5 - 2014-11-09
+ * @version v0.1.5 - 2014-11-12
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -32,28 +32,39 @@
         if (permissions) {
           event.preventDefault();
 
-          Permission.authorize(permissions, toParams).then(function () {
+          Permission.authorize(permissions, toParams).then(function (resolution) {
+            resolution = resolution || {};
+
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
             // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
             if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
-              $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams);
+              $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, fromState, fromParams, resolution.role, resolution.reason);
 
               $state.go(toState.name, toParams, {notify: false}).then(function() {
-                $rootScope
-                  .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
+                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
               });
             }
-          }, function () {
-            if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
-              $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams);
 
-              // If not authorized, redirect to wherever the route has defined, if defined at all
-              var redirectTo = permissions.redirectTo;
+          }, function (rejection) {
+            if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
+              $rootScope.$broadcast('$stateChangePermissionDenied');
+
+              rejection = rejection || {};
+              $rootScope.$broadcast('$stateChangePermissionDenied', toState.name, toParams, fromState.name, fromParams, rejection.role, rejection.response);
+
+              var redirectTo;
+              if(rejection && rejection.redirectTo) {
+                redirectTo = rejection.redirectTo;
+              }
+              else {
+                // If not authorized, redirect to wherever the route has defined, if defined at all
+                redirectTo = permissions.redirectTo;
+              }
+
               if (redirectTo) {
                 $state.go(redirectTo, {}, {notify: false}).then(function() {
-                  $rootScope
-                    .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
+                  $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
                 });
               }
             }
@@ -113,8 +124,8 @@
             if (typeof(roleMap) !== 'object' || roleMap instanceof Array) {
               throw new Error('Role map has to be an object');
             }
-            if (roleMap.only === undefined && roleMap.except === undefined) {
-              throw new Error('Either "only" or "except" keys must me defined');
+            if (roleMap.only === undefined && roleMap.except === undefined && roleMap.all === undefined) {
+              throw new Error('Either "only", "except" or "all" keys must me defined');
             }
             if (roleMap.only) {
               if (!(roleMap.only instanceof Array)) {
@@ -123,6 +134,10 @@
             } else if (roleMap.except) {
               if (!(roleMap.except instanceof Array)) {
                 throw new Error('Array of roles expected');
+              }
+            } else if(roleMap.all) {
+              if(!(roleMap.all instanceof Array || angular.isObject(roleMap.all))) {
+                throw new Error('Array/Object of roles expected');
               }
             }
           },
@@ -156,6 +171,69 @@
 
             return deferred.promise;
           },
+          _checkIfAllRolesMatch: function (roles, toParams) {
+            var deferred = $q.defer();
+            var rolesArray = [];
+            // private method for this function
+            var promiseifyRole = function (role) {
+                if (!angular.isFunction(Permission.roleValidations[role])) {
+                  throw new Error('undefined role or invalid role validation');
+                }
+
+                return {
+                  name: role,
+                  promise: Permission._promiseify(Permission.roleValidations[role](toParams))
+                };              
+              };
+
+            // if roles is an array just promiseify the roles one by one
+            if(roles instanceof Array) {
+              rolesArray = roles.map(function (role) {
+                return promiseifyRole(role);
+              });
+            }             
+            else if(angular.isObject(roles)) {
+              for(var role in roles) {
+                if(roles.hasOwnProperty(role)) {
+                  rolesArray.push(promiseifyRole(role));
+                }
+              }
+            }
+            else {
+              throw new Error('The roles have to be provided either as an Array or an Object');
+            }
+
+            // A solution with $q.all would have been more elegant. Sadly $q.all does not provide the information which promise has
+            // been rejected. This implementation is very similar to $q.all
+            var resolvedCounter = 0;
+            angular.forEach(rolesArray, function(role) {
+              resolvedCounter = resolvedCounter + 1;
+              role.promise.then(
+                function resolved () { // TODO maybe add return resolution of all promises like $q.all
+                  resolvedCounter = resolvedCounter - 1;
+                  if(resolvedCounter === 0) {
+                    deferred.resolve();
+                  }
+                },
+                function rejected (response) {
+                  // if the roles were provided in an object
+                  if(angular.isObject(roles) && roles[role.name] && roles[role.name].redirectTo) {
+                    deferred.reject({role: role.name, response: response, redirectTo: roles[role.name].redirectTo});
+                  }
+                  else {
+                    deferred.reject({role: role.name, response: response});
+                  }
+                }
+              );
+            });
+
+            if(resolvedCounter === 0) {
+              deferred.resolve(); // no role provided, no role available
+            }
+
+            return deferred.promise;
+          },
+
           defineRole: function (roleName, validationFunction) {
             /**
               Service-available version of defineRole, the callback passed here lives in the
@@ -178,6 +256,22 @@
             });
             return deferred.promise;
           },
+          
+          resolveIfAllMatch: function (rolesArray, toParams) {
+            var roles = angular.copy(rolesArray);
+            var deferred = $q.defer();
+
+            Permission._checkIfAllRolesMatch(roles, toParams).then(
+              function resolved (resolution) {
+                deferred.resolve(resolution);
+              },
+              function rejected (rejection) {
+                deferred.reject(rejection);
+              }
+            );
+            return deferred.promise;
+          },
+
           rejectIfMatch: function (roles, toParams) {
             var deferred = $q.defer();
             Permission._findMatchingRole(roles, toParams).then(function () {
@@ -198,8 +292,10 @@
 
             if (roleMap.only) {
               authorizing = Permission.resolveIfMatch(roleMap.only, toParams);
-            } else {
+            } else if(roleMap.except) {
               authorizing = Permission.rejectIfMatch(roleMap.except, toParams);
+            } else if(roleMap.all) {
+              authorizing = Permission.resolveIfAllMatch(roleMap.all, toParams);
             }
 
             return authorizing;

@@ -77,6 +77,25 @@ describe('Service: Permission', function () {
         }
         return deferred.promise;
       });
+
+      // used for check all
+      Permission.defineRole('resolve', function () {
+        var deferred = $q.defer();
+        deferred.resolve();
+        return deferred.promise;
+      });
+
+      Permission.defineRole('reject-no-redirect', function () {
+        var deferred = $q.defer();
+        deferred.reject();
+        return deferred.promise;
+      });
+
+      Permission.defineRole('reject-with-object', function () {
+        var deferred = $q.defer();
+        deferred.reject({hello: 'world'});
+        return deferred.promise;
+      });            
     };
   });
 
@@ -164,7 +183,7 @@ describe('Service: Permission', function () {
     });
 
     it('should throw an exception if param doesn\'t have "only" or "except" keys', function () {
-      var exception = new Error('Either "only" or "except" keys must me defined');
+      var exception = new Error('Either "only", "except" or "all" keys must me defined');
       expect(function () {
         Permission._validateRoleMap({});
       }).toThrow(exception);
@@ -289,4 +308,92 @@ describe('Service: Permission', function () {
       expect(callbacks.resolve).not.toHaveBeenCalled();
     });
   });
+
+  describe('#resolveIfAllMatch - Array', function () {
+    beforeEach(function () {defineRolesHelper();});
+
+    it('should resolve if all roles match', function () {
+      var callbacks = {reject: function () {}, resolve: function () {}};
+      spyOn(callbacks, 'reject');
+      spyOn(callbacks, 'resolve');
+
+      Permission.resolveIfAllMatch(['user', 'admin', 'resolve']).then(callbacks.resolve, callbacks.reject);
+      $rootScope.$digest();
+
+      expect(callbacks.reject).not.toHaveBeenCalled();
+      expect(callbacks.resolve).toHaveBeenCalled();
+    });
+
+    it('should reject if one role rejects', function () {
+      var callbacks = {reject: function () {}, resolve: function () {}};
+      spyOn(callbacks, 'reject');
+      spyOn(callbacks, 'resolve');
+
+      // test some permutations
+
+      Permission.resolveIfAllMatch(['user', 'admin', 'reject-no-redirect']).then(callbacks.resolve, callbacks.reject);
+      $rootScope.$digest();
+
+      expect(callbacks.reject).toHaveBeenCalled();
+      expect(callbacks.resolve).not.toHaveBeenCalled();
+
+      callbacks = {reject: function () {}, resolve: function () {}};
+      spyOn(callbacks, 'reject');
+      spyOn(callbacks, 'resolve');
+
+      Permission.resolveIfAllMatch(['user', 'reject-no-redirect', 'admin']).then(callbacks.resolve, callbacks.reject);
+      $rootScope.$digest();
+
+      expect(callbacks.reject).toHaveBeenCalled();
+      expect(callbacks.resolve).not.toHaveBeenCalled();
+
+      callbacks = {reject: function () {}, resolve: function () {}};
+      spyOn(callbacks, 'reject');
+      spyOn(callbacks, 'resolve');
+
+      Permission.resolveIfAllMatch(['reject-no-redirect', 'user', 'admin']).then(callbacks.resolve, callbacks.reject);
+      $rootScope.$digest();
+
+      expect(callbacks.reject).toHaveBeenCalled();
+      expect(callbacks.resolve).not.toHaveBeenCalled();
+    });
+
+    it('should reject if two of three reject', function () {
+      var callbacks = {reject: function () {}, resolve: function () {}};
+      spyOn(callbacks, 'reject');
+      spyOn(callbacks, 'resolve');
+
+      // test the permutations
+
+      Permission.resolveIfAllMatch(['user', 'reject-no-redirect']).then(callbacks.resolve, callbacks.reject);
+      $rootScope.$digest();
+
+      expect(callbacks.reject).toHaveBeenCalled();
+      expect(callbacks.resolve).not.toHaveBeenCalled();
+
+      callbacks = {reject: function () {}, resolve: function () {}};
+      spyOn(callbacks, 'reject');
+      spyOn(callbacks, 'resolve');
+
+      Permission.resolveIfAllMatch(['reject-no-redirect', 'user']).then(callbacks.resolve, callbacks.reject);
+      $rootScope.$digest();
+
+      expect(callbacks.reject).toHaveBeenCalled();
+      expect(callbacks.resolve).not.toHaveBeenCalled();
+    });
+
+    it('should reject if three of three reject', function () {
+      var callbacks = {reject: function () {}, resolve: function () {}};
+      spyOn(callbacks, 'reject');
+      spyOn(callbacks, 'resolve');
+
+      Permission.resolveIfAllMatch(['reject-with-object', 'reject-no-redirect']).then(callbacks.resolve, callbacks.reject);
+      $rootScope.$digest();
+
+      expect(callbacks.reject).toHaveBeenCalled();
+      expect(callbacks.resolve).not.toHaveBeenCalled();
+    });
+
+  });
+
 });
