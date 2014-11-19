@@ -45,7 +45,12 @@ describe('Module: Permission', function () {
     });
 
     PermissionProvider.defineRole('withParams', function(params) {
-      return params.isset === 'true';
+      if(params.isset && angular.isString(params.isset)) {
+        return params.isset === 'true';
+      }
+      else {
+        return params.isset === true;
+      }
     });
 
 
