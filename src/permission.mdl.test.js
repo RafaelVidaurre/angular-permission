@@ -45,7 +45,12 @@ describe('Module: Permission', function () {
     });
 
     PermissionProvider.defineRole('withParams', function(params) {
-      return params.isset === true;
+      if(params.isset && angular.isString(params.isset)) {
+        return params.isset === 'true';
+      }
+      else {
+        return params.isset === true;
+      }
     });
 
 
@@ -196,7 +201,7 @@ describe('Module: Permission', function () {
 
     it('should not go to a accepted state when $stateChangeStart has been cancelled', function () {
       initStateTo('home');
-      
+
       $rootScope.$on('$stateChangeStart', function (event) {
         event.preventDefault();
       });
@@ -221,7 +226,7 @@ describe('Module: Permission', function () {
 
     it('should not go to a denied state when $stateChangeStart has been cancelled', function () {
       initStateTo('home');
-      
+
       $rootScope.$on('$stateChangeStart', function (event) {
         event.preventDefault();
       });
