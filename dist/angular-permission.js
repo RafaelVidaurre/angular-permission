@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.1.5 - 2014-11-09
+ * @version v0.1.6 - 2014-12-01
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -51,7 +51,7 @@
               // If not authorized, redirect to wherever the route has defined, if defined at all
               var redirectTo = permissions.redirectTo;
               if (redirectTo) {
-                $state.go(redirectTo, {}, {notify: false}).then(function() {
+                $state.go(redirectTo, toParams, {notify: false}).then(function() {
                   $rootScope
                     .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
                 });

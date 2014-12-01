@@ -100,6 +100,23 @@ describe('Module: Permission', function () {
         }
       }
     });
+
+    $stateProvider.state('abstractTest', {
+      abstract: true,
+      url: ':abstractValue'
+    });
+    $stateProvider.state('abstractTest.redirect', {
+      url: '/abstract'
+    });
+    $stateProvider.state('abstractTest.denied', {
+      url: '/denied',
+      data: {
+        permissions: {
+          only: ['denied'],
+          redirectTo: 'abstractTest.redirect'
+        }
+      }
+    });
   });
 
   describe('On $stateChangeStart', function () {
@@ -157,6 +174,25 @@ describe('Module: Permission', function () {
       });
       $rootScope.$digest();
       expect($state.current.name).toBe('redirectToThisState');
+      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
+    });
+
+    it('should pass state params on redirect', function () {
+      initStateTo('home');
+      $state.go('abstractTest.denied',{abstractValue: 'test'});
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
+
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
+      $rootScope.$digest();
+      expect($state.current.name).toBe('abstractTest.redirect');
+      expect($state.params.abstractValue).toBe('test');
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
