@@ -45,7 +45,12 @@ describe('Module: Permission', function () {
     });
 
     PermissionProvider.defineRole('withParams', function(params) {
-      return params.isset === true;
+      if(params.isset && angular.isString(params.isset)) {
+        return params.isset === 'true';
+      }
+      else {
+        return params.isset === true;
+      }
     });
 
 
@@ -95,7 +100,7 @@ describe('Module: Permission', function () {
         }
       }
     });
-    
+
     $stateProvider.state('abstractTest', {
       abstract: true,
       url: ':abstractValue'
@@ -172,7 +177,7 @@ describe('Module: Permission', function () {
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
-    
+
     it('should pass state params on redirect', function () {
       initStateTo('home');
       $state.go('abstractTest.denied',{abstractValue: 'test'});
@@ -180,7 +185,7 @@ describe('Module: Permission', function () {
       $rootScope.$on('$stateChangePermissionAccepted', function () {
         changePermissionAcceptedHasBeenCalled = true;
       });
-      
+
       var changePermissionDeniedHasBeenCalled = false;
       $rootScope.$on('$stateChangePermissionDenied', function () {
         changePermissionDeniedHasBeenCalled = true;
