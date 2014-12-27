@@ -127,34 +127,20 @@
             }
           },
           _findMatchingRole: function (rolesArray, toParams) {
-            var roles = angular.copy(rolesArray);
-            var deferred = $q.defer();
-            var currentRole = roles.shift();
-
-            // If no roles left to validate reject promise
-            if (!currentRole) {
-              deferred.reject();
-              return deferred.promise;
-            }
-            // Validate role definition exists
-            if (!angular.isFunction(Permission.roleValidations[currentRole])) {
-              throw new Error('undefined role or invalid role validation');
-            }
-
-            var validatingRole = Permission.roleValidations[currentRole](toParams);
-            validatingRole = Permission._promiseify(validatingRole);
-
-            validatingRole.then(function () {
-              deferred.resolve();
-            }, function () {
-              Permission._findMatchingRole(roles, toParams).then(function () {
+            return $q.all(rolesArray.map(function (role) {
+              var deferred = $q.defer();
+              if (!angular.isFunction(Permission.roleValidations[role])) {
+                throw new Error('undefined role or invalid role validation');
+              }
+              var validatingRole = Permission.roleValidations[role](toParams);
+              validatingRole = Permission._promiseify(validatingRole);
+              validatingRole.then(function () {
                 deferred.resolve();
               }, function () {
                 deferred.reject();
               });
-            });
-
-            return deferred.promise;
+              return deferred.promise;
+            }));
           },
           defineRole: function (roleName, validationFunction) {
             /**
