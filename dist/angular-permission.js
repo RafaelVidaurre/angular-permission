@@ -30,8 +30,6 @@
         }
 
         if (permissions) {
-          event.preventDefault();
-
           Permission.authorize(permissions, toParams).then(function () {
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
