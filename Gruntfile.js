@@ -63,7 +63,8 @@ module.exports = function(grunt) {
         files: {
           'dist/<%= pkg.name %>.js': [
             'src/**/*.mdl.js',
-            'src/**/*.svc.js'
+            'src/**/*.svc.js',
+            'src/**/*.dtv.js'
           ]
         }
       }
