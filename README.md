@@ -75,6 +75,25 @@ Another thing you can do is set a redirect url to which unauthorized sessions wi
     });
 ```
 
+You can also redirect dynamically based on the current role
+
+```javascript
+  $stateProvider
+    .state('dashboard', {
+      url: '...',
+      data: {
+        permissions: {
+          except: ['guest'],
+          redirectTo: {
+            user: 'user.index',
+            admin: 'admin.index',
+            otherwise: 'home'
+          }
+        }
+      }
+    });
+```
+
 
 Defining roles
 --------------------------
