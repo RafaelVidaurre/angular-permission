@@ -83,6 +83,18 @@ describe('Module: Permission', function () {
       }
     });
 
+    $stateProvider.state('deniedWithMultipleRedirect', {
+      data: {
+        permissions: {
+          only: ['denied'],
+          redirectTo: {
+            accepted: 'accepted',
+            otherwhise: 'home'
+          }
+        }
+      }
+    });
+
     $stateProvider.state('onlyWithParams', {
       url: ':isset',
       data: {
@@ -285,6 +297,23 @@ describe('Module: Permission', function () {
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
     });
 
+    it('should not go to the denied state but redirect to the provided state identified by the role', function () {
+      initStateTo('home');
+      $state.go('deniedWithMultipleRedirect');
+      var changePermissionAcceptedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionAccepted', function () {
+        changePermissionAcceptedHasBeenCalled = true;
+      });
+
+      var changePermissionDeniedHasBeenCalled = false;
+      $rootScope.$on('$stateChangePermissionDenied', function () {
+        changePermissionDeniedHasBeenCalled = true;
+      });
+      $rootScope.$digest();
+      expect($state.current.name).toBe('accepted');
+      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
+    });
 
   });
 

@@ -42,10 +42,27 @@
               // If not authorized, redirect to wherever the route has defined, if defined at all
               var redirectTo = permissions.redirectTo;
               if (redirectTo) {
-                $state.go(redirectTo, toParams, {notify: false}).then(function() {
-                  $rootScope
+                var state = undefined;
+                if (redirectTo === Object(redirectTo)) {
+                  for (var role in redirectTo) {
+                    if (Permission.roleValidations.hasOwnProperty(role) && Permission.roleValidations[role]()) {
+                      state = redirectTo[role];
+                      break; 
+                    }
+                  }
+                  // If no state is authorized then check for otherwise
+                  if (state == undefined && redirectTo.hasOwnProperty('otherwise')) {
+                    state = redirectTo['otherwise'];
+                  }
+                } else {
+                  state = redirectTo;
+                }
+                if (state) {
+                  $state.go(state, toParams, {notify: false}).then(function() {
+                    $rootScope
                     .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
-                });
+                  });
+                }
               }
             }
           });
