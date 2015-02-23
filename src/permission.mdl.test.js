@@ -178,6 +178,17 @@ describe('Module: Permission', function () {
       expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
 
+    it('should trigger $stateChangeSuccess with the redirect state and not the denied one', function () {
+      initStateTo('home');
+      $state.go('deniedWithRedirect');
+
+      $rootScope.$on('$stateChangeSuccess', function (name, toState) {
+        expect(toState.name).not.toBe('deniedWithRedirect');
+        expect(toState.name).toBe('redirectToThisState');
+      });
+      $rootScope.$digest();
+    });
+
     it('should pass state params on redirect', function () {
       initStateTo('home');
       $state.go('abstractTest.denied',{abstractValue: 'test'});
