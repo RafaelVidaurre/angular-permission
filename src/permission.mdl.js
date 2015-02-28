@@ -5,6 +5,10 @@
     .run(['$rootScope', 'Permission', '$state', function ($rootScope, Permission, $state) {
       $rootScope.$on('$stateChangeStart',
       function (event, toState, toParams, fromState, fromParams) {
+        if (toState.$$finishAuthorize) {
+          return;
+        }
+
         // If there are permissions set then prevent default and attempt to authorize
         var permissions;
         if (toState.data && toState.data.permissions) {
@@ -22,12 +26,13 @@
 
         if (permissions) {
           event.preventDefault();
+          toState = angular.extend({'$$finishAuthorize': true}, toState);
 
           Permission.authorize(permissions, toParams).then(function () {
             // If authorized, use call state.go without triggering the event.
             // Then trigger $stateChangeSuccess manually to resume the rest of the process
             // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
-            if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
+            if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
               $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams);
 
               $state.go(toState.name, toParams, {notify: false}).then(function() {
@@ -36,7 +41,7 @@
               });
             }
           }, function () {
-            if (!$rootScope.$broadcast('$stateChangeStart', toState.name, toParams, fromState.name, fromParams).defaultPrevented) {
+            if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
               $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams);
 
               // If not authorized, redirect to wherever the route has defined, if defined at all
