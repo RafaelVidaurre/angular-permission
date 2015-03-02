@@ -134,11 +134,30 @@ describe('Module: Permission', function () {
         changePermissionDeniedHasBeenCalled = true;
       });
 
-
       $rootScope.$digest();
       expect($state.current.name).toBe('accepted');
       expect(changePermissionAcceptedHasBeenCalled).toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
+    }));
+
+    it('should broadcast a $stateChangeStart with correct parameters(accepted state)', inject (function($rootScope) {
+      initStateTo('home');
+      $state.go('accepted');
+
+      var changeStartHasBeenCalled = false;
+      var toState = null;
+      var fromState = null;
+      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState, fromParams) {
+        changeStartHasBeenCalled = true;
+        toState = _toState;
+        fromState = _fromState;
+      });
+
+      $rootScope.$digest();
+      expect($state.current.name).toBe('accepted');
+      expect(changeStartHasBeenCalled).toBeTruthy();
+      expect(toState.name).toBe('accepted');
+      expect(fromState.name).toBe('home');
     }));
 
     it('should not go to the denied state', function () {
@@ -159,6 +178,26 @@ describe('Module: Permission', function () {
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
+
+    it('should broadcast a $stateChangeStart with correct parameters(denied state)', inject (function($rootScope) {
+      initStateTo('home');
+      $state.go('denied');
+
+      var changeStartHasBeenCalled = false;
+      var toState = null;
+      var fromState = null;
+      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState, fromParams) {
+        changeStartHasBeenCalled = true;
+        toState = _toState;
+        fromState = _fromState;
+      });
+
+      $rootScope.$digest();
+      expect($state.current.name).toBe('home');
+      expect(changeStartHasBeenCalled).toBeTruthy();
+      expect(toState.name).toBe('denied');
+      expect(fromState.name).toBe('home');
+    }));
 
     it('should not go to the denied state but redirect to the provided state', function () {
       initStateTo('home');
