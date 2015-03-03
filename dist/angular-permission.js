@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.2.0 - 2015-03-02
+ * @version v0.2.0 - 2015-03-03
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -36,6 +36,10 @@
         if (permissions) {
           event.preventDefault();
           toState = angular.extend({'$$finishAuthorize': true}, toState);
+
+          if ($rootScope.$broadcast('$stateChangePermissionStart', toState, toParams).defaultPrevented) {
+            return;
+          }
 
           Permission.authorize(permissions, toParams).then(function () {
             // If authorized, use call state.go without triggering the event.

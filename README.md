@@ -145,6 +145,8 @@ it allows you to define this behaviour however you want to.
 
 Events
 ------
+- **$stateChangePermissionStart**: This event is broadcasted before perform authorize.
+
 - **$stateChangePermissionAccepted**: This event is broadcasted when one of the permissions has been accepted and the state changes successfully.
 
 - **$stateChangePermissionDenied**: This event is broadcasted when the access to the target state is not granted (no permissions found on the `only` array or at least one permission found on the `except` array). This is when the state stays the same or is changed based on the `redirectTo` option.
