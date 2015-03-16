@@ -151,6 +151,15 @@ Events
 
 - **$stateChangePermissionDenied**: This event is broadcasted when the access to the target state is not granted (no permissions found on the `only` array or at least one permission found on the `except` array). This is when the state stays the same or is changed based on the `redirectTo` option.
 
+Directive
+------
+To be able to show/hide HTML elements based on defined roles you can use the included directive as follows:
+
+```html
+<button type="button" permission="CanEditUser, Admin" permission-type="only">Save User</button>
+<button type="button" permission="anonymous" permission-type="except">Save User</button>
+```
+
 TODOS:
 -----
 Help fill this list with your feature requests
