@@ -23,7 +23,7 @@
   },
   "homepage": "http://www.rafaelvidaurre.com",
   "peerDependencies": {
-    "ui-router": "^0.2.11"
+    "angular-ui-router": "^0.2.11"
   },
   "devDependencies": {
     "grunt": "^0.4.5",
