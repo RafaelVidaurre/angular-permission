@@ -1,5 +1,30 @@
 {
-  "dependencies": {},
+  "name": "angular-permission",
+  "version": "0.2.0",
+  "description": "Route permission and access control as simple as it can get",
+  "author": {
+    "name": "Rafael Vidaurre",
+    "email": "narzerus@gmail.com"
+  },
+  "main": "dist/angular-permission.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Narzerus/angular-permission.git"
+  },
+  "keywords": [
+    "angular",
+    "permissions",
+    "roles",
+    "route"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Narzerus/angular-permission/issues"
+  },
+  "homepage": "http://www.rafaelvidaurre.com",
+  "peerDependencies": {
+    "ui-router": "^0.2.11"
+  },
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-clean": "^0.5.0",
