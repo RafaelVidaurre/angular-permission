@@ -47,7 +47,7 @@
               // If not authorized, redirect to wherever the route has defined, if defined at all
               var redirectTo = permissions.redirectTo;
               if (redirectTo) {
-                $state.go(redirectTo, toParams);
+                $state.go(redirectTo, toParams, {reload: true});
               }
             }
           });
