@@ -22,6 +22,7 @@
     "tests",
     "src"
   ],
+  "directory": "/",
   "devDependencies": {
     "angular": "*",
     "angular-mocks": "*"
