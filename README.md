@@ -151,6 +151,23 @@ Events
 
 - **$stateChangePermissionDenied**: This event is broadcasted when the access to the target state is not granted (no permissions found on the `only` array or at least one permission found on the `except` array). This is when the state stays the same or is changed based on the `redirectTo` option.
 
+
+Caveats
+=======
+Because of a bug in ui-router, when using `$urlStateProvider.otherwise` we get an **infinite digest** loop error.
+A workaround was found by [@shaoibmerchant](https://github.com/shoaibmerchant) and it goes like this:
+
+```javascript
+// Normal usage (creates INFDG error)
+$urlRouterProvider.otherwise('/somestate');
+
+// Instead
+$urlRouterProvider.otherwise( function($injector) {
+  var $state = $injector.get("$state");
+  $state.go('/somestate');
+});
+```
+
 TODOS:
 -----
 Help fill this list with your feature requests
