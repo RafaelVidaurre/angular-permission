@@ -2,7 +2,8 @@
   'use strict';
 
   angular.module('permission', ['ui.router'])
-    .run(['$rootScope', 'Permission', '$state', function ($rootScope, Permission, $state) {
+    .run(['$rootScope', 'Permission', '$state', '$q',
+    function ($rootScope, Permission, $state, $q) {
       $rootScope.$on('$stateChangeStart',
       function (event, toState, toParams, fromState, fromParams) {
         if (toState.$$finishAuthorize) {
@@ -48,10 +49,22 @@
             if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
               $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams);
 
-              // If not authorized, redirect to wherever the route has defined, if defined at all
               var redirectTo = permissions.redirectTo;
-              if (redirectTo) {
-                $state.go(redirectTo, toParams);
+              var result;
+
+              if (angular.isFunction(redirectTo)) {
+                redirectTo = redirectTo();
+
+                $q.when(redirectTo).then(function (newState) {
+                  if (newState) {
+                    $state.go(newState, toParams);
+                  }
+                });
+
+              } else {
+                if (redirectTo) {
+                  $state.go(redirectTo, toParams);
+                }
               }
             }
           });

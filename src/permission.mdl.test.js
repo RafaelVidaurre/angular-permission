@@ -117,6 +117,34 @@ describe('Module: Permission', function () {
         }
       }
     });
+
+    $stateProvider.state('functionRedirect', {
+      url: '/function',
+      data: {
+        permissions: {
+          only: ['denied'],
+          redirectTo: function () {
+            return 'other';
+          }
+        }
+      }
+    });
+
+    $stateProvider.state('functionPromiseRedirect', {
+      url: '/function-promise',
+      data: {
+        permissions: {
+          only: ['denied'],
+          redirectTo: function () {
+            return $q.when('other');
+          }
+        }
+      }
+    });
+
+    $stateProvider.state('other', {
+      url: '/other'
+    })
   });
 
   describe('On $stateChangeStart', function () {
@@ -374,8 +402,24 @@ describe('Module: Permission', function () {
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
     });
+  });
 
+  describe('#redirectTo function', function () {
+    it('should redirect based on function if passed', function () {
+      initStateTo('home');
 
+      $state.go('functionRedirect');
+      $rootScope.$digest();
+      expect($state.current.name).toBe('other');
+    });
+
+    it('should redirect with promises as well', function () {
+      initStateTo('home');
+
+      $state.go('functionPromiseRedirect');
+      $rootScope.$digest();
+      expect($state.current.name).toBe('other');
+    });
   });
 
 });
