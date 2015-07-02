@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.3.0 - 2015-06-15
+ * @version v0.3.0 - 2015-07-02
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -97,6 +97,23 @@
         }
       };
 
+      var validateManyRolesDefinitionParams = function(roles, validationFunction) {
+        if (!angular.isArray(roles)) {
+          throw new Error('Roles must be an array');
+        } else {
+          for(var i = 0; i < roles.length; i++) {
+            validateRoleDefinitionParams(roles[i], validationFunction);
+          }
+        }
+      };
+
+      var createManyRolesValidationFunction = function(roleName, validationFunction) {
+         var roleValidator = function() {
+              return validationFunction(roleName);
+          };
+          return roleValidator;
+      };
+
       this.defineRole = function (roleName, validationFunction) {
         /**
           This method is only available in config-time, and cannot access services, as they are
@@ -184,6 +201,17 @@
             roleValidationConfig[roleName] = validationFunction;
 
             return Permission;
+          },
+          defineMany: function(roles, validationFunction) {
+            validateManyRolesDefinitionParams(roles, validationFunction);
+
+            var definedPermissions = Permission;
+            for(var i = 0; i < roles.length; i++) {
+               var validator =  createManyRolesValidationFunction(roles[i], validationFunction);
+               definedPermissions = definedPermissions.defineRole(roles[i], validator);
+            }
+
+            return definedPermissions;
           },
           resolveIfMatch: function (rolesArray, toParams) {
             var roles = angular.copy(rolesArray);
