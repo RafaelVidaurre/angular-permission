@@ -19,5 +19,29 @@
   },
   "scripts": {
     "test": "grunt karma:unit"
-  }
+  },
+  "name": "angular-permission",
+  "description": "![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)",
+  "version": "1.0.6",
+  "main": "dist/angular-permission.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Narzerus/angular-permission.git"
+  },
+  "keywords": [
+    "permission",
+    "angular",
+    "routes",
+    "ui-router",
+    "access"
+  ],
+  "author": "Rafael Vidaurre",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Narzerus/angular-permission/issues"
+  },
+  "homepage": "https://github.com/Narzerus/angular-permission#readme"
 }
