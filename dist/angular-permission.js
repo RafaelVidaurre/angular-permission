@@ -107,13 +107,6 @@
         }
       };
 
-      var createManyRolesValidationFunction = function(roleName, validationFunction) {
-         var roleValidator = function() {
-              return validationFunction(roleName);
-          };
-          return roleValidator;
-      };
-
       this.defineRole = function (roleName, validationFunction) {
         /**
           This method is only available in config-time, and cannot access services, as they are
@@ -177,7 +170,7 @@
               throw new Error('undefined role or invalid role validation');
             }
 
-            var validatingRole = Permission.roleValidations[currentRole](toParams);
+            var validatingRole = Permission.roleValidations[currentRole](toParams, currentRole);
             validatingRole = Permission._promiseify(validatingRole);
 
             validatingRole.then(function () {
@@ -207,8 +200,7 @@
 
             var definedPermissions = Permission;
             for(var i = 0; i < roles.length; i++) {
-               var validator =  createManyRolesValidationFunction(roles[i], validationFunction);
-               definedPermissions = definedPermissions.defineRole(roles[i], validator);
+               definedPermissions = definedPermissions.defineRole(roles[i], validationFunction);
             }
 
             return definedPermissions;

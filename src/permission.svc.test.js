@@ -119,7 +119,7 @@ describe('Service: Permission', function () {
 
         expect(function () {
           Permission.defineMany(['admin', 1], function () {});
-        }).toThrow(defineRoleException)        
+        }).toThrow(defineRoleException)
 
       });
 
@@ -174,7 +174,7 @@ describe('Service: Permission', function () {
      var systemRoles = ['admin', 'publisher', 'user', 'anonymous'];
      var userRoles = ['publisher', 'user'];
 
-      Permission.defineMany(systemRoles, function(role){
+      Permission.defineMany(systemRoles, function(stateParams, role){
           var deferred = $q.defer();
           var userHasRole = (userRoles.indexOf(role) != -1);
           userHasRole ? deferred.reject() : deferred.resolve()
@@ -333,4 +333,3 @@ describe('Service: Permission', function () {
     });
   });
 });
-
