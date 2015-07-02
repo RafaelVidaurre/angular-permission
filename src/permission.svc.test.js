@@ -10,6 +10,7 @@ describe('Service: Permission', function () {
   var resolveHelper, rejectHelper, defineProviderRolesHelper, defineRolesHelper;
   beforeEach(function () {
     var user = {role: 'admin'};
+
     resolveHelper = function () {
       var deferred = $q.defer();
       deferred.resolve();
@@ -94,14 +95,32 @@ describe('Service: Permission', function () {
     describe('#defineRole (provider version)', function () {
 
       it('should throw an exception on invalid role name', function () {
-        var exception = new Error('Role name must be a string');
+        var defineRoleException = new Error('Role name must be a string');
+        var defineManyException = new Error('Roles must be an array');
         expect(function () {
           PermissionProvider.defineRole(123, function () {});
-        }).toThrow(exception);
+        }).toThrow(defineRoleException);
 
         expect(function () {
           PermissionProvider.defineRole(null, function () {});
-        }).toThrow(exception);
+        }).toThrow(defineRoleException);
+
+        expect(function () {
+          Permission.defineMany(123, function () {});
+        }).toThrow(defineManyException)
+
+        expect(function () {
+          Permission.defineMany(null, function () {});
+        }).toThrow(defineManyException)
+
+        expect(function () {
+          Permission.defineMany('admin', function () {});
+        }).toThrow(defineManyException)
+
+        expect(function () {
+          Permission.defineMany(['admin', 1], function () {});
+        }).toThrow(defineRoleException)        
+
       });
 
       it('should not throw an exception on valid role name', function () {
@@ -120,6 +139,10 @@ describe('Service: Permission', function () {
         expect(angular.isFunction(CustomPermission.roleValidations.anonymous)).toBe(true);
         expect(angular.isFunction(CustomPermission.roleValidations.user)).toBe(true);
         expect(angular.isFunction(CustomPermission.roleValidations.admin)).toBe(true);
+      });
+
+      it('should not throw an exception on valid role name', function () {
+        Permission.defineMany(['admin', 'publisher'], function () {});
       });
     });
   });
@@ -143,6 +166,26 @@ describe('Service: Permission', function () {
       });
       expect(angular.isFunction(Permission.roleValidations.noob)).toBe(true);
       expect(angular.isFunction(Permission.roleValidations.pair)).toBe(true);
+    });
+  });
+
+  describe('#defineManyRoles', function () {
+    it('should define roles on run stage', function () {
+     var systemRoles = ['admin', 'publisher', 'user', 'anonymous'];
+     var userRoles = ['publisher', 'user'];
+
+      Permission.defineMany(systemRoles, function(role){
+          var deferred = $q.defer();
+          var userHasRole = (userRoles.indexOf(role) != -1);
+          userHasRole ? deferred.reject() : deferred.resolve()
+          return deferred.promise;
+      });
+
+      expect(angular.isFunction(Permission.roleValidations.admin)).toBe(true);
+      expect(angular.isFunction(Permission.roleValidations.publisher)).toBe(true);
+      expect(angular.isFunction(Permission.roleValidations.user)).toBe(true);
+      expect(angular.isFunction(Permission.roleValidations.anonymous)).toBe(true);
+
     });
   });
 
