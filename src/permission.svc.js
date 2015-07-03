@@ -111,7 +111,7 @@
 
             return Permission;
           },
-          defineMany: function(roles, validationFunction) {
+          defineManyRoles: function(roles, validationFunction) {
             validateManyRolesDefinitionParams(roles, validationFunction);
 
             var definedPermissions = Permission;

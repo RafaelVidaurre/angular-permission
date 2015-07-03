@@ -96,7 +96,7 @@ describe('Service: Permission', function () {
 
       it('should throw an exception on invalid role name', function () {
         var defineRoleException = new Error('Role name must be a string');
-        var defineManyException = new Error('Roles must be an array');
+        var defineManyRolesException = new Error('Roles must be an array');
         expect(function () {
           PermissionProvider.defineRole(123, function () {});
         }).toThrow(defineRoleException);
@@ -106,19 +106,19 @@ describe('Service: Permission', function () {
         }).toThrow(defineRoleException);
 
         expect(function () {
-          Permission.defineMany(123, function () {});
-        }).toThrow(defineManyException)
+          Permission.defineManyRoles(123, function () {});
+        }).toThrow(defineManyRolesException)
 
         expect(function () {
-          Permission.defineMany(null, function () {});
-        }).toThrow(defineManyException)
+          Permission.defineManyRoles(null, function () {});
+        }).toThrow(defineManyRolesException)
 
         expect(function () {
-          Permission.defineMany('admin', function () {});
-        }).toThrow(defineManyException)
+          Permission.defineManyRoles('admin', function () {});
+        }).toThrow(defineManyRolesException)
 
         expect(function () {
-          Permission.defineMany(['admin', 1], function () {});
+          Permission.defineManyRoles(['admin', 1], function () {});
         }).toThrow(defineRoleException)
 
       });
@@ -142,7 +142,7 @@ describe('Service: Permission', function () {
       });
 
       it('should not throw an exception on valid role name', function () {
-        Permission.defineMany(['admin', 'publisher'], function () {});
+        Permission.defineManyRoles(['admin', 'publisher'], function () {});
       });
     });
   });
@@ -170,14 +170,14 @@ describe('Service: Permission', function () {
   });
 
   describe('#defineManyRoles', function () {
-    it('should define roles on run stage', function () {
+    it('should define many roles on run stage', function () {
      var systemRoles = ['admin', 'publisher', 'user', 'anonymous'];
      var userRoles = ['publisher', 'user'];
 
-      Permission.defineMany(systemRoles, function(stateParams, role){
+      Permission.defineManyRoles(systemRoles, function(stateParams, role){
           var deferred = $q.defer();
           var userHasRole = (userRoles.indexOf(role) != -1);
-          userHasRole ? deferred.reject() : deferred.resolve()
+          userHasRole ?  deferred.resolve() : deferred.reject();
           return deferred.promise;
       });
 

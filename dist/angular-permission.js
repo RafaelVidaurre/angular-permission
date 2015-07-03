@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.3.0 - 2015-07-02
+ * @version v0.3.0 - 2015-07-03
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -195,7 +195,7 @@
 
             return Permission;
           },
-          defineMany: function(roles, validationFunction) {
+          defineManyRoles: function(roles, validationFunction) {
             validateManyRolesDefinitionParams(roles, validationFunction);
 
             var definedPermissions = Permission;
