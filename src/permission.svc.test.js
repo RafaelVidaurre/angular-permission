@@ -5,11 +5,16 @@ describe('Service: Permission', function () {
   var $q;
   var $rootScope;
   var PermissionProvider;
+  var EXCEPTIONS = {
+    DEFINE_ROLE_EXCEPTION: new Error('Role name must be a string'),
+    DEFINE_MANY_ROLES_EXCEPTION: new Error('Roles must be an array')
+  };
 
   // Helpers
   var resolveHelper, rejectHelper, defineProviderRolesHelper, defineRolesHelper;
   beforeEach(function () {
     var user = {role: 'admin'};
+
     resolveHelper = function () {
       var deferred = $q.defer();
       deferred.resolve();
@@ -94,14 +99,13 @@ describe('Service: Permission', function () {
     describe('#defineRole (provider version)', function () {
 
       it('should throw an exception on invalid role name', function () {
-        var exception = new Error('Role name must be a string');
         expect(function () {
           PermissionProvider.defineRole(123, function () {});
-        }).toThrow(exception);
+        }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION);
 
         expect(function () {
           PermissionProvider.defineRole(null, function () {});
-        }).toThrow(exception);
+        }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION);
       });
 
       it('should not throw an exception on valid role name', function () {
@@ -121,7 +125,36 @@ describe('Service: Permission', function () {
         expect(angular.isFunction(CustomPermission.roleValidations.user)).toBe(true);
         expect(angular.isFunction(CustomPermission.roleValidations.admin)).toBe(true);
       });
+
     });
+
+    describe('#defineManyRoles (provider version)', function () {
+
+      it('should throw an exception on invalid role name', function () {
+          expect(function () {
+            Permission.defineManyRoles(123, function () {});
+          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION)
+
+          expect(function () {
+            Permission.defineManyRoles(null, function () {});
+          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION)
+
+          expect(function () {
+            Permission.defineManyRoles('admin', function () {});
+          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION)
+
+          expect(function () {
+            Permission.defineManyRoles(['admin', 1], function () {});
+          }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION)
+      });
+
+      it('should not throw an exception on valid role name', function () {
+          Permission.defineManyRoles(['admin', 'publisher'], function () {});
+      });
+
+    });
+
+
   });
 
   describe('#defineRole', function () {
@@ -144,6 +177,28 @@ describe('Service: Permission', function () {
       expect(angular.isFunction(Permission.roleValidations.noob)).toBe(true);
       expect(angular.isFunction(Permission.roleValidations.pair)).toBe(true);
     });
+  });
+
+  describe('#defineManyRoles', function () {
+
+    it('should define many roles on run stage', function () {
+     var systemRoles = ['admin', 'publisher', 'user', 'anonymous'];
+     var userRoles = ['publisher', 'user'];
+
+      Permission.defineManyRoles(systemRoles, function(stateParams, role){
+          var deferred = $q.defer();
+          var userHasRole = (userRoles.indexOf(role) != -1);
+          userHasRole ?  deferred.resolve() : deferred.reject();
+          return deferred.promise;
+      });
+
+      expect(angular.isFunction(Permission.roleValidations.admin)).toBe(true);
+      expect(angular.isFunction(Permission.roleValidations.publisher)).toBe(true);
+      expect(angular.isFunction(Permission.roleValidations.user)).toBe(true);
+      expect(angular.isFunction(Permission.roleValidations.anonymous)).toBe(true);
+
+    });
+
   });
 
   describe('#_validateRoleMap', function () {

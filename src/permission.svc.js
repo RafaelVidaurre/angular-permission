@@ -13,6 +13,16 @@
         }
       };
 
+      var validateManyRolesDefinitionParams = function(roles, validationFunction) {
+        if (!angular.isArray(roles)) {
+          throw new Error('Roles must be an array');
+        } else {
+          for(var i = 0; i < roles.length; i++) {
+            validateRoleDefinitionParams(roles[i], validationFunction);
+          }
+        }
+      };
+
       this.defineRole = function (roleName, validationFunction) {
         /**
           This method is only available in config-time, and cannot access services, as they are
@@ -76,7 +86,7 @@
               throw new Error('undefined role or invalid role validation');
             }
 
-            var validatingRole = Permission.roleValidations[currentRole](toParams);
+            var validatingRole = Permission.roleValidations[currentRole](toParams, currentRole);
             validatingRole = Permission._promiseify(validatingRole);
 
             validatingRole.then(function () {
@@ -100,6 +110,16 @@
             roleValidationConfig[roleName] = validationFunction;
 
             return Permission;
+          },
+          defineManyRoles: function(roles, validationFunction) {
+            validateManyRolesDefinitionParams(roles, validationFunction);
+
+            var definedPermissions = Permission;
+            for(var i = 0; i < roles.length; i++) {
+               definedPermissions = definedPermissions.defineRole(roles[i], validationFunction);
+            }
+
+            return definedPermissions;
           },
           resolveIfMatch: function (rolesArray, toParams) {
             var roles = angular.copy(rolesArray);
