@@ -140,6 +140,17 @@ For that you can use promises
         });
     });
 ```
+
+You can also define many roles which share the same validator. This is useful when you have some central service which handles the validation.
+
+To define many roles which share one validator callback, use `defineManyRoles(<array>, <validator function>)`
+
+```javascript
+  Permission.defineManyRoles(arrayOfRoleNames, function (stateParams, roleName) {
+    return User.hasRole(roleName);
+  });
+```
+
 As you can see, Permission is useful wether you want a role-based access control or a permission-based one, as
 it allows you to define this behaviour however you want to.
 
