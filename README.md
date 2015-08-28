@@ -166,7 +166,7 @@ Events
 Caveats
 =======
 Because of a bug in ui-router, when using `$urlStateProvider.otherwise` we get an **infinite digest** loop error.
-A workaround was found by [@shaoibmerchant](https://github.com/shoaibmerchant) and it goes like this:
+A workaround was found by [@shoaibmerchant](https://github.com/shoaibmerchant) and it goes like this:
 
 ```javascript
 // Normal usage (creates INFDG error)
