@@ -47,7 +47,6 @@
   },
   "name": "angular-permission",
   "description": "![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)",
-  "version": "1.0.6",
   "main": "dist/angular-permission.js",
   "directories": {
     "test": "test"
