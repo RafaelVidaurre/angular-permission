@@ -182,7 +182,7 @@ $urlRouterProvider.otherwise( function($injector) {
 TODOS:
 -----
 Help fill this list with your feature requests
-- More powerful redirection to allow passing state parameters and other useful stuff ui-router provides. Ideas anyone?
+- [Waiting for release on `ui-router`'s end] More powerful redirection to allow passing state parameters and other useful stuff ui-router provides. Ideas anyone?
 - Inheritance (example: 'admin' inherits from 'user')
 - Role validation caching?
 
