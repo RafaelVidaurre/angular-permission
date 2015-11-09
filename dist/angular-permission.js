@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v0.3.1 - 2015-07-07
+ * @version v1.1.1 - 2015-11-09
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -191,7 +191,7 @@
               scope where it is defined and therefore can interact with other modules
             **/
             validateRoleDefinitionParams(roleName, validationFunction);
-            roleValidationConfig[roleName] = validationFunction;
+            Permission.roleValidations[roleName] = validationFunction;
 
             return Permission;
           },
