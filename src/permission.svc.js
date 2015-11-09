@@ -107,7 +107,7 @@
               scope where it is defined and therefore can interact with other modules
             **/
             validateRoleDefinitionParams(roleName, validationFunction);
-            roleValidationConfig[roleName] = validationFunction;
+            Permission.roleValidations[roleName] = validationFunction;
 
             return Permission;
           },
