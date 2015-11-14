@@ -20,6 +20,16 @@
   "smarttabs": true,
   "globals": {
     "angular": false,
-    "_": false
+    "_": false,
+    "it": false,
+    "xit": false,
+    "describe": false,
+    "xdescribe": false,
+    "beforeEach": false,
+    "afterEach": false,
+    "expect": false,
+    "spyOn": false,
+    "inject": false,
+    "jasmine": false
   }
 }
