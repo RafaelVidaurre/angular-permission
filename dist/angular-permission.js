@@ -1,9 +1,9 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v1.1.1 - 2015-11-09
+ * @version v1.1.1 - 2015-11-15
  * @link http://www.rafaelvidaurre.com
- * @author Rafael Vidaurre <narzerus@gmail.com>
+ * @author Rafael Vidaurre <narzerus@gmail.com>, Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
