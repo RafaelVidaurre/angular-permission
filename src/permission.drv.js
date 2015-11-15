@@ -17,8 +17,8 @@
 								element.addClass('ng-hide');
 							});
 					} catch (e) {
-						$log.error(e.message);
 						element.addClass('ng-hide');
+						$log.error(e.message);
 					}
 				}
 			};
@@ -30,11 +30,15 @@
 					try {
 						Permission
 							.authorize({except: attrs.permissionExcept.replace(/\s/g, '').split(',')})
-							.then(element.show())
-							.catch(element.hide());
+							.then(function () {
+								element.removeClass('ng-hide');
+							})
+							.catch(function () {
+								element.addClass('ng-hide');
+							});
 					} catch (e) {
+						element.addClass('ng-hide');
 						$log.error(e.message);
-						element.hide();
 					}
 				}
 			};
