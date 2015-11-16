@@ -23,6 +23,7 @@
 				}
 			};
 		}])
+
 		.directive('permissionExcept', ['$log', 'Permission', function ($log, Permission) {
 			return {
 				restrict: 'A',
