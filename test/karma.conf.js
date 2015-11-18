@@ -22,7 +22,9 @@ module.exports = function(config) {
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
       'src/**/*.mdl.js',
+      'src/**/*.drv.js',
       'src/**/*.svc.js',
+      'src/**/*.ctl.js',
       'src/**/*.test.js'
     ],
 
@@ -58,7 +60,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-    logLevel: config.LOG_INFO,
+    logLevel: config.LOG_INFO
 
     // Uncomment the following lines if you are using grunt's server to run the tests
     // proxies: {
