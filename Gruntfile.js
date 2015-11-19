@@ -39,27 +39,13 @@ module.exports = function(grunt) {
         }]
       }
     },
-    uglify: {
-      options: {
-        banner: '<%= meta.banner %>',
-        mangle: {
-          except: ['angular']
-        },
-        sourceMap: true
-      },
-      default: {
-        files: {
-          'dist/angular-permission.min.js': ['dist/angular-permission.js']
-        }
-      }
-    },
     watch: {
       bower: {
         files: ['bower.json']
       },
       js: {
         files: ['<%= appConfig.app %>/src/**/*.js','!<%= appConfig.app %>/src/**/*.test.js'],
-        tasks: ['newer:jshint:all']
+        tasks: ['newer:jshint:all'],
       },
       jsTest: {
         files: ['<%= appConfig.app %>/src/**/*.test.js'],
@@ -77,7 +63,6 @@ module.exports = function(grunt) {
         files: {
           'dist/<%= pkg.name %>.js': [
             'src/**/*.mdl.js',
-            'src/**/*.drv.js',
             'src/**/*.svc.js'
           ]
         }
@@ -95,8 +80,7 @@ module.exports = function(grunt) {
   grunt.registerTask('build', [
     'karma',
     'clean:dist',
-    'concat',
-    'uglify'
+    'concat'
   ]);
   grunt.registerTask('test', [
     'karma'
