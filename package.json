@@ -1,25 +1,27 @@
 {
   "name": "angular-permission",
-  "version": "1.1.1",
-  "description": "![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)",
-  "author": "Rafael Vidaurre",
+  "version": "1.2.0",
+  "description": "Route permission and access control as simple as it can get",
+  "author": {
+    "name": "Rafael Vidaurre",
+    "email": "narzerus@gmail.com"
+  },
   "main": "dist/angular-permission.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Narzerus/angular-permission.git"
+    "url": "https://github.com/Narzerus/angular-permission.git"
   },
   "keywords": [
-    "permission",
     "angular",
-    "routes",
-    "ui-router",
-    "access"
+    "permissions",
+    "roles",
+    "route"
   ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Narzerus/angular-permission/issues"
   },
-  "homepage": "https://github.com/Narzerus/angular-permission#readme",
+  "homepage": "http://www.rafaelvidaurre.com",
   "peerDependencies": {
     "angular-ui-router": "^0.2.11"
   },
@@ -44,7 +46,27 @@
   "scripts": {
     "test": "grunt karma:unit"
   },
+  "name": "angular-permission",
+  "description": "![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)",
+  "main": "dist/angular-permission.js",
   "directories": {
     "test": "test"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Narzerus/angular-permission.git"
+  },
+  "keywords": [
+    "permission",
+    "angular",
+    "routes",
+    "ui-router",
+    "access"
+  ],
+  "author": "Rafael Vidaurre",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Narzerus/angular-permission/issues"
+  },
+  "homepage": "https://github.com/Narzerus/angular-permission#readme"
 }

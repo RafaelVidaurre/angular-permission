@@ -144,7 +144,7 @@ describe('Module: Permission', function () {
 
     $stateProvider.state('other', {
       url: '/other'
-    })
+    });
   });
 
   describe('On $stateChangeStart', function () {
