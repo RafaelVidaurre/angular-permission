@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/Narzerus/angular-permission/issues"
   },
-  "homepage": "http://www.rafaelvidaurre.com",
+  "homepage": "https://github.com/Narzerus/angular-permission",
   "peerDependencies": {
     "angular-ui-router": "^0.2.11"
   },
@@ -51,22 +51,5 @@
   "main": "dist/angular-permission.js",
   "directories": {
     "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Narzerus/angular-permission.git"
-  },
-  "keywords": [
-    "permission",
-    "angular",
-    "routes",
-    "ui-router",
-    "access"
-  ],
-  "author": "Rafael Vidaurre",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Narzerus/angular-permission/issues"
-  },
-  "homepage": "https://github.com/Narzerus/angular-permission#readme"
+  }
 }
