@@ -1,7 +1,7 @@
 {
   "name": "angular-permission",
   "version": "1.2.0",
-  "description": "Route permission and access control as simple as it can get",
+  "description": "![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)",
   "author": {
     "name": "Rafael Vidaurre",
     "email": "narzerus@gmail.com"
@@ -31,25 +31,15 @@
     "grunt-contrib-concat": "^0.4.0",
     "grunt-contrib-connect": "^0.7.1",
     "grunt-contrib-copy": "^0.5.0",
-    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-jshint": "^0.11.3",
     "grunt-contrib-uglify": "^0.10.1",
     "grunt-contrib-watch": "^0.6.1",
-    "grunt-filerev": "^0.2.1",
     "grunt-karma": "^0.8.3",
     "grunt-newer": "^0.7.0",
+    "jshint-stylish": "^2.1.0",
     "karma": "^0.12.17",
     "karma-jasmine": "^0.1.5",
     "karma-phantomjs-launcher": "^0.1.4",
-    "load-grunt-tasks": "^0.4.0",
-    "time-grunt": "^0.3.1"
-  },
-  "scripts": {
-    "test": "grunt karma:unit"
-  },
-  "name": "angular-permission",
-  "description": "![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)",
-  "main": "dist/angular-permission.js",
-  "directories": {
-    "test": "test"
+    "load-grunt-config": "^0.19.0"
   }
 }
