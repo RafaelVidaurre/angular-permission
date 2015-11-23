@@ -11,7 +11,7 @@ module.exports = function(config) {
     autoWatch: true,
 
     // base path, that will be used to resolve files and exclude
-    basePath: '../',
+    basePath: '../../',
 
     // testing framework to use (jasmine/mocha/qunit/...)
     frameworks: ['jasmine'],
@@ -25,7 +25,7 @@ module.exports = function(config) {
       'src/**/*.drv.js',
       'src/**/*.svc.js',
       'src/**/*.ctl.js',
-      'src/**/*.test.js'
+      'test/**/*.test.js'
     ],
 
     // list of files / patterns to exclude

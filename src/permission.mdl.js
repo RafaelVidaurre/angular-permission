@@ -50,7 +50,6 @@
               $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams);
 
               var redirectTo = permissions.redirectTo;
-              var result;
 
               if (angular.isFunction(redirectTo)) {
                 redirectTo = redirectTo();
