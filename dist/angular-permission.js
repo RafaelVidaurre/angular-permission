@@ -14,7 +14,13 @@
     .run(['$rootScope', 'Permission', '$state', '$q',
     function ($rootScope, Permission, $state, $q) {
       $rootScope.$on('$stateChangeStart',
-      function (event, toState, toParams, fromState, fromParams) {
+      function (event, toState, toParams, fromState, fromParams, options) {
+        var transitionReloadOption = false;
+
+        if(!!options){
+          transitionReloadOption = options.reload;
+        }
+
         if (toState.$$finishAuthorize) {
           return;
         }
@@ -49,7 +55,7 @@
             if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
               $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams);
 
-              $state.go(toState.name, toParams, {notify: false}).then(function() {
+              $state.go(toState.name, toParams, {notify: false, reload: transitionReloadOption}).then(function() {
                 $rootScope
                   .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
               });
