@@ -11,7 +11,7 @@
         }
 
         // If there are permissions set then prevent default and attempt to authorize
-        var permissions;
+        var permissions = Permission.defaultPermissions();
         if (toState.data && toState.data.permissions) {
           permissions = toState.data.permissions;
         } else if (toState.permissions) {
