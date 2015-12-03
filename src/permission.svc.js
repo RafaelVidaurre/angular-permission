@@ -13,35 +13,41 @@
         }
       };
 
-      var validateManyRolesDefinitionParams = function(roles, validationFunction) {
+      var validateManyRolesDefinitionParams = function (roles, validationFunction) {
         if (!angular.isArray(roles)) {
           throw new Error('Roles must be an array');
         } else {
-          for(var i = 0; i < roles.length; i++) {
+          for (var i = 0; i < roles.length; i++) {
             validateRoleDefinitionParams(roles[i], validationFunction);
           }
         }
       };
 
       this.defineRole = function (roleName, validationFunction) {
+        console.warn('Function "defineRole" will be deprecated. Use "definePermission" instead');
+        return this.definePermission(roleName, validationFunction);
+      };
+
+      this.definePermission = function (roleName, validationFunction) {
         /**
-          This method is only available in config-time, and cannot access services, as they are
-          not yet injected anywere which makes this kinda useless.
-          Should remove if we cannot find a use for it.
-        **/
+         This method is only available in config-time, and cannot access services, as they are
+         not yet injected anywere which makes this kinda useless.
+         Should remove if we cannot find a use for it.
+         **/
         validateRoleDefinitionParams(roleName, validationFunction);
         roleValidationConfig[roleName] = validationFunction;
 
         return this;
       };
 
+
       this.$get = ['$q', function ($q) {
         var Permission = {
           _promiseify: function (value) {
             /**
-              Converts a value into a promise, if the value is truthy it resolves it, otherwise
-              it rejects it
-            **/
+             Converts a value into a promise, if the value is truthy it resolves it, otherwise
+             it rejects it
+             **/
             if (value && angular.isFunction(value.then)) {
               return value;
             }
@@ -102,21 +108,30 @@
             return deferred.promise;
           },
           defineRole: function (roleName, validationFunction) {
-            /**
-              Service-available version of defineRole, the callback passed here lives in the
-              scope where it is defined and therefore can interact with other modules
-            **/
+            console.warn('Function "defineRole" will be deprecated. Use "definePermission" instead');
             validateRoleDefinitionParams(roleName, validationFunction);
             Permission.roleValidations[roleName] = validationFunction;
 
             return Permission;
           },
-          defineManyRoles: function(roles, validationFunction) {
+          definePermission: function (roleName, validationFunction) {
+            /**
+             Service-available version of defineRole, the callback passed here lives in the
+             scope where it is defined and therefore can interact with other modules
+             **/
+            validateRoleDefinitionParams(roleName, validationFunction);
+            Permission.roleValidations[roleName] = validationFunction;
+          },
+          defineManyRoles: function (roles, validationFunction) {
+            console.warn('Function "defineManyRoles" will be deprecated. Use "defineManyPermissions" instead');
+            return Permission.defineManyPermissions(roles, validationFunction);
+          },
+          defineManyPermissions: function (roles, validationFunction) {
             validateManyRolesDefinitionParams(roles, validationFunction);
 
             var definedPermissions = Permission;
-            for(var i = 0; i < roles.length; i++) {
-               definedPermissions = definedPermissions.defineRole(roles[i], validationFunction);
+            for (var i = 0; i < roles.length; i++) {
+              definedPermissions = definedPermissions.defineRole(roles[i], validationFunction);
             }
 
             return definedPermissions;

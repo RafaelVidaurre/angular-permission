@@ -26,7 +26,7 @@ describe('Service: Permission', function () {
       return deferred.promise;
     };
     defineProviderRolesHelper = function () {
-      PermissionProvider.defineRole('anonymous', function () {
+      PermissionProvider.definePermission('anonymous', function () {
         var deferred = $q.defer();
         if (!user) {
           deferred.resolve();
@@ -35,7 +35,7 @@ describe('Service: Permission', function () {
         }
         return deferred.promise;
       });
-      PermissionProvider.defineRole('user', function () {
+      PermissionProvider.definePermission('user', function () {
         var deferred = $q.defer();
         if (user) {
           deferred.resolve();
@@ -44,7 +44,7 @@ describe('Service: Permission', function () {
         }
         return deferred.promise;
       });
-      PermissionProvider.defineRole('admin', function () {
+      PermissionProvider.definePermission('admin', function () {
         var deferred = $q.defer();
         if (user && user.role === 'admin') {
           deferred.resolve();
@@ -55,7 +55,7 @@ describe('Service: Permission', function () {
       });
     };
     defineRolesHelper = function () {
-      Permission.defineRole('anonymous', function () {
+      Permission.definePermission('anonymous', function () {
         var deferred = $q.defer();
         if (!user) {
           deferred.resolve();
@@ -64,7 +64,7 @@ describe('Service: Permission', function () {
         }
         return deferred.promise;
       });
-      Permission.defineRole('user', function () {
+      Permission.definePermission('user', function () {
         var deferred = $q.defer();
         if (user) {
           deferred.resolve();
@@ -73,7 +73,7 @@ describe('Service: Permission', function () {
         }
         return deferred.promise;
       });
-      Permission.defineRole('admin', function () {
+      Permission.definePermission('admin', function () {
         var deferred = $q.defer();
         if (user && user.role === 'admin') {
           deferred.resolve();
@@ -100,16 +100,16 @@ describe('Service: Permission', function () {
 
       it('should throw an exception on invalid role name', function () {
         expect(function () {
-          PermissionProvider.defineRole(123, function () {});
+          PermissionProvider.definePermission(123, function () {});
         }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION);
 
         expect(function () {
-          PermissionProvider.defineRole(null, function () {});
+          PermissionProvider.definePermission(null, function () {});
         }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION);
       });
 
       it('should not throw an exception on valid role name', function () {
-        PermissionProvider.defineRole('valid-name', function () {});
+        PermissionProvider.definePermission('valid-name', function () {});
       });
 
       it('should set a role validation method to the key defined', function () {
@@ -132,24 +132,24 @@ describe('Service: Permission', function () {
 
       it('should throw an exception on invalid role name', function () {
           expect(function () {
-            Permission.defineManyRoles(123, function () {});
-          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION)
+            Permission.defineManyPermissions(123, function () {});
+          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION);
 
           expect(function () {
-            Permission.defineManyRoles(null, function () {});
-          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION)
+            Permission.defineManyPermissions(null, function () {});
+          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION);
 
           expect(function () {
-            Permission.defineManyRoles('admin', function () {});
-          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION)
+            Permission.defineManyPermissions('admin', function () {});
+          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION);
 
           expect(function () {
-            Permission.defineManyRoles(['admin', 1], function () {});
-          }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION)
+            Permission.defineManyPermissions(['admin', 1], function () {});
+          }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION);
       });
 
       it('should not throw an exception on valid role name', function () {
-          Permission.defineManyRoles(['admin', 'publisher'], function () {});
+          Permission.defineManyPermissions(['admin', 'publisher'], function () {});
       });
 
     });
@@ -179,15 +179,15 @@ describe('Service: Permission', function () {
     });
   });
 
-  describe('#defineManyRoles', function () {
+  describe('#defineManyPermissions', function () {
 
     it('should define many roles on run stage', function () {
      var systemRoles = ['admin', 'publisher', 'user', 'anonymous'];
      var userRoles = ['publisher', 'user'];
 
-      Permission.defineManyRoles(systemRoles, function(stateParams, role){
+      Permission.defineManyPermissions(systemRoles, function(stateParams, role){
           var deferred = $q.defer();
-          var userHasRole = (userRoles.indexOf(role) != -1);
+          var userHasRole = (userRoles.indexOf(role) !== -1);
           userHasRole ?  deferred.resolve() : deferred.reject();
           return deferred.promise;
       });

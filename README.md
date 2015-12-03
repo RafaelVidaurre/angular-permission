@@ -2,24 +2,35 @@
 
 Permission
 ==========
-*Role and permission based authentication on routes as simple as it can get.*
+*Access Control List based authentication on routes made as simple as it can get.*
 
-- Requires you to use [ui-router](https://github.com/angular-ui/ui-router) as your router module.
+Dependencies
+------------
+- [Angular](https://github.com/angular/angular) as MV* framework
+- [UI-Router](https://github.com/angular-ui/ui-router) as your router module
 
 Permission is the gatekeeper for your routes
 --------------------------------------------
 Permission helps you gain control of your routes, by using simple concepts for you to decide who can access them.
 I've seen plenty of big fat tutorials on access control implementations, and they can be quite overwhelming. So I bring you a simple, powerful, straightforward solution.
 
-Important
----------
-Please remember this project is very new, I wouldn't recommend yet using this in a big project just yet as, like any new project, might drastically change over time.
+Installation
+================
 
-Install via bower
+bower
 -----------------
 ```
 bower install angular-permission --save
 ```
+
+npm
+-----------------
+```
+npm install angular-permission --save
+```
+
+Usage
+================
 
 Include to your dependencies
 ----------------------------
@@ -27,132 +38,169 @@ Include to your dependencies
 angular.module('yourModule', [..., 'permission']);
 ```
 
-Setting route permissions/roles
+Setting route permissions/permissions
 -------------------------------
 This is how simple Permission makes it for you to define a route which requires authorization.
 
 ```javascript
-
-  // We define a route via ui-router's $stateProvider
-  $stateProvider
-    .state('staffpanel', {
-      url: '...',
-      data: {
-        permissions: {
-          only: ['admin', 'moderator']
-        }
+// We define a route via ui-router's $stateProvider
+$stateProvider
+  .state('staffpanel', {
+    url: '...',
+    data: {
+      permissions: {
+        only: ['admin', 'moderator']
       }
-    });
+    }
+  });
 ```
 
 You can either set an `only` or an `except` array.
 
 ```javascript
-  // Let's prevent anonymous users from looking at a dashboard
-  $stateProvider
-    .state('dashboard', {
-      url: '...',
-      data: {
-        permissions: {
-          except: ['anonymous']
-        }
+// Let's prevent anonymous users from looking at a dashboard
+$stateProvider
+  .state('dashboard', {
+    url: '...',
+    data: {
+      permissions: {
+        except: ['anonymous']
       }
-    });
+    }
+  });
 ```
 
 Another thing you can do is set a redirect url to which unauthorized sessions will go to.
 
 ```javascript
-  $stateProvider
-    .state('dashboard', {
-      url: '...',
-      data: {
-        permissions: {
-          except: ['anonymous'],
-          redirectTo: 'login'
-        }
+$stateProvider
+  .state('dashboard', {
+    url: '...',
+    data: {
+      permissions: {
+        except: ['anonymous'],
+        redirectTo: 'login'
       }
-    });
+    }
+  });
 ```
 
 
-Defining roles
+Defining permissions
 --------------------------
 So, how do yo tell Permission what does 'anonymous', 'admin' or 'foo' mean and how to know if the current user belongs
 to those definitions?
 
-Well, Permission allows you to define different 'roles' along with the logic that determines if the current
+Well, Permission allows you to define different 'permissions' along with the logic that determines if the current
 session belongs to them.
 
 ```javascript
-  // Let's imagine we have a User service which has information about the current user in the session
-  // and is undefined if no session is active
-  //
-  // We will define the following roles:
-  // anonymous: When there is not user currenly logged in
-  // normal: A user with isAdmin = false
-  // admin: A user with isAdmin = true
+// Let's imagine we have a User service which has information about the current user in the session
+// and is undefined if no session is active
+//
+// We will define the following permissions:
+// anonymous: When there is not user currently logged in
+// normal: A user with isAdmin = false
+// admin: A user with isAdmin = true
 
-  angular.module('fooModule', ['permission', 'user'])
-    .run(function (Permission, User) {
-      // Define anonymous role
-      Permission.defineRole('anonymous', function (stateParams) {
-        // If the returned value is *truthy* then the user has the role, otherwise they don't
-        if (!User) {
-          return true; // Is anonymous
-        }
-        return false;
-      });
+angular.module('fooModule', ['permission', 'user'])
+  .run(function (Permission, User) {
+    // Define anonymous permission
+    Permission.definePermission('anonymous', function (stateParams) {
+      // If the returned value is *truthy* then the user has the permission, otherwise they don't
+      if (!User) {
+        return true; // Is anonymous
+      }
+      return false;
     });
-```
-
-Sometimes you will need to call some a back-end api or some other asyncronous task to define the role
-For that you can use promises
-
-```javascript
-  angular.module('barModule', ['permission', 'user'])
-    .run(function (Permission, User, $q) {
-      Permission
-        // Define user role calling back-end
-        .defineRole('user', function (stateParams) {
-          // This time we will return a promise
-          // If the promise *resolves* then the user has the role, if it *rejects* (you guessed it)
-
-          // Let's assume this returns a promise that resolves or rejects if session is active
-          return User.checkSession();
-        })
-        // A different example for admin
-        .defineRole('admin', function (stateParams) {
-          var deferred = $q.defer();
-
-          User.getAccessLevel().then(function (data) {
-            if (data.accessLevel === 'admin') {
-              deferred.resolve();
-            } else {
-              deferred.reject();
-            }
-          }, function () {
-            // Error with request
-            deferred.reject();
-          });
-
-          return deferred.promise;
-        });
-    });
-```
-
-You can also define many roles which share the same validator. This is useful when you have some central service which handles the validation.
-
-To define many roles which share one validator callback, use `defineManyRoles(<array>, <validator function>)`
-
-```javascript
-  Permission.defineManyRoles(arrayOfRoleNames, function (stateParams, roleName) {
-    return User.hasRole(roleName);
   });
 ```
 
-As you can see, Permission is useful wether you want a role-based access control or a permission-based one, as
-it allows you to define this behaviour however you want to.
+Sometimes you will need to call some a back-end api or some other asynchronous task to define the permission.
+For that you can use promises:
+
+```javascript
+angular.module('barModule', ['permission', 'user'])
+  .run(function (Permission, User, $q) {
+    Permission
+      // Define user permission calling back-end
+      .definePermission('user', function (stateParams) {
+        // This time we will return a promise
+        // If the promise *resolves* then the user has the permission, if it *rejects* (you guessed it)
+
+        // Let's assume this returns a promise that resolves or rejects if session is active
+        return User.checkSession();
+      })
+      // A different example for admin
+      .definePermission('admin', function (stateParams) {
+        var deferred = $q.defer();
+
+        User.getAccessLevel().then(function (data) {
+          if (data.accessLevel === 'admin') {
+            deferred.resolve();
+          } else {
+            deferred.reject();
+          }
+        }, function () {
+          // Error with request
+          deferred.reject();
+        });
+
+        return deferred.promise;
+      });
+  });
+```
+
+You can also define many permissions which share the same validator. This is useful when you have some central service which handles the validation.
+
+To define many permissions which share one validator callback, use `defineManyPermissions(<array>, <validator function>)`
+
+```javascript
+Permission.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
+  return User.hasPermission(permissionName);
+});
+```
+
+Views
+-----
+Permission module exposes two directives `permission-only` and `permission-except` that can show/hide elements of your application based on set of permissions.
+
+Directives accepts either single permission that has to be met in order to display it's content:
+ 
+```html
+<div permission-only="loggedIn">
+  <span>Congrats! You are logged in.</span>  
+</div>
+```
+
+Or set of permissions separated by 'coma':
+
+```html
+<div permission-except="user,admin">
+  <span>You are not 'admin' nor 'user'.</span>  
+</div>
+```
+
+When using async calls to fetch permissions make sure that modules (or app) are waiting for permissions to be resolved before running them:
+   
+```html
+[index.html]
+<div ui-view="root" ng-if="appReady"><div>
+```
+
+And in app module: 
+
+```js
+ var app = ng.module('app', ['permission']);
+ 
+ app.run(function($rootScope, Permission, User){
+   User
+    .fetchPermission()
+    .then(function(){
+      $rootScope.appReady = true;
+    })
+ })
+```
 
 Events
 ------
@@ -178,13 +226,6 @@ $urlRouterProvider.otherwise( function($injector) {
   $state.go('/somestate');
 });
 ```
-
-TODOS:
------
-Help fill this list with your feature requests
-- [Waiting for release on `ui-router`'s end] More powerful redirection to allow passing state parameters and other useful stuff ui-router provides. Ideas anyone?
-- Inheritance (example: 'admin' inherits from 'user')
-- Role validation caching?
 
 Contributing
 ============
