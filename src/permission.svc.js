@@ -3,166 +3,285 @@
 
   angular.module('permission')
     .provider('Permission', function () {
-      var roleValidationConfig = {};
-      var validateRoleDefinitionParams = function (roleName, validationFunction) {
-        if (!angular.isString(roleName)) {
-          throw new Error('Role name must be a string');
+      var permissions = {};
+
+      /**
+       * Allows to define permission on application configuration
+       * @deprecated
+       *
+       * @param permission {String}
+       * @param validationFunction {Function}
+       */
+      this.defineRole = function (permission, validationFunction) {
+        console.warn('Function "defineRole" will be deprecated. Use "definePermission" instead');
+        return this.definePermission(permission, validationFunction);
+      };
+
+
+      /**
+       * Allows to define permission on application configuration
+       *
+       * @param permission {String}
+       * @param validationFunction {Function}
+       */
+      this.definePermission = function (permission, validationFunction) {
+        validatePermission(permission, validationFunction);
+        permissions[permission] = validationFunction;
+      };
+
+      /**
+       * Allows to define set of permissions with shared validation function on application configuration
+       *
+       * @param permissions {Array}
+       * @param validationFunction {Function}
+       */
+      this.defineManyPermissions = function (permissions, validationFunction) {
+        var that = this;
+
+        if (!angular.isArray(permissions)) {
+          throw new TypeError('Parameter "permissions" name must be Array');
+        }
+
+        angular.forEach(permissions, function (permissionName) {
+          that.definePermission(permissionName, validationFunction);
+        });
+      };
+
+      /**
+       * Checks if provided permission has accepted parameter types
+       * @private
+       *
+       * @param permission {String}
+       * @param validationFunction {Function}
+       */
+      function validatePermission(permission, validationFunction) {
+        if (!angular.isString(permission)) {
+          throw new TypeError('Parameter "permission" name must be String');
         }
         if (!angular.isFunction(validationFunction)) {
-          throw new Error('Validation function not provided correctly');
+          throw new TypeError('Parameter "validationFunction" must be Function');
         }
-      };
+      }
 
-      var validateManyRolesDefinitionParams = function(roles, validationFunction) {
-        if (!angular.isArray(roles)) {
-          throw new Error('Roles must be an array');
-        } else {
-          for(var i = 0; i < roles.length; i++) {
-            validateRoleDefinitionParams(roles[i], validationFunction);
-          }
+      /**
+       * Checks if provided permission map has accepted parameter types
+       * @private
+       *
+       * @param permissionMap {Object}
+       */
+      function validatePermissionMap(permissionMap) {
+        if (!angular.isObject(permissionMap)) {
+          throw new TypeError('Parameter "permissionMap" has to be Object');
         }
-      };
 
-      this.defineRole = function (roleName, validationFunction) {
-        /**
-          This method is only available in config-time, and cannot access services, as they are
-          not yet injected anywere which makes this kinda useless.
-          Should remove if we cannot find a use for it.
-        **/
-        validateRoleDefinitionParams(roleName, validationFunction);
-        roleValidationConfig[roleName] = validationFunction;
+        if (angular.isUndefined(permissionMap.only) && angular.isUndefined(permissionMap.except)) {
+          throw new ReferenceError('Either "only" or "except" keys must me defined');
+        }
 
-        return this;
-      };
+        if (!angular.isArray(permissionMap.only) || !angular.isArray(permissionMap.except)) {
+          throw new TypeError('Parameter "permissionMap" properties must be Array');
+        }
+      }
 
       this.$get = ['$q', function ($q) {
-        var Permission = {
-          _promiseify: function (value) {
-            /**
-              Converts a value into a promise, if the value is truthy it resolves it, otherwise
-              it rejects it
-            **/
-            if (value && angular.isFunction(value.then)) {
-              return value;
-            }
 
-            var deferred = $q.defer();
-            if (value) {
-              deferred.resolve();
-            } else {
-              deferred.reject();
-            }
-            return deferred.promise;
-          },
-          _validateRoleMap: function (roleMap) {
-            if (typeof(roleMap) !== 'object' || roleMap instanceof Array) {
-              throw new Error('Role map has to be an object');
-            }
-            if (roleMap.only === undefined && roleMap.except === undefined) {
-              throw new Error('Either "only" or "except" keys must me defined');
-            }
-            if (roleMap.only) {
-              if (!(roleMap.only instanceof Array)) {
-                throw new Error('Array of roles expected');
-              }
-            } else if (roleMap.except) {
-              if (!(roleMap.except instanceof Array)) {
-                throw new Error('Array of roles expected');
-              }
-            }
-          },
-          _findMatchingRole: function (rolesArray, toParams) {
-            var roles = angular.copy(rolesArray);
-            var deferred = $q.defer();
-            var currentRole = roles.shift();
+        /**
+         * Performs iteration over list of defined permissions looking for matching roles
+         * @private
+         *
+         * @param permissions {Array}
+         * @param toParams {Object}
+         * @returns {Promise}
+         */
+        function findMatchingRole(permissions, toParams) {
+          var deferred = $q.defer();
+          var currentPermission = permissions.shift();
 
-            // If no roles left to validate reject promise
-            if (!currentRole) {
-              deferred.reject();
-              return deferred.promise;
-            }
-            // Validate role definition exists
-            if (!angular.isFunction(Permission.roleValidations[currentRole])) {
-              throw new Error('undefined role or invalid role validation');
-            }
+          if (angular.isDefined(currentPermission)) {
+            var validatedPermission = permissions[currentPermission](toParams, currentPermission);
 
-            var validatingRole = Permission.roleValidations[currentRole](toParams, currentRole);
-            validatingRole = Permission._promiseify(validatingRole);
-
-            validatingRole.then(function () {
-              deferred.resolve();
-            }, function () {
-              Permission._findMatchingRole(roles, toParams).then(function () {
+            $q.when(validatedPermission)
+              .then(function () {
                 deferred.resolve();
-              }, function () {
-                deferred.reject();
+              })
+              .catch(function () {
+                findMatchingRole(permissions, toParams)
+                  .then(function () {
+                    deferred.resolve();
+                  })
+                  .catch(function () {
+                    deferred.reject();
+                  });
               });
-            });
+          } else {
+            // If no roles left to validate reject promise
+            deferred.reject();
+          }
 
-            return deferred.promise;
-          },
-          defineRole: function (roleName, validationFunction) {
-            /**
-              Service-available version of defineRole, the callback passed here lives in the
-              scope where it is defined and therefore can interact with other modules
-            **/
-            validateRoleDefinitionParams(roleName, validationFunction);
-            Permission.roleValidations[roleName] = validationFunction;
+          return deferred.promise;
+        }
 
-            return Permission;
-          },
-          defineManyRoles: function(roles, validationFunction) {
-            validateManyRolesDefinitionParams(roles, validationFunction);
+        /**
+         * Resolves promise if search permission is found
+         * @private
+         *
+         * @param permissions {Array}
+         * @param toParams {Object}
+         * @returns {Promise}
+         */
+        function resolveIfMatch(permissions, toParams) {
+          var deferred = $q.defer();
 
-            var definedPermissions = Permission;
-            for(var i = 0; i < roles.length; i++) {
-               definedPermissions = definedPermissions.defineRole(roles[i], validationFunction);
-            }
-
-            return definedPermissions;
-          },
-          resolveIfMatch: function (rolesArray, toParams) {
-            var roles = angular.copy(rolesArray);
-            var deferred = $q.defer();
-            Permission._findMatchingRole(roles, toParams).then(function () {
-              // Found role match
+          findMatchingRole(permissions, toParams)
+            .then(function () {
               deferred.resolve();
-            }, function () {
-              // No match
+            })
+            .catch(function () {
               deferred.reject();
             });
-            return deferred.promise;
-          },
-          rejectIfMatch: function (roles, toParams) {
-            var deferred = $q.defer();
-            Permission._findMatchingRole(roles, toParams).then(function () {
-              // Role found
+
+          return deferred.promise;
+        }
+
+        /**
+         * Resolves promise if search permission is missing
+         * @private
+         *
+         * @param permissions {Array}
+         * @param toParams {Object}
+         * @returns {Promise}
+         */
+        function rejectIfMatch(permissions, toParams) {
+          var deferred = $q.defer();
+
+          findMatchingRole(permissions, toParams)
+            .then(function () {
               deferred.reject();
-            }, function () {
-              // Role not found
+            })
+            .catch(function () {
               deferred.resolve();
             });
-            return deferred.promise;
+
+          return deferred.promise;
+        }
+
+        var Permission = {
+
+          /**
+           * Allows to define permission in runtime
+           * @deprecated
+           *
+           * @param permission {String}
+           * @param validationFunction {Function}
+           */
+          defineRole: function (permission, validationFunction) {
+            console.warn('Function "defineRole" will be deprecated. Use "definePermission" instead');
+            Permission.definePermission(permission, validationFunction);
           },
-          roleValidations: roleValidationConfig,
-          authorize: function (roleMap, toParams) {
-            // Validate input
-            Permission._validateRoleMap(roleMap);
 
-            var authorizing;
+          /**
+           * Allows to define permission in runtime
+           *
+           * @param permission {String}
+           * @param validationFunction {Function}
+           */
+          definePermission: function (permission, validationFunction) {
+            validatePermission(permission, validationFunction);
+            permissions[permission] = validationFunction;
+          },
 
-            if (roleMap.only) {
-              authorizing = Permission.resolveIfMatch(roleMap.only, toParams);
+          /**
+           * Allows to define set of permissions with shared validation function in runtime
+           * @deprecated
+           *
+           * @param permissions {Array}
+           * @param validationFunction {Function}
+           */
+          defineManyRoles: function (permissions, validationFunction) {
+            console.warn('Function "defineManyRoles" will be deprecated. Use "defineManyPermissions" instead');
+            Permission.defineManyPermissions(permissions, validationFunction);
+          },
+
+          /**
+           * Allows to define set of permissions with shared validation function in runtime
+           *
+           * @param permissions {Array}
+           * @param validationFunction {Function}
+           */
+          defineManyPermissions: function (permissions, validationFunction) {
+            angular.forEach(permissions, function (role) {
+              Permission.definePermission(role, validationFunction);
+            });
+          },
+
+          /**
+           * Deletes permission
+           *
+           * @param permission {String}
+           */
+          removePermission: function (permission) {
+            delete permissions[permission];
+          },
+
+          /**
+           * Deletes set of permissions
+           *
+           * @param permissions {Array}
+           */
+          removeManyPermissions: function (permissions) {
+            angular.forEach(permissions, function (permission) {
+              delete permissions[permission];
+            });
+          },
+
+          /**
+           * Checks if permission exists
+           *
+           * @param permission {String}
+           * @returns {Function}
+           */
+          hasDefinedPermission: function (permission) {
+            return angular.isDefined(permissions[permission]);
+          },
+
+          /**
+           * Returns all permissions
+           *
+           * @returns {Object}
+           */
+          getPermissions: function () {
+            return permissions;
+          },
+
+          /**
+           * Removes all permissions
+           */
+          clearPermissions: function () {
+            permissions = [];
+          },
+
+          /**
+           * Checks if provided permissions are acceptable
+           *
+           * @param permissionsMap {Object}
+           * @param toParams {Object}
+           * @returns {Promise}
+           */
+          authorize: function (permissionsMap, toParams) {
+            var result;
+
+            validatePermissionMap(permissionsMap);
+            if (angular.isDefined(permissionsMap.only)) {
+              result = resolveIfMatch(angular.copy(permissionsMap.only), toParams);
             } else {
-              authorizing = Permission.rejectIfMatch(roleMap.except, toParams);
+              result = rejectIfMatch(angular.copy(permissionsMap.except), toParams);
             }
 
-            return authorizing;
+            return result;
           }
         };
 
         return Permission;
       }];
     });
-
-}());
+})();
