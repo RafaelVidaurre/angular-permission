@@ -3,7 +3,8 @@
 
   angular.module('permission')
     .provider('Permission', function () {
-      var permissions = {};
+      var permissionStore = {};
+      var that = this;
 
       /**
        * Allows to define permission on application configuration
@@ -26,7 +27,7 @@
        */
       this.definePermission = function (permission, validationFunction) {
         validatePermission(permission, validationFunction);
-        permissions[permission] = validationFunction;
+        permissionStore[permission] = validationFunction;
       };
 
       /**
@@ -78,7 +79,7 @@
           throw new ReferenceError('Either "only" or "except" keys must me defined');
         }
 
-        if (!angular.isArray(permissionMap.only) || !angular.isArray(permissionMap.except)) {
+        if (!(angular.isArray(permissionMap.only) || angular.isArray(permissionMap.except))) {
           throw new TypeError('Parameter "permissionMap" properties must be Array');
         }
       }
@@ -97,8 +98,8 @@
           var deferred = $q.defer();
           var currentPermission = permissions.shift();
 
-          if (angular.isDefined(currentPermission)) {
-            var validatedPermission = permissions[currentPermission](toParams, currentPermission);
+          if (angular.isDefined(currentPermission) && angular.isFunction(permissionStore[currentPermission])) {
+            var validatedPermission = permissionStore[currentPermission](toParams, currentPermission);
 
             $q.when(validatedPermission)
               .then(function () {
@@ -186,8 +187,7 @@
            * @param validationFunction {Function}
            */
           definePermission: function (permission, validationFunction) {
-            validatePermission(permission, validationFunction);
-            permissions[permission] = validationFunction;
+            that.definePermission(permission, validationFunction);
           },
 
           /**
@@ -209,9 +209,7 @@
            * @param validationFunction {Function}
            */
           defineManyPermissions: function (permissions, validationFunction) {
-            angular.forEach(permissions, function (role) {
-              Permission.definePermission(role, validationFunction);
-            });
+            that.defineManyPermissions(permissions, validationFunction);
           },
 
           /**
@@ -220,7 +218,7 @@
            * @param permission {String}
            */
           removePermission: function (permission) {
-            delete permissions[permission];
+            delete permissionStore[permission];
           },
 
           /**
@@ -230,7 +228,7 @@
            */
           removeManyPermissions: function (permissions) {
             angular.forEach(permissions, function (permission) {
-              delete permissions[permission];
+              delete permissionStore[permission];
             });
           },
 
@@ -240,8 +238,8 @@
            * @param permission {String}
            * @returns {Function}
            */
-          hasDefinedPermission: function (permission) {
-            return angular.isDefined(permissions[permission]);
+          hasPermission: function (permission) {
+            return angular.isDefined(permissionStore[permission]);
           },
 
           /**
@@ -250,14 +248,14 @@
            * @returns {Object}
            */
           getPermissions: function () {
-            return permissions;
+            return permissionStore;
           },
 
           /**
            * Removes all permissions
            */
           clearPermissions: function () {
-            permissions = [];
+            permissionStore = [];
           },
 
           /**
@@ -271,6 +269,7 @@
             var result;
 
             validatePermissionMap(permissionsMap);
+
             if (angular.isDefined(permissionsMap.only)) {
               result = resolveIfMatch(angular.copy(permissionsMap.only), toParams);
             } else {

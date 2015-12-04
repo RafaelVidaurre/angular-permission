@@ -1,4 +1,4 @@
-describe('Directive: Permission', function () {
+describe('directive: Permission', function () {
   'use strict';
 
   var $q, $compile, $rootScope, Permission;
@@ -16,7 +16,7 @@ describe('Directive: Permission', function () {
     });
   });
 
-  describe('permissionOnly', function () {
+  describe('directive: permissionOnly', function () {
 
     it('should show element if authorized', function () {
       // GIVEN
@@ -75,7 +75,7 @@ describe('Directive: Permission', function () {
     });
   });
 
-  describe('permissionExcept', function () {
+  describe('directive: permissionExcept', function () {
 
     it('should show element if authorized', function () {
       // GIVEN

@@ -36,15 +36,15 @@ describe('Module: Permission', function () {
   }));
 
   beforeEach(function() {
-    PermissionProvider.defineRole('accepted', function() {
+    PermissionProvider.definePermission('accepted', function() {
       return true;
     });
 
-    PermissionProvider.defineRole('denied', function() {
+    PermissionProvider.definePermission('denied', function() {
       return false;
     });
 
-    PermissionProvider.defineRole('withParams', function(params) {
+    PermissionProvider.definePermission('withParams', function(params) {
       if(params.isset && angular.isString(params.isset)) {
         return params.isset === 'true';
       }
@@ -60,26 +60,26 @@ describe('Module: Permission', function () {
 
     $stateProvider.state('accepted', {
       data: {
-      permissions: {
-        only: ['accepted']
-      }
+        permissions: {
+          only: ['accepted']
+        }
       }
     });
 
     $stateProvider.state('denied', {
       data: {
-      permissions: {
-        only: ['denied']
-      }
+        permissions: {
+          only: ['denied']
+        }
       }
     });
 
     $stateProvider.state('deniedWithRedirect', {
       data: {
-      permissions: {
-        only: ['denied'],
-        redirectTo: 'redirectToThisState'
-      }
+        permissions: {
+          only: ['denied'],
+          redirectTo: 'redirectToThisState'
+        }
       }
     });
 
@@ -175,7 +175,7 @@ describe('Module: Permission', function () {
       var changeStartHasBeenCalled = false;
       var toState = null;
       var fromState = null;
-      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState, fromParams) {
+      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState) {
         changeStartHasBeenCalled = true;
         toState = _toState;
         fromState = _fromState;
@@ -254,7 +254,7 @@ describe('Module: Permission', function () {
       var changeStartHasBeenCalled = false;
       var toState = null;
       var fromState = null;
-      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState, fromParams) {
+      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState) {
         changeStartHasBeenCalled = true;
         toState = _toState;
         fromState = _fromState;
