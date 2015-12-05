@@ -93,7 +93,7 @@
          * @private
          *
          * @param func {Function} Function to be wrapped into promise
-         * @return {Promise} $q.promise object
+         * @return {promise} $q.promise object
          */
         function wrapInPromise(func) {
           var dfd = $q.defer();
