@@ -161,6 +161,35 @@ Permission.defineManyPermissions(arrayOfPermissionNames, function (stateParams, 
 });
 ```
 
+Removing Permissions
+-----
+You can easily remove _all_ permissions after user logged out or switched profile:  
+
+```javascript
+Permission.clearPermissions();
+```
+
+Alternatively you can use `removePermission` and `removeManyPermissions` to delete defined permissions manually:
+
+```javascript
+Permission.removePermission('user');
+Permission.removeManyPermission(['admin', 'superAdmin']);
+```
+
+Helper Method
+-----
+To get all user permissions use method `getPermissions`:
+
+```javascript
+Permission.hasPermission('user');
+```
+
+Inside components you can use `Permission` service to check if user has one of permissions:
+
+```javascript
+Permission.hasPermission('user');
+```
+
 Views
 -----
 Permission module exposes two directives `permission-only` and `permission-except` that can show/hide elements of your application based on set of permissions.
