@@ -23,7 +23,7 @@ describe('directive: Permission', function () {
       var element = angular.element('<div permission-only="USER"></div>');
       var dfd = $q.defer();
       dfd.resolve();
-      spyOn(Permission, 'authorize').andReturn(dfd.promise);
+      spyOn(Permission, 'authorize').and.returnValue(dfd.promise);
 
       // WHEN
       $compile(element)($rootScope.$new());
@@ -38,7 +38,7 @@ describe('directive: Permission', function () {
       var element = angular.element('<div permission-only="USER"></div>');
       var dfd = $q.defer();
       dfd.reject();
-      spyOn(Permission, 'authorize').andReturn(dfd.promise);
+      spyOn(Permission, 'authorize').and.returnValue(dfd.promise);
 
       // WHEN
       $compile(element)($rootScope.$new());
@@ -58,7 +58,7 @@ describe('directive: Permission', function () {
       $rootScope.$apply();
 
       // THEN
-      expect(Permission.authorize).toHaveBeenCalledWith({only: ['USER']});
+      expect(Permission.authorize).toHaveBeenCalledWith({only: ['USER']}, null);
     });
 
     it('should accept multiple roles', function () {
@@ -71,7 +71,7 @@ describe('directive: Permission', function () {
       $rootScope.$apply();
 
       // THEN
-      expect(Permission.authorize).toHaveBeenCalledWith({only: ['USER', 'ADMIN']});
+      expect(Permission.authorize).toHaveBeenCalledWith({only: ['USER', 'ADMIN']}, null);
     });
   });
 
@@ -82,7 +82,7 @@ describe('directive: Permission', function () {
       var element = angular.element('<div permission-except="USER"></div>');
       var dfd = $q.defer();
       dfd.resolve();
-      spyOn(Permission, 'authorize').andReturn(dfd.promise);
+      spyOn(Permission, 'authorize').and.returnValue(dfd.promise);
 
       // WHEN
       $compile(element)($rootScope.$new());
@@ -97,7 +97,7 @@ describe('directive: Permission', function () {
       var element = angular.element('<div permission-except="USER"></div>');
       var dfd = $q.defer();
       dfd.reject();
-      spyOn(Permission, 'authorize').andReturn(dfd.promise);
+      spyOn(Permission, 'authorize').and.returnValue(dfd.promise);
 
       // WHEN
       $compile(element)($rootScope.$new());
@@ -117,7 +117,7 @@ describe('directive: Permission', function () {
       $rootScope.$apply();
 
       // THEN
-      expect(Permission.authorize).toHaveBeenCalledWith({except: ['USER']});
+      expect(Permission.authorize).toHaveBeenCalledWith({except: ['USER']}, null);
     });
 
     it('should accept multiple roles', function () {
@@ -130,7 +130,7 @@ describe('directive: Permission', function () {
       $rootScope.$apply();
 
       // THEN
-      expect(Permission.authorize).toHaveBeenCalledWith({except: ['USER', 'ADMIN']});
+      expect(Permission.authorize).toHaveBeenCalledWith({except: ['USER', 'ADMIN']}, null);
     });
   });
 });
