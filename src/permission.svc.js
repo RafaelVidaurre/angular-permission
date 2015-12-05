@@ -113,7 +113,7 @@
          *
          * @param permissions {Array} Set of permission names
          * @param toParams {Object} UI-Router params object
-         * @returns {Promise} $q.promise object
+         * @returns {promise} $q.promise object
          */
         function findMatchingRole(permissions, toParams) {
           var deferred = $q.defer();
@@ -153,7 +153,7 @@
          *
          * @param permissions {Array} Set of permission names
          * @param toParams {Object} UI-Router params object
-         * @returns {Promise} $q.promise object
+         * @returns {promise} $q.promise object
          */
         function resolveIfMatch(permissions, toParams) {
           var deferred = $q.defer();
@@ -175,7 +175,7 @@
          *
          * @param permissions {Array} Set of permission names
          * @param toParams {Object} UI-Router params object
-         * @returns {Promise} $q.promise object
+         * @returns {promise} $q.promise object
          */
         function rejectIfMatch(permissions, toParams) {
           var deferred = $q.defer();
@@ -291,7 +291,7 @@
            *
            * @param permissionsMap {Object} Map of "only" or "except" permission names
            * @param toParams {Object} UI-Router params object
-           * @returns {Promise} $q.promise object
+           * @returns {promise} $q.promise object
            */
           authorize: function (permissionsMap, toParams) {
             var result;

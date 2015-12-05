@@ -7,66 +7,61 @@
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
 
       //noinspection JSUnresolvedVariable
-      if (toState.$$finishAuthorize) {
+      if (toState.$$finishAuthorize || !toState.data || !toState.data.permissions) {
         return;
       }
 
-      // If there are permissions set then prevent default and attempt to authorize
-      var permissions;
-
       //noinspection JSUnresolvedVariable
-      if (toState.data && toState.data.permissions) {
-        //noinspection JSUnresolvedVariable
-        permissions = toState.data.permissions;
+      var permissions = toState.data.permissions;
+
+      //noinspection JSUnresolvedFunction
+      event.preventDefault();
+      toState = angular.extend({'$$finishAuthorize': true}, toState);
+
+      if ($rootScope.$broadcast('$stateChangePermissionStart', toState, toParams).defaultPrevented) {
+        return;
       }
 
-      if (permissions) {
-        //noinspection JSUnresolvedFunction
-        event.preventDefault();
-        toState = angular.extend({'$$finishAuthorize': true}, toState);
+      Permission
+        .authorize(permissions, toParams)
+        .then(function () {
+          // If authorized, use call state.go without triggering the event.
+          // Then trigger $stateChangeSuccess manually to resume the rest of the process
+          // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
+          if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
+            $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams);
 
-        if ($rootScope.$broadcast('$stateChangePermissionStart', toState, toParams).defaultPrevented) {
-          return;
-        }
-
-        Permission
-          .authorize(permissions, toParams)
-          .then(function () {
-            // If authorized, use call state.go without triggering the event.
-            // Then trigger $stateChangeSuccess manually to resume the rest of the process
-            // Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
-            if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
-              $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams);
-
-              $state.go(toState.name, toParams, {notify: false}).then(function () {
+            //noinspection JSUnresolvedVariable,JSUnresolvedFunction
+            $state
+              .go(toState.name, toParams, {notify: false})
+              .then(function () {
                 $rootScope
                   .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
               });
-            }
-          })
-          .catch(function () {
-            if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
-              $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams);
+          }
+        })
+        .catch(function () {
+          if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
+            $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams);
 
-              var redirectTo = permissions.redirectTo;
+            var redirectTo = permissions.redirectTo;
 
-              if (angular.isFunction(redirectTo)) {
-                redirectTo = redirectTo();
+            if (angular.isFunction(redirectTo)) {
+              redirectTo = redirectTo();
 
-                $q.when(redirectTo).then(function (newState) {
-                  if (newState) {
-                    $state.go(newState, toParams);
-                  }
-                });
-
-              } else {
-                if (redirectTo) {
-                  $state.go(redirectTo, toParams);
+              $q.when(redirectTo).then(function (newState) {
+                if (newState) {
+                  $state.go(newState, toParams);
                 }
+              });
+
+            } else {
+              if (redirectTo) {
+                $state.go(redirectTo, toParams);
               }
             }
-          });
-      }
+          }
+        });
     });
   }]);
 }());
