@@ -87,26 +87,6 @@
       }
 
       this.$get = ['$q', function ($q) {
-
-        /**
-         * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
-         * @private
-         *
-         * @param func {Function} Function to be wrapped into promise
-         * @return {promise} $q.promise object
-         */
-        function wrapInPromise(func) {
-          var dfd = $q.defer();
-
-          if (func) {
-            dfd.resolve();
-          } else {
-            dfd.reject();
-          }
-
-          return dfd.promise;
-        }
-
         /**
          * Performs iteration over list of defined permissions looking for matching roles
          * @private
@@ -116,35 +96,38 @@
          * @returns {promise} $q.promise object
          */
         function findMatchingRole(permissions, toParams) {
-          var deferred = $q.defer();
+          var dfd = $q.defer();
           var currentPermission = permissions.shift();
 
           if (angular.isDefined(currentPermission) && angular.isFunction(permissionStore[currentPermission])) {
             var validationResult = permissionStore[currentPermission].call(self, toParams, currentPermission);
 
-            if (!angular.isFunction(validationResult.then)) {
-              validationResult = wrapInPromise(validationResult);
-            }
-
             $q.when(validationResult)
-              .then(function () {
-                deferred.resolve();
+              .then(function (value) {
+                // If is promise wrapped true-falsely function resolve it based on value
+                if (value) {
+                  dfd.resolve();
+                } else {
+                  dfd.reject();
+                }
+
+                dfd.resolve();
               })
               .catch(function () {
                 findMatchingRole(permissions, toParams)
                   .then(function () {
-                    deferred.resolve();
+                    dfd.resolve();
                   })
                   .catch(function () {
-                    deferred.reject();
+                    dfd.reject();
                   });
               });
           } else {
             // If no roles left to validate reject promise
-            deferred.reject();
+            dfd.reject();
           }
 
-          return deferred.promise;
+          return dfd.promise;
         }
 
         /**
