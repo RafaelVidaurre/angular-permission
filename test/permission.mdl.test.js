@@ -175,7 +175,7 @@ describe('Module: Permission', function () {
       var changeStartHasBeenCalled = false;
       var toState = null;
       var fromState = null;
-      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState, fromParams) {
+      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState) {
         changeStartHasBeenCalled = true;
         toState = _toState;
         fromState = _fromState;
@@ -254,7 +254,7 @@ describe('Module: Permission', function () {
       var changeStartHasBeenCalled = false;
       var toState = null;
       var fromState = null;
-      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState, fromParams) {
+      $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState) {
         changeStartHasBeenCalled = true;
         toState = _toState;
         fromState = _fromState;

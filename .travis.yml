@@ -1,8 +1,17 @@
 language: node_js
+sudo: false
+cache:
+  directories:
+    - node_modules
+    - bower_components
 node_js:
-  - 0.10
-before_install: npm install -g grunt-cli
-install: npm install
+  - 4.2.3
+before_install:
+  - npm install -g grunt-cli
+install:
+  - npm install
 before_script:
   - npm install -g bower
   - bower install
+script:
+  - grunt build

@@ -166,12 +166,20 @@ describe('Service: Permission', function () {
       };
       Permission.defineRole('noob', function () {
         var deferred = $q.defer();
-        fakeService.wise ? deferred.reject() : deferred.resolve();
+        if(fakeService.wise){
+          deferred.reject();
+        }else{
+          deferred.resolve();
+        }
         return deferred.promise;
       });
       Permission.defineRole('pair', function () {
         var deferred = $q.defer();
-        fakeService.evenAge ? deferred.resolve() : deferred.reject();
+        if(fakeService.evenAge){
+          deferred.resolve();
+        } else{
+          deferred.reject();
+        }
         return deferred.promise;
       });
       expect(angular.isFunction(Permission.roleValidations.noob)).toBe(true);
@@ -188,7 +196,11 @@ describe('Service: Permission', function () {
       Permission.defineManyPermissions(systemRoles, function(stateParams, role){
           var deferred = $q.defer();
           var userHasRole = (userRoles.indexOf(role) !== -1);
-          userHasRole ?  deferred.resolve() : deferred.reject();
+          if(userHasRole){
+            deferred.resolve();
+          } else {
+            deferred.reject();
+          }
           return deferred.promise;
       });
 
