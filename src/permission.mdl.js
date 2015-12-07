@@ -6,15 +6,12 @@
   permission.run(['$rootScope', 'Permission', '$state', '$q', function ($rootScope, Permission, $state, $q) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
 
-      //noinspection JSUnresolvedVariable
       if (toState.$$finishAuthorize || !toState.data || !toState.data.permissions) {
         return;
       }
 
-      //noinspection JSUnresolvedVariable
       var permissions = toState.data.permissions;
 
-      //noinspection JSUnresolvedFunction
       event.preventDefault();
       toState = angular.extend({'$$finishAuthorize': true}, toState);
 
@@ -31,7 +28,6 @@
           if (!$rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented) {
             $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams);
 
-            //noinspection JSUnresolvedVariable,JSUnresolvedFunction
             $state
               .go(toState.name, toParams, {notify: false})
               .then(function () {
