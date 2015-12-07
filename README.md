@@ -173,7 +173,7 @@ Alternatively you can use `removePermission` and `removeManyPermissions` to dele
 
 ```javascript
 Permission.removePermission('user');
-Permission.removeManyPermission(['admin', 'superAdmin']);
+Permission.removeManyPermissions(['admin', 'superAdmin']);
 ```
 
 Helper Method
