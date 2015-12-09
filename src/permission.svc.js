@@ -3,6 +3,7 @@
 
   angular.module('permission')
     .provider('Permission', function () {
+      var defaultPermissions;
       var roleValidationConfig = {};
       var validateRoleDefinitionParams = function (roleName, validationFunction) {
         if (!angular.isString(roleName)) {
@@ -135,6 +136,13 @@
             }
 
             return definedPermissions;
+          },
+          defineDefaultPermissions: function (permissions) {
+            defaultPermissions = permissions;
+            return Permission;
+          },
+          defaultPermissions: function () {
+            return defaultPermissions;
           },
           resolveIfMatch: function (rolesArray, toParams) {
             var roles = angular.copy(rolesArray);
