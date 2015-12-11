@@ -1,314 +1,262 @@
-describe('Module: Permission', function () {
+describe('module: Permission', function () {
   'use strict';
 
-  // TODO: Finish this test
+  var $rootScope, $state, $stateProvider, $q, PermissionProvider;
 
-  var $rootScope;
-  var $state;
-  var $stateProvider;
-  var $q;
-  var PermissionProvider;
-
-
-  function $get(what) {
-    return jasmine.getEnv().currentSpec.$injector.get(what);
-  }
-
-  function initStateTo(stateName, optionalParams) {
-    var $state = $get('$state'), $rootScope = $get('$rootScope');
-    $state.transitionTo(stateName, optionalParams || {});
-    $rootScope.$digest();
-    expect($state.current.name).toBe(stateName);
-  }
-
-  beforeEach(module('ui.router', function (_$stateProvider_) {
-    $stateProvider = _$stateProvider_;
-  }));
-
-  beforeEach(module('permission', function (_PermissionProvider_) {
-    PermissionProvider = _PermissionProvider_;
-  }));
-
-  beforeEach(inject(function(_$state_, _$q_, _$rootScope_) {
-    $state = _$state_;
-    $q = _$q_;
-    $rootScope = _$rootScope_;
-  }));
-
-  beforeEach(function() {
-    PermissionProvider.defineRole('accepted', function() {
-      return true;
+  beforeEach(function () {
+    module('ui.router', function ($injector) {
+      $stateProvider = $injector.get('$stateProvider');
     });
 
-    PermissionProvider.defineRole('denied', function() {
-      return false;
+    module('permission', function ($injector) {
+      PermissionProvider = $injector.get('PermissionProvider');
     });
 
-    PermissionProvider.defineRole('withParams', function(params) {
-      if(params.isset && angular.isString(params.isset)) {
-        return params.isset === 'true';
-      }
-      else {
-        return params.isset === true;
-      }
-    });
-
-
-    $stateProvider.state('home', {});
-    $stateProvider.state('redirectToThisState', {});
-
-
-    $stateProvider.state('accepted', {
-      data: {
-      permissions: {
-        only: ['accepted']
-      }
-      }
-    });
-
-    $stateProvider.state('denied', {
-      data: {
-      permissions: {
-        only: ['denied']
-      }
-      }
-    });
-
-    $stateProvider.state('deniedWithRedirect', {
-      data: {
-      permissions: {
-        only: ['denied'],
-        redirectTo: 'redirectToThisState'
-      }
-      }
-    });
-
-    $stateProvider.state('onlyWithParams', {
-      url: ':isset',
-      data: {
-        permissions: {
-          only: ['withParams']
-        }
-      }
-    });
-
-    $stateProvider.state('exceptWithParams', {
-      url: ':isset',
-      data: {
-        permissions: {
-          except: ['withParams']
-        }
-      }
-    });
-
-    $stateProvider.state('abstractTest', {
-      abstract: true,
-      url: ':abstractValue'
-    });
-    $stateProvider.state('abstractTest.redirect', {
-      url: '/abstract'
-    });
-    $stateProvider.state('abstractTest.denied', {
-      url: '/denied',
-      data: {
-        permissions: {
-          only: ['denied'],
-          redirectTo: 'abstractTest.redirect'
-        }
-      }
-    });
-
-    $stateProvider.state('functionRedirect', {
-      url: '/function',
-      data: {
-        permissions: {
-          only: ['denied'],
-          redirectTo: function () {
-            return 'other';
-          }
-        }
-      }
-    });
-
-    $stateProvider.state('functionPromiseRedirect', {
-      url: '/function-promise',
-      data: {
-        permissions: {
-          only: ['denied'],
-          redirectTo: function () {
-            return $q.when('other');
-          }
-        }
-      }
-    });
-
-    $stateProvider.state('other', {
-      url: '/other'
+    inject(function ($injector) {
+      $state = $injector.get('$state');
+      $q = $injector.get('$q');
+      $rootScope = $injector.get('$rootScope');
     });
   });
 
-  describe('On $stateChangeStart', function () {
-    it('should go to an accepted state', inject (function($rootScope) {
-      initStateTo('home');
+  // Initialize permissions
+  beforeEach(function () {
+    PermissionProvider.setPermission('accepted', function () {
+      return true;
+    });
+
+    PermissionProvider.setPermission('denied', function () {
+      return false;
+    });
+
+    PermissionProvider.setPermission('withParams', function (params) {
+      if (params.isSet && angular.isString(params.isSet)) {
+        return params.isSet === 'true';
+      }
+      else {
+        return params.isSet === true;
+      }
+    });
+  });
+
+  // Set default states and go home
+  beforeEach(function () {
+    $stateProvider
+      .state('home', {})
+      .state('accepted', {
+        data: {
+          permissions: {only: ['accepted']}
+        }
+      })
+      .state('denied', {
+        data: {
+          permissions: {
+            only: ['denied']
+          }
+        }
+      });
+
+    $state.go('home');
+    $rootScope.$apply();
+  });
+
+  var changePermissionAcceptedHasBeenCalled, changePermissionDeniedHasBeenCalled;
+
+  // Bind event listeners
+  beforeEach(function () {
+    changePermissionAcceptedHasBeenCalled = false;
+    changePermissionDeniedHasBeenCalled = false;
+
+    $rootScope.$on('$stateChangePermissionAccepted', function () {
+      changePermissionAcceptedHasBeenCalled = true;
+    });
+
+    $rootScope.$on('$stateChangePermissionDenied', function () {
+      changePermissionDeniedHasBeenCalled = true;
+    });
+  });
+
+  describe('event: $stateChangeStart', function () {
+    it('should go to an accepted state', function () {
+      // GIVEN
+      // WHEN
       $state.go('accepted');
+      $rootScope.$apply();
 
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
-      });
-
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
-
-      $rootScope.$digest();
+      // THEN
       expect($state.current.name).toBe('accepted');
       expect(changePermissionAcceptedHasBeenCalled).toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
-    }));
+    });
 
-    it('should broadcast a $stateChangeStart with correct parameters(accepted state)', inject (function($rootScope) {
-      initStateTo('home');
-      $state.go('accepted');
-
-      var changeStartHasBeenCalled = false;
+    it('should broadcast a $stateChangeStart with correct parameters (accepted state)', function () {
+      // GIVEN
+      var called = false;
       var toState = null;
       var fromState = null;
+
       $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState) {
-        changeStartHasBeenCalled = true;
+        called = true;
         toState = _toState;
         fromState = _fromState;
       });
 
-      $rootScope.$digest();
-      expect($state.current.name).toBe('accepted');
-      expect(changeStartHasBeenCalled).toBeTruthy();
+      // WHEN
+      $state.go('accepted');
+      $rootScope.$apply();
+
+      expect(called).toBeTruthy();
       expect(toState.name).toBe('accepted');
       expect(fromState.name).toBe('home');
-    }));
+    });
 
-    it('should broadcast a $stateChangePermissionStart', inject(function($rootScope) {
-      initStateTo('home');
-
-      var changePermissionStartHasBeenCalled = false;
+    it('should broadcast a $stateChangePermissionStart', inject(function ($rootScope) {
+      // GIVEN
+      var called = false;
       var toState = null;
+
       $rootScope.$on('$stateChangePermissionStart', function (event, _toState) {
-        changePermissionStartHasBeenCalled = true;
+        called = true;
         toState = _toState;
       });
 
+      // WHEN
       $state.go('accepted');
-      $rootScope.$digest();
-      expect(changePermissionStartHasBeenCalled).toBeTruthy();
+      $rootScope.$apply();
+
+      //THEN
+      expect(called).toBeTruthy();
       expect(toState.name).toBe('accepted');
     }));
 
-    it('should not go to a state when $stateChangePermissionStart has been cancelled', function() {
-      initStateTo('home');
-
+    it('should not go to a state when $stateChangePermissionStart has been cancelled', function () {
+      // GIVEN
       $rootScope.$on('$stateChangePermissionStart', function (event) {
+        //noinspection JSUnresolvedFunction
         event.preventDefault();
       });
 
+      // WHEN
       $state.go('accepted');
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
-      });
+      $rootScope.$apply();
 
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
-
-      $rootScope.$digest();
+      // THEN
       expect($state.current.name).toBe('home');
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
     });
 
     it('should not go to the denied state', function () {
-      initStateTo('home');
+      // GIVEN
+      // WHEN
       $state.go('denied');
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
-      });
-
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
-
       $rootScope.$digest();
+
+      // THEN
       expect($state.current.name).toBe('home');
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
 
-    it('should broadcast a $stateChangeStart with correct parameters(denied state)', inject (function($rootScope) {
-      initStateTo('home');
-      $state.go('denied');
-
-      var changeStartHasBeenCalled = false;
+    it('should broadcast a $stateChangeStart with correct parameters (denied state)', inject(function ($rootScope) {
+      // GIVEN
+      var called = false;
       var toState = null;
       var fromState = null;
+
       $rootScope.$on('$stateChangeStart', function (event, _toState, toParams, _fromState) {
-        changeStartHasBeenCalled = true;
+        called = true;
         toState = _toState;
         fromState = _fromState;
       });
 
-      $rootScope.$digest();
+      // WHEN
+      $state.go('denied');
+      $rootScope.$apply();
+
+      // THEN
       expect($state.current.name).toBe('home');
-      expect(changeStartHasBeenCalled).toBeTruthy();
+      expect(called).toBeTruthy();
       expect(toState.name).toBe('denied');
       expect(fromState.name).toBe('home');
     }));
 
     it('should not go to the denied state but redirect to the provided state', function () {
-      initStateTo('home');
-      $state.go('deniedWithRedirect');
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
-      });
+      // GIVEN
+      $stateProvider
+        .state('redirectToThisState', {})
+        .state('deniedWithRedirect', {
+          data: {
+            permissions: {
+              only: ['denied'],
+              redirectTo: 'redirectToThisState'
+            }
+          }
+        });
 
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
+      // WHEN
+      $state.go('deniedWithRedirect');
       $rootScope.$digest();
+
+      // THEN
       expect($state.current.name).toBe('redirectToThisState');
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
 
     it('should trigger $stateChangeSuccess with the redirect state and not the denied one', function () {
-      initStateTo('home');
-      $state.go('deniedWithRedirect');
+      // GIVEN
+      var toState = null;
 
-      $rootScope.$on('$stateChangeSuccess', function (name, toState) {
-        expect(toState.name).not.toBe('deniedWithRedirect');
-        expect(toState.name).toBe('redirectToThisState');
+      $stateProvider
+        .state('redirectToThisState', {})
+        .state('deniedWithRedirect', {
+          data: {
+            permissions: {
+              only: ['denied'],
+              redirectTo: 'redirectToThisState'
+            }
+          }
+        });
+
+      $rootScope.$on('$stateChangeSuccess', function (name, _toState) {
+        toState = _toState;
       });
-      $rootScope.$digest();
+
+      // WHEN
+      $state.go('deniedWithRedirect');
+      $rootScope.$apply();
+
+      // THEN
+      expect(toState.name).not.toBe('deniedWithRedirect');
+      expect(toState.name).toBe('redirectToThisState');
     });
 
     it('should pass state params on redirect', function () {
-      initStateTo('home');
-      $state.go('abstractTest.denied',{abstractValue: 'test'});
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
-      });
+      // GIVEN
+      $stateProvider
+        .state('abstractTest', {
+          abstract: true,
+          url: ':abstractValue'
+        })
+        .state('abstractTest.redirect', {
+          url: '/abstract'
+        })
+        .state('abstractTest.denied', {
+          url: '/denied',
+          data: {
+            permissions: {
+              only: ['denied'],
+              redirectTo: 'abstractTest.redirect'
+            }
+          }
+        });
 
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
-      $rootScope.$digest();
+      // WHEN
+      $state.go('abstractTest.denied', {abstractValue: 'test'});
+      $rootScope.$apply();
+
+      // THEN
       expect($state.current.name).toBe('abstractTest.redirect');
       expect($state.params.abstractValue).toBe('test');
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
@@ -316,62 +264,59 @@ describe('Module: Permission', function () {
     });
 
     it('should pass state params (only)', function () {
-      initStateTo('home');
-      $state.go('onlyWithParams',{isset: true});
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
+      // GIVEN
+      $stateProvider.state('onlyWithParams', {
+        url: ':isSet',
+        data: {
+          permissions: {
+            only: ['withParams']
+          }
+        }
       });
 
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
+      // WHEN
+      $state.go('onlyWithParams', {isSet: true});
+      $rootScope.$apply();
 
-      $rootScope.$digest();
+      // THEN
       expect($state.current.name).toBe('onlyWithParams');
       expect(changePermissionAcceptedHasBeenCalled).toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
     });
 
     it('should pass state params (except)', function () {
-      initStateTo('home');
-      $state.go('exceptWithParams',{isset: true});
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
+      // GIVEN
+      $stateProvider.state('exceptWithParams', {
+        url: ':isSet',
+        data: {
+          permissions: {
+            except: ['withParams']
+          }
+        }
       });
 
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
+      // WHEN
+      $state.go('exceptWithParams', {isSet: true});
+      $rootScope.$apply();
 
-      $rootScope.$digest();
+      // THEN
       expect($state.current.name).toBe('home');
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
 
     it('should not go to a accepted state when $stateChangeStart has been cancelled', function () {
-      initStateTo('home');
-
+      // GIVEN
       $rootScope.$on('$stateChangeStart', function (event) {
+        //noinspection JSUnresolvedFunction
         event.preventDefault();
       });
 
+      // WHEN
       $state.go('accepted');
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
-      });
+      $rootScope.$apply();
 
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
-
-      $rootScope.$digest();
+      // THEN
       expect($state.current.name).toBe('home');
       // neither of them should have been called because the event was aborted manually
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
@@ -379,24 +324,17 @@ describe('Module: Permission', function () {
     });
 
     it('should not go to a denied state when $stateChangeStart has been cancelled', function () {
-      initStateTo('home');
-
+      // GIVEN
       $rootScope.$on('$stateChangeStart', function (event) {
+        //noinspection JSUnresolvedFunction
         event.preventDefault();
       });
 
+      // WHEN
       $state.go('denied');
-      var changePermissionAcceptedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionAccepted', function () {
-        changePermissionAcceptedHasBeenCalled = true;
-      });
+      $rootScope.$apply();
 
-      var changePermissionDeniedHasBeenCalled = false;
-      $rootScope.$on('$stateChangePermissionDenied', function () {
-        changePermissionDeniedHasBeenCalled = true;
-      });
-
-      $rootScope.$digest();
+      // THEN
       expect($state.current.name).toBe('home');
       // neither of them should have been called because the event was aborted manually
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
@@ -404,22 +342,56 @@ describe('Module: Permission', function () {
     });
   });
 
-  describe('#redirectTo function', function () {
+  describe('param: redirectTo', function () {
     it('should redirect based on function if passed', function () {
-      initStateTo('home');
+      // GIVEN
+      $stateProvider
+        .state('functionRedirect', {
+          url: '/function',
+          data: {
+            permissions: {
+              only: ['denied'],
+              redirectTo: function () {
+                return 'other';
+              }
+            }
+          }
+        })
+        .state('other', {
+          url: '/other'
+        });
 
+      // WHEN
       $state.go('functionRedirect');
-      $rootScope.$digest();
+      $rootScope.$apply();
+
+      // THEN
       expect($state.current.name).toBe('other');
     });
 
     it('should redirect with promises as well', function () {
-      initStateTo('home');
+      // GIVEN
+      $stateProvider.state('functionPromiseRedirect', {
+          url: '/function-promise',
+          data: {
+            permissions: {
+              only: ['denied'],
+              redirectTo: function () {
+                return $q.when('other');
+              }
+            }
+          }
+        })
+        .state('other', {
+          url: '/other'
+        });
 
+      // WHEN
       $state.go('functionPromiseRedirect');
-      $rootScope.$digest();
+      $rootScope.$apply();
+
+      // THEN
       expect($state.current.name).toBe('other');
     });
   });
-
 });

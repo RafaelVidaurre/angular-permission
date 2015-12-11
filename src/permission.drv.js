@@ -9,7 +9,7 @@
         link: function (scope, element, attrs) {
           try {
             Permission
-              .authorize({only: attrs.permissionOnly.replace(/\s/g, '').split(',')})
+              .authorize({only: attrs.permissionOnly.replace(/\s/g, '').split(',')}, null)
               .then(function () {
                 element.removeClass('ng-hide');
               })
@@ -30,7 +30,7 @@
         link: function (scope, element, attrs) {
           try {
             Permission
-              .authorize({except: attrs.permissionExcept.replace(/\s/g, '').split(',')})
+              .authorize({except: attrs.permissionExcept.replace(/\s/g, '').split(',')}, null)
               .then(function () {
                 element.removeClass('ng-hide');
               })

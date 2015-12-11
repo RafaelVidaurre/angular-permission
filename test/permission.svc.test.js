@@ -1,359 +1,276 @@
-describe('Service: Permission', function () {
+describe('service: Permission', function () {
   'use strict';
 
-  var Permission;
-  var $q;
-  var $rootScope;
-  var PermissionProvider;
-  var EXCEPTIONS = {
-    DEFINE_ROLE_EXCEPTION: new Error('Role name must be a string'),
-    DEFINE_MANY_ROLES_EXCEPTION: new Error('Roles must be an array')
-  };
+  var Permission, $q, $rootScope, PermissionProvider;
 
-  // Helpers
-  var resolveHelper, rejectHelper, defineProviderRolesHelper, defineRolesHelper;
   beforeEach(function () {
-    var user = {role: 'admin'};
+    module('permission', function (_PermissionProvider_) {
+      PermissionProvider = _PermissionProvider_;
+    });
 
-    resolveHelper = function () {
-      var deferred = $q.defer();
-      deferred.resolve();
-      return deferred.promise;
-    };
-    rejectHelper = function () {
-      var deferred = $q.defer();
-      deferred.reject();
-      return deferred.promise;
-    };
-    defineProviderRolesHelper = function () {
-      PermissionProvider.definePermission('anonymous', function () {
-        var deferred = $q.defer();
-        if (!user) {
-          deferred.resolve();
-        } else {
-          deferred.reject();
-        }
-        return deferred.promise;
-      });
-      PermissionProvider.definePermission('user', function () {
-        var deferred = $q.defer();
-        if (user) {
-          deferred.resolve();
-        } else {
-          deferred.reject();
-        }
-        return deferred.promise;
-      });
-      PermissionProvider.definePermission('admin', function () {
-        var deferred = $q.defer();
-        if (user && user.role === 'admin') {
-          deferred.resolve();
-        } else {
-          deferred.reject();
-        }
-        return deferred.promise;
-      });
-    };
-    defineRolesHelper = function () {
-      Permission.definePermission('anonymous', function () {
-        var deferred = $q.defer();
-        if (!user) {
-          deferred.resolve();
-        } else {
-          deferred.reject();
-        }
-        return deferred.promise;
-      });
-      Permission.definePermission('user', function () {
-        var deferred = $q.defer();
-        if (user) {
-          deferred.resolve();
-        } else {
-          deferred.reject();
-        }
-        return deferred.promise;
-      });
-      Permission.definePermission('admin', function () {
-        var deferred = $q.defer();
-        if (user && user.role === 'admin') {
-          deferred.resolve();
-        } else {
-          deferred.reject();
-        }
-        return deferred.promise;
-      });
-    };
+    inject(function ($injector) {
+      Permission = $injector.get('Permission');
+      $q = $injector.get('$q');
+      $rootScope = $injector.get('$rootScope');
+    });
   });
 
-  beforeEach(module('permission', function (_PermissionProvider_) {
-    PermissionProvider = _PermissionProvider_;
-  }));
+  describe('provider: PermissionProvider', function () {
 
-  beforeEach(inject(function(_Permission_, _$q_, _$rootScope_) {
-    Permission = _Permission_;
-    $q = _$q_;
-    $rootScope = _$rootScope_;
-  }));
-
-  describe('PermissionProvider', function () {
-    describe('#defineRole (provider version)', function () {
-
-      it('should throw an exception on invalid role name', function () {
+    describe('method: setPermission', function () {
+      it('should throw an exception on invalid permission', function () {
+        // GIVEN
+        // WHEN
+        // THEN
         expect(function () {
-          PermissionProvider.definePermission(123, function () {});
-        }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION);
+          PermissionProvider.setPermission(null, function () {
+            return true;
+          });
+        }).toThrow(new TypeError('Parameter "permission" name must be String'));
+      });
 
+      it('should throw an exception on invalid validationFunction', function () {
+        // GIVEN
+        // WHEN
+        // THEN
         expect(function () {
-          PermissionProvider.definePermission(null, function () {});
-        }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION);
+          PermissionProvider.setPermission('valid-name', undefined);
+        }).toThrow(new TypeError('Parameter "validationFunction" must be Function'));
       });
 
-      it('should not throw an exception on valid role name', function () {
-        PermissionProvider.definePermission('valid-name', function () {});
+      it('should set permission for correct parameters', function () {
+        // GIVEN
+        // WHEN
+        PermissionProvider.setPermission('user', function () {
+          return true;
+        });
+        // THEN
+        expect(Permission.hasPermission('user')).toBe(true);
+      });
+    });
+
+    describe('method: setManyPermissions', function () {
+      it('should throw an exception if permissions are not array', function () {
+        // GIVEN
+        // WHEN
+        // THEN
+        expect(function () {
+          PermissionProvider.setManyPermissions(null, function () {
+          });
+        }).toThrow(new TypeError('Parameter "permissions" name must be Array'));
       });
 
-      it('should set a role validation method to the key defined', function () {
-        var CustomPermission;
-
-        defineProviderRolesHelper();
-
-        inject(function(_Permission_) {
-          CustomPermission = _Permission_;
+      it('should set permissions for correct set of parameters', function () {
+        // GIVEN
+        // WHEN
+        PermissionProvider.setManyPermissions(['user', 'admin'], function () {
+          return true;
         });
 
-        expect(angular.isFunction(CustomPermission.roleValidations.anonymous)).toBe(true);
-        expect(angular.isFunction(CustomPermission.roleValidations.user)).toBe(true);
-        expect(angular.isFunction(CustomPermission.roleValidations.admin)).toBe(true);
+        // THEN
+        expect(Permission.hasPermission('user')).toBe(true);
+        expect(Permission.hasPermission('admin')).toBe(true);
       });
-
-    });
-
-    describe('#defineManyRoles (provider version)', function () {
-
-      it('should throw an exception on invalid role name', function () {
-          expect(function () {
-            Permission.defineManyPermissions(123, function () {});
-          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION);
-
-          expect(function () {
-            Permission.defineManyPermissions(null, function () {});
-          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION);
-
-          expect(function () {
-            Permission.defineManyPermissions('admin', function () {});
-          }).toThrow(EXCEPTIONS.DEFINE_MANY_ROLES_EXCEPTION);
-
-          expect(function () {
-            Permission.defineManyPermissions(['admin', 1], function () {});
-          }).toThrow(EXCEPTIONS.DEFINE_ROLE_EXCEPTION);
-      });
-
-      it('should not throw an exception on valid role name', function () {
-          Permission.defineManyPermissions(['admin', 'publisher'], function () {});
-      });
-
-    });
-
-
-  });
-
-  describe('#defineRole', function () {
-    it('should define roles on run stage', function () {
-      var fakeService = {
-        age: 12,
-        wise: true,
-        evenAge: function () {return this.age % 2 === 0;}
-      };
-      Permission.defineRole('noob', function () {
-        var deferred = $q.defer();
-        if(fakeService.wise){
-          deferred.reject();
-        }else{
-          deferred.resolve();
-        }
-        return deferred.promise;
-      });
-      Permission.defineRole('pair', function () {
-        var deferred = $q.defer();
-        if(fakeService.evenAge){
-          deferred.resolve();
-        } else{
-          deferred.reject();
-        }
-        return deferred.promise;
-      });
-      expect(angular.isFunction(Permission.roleValidations.noob)).toBe(true);
-      expect(angular.isFunction(Permission.roleValidations.pair)).toBe(true);
     });
   });
 
-  describe('#defineManyPermissions', function () {
+  describe('method: setPermission', function () {
+    it('should call setPermission defined in provider', function () {
+      // GIVEN
+      spyOn(PermissionProvider, 'setPermission');
 
-    it('should define many roles on run stage', function () {
-     var systemRoles = ['admin', 'publisher', 'user', 'anonymous'];
-     var userRoles = ['publisher', 'user'];
-
-      Permission.defineManyPermissions(systemRoles, function(stateParams, role){
-          var deferred = $q.defer();
-          var userHasRole = (userRoles.indexOf(role) !== -1);
-          if(userHasRole){
-            deferred.resolve();
-          } else {
-            deferred.reject();
-          }
-          return deferred.promise;
+      // WHEN
+      Permission.setPermission('user', function () {
+        return true;
       });
 
-      expect(angular.isFunction(Permission.roleValidations.admin)).toBe(true);
-      expect(angular.isFunction(Permission.roleValidations.publisher)).toBe(true);
-      expect(angular.isFunction(Permission.roleValidations.user)).toBe(true);
-      expect(angular.isFunction(Permission.roleValidations.anonymous)).toBe(true);
-
+      // THEN
+      expect(PermissionProvider.setPermission).toHaveBeenCalled();
     });
-
   });
 
-  describe('#_validateRoleMap', function () {
-    it('should throw exception if param isn\'t an object', function () {
-      var exception = new Error('Role map has to be an object');
-      expect(function () {
-        Permission._validateRoleMap([1, 2]);
-      }).toThrow(exception);
-      expect(function () {
-        Permission._validateRoleMap('string');
-      }).toThrow(exception);
-      expect(function () {
-        Permission._validateRoleMap(123);
-      }).toThrow(exception);
-      expect(function () {
-        Permission._validateRoleMap();
-      }).toThrow(exception);
+  describe('method: setManyPermissions', function () {
+    it('should call setManyPermissions defined in provider', function () {
+      // GIVEN
+      spyOn(PermissionProvider, 'setManyPermissions');
+
+      // WHEN
+      Permission.setManyPermissions(['user', 'admin'], function () {
+        return true;
+      });
+
+      expect(PermissionProvider.setManyPermissions).toHaveBeenCalled();
+    });
+  });
+
+  describe('method: authorize', function () {
+
+    var isResolved;
+
+    beforeEach(function () {
+      Permission.setPermission('user', function () {
+        return true;
+      });
+
+      isResolved = false;
     });
 
-    it('should throw an exception if param doesn\'t have "only" or "except" keys', function () {
-      var exception = new Error('Either "only" or "except" keys must me defined');
+    it('should throw error when permissionMap is not object', function () {
+      // GIVEN
+      // WHEN
+      // THEN
       expect(function () {
-        Permission._validateRoleMap({});
-      }).toThrow(exception);
-      expect(function () {
-        Permission._validateRoleMap({foo: ['a']});
-      }).toThrow(exception);
+        Permission.authorize('notObject', null);
+      }).toThrow(new TypeError('Parameter "permissionMap" has to be Object'));
     });
 
-    it('should throw an exception if only or except keys are not arrays', function () {
-      var exception = new Error('Array of roles expected');
-
+    it('should throw error when permissionMap has not set either "only" nor "except"', function () {
+      // GIVEN
+      // WHEN
+      // THEN
       expect(function () {
-        Permission._validateRoleMap({
-          only: 'a'
+        Permission.authorize({}, null);
+      }).toThrow(new ReferenceError('Either "only" or "except" keys must me defined'));
+    });
+
+    it('should throw error when permissionMap property "only" is not Object', function () {
+      // GIVEN
+      // WHEN
+      // THEN
+      expect(function () {
+        Permission.authorize({only: null}, null);
+      }).toThrow(new TypeError('Parameter "permissionMap" properties must be Array'));
+    });
+
+    it('should throw error when permissionMap property "except" is not Object', function () {
+      // GIVEN
+      // WHEN
+      // THEN
+      expect(function () {
+        Permission.authorize({except: null}, null);
+      }).toThrow(new TypeError('Parameter "permissionMap" properties must be Array'));
+    });
+
+    it('should resolve promise when "only" matches permissions', function () {
+      // GIVEN
+      Permission
+        .authorize({only: ['user']}, null)
+        .then(function () {
+          isResolved = true;
         });
-      }).toThrow(exception);
 
-      expect(function () {
-        Permission._validateRoleMap({
-          only: 123
+      // WHEN
+      $rootScope.$apply();
+
+      // THEN
+      expect(isResolved).toEqual(true);
+    });
+
+    it('should reject promise when "only" mismatches permissions', function () {
+      // GIVEN
+      Permission
+        .authorize({only: ['admin']}, null)
+        .catch(function () {
+          isResolved = true;
         });
-      }).toThrow(exception);
+
+      // WHEN
+      $rootScope.$apply();
+
+      // THEN
+      expect(isResolved).toEqual(true);
     });
 
-  });
+    it('should resolve promise when "except" mismatches permissions', function () {
+      // GIVEN
+      Permission
+        .authorize({except: ['admin']}, null)
+        .then(function () {
+          isResolved = true;
+        });
 
-  describe('#authorize', function () {
-    it('should be a function', function () {
-      expect(Permission.authorize).toBeDefined();
+      // WHEN
+      $rootScope.$apply();
+
+      // THEN
+      expect(isResolved).toEqual(true);
     });
 
-    it('should call _authorizeOnly if "only" key is defined', function () {
-      spyOn(Permission, 'resolveIfMatch');
-      spyOn(Permission, 'rejectIfMatch');
+    it('should reject promise when "except" matches permissions', function () {
+      // GIVEN
+      Permission
+        .authorize({except: ['user']}, null)
+        .catch(function () {
+          isResolved = true;
+        });
 
-      Permission.authorize({
-        only: ['a', 'b']
-      });
+      // WHEN
+      $rootScope.$apply();
 
-      expect(Permission.resolveIfMatch).toHaveBeenCalled();
-      expect(Permission.rejectIfMatch).not.toHaveBeenCalled();
-    });
-
-    it('should call _authorizeExcept if "except" key is defined', function () {
-      spyOn(Permission, 'resolveIfMatch');
-      spyOn(Permission, 'rejectIfMatch');
-
-      Permission.authorize({
-        except: ['a', 'b']
-      });
-
-      expect(Permission.rejectIfMatch).toHaveBeenCalled();
-      expect(Permission.resolveIfMatch).not.toHaveBeenCalled();
-    });
-
-    it('should call "only" if both keys are defined', function () {
-      spyOn(Permission, 'resolveIfMatch');
-      spyOn(Permission, 'rejectIfMatch');
-
-      Permission.authorize({
-        only: ['a', 'b'],
-        except: ['c', 'd']
-      });
-
-      expect(Permission.resolveIfMatch).toHaveBeenCalled();
-      expect(Permission.rejectIfMatch).not.toHaveBeenCalled();
+      // THEN
+      expect(isResolved).toEqual(true);
     });
   });
 
-  describe('#rejectIfMatch', function () {
-    beforeEach(function () {defineRolesHelper();});
+  describe('method: hasPermission', function () {
+    it('should check if permission is set', function () {
+      // GIVEN
+      // WHEN
+      Permission.setPermission('user', function () {
+        return true;
+      });
 
-    it('should reject if a role is matched', function () {
-      var callbacks = {reject: function () {}, resolve: function () {}};
-      spyOn(callbacks, 'reject');
-      spyOn(callbacks, 'resolve');
-
-      Permission.rejectIfMatch(['admin']).then(callbacks.resolve, callbacks.reject);
-      $rootScope.$digest();
-
-      expect(callbacks.resolve).not.toHaveBeenCalled();
-      expect(callbacks.reject).toHaveBeenCalled();
-    });
-
-    it('should resolve if no role is matched', function () {
-      var callbacks = {reject: function () {}, resolve: function () {}};
-      spyOn(callbacks, 'reject');
-      spyOn(callbacks, 'resolve');
-
-      Permission.rejectIfMatch(['anonymous']).then(callbacks.resolve, callbacks.reject);
-      $rootScope.$digest();
-
-      expect(callbacks.resolve).toHaveBeenCalled();
-      expect(callbacks.reject).not.toHaveBeenCalled();
+      // THEN
+      expect(Permission.hasPermission('user')).toBeTruthy();
+      expect(Permission.hasPermission('admin')).toBeFalsy();
     });
   });
 
-  describe('#resolveIfMatch', function () {
-    beforeEach(function () {defineRolesHelper();});
+  describe('method: clearPermissions', function () {
+    it('should remove all set permissions', function () {
+      // GIVEN
+      Permission.setManyPermissions(['user', 'admin', 'superAdmin'], function () {
+        return true;
+      });
 
-    it('should resolve if a role is matched', function () {
-      var callbacks = {reject: function () {}, resolve: function () {}};
-      spyOn(callbacks, 'reject');
-      spyOn(callbacks, 'resolve');
+      // WHEN
+      Permission.clearPermissions();
 
-      Permission.resolveIfMatch(['admin']).then(callbacks.resolve, callbacks.reject);
-      $rootScope.$digest();
-
-      expect(callbacks.resolve).toHaveBeenCalled();
-      expect(callbacks.reject).not.toHaveBeenCalled();
+      // THEN
+      expect(Permission.getPermissions().length).toBe(0);
     });
+  });
 
-    it('should reject if no role is matched', function () {
-      var callbacks = {reject: function () {}, resolve: function () {}};
-      spyOn(callbacks, 'reject');
-      spyOn(callbacks, 'resolve');
+  describe('method: removePermission', function () {
+    it('should remove provided permission', function () {
+      // GIVEN
+      Permission.setManyPermissions(['user', 'admin'], function () {
+        return true;
+      });
 
-      Permission.resolveIfMatch(['anonymous']).then(callbacks.resolve, callbacks.reject);
-      $rootScope.$digest();
+      // WHEN
+      Permission.removePermission('user');
 
-      expect(callbacks.reject).toHaveBeenCalled();
-      expect(callbacks.resolve).not.toHaveBeenCalled();
+      // THEN
+      expect(Permission.hasPermission('user')).toBeFalsy();
+      expect(Permission.hasPermission('admin')).toBeTruthy();
+    });
+  });
+
+  describe('method: removeManyPermissions', function () {
+    it('should remove provided set of permissions', function () {
+      // GIVEN
+      Permission.setManyPermissions(['user', 'admin', 'superAdmin'], function () {
+        return true;
+      });
+
+      // WHEN
+      Permission.removeManyPermissions(['user','admin']);
+
+      // THEN
+      expect(Permission.hasPermission('user')).toBeFalsy();
+      expect(Permission.hasPermission('admin')).toBeFalsy();
+      expect(Permission.hasPermission('superAdmin')).toBeTruthy();
     });
   });
 });
