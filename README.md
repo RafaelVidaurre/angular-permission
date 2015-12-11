@@ -86,12 +86,12 @@ $stateProvider
 ```
 
 
-Defining permissions
+Setting permissions
 --------------------------
 So, how do yo tell Permission what does 'anonymous', 'admin' or 'foo' mean and how to know if the current user belongs
 to those definitions?
 
-Well, Permission allows you to define different 'permissions' along with the logic that determines if the current
+Well, Permission allows you to set different 'permissions' along with the logic that determines if the current
 session belongs to them.
 
 ```javascript
@@ -106,7 +106,7 @@ session belongs to them.
 angular.module('fooModule', ['permission', 'user'])
   .run(function (Permission, User) {
     // Define anonymous permission
-    Permission.definePermission('anonymous', function (stateParams) {
+    Permission.setPermission('anonymous', function (stateParams) {
       // If the returned value is *truthy* then the user has the permission, otherwise they don't
       if (!User) {
         return true; // Is anonymous
@@ -124,7 +124,7 @@ angular.module('barModule', ['permission', 'user'])
   .run(function (Permission, User, $q) {
     Permission
       // Define user permission calling back-end
-      .definePermission('user', function (stateParams) {
+      .setPermission('user', function (stateParams) {
         // This time we will return a promise
         // If the promise *resolves* then the user has the permission, if it *rejects* (you guessed it)
 
@@ -132,7 +132,7 @@ angular.module('barModule', ['permission', 'user'])
         return User.checkSession();
       })
       // A different example for admin
-      .definePermission('admin', function (stateParams) {
+      .setPermission('admin', function (stateParams) {
         var deferred = $q.defer();
 
         User.getAccessLevel().then(function (data) {
@@ -151,12 +151,12 @@ angular.module('barModule', ['permission', 'user'])
   });
 ```
 
-You can also define many permissions which share the same validator. This is useful when you have some central service which handles the validation.
+You can also set many permissions which share the same validator. This is useful when you have some central service which handles the validation.
 
-To define many permissions which share one validator callback, use `defineManyPermissions(<array>, <validator function>)`
+To define many permissions which share one validator callback, use `setManyPermissions(<array>, <validator function>)`
 
 ```javascript
-Permission.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
+Permission.setManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
   return User.hasPermission(permissionName);
 });
 ```

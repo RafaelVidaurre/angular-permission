@@ -21,15 +21,15 @@ describe('module: Permission', function () {
 
   // Initialize permissions
   beforeEach(function () {
-    PermissionProvider.definePermission('accepted', function () {
+    PermissionProvider.setPermission('accepted', function () {
       return true;
     });
 
-    PermissionProvider.definePermission('denied', function () {
+    PermissionProvider.setPermission('denied', function () {
       return false;
     });
 
-    PermissionProvider.definePermission('withParams', function (params) {
+    PermissionProvider.setPermission('withParams', function (params) {
       if (params.isSet && angular.isString(params.isSet)) {
         return params.isSet === 'true';
       }

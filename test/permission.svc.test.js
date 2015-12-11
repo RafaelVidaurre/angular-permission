@@ -17,13 +17,13 @@ describe('service: Permission', function () {
 
   describe('provider: PermissionProvider', function () {
 
-    describe('method: definePermission', function () {
+    describe('method: setPermission', function () {
       it('should throw an exception on invalid permission', function () {
         // GIVEN
         // WHEN
         // THEN
         expect(function () {
-          PermissionProvider.definePermission(null, function () {
+          PermissionProvider.setPermission(null, function () {
             return true;
           });
         }).toThrow(new TypeError('Parameter "permission" name must be String'));
@@ -34,14 +34,14 @@ describe('service: Permission', function () {
         // WHEN
         // THEN
         expect(function () {
-          PermissionProvider.definePermission('valid-name', undefined);
+          PermissionProvider.setPermission('valid-name', undefined);
         }).toThrow(new TypeError('Parameter "validationFunction" must be Function'));
       });
 
       it('should set permission for correct parameters', function () {
         // GIVEN
         // WHEN
-        PermissionProvider.definePermission('user', function () {
+        PermissionProvider.setPermission('user', function () {
           return true;
         });
         // THEN
@@ -49,13 +49,13 @@ describe('service: Permission', function () {
       });
     });
 
-    describe('method: defineManyPermissions', function () {
+    describe('method: setManyPermissions', function () {
       it('should throw an exception if permissions are not array', function () {
         // GIVEN
         // WHEN
         // THEN
         expect(function () {
-          PermissionProvider.defineManyPermissions(null, function () {
+          PermissionProvider.setManyPermissions(null, function () {
           });
         }).toThrow(new TypeError('Parameter "permissions" name must be Array'));
       });
@@ -63,7 +63,7 @@ describe('service: Permission', function () {
       it('should set permissions for correct set of parameters', function () {
         // GIVEN
         // WHEN
-        PermissionProvider.defineManyPermissions(['user', 'admin'], function () {
+        PermissionProvider.setManyPermissions(['user', 'admin'], function () {
           return true;
         });
 
@@ -74,32 +74,32 @@ describe('service: Permission', function () {
     });
   });
 
-  describe('method: definePermission', function () {
-    it('should call definePermission defined in provider', function () {
+  describe('method: setPermission', function () {
+    it('should call setPermission defined in provider', function () {
       // GIVEN
-      spyOn(PermissionProvider, 'definePermission');
+      spyOn(PermissionProvider, 'setPermission');
 
       // WHEN
-      Permission.definePermission('user', function () {
+      Permission.setPermission('user', function () {
         return true;
       });
 
       // THEN
-      expect(PermissionProvider.definePermission).toHaveBeenCalled();
+      expect(PermissionProvider.setPermission).toHaveBeenCalled();
     });
   });
 
-  describe('method: defineManyPermissions', function () {
-    it('should call defineManyPermissions defined in provider', function () {
+  describe('method: setManyPermissions', function () {
+    it('should call setManyPermissions defined in provider', function () {
       // GIVEN
-      spyOn(PermissionProvider, 'defineManyPermissions');
+      spyOn(PermissionProvider, 'setManyPermissions');
 
       // WHEN
-      Permission.defineManyPermissions(['user', 'admin'], function () {
+      Permission.setManyPermissions(['user', 'admin'], function () {
         return true;
       });
 
-      expect(PermissionProvider.defineManyPermissions).toHaveBeenCalled();
+      expect(PermissionProvider.setManyPermissions).toHaveBeenCalled();
     });
   });
 
@@ -108,7 +108,7 @@ describe('service: Permission', function () {
     var isResolved;
 
     beforeEach(function () {
-      Permission.definePermission('user', function () {
+      Permission.setPermission('user', function () {
         return true;
       });
 
@@ -216,7 +216,7 @@ describe('service: Permission', function () {
     it('should check if permission is set', function () {
       // GIVEN
       // WHEN
-      Permission.definePermission('user', function () {
+      Permission.setPermission('user', function () {
         return true;
       });
 
@@ -229,7 +229,7 @@ describe('service: Permission', function () {
   describe('method: clearPermissions', function () {
     it('should remove all set permissions', function () {
       // GIVEN
-      Permission.defineManyPermissions(['user', 'admin', 'superAdmin'], function () {
+      Permission.setManyPermissions(['user', 'admin', 'superAdmin'], function () {
         return true;
       });
 
@@ -244,7 +244,7 @@ describe('service: Permission', function () {
   describe('method: removePermission', function () {
     it('should remove provided permission', function () {
       // GIVEN
-      Permission.defineManyPermissions(['user', 'admin'], function () {
+      Permission.setManyPermissions(['user', 'admin'], function () {
         return true;
       });
 
@@ -260,7 +260,7 @@ describe('service: Permission', function () {
   describe('method: removeManyPermissions', function () {
     it('should remove provided set of permissions', function () {
       // GIVEN
-      Permission.defineManyPermissions(['user', 'admin', 'superAdmin'], function () {
+      Permission.setManyPermissions(['user', 'admin', 'superAdmin'], function () {
         return true;
       });
 

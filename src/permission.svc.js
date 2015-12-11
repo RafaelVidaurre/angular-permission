@@ -14,8 +14,8 @@
        * @param validationFunction {Function} Function used to validate if permission is valid
        */
       this.defineRole = function (permission, validationFunction) {
-        console.warn('Function "defineRole" will be deprecated. Use "definePermission" instead');
-        self.definePermission(permission, validationFunction);
+        console.warn('Function "defineRole" will be deprecated. Use "setPermission" instead');
+        self.setPermission(permission, validationFunction);
         return this;
       };
 
@@ -26,7 +26,7 @@
        * @param permission {String} Name of defined permission
        * @param validationFunction {Function} Function used to validate if permission is valid
        */
-      this.definePermission = function (permission, validationFunction) {
+      this.setPermission = function (permission, validationFunction) {
         validatePermission(permission, validationFunction);
         permissionStore[permission] = validationFunction;
         return this;
@@ -38,13 +38,13 @@
        * @param permissions {Array} Set of permission names
        * @param validationFunction {Function} Function used to validate if permission is valid
        */
-      this.defineManyPermissions = function (permissions, validationFunction) {
+      this.setManyPermissions = function (permissions, validationFunction) {
         if (!angular.isArray(permissions)) {
           throw new TypeError('Parameter "permissions" name must be Array');
         }
 
         angular.forEach(permissions, function (permissionName) {
-          self.definePermission(permissionName, validationFunction);
+          self.setPermission(permissionName, validationFunction);
         });
 
         return this;
@@ -88,6 +88,25 @@
 
       this.$get = ['$q', function ($q) {
         /**
+         * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
+         * @private
+         *
+         * @param func {Function} Function to be wrapped into promise
+         * @return {promise} $q.promise object
+         */
+        function wrapInPromise(func) {
+          var dfd = $q.defer();
+
+          if (func) {
+            dfd.resolve();
+          } else {
+            dfd.reject();
+          }
+
+          return dfd.promise;
+        }
+
+        /**
          * Performs iteration over list of defined permissions looking for matching roles
          * @private
          *
@@ -102,15 +121,12 @@
           if (angular.isDefined(currentPermission) && angular.isFunction(permissionStore[currentPermission])) {
             var validationResult = permissionStore[currentPermission].call(self, toParams, currentPermission);
 
-            $q.when(validationResult)
-              .then(function (value) {
-                // If is promise wrapped true-falsely function resolve it based on value
-                if (value) {
-                  dfd.resolve();
-                } else {
-                  dfd.reject();
-                }
+            if (!angular.isFunction(validationResult.then)) {
+              validationResult = wrapInPromise(validationResult);
+            }
 
+            $q.when(validationResult)
+              .then(function () {
                 dfd.resolve();
               })
               .catch(function () {
@@ -183,8 +199,8 @@
            * @param validationFunction {Function} Function used to validate if permission is valid
            */
           defineRole: function (permission, validationFunction) {
-            console.warn('Function "defineRole" will be deprecated. Use "definePermission" instead');
-            self.definePermission(permission, validationFunction);
+            console.warn('Function "defineRole" will be deprecated. Use "setPermission" instead');
+            self.setPermission(permission, validationFunction);
             return Permission;
           },
 
@@ -194,8 +210,8 @@
            * @param permission {String} Name of defined permission
            * @param validationFunction {Function} Function used to validate if permission is valid
            */
-          definePermission: function (permission, validationFunction) {
-            self.definePermission(permission, validationFunction);
+          setPermission: function (permission, validationFunction) {
+            self.setPermission(permission, validationFunction);
             return Permission;
           },
 
@@ -207,8 +223,8 @@
            * @param validationFunction {Function} Function used to validate if permission is valid
            */
           defineManyRoles: function (permissions, validationFunction) {
-            console.warn('Function "defineManyRoles" will be deprecated. Use "defineManyPermissions" instead');
-            self.defineManyPermissions(permissions, validationFunction);
+            console.warn('Function "defineManyRoles" will be deprecated. Use "setManyPermissions" instead');
+            self.setManyPermissions(permissions, validationFunction);
             return Permission;
           },
 
@@ -218,8 +234,8 @@
            * @param permissions {Array} Set of permission names
            * @param validationFunction {Function} Function used to validate if permission is valid
            */
-          defineManyPermissions: function (permissions, validationFunction) {
-            self.defineManyPermissions(permissions, validationFunction);
+          setManyPermissions: function (permissions, validationFunction) {
+            self.setManyPermissions(permissions, validationFunction);
             return Permission;
           },
 
