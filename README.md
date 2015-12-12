@@ -70,7 +70,7 @@ $stateProvider
   });
 ```
 
-Another thing you can do is set a redirect url to which unauthorized sessions will go to.
+Another thing you can do is set `redirectTo` property that will handle unmatched permission redirection:
 
 ```javascript
 $stateProvider
@@ -85,7 +85,7 @@ $stateProvider
   });
 ```
 
-Property `redirectTo` can accept function:
+Property `redirectTo` can also accept function:
 
 ```javascript
 $stateProvider
