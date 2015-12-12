@@ -127,15 +127,15 @@
 
             $q.when(validationResult)
               .then(function () {
-                dfd.resolve();
+                dfd.resolve(currentPermission);
               })
               .catch(function () {
                 findMatchingRole(permissions, toParams)
                   .then(function () {
-                    dfd.resolve();
+                    dfd.resolve(currentPermission);
                   })
                   .catch(function () {
-                    dfd.reject();
+                    dfd.reject(currentPermission);
                   });
               });
           } else {
@@ -158,11 +158,11 @@
           var deferred = $q.defer();
 
           findMatchingRole(permissions, toParams)
-            .then(function () {
-              deferred.resolve();
+            .then(function (permission) {
+              deferred.resolve(permission);
             })
-            .catch(function () {
-              deferred.reject();
+            .catch(function (permission) {
+              deferred.reject(permission);
             });
 
           return deferred.promise;
@@ -180,11 +180,11 @@
           var deferred = $q.defer();
 
           findMatchingRole(permissions, toParams)
-            .then(function () {
-              deferred.reject();
+            .then(function (permission) {
+              deferred.reject(permission);
             })
-            .catch(function () {
-              deferred.resolve();
+            .catch(function (permission) {
+              deferred.resolve(permission);
             });
 
           return deferred.promise;
