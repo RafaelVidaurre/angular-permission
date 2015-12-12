@@ -161,6 +161,14 @@ Permission.setManyPermissions(arrayOfPermissionNames, function (stateParams, per
 });
 ```
 
+or use internal `Permission` service to check if user has one of permissions:
+
+```javascript
+Permission.setManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
+  return Permission.hasPermission(permissionName);
+});
+```
+
 Removing Permissions
 -----
 You can easily remove _all_ permissions after user logged out or switched profile:  
@@ -181,13 +189,7 @@ Helper Method
 To get all user permissions use method `getPermissions`:
 
 ```javascript
-Permission.hasPermission('user');
-```
-
-Inside components you can use `Permission` service to check if user has one of permissions:
-
-```javascript
-Permission.hasPermission('user');
+var permissions = Permission.getPermissions();
 ```
 
 Views
