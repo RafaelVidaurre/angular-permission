@@ -158,6 +158,34 @@ describe('module: Permission', function () {
       expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
     });
 
+    it('should go to child state if parent permissions are resolved', function () {
+      // GIVEN
+      $stateProvider.state('accepted.acceptedChild', {});
+
+      // WHEN
+      $state.go('accepted.acceptedChild');
+      $rootScope.$digest();
+
+      // THEN
+      expect($state.current.name).toBe('accepted.acceptedChild');
+      expect(changePermissionAcceptedHasBeenCalled).toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
+    });
+
+    it('should not go to child state if parent permissions are rejected', function () {
+      // GIVEN
+      $stateProvider.state('denied.deniedChild', {});
+
+      // WHEN
+      $state.go('denied.deniedChild');
+      $rootScope.$digest();
+
+      // THEN
+      expect($state.current.name).toBe('home');
+      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
+      expect(changePermissionDeniedHasBeenCalled).toBeTruthy();
+    });
+
     it('should broadcast a $stateChangeStart with correct parameters (denied state)', inject(function ($rootScope) {
       // GIVEN
       var called = false;
