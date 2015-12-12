@@ -4,7 +4,7 @@
   var permission = angular.module('permission', ['ui.router']);
 
   permission.run(['$rootScope', 'Permission', '$state', '$q', function ($rootScope, Permission, $state, $q) {
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
       if (areSetStatePermissions()) {
         setStateAuthorizationStatus(true);
@@ -55,11 +55,11 @@
         Permission
           .authorize(permissions, toParams)
           .then(function () {
-            $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams);
+            $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, options);
             goToState(toState.name);
           })
           .catch(function (rejectedPermission) {
-            $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams);
+            $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
             redirectToState(permissions.redirectTo, rejectedPermission);
           });
       }
@@ -76,7 +76,7 @@
           .go(name, toParams, {notify: false})
           .then(function () {
             $rootScope
-              .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
+              .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams, options);
           });
       }
 
@@ -148,7 +148,7 @@
        * @param state {String} State to which app should be redirected
        */
       function handleStringRedirect(state){
-        $state.go(state, toParams);
+        $state.go(state, toParams, options);
       }
 
       /**
@@ -157,7 +157,7 @@
        * @returns {boolean}
        */
       function isStateChangeStartDefaultPrevented() {
-        return $rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams).defaultPrevented;
+        return $rootScope.$broadcast('$stateChangeStart', toState, toParams, fromState, fromParams, options).defaultPrevented;
       }
 
       /**
@@ -166,7 +166,7 @@
        * @returns {boolean}
        */
       function isStateChangePermissionStartDefaultPrevented() {
-        return $rootScope.$broadcast('$stateChangePermissionStart', toState, toParams).defaultPrevented;
+        return $rootScope.$broadcast('$stateChangePermissionStart', toState, toParams, options).defaultPrevented;
       }
     });
   }]);
