@@ -1,7 +1,7 @@
 describe('module: Permission', function () {
   'use strict';
 
-  var $rootScope, $state, $stateProvider, $q, $exceptionHandler, PermissionProvider;
+  var $rootScope, $state, $stateProvider, $q, PermissionProvider;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {
@@ -16,7 +16,6 @@ describe('module: Permission', function () {
       $state = $injector.get('$state');
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
-      $exceptionHandler = $injector.get('$exceptionHandler');
     });
   });
 
