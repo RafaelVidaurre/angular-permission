@@ -127,7 +127,7 @@
                 validationResult = wrapInPromise(validationResult);
               }
 
-              $q.when(validationResult)
+              validationResult
                 .then(function () {
                   dfd.resolve(permission);
                 })
