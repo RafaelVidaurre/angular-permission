@@ -70,7 +70,7 @@ $stateProvider
   });
 ```
 
-Another thing you can do is set a redirect url to which unauthorized sessions will go to.
+Another thing you can do is set `redirectTo` property that will handle unmatched permission redirection:
 
 ```javascript
 $stateProvider
@@ -85,6 +85,44 @@ $stateProvider
   });
 ```
 
+Property `redirectTo` can also accept function:
+
+```javascript
+$stateProvider
+  .state('agenda', {
+    data: {
+      permissions: {
+        only: ['manager'],
+        redirectTo: function(){
+          return 'auth';
+        }
+      }
+    }
+  })
+```
+
+**Important!** Remember to always return _route's state_. Otherwise errors will thrown from either Permission or UI-Router library.
+
+or object with map of permissions:
+```javascript
+$stateProvider
+  .state('agenda', {
+    data: {
+      permissions: {
+        only: ['manager'],
+        redirectTo: {
+          account: 'profile',
+          user: function(){
+            return 'dashboard';
+          },
+          default: 'auth'
+        }
+      }
+    }
+  })
+```
+
+**Important!** Remember define _default_ property that will handle fallback redirect for not defined permissions. Otherwise errors will thrown from either Permission or UI-Router library. 
 
 Setting permissions
 --------------------------
