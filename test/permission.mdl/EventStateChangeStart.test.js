@@ -211,6 +211,7 @@ describe('module: Permission', function () {
       $rootScope.$apply();
 
       // THEN
+      console.log($state.params);
       expect($state.current.name).toBe('abstractTest.redirect');
       expect($state.params.abstractValue).toBe('test');
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();

@@ -115,7 +115,6 @@
             goToState(toState.name);
           })
           .catch(function (rejectedPermission) {
-            console.log(rejectedPermission);
             $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
             redirectToState(permissions.redirectTo, rejectedPermission);
           });
@@ -205,7 +204,7 @@
        * @param state {String} State to which app should be redirected
        */
       function handleStringRedirect(state) {
-        $state.go(state);
+        $state.go(state, toParams, options);
       }
 
       /**
