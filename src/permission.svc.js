@@ -112,79 +112,70 @@
          *
          * @param permissions {Array} Set of permission names
          * @param toParams {Object} UI-Router params object
-         * @returns {promise} $q.promise object
+         * @returns {Array} Promise collection
          */
         function findMatchingRole(permissions, toParams) {
-          var dfd = $q.defer();
-          var currentPermission = permissions.shift();
+          var promises = [];
 
-          if (angular.isDefined(currentPermission) && angular.isFunction(permissionStore[currentPermission])) {
-            var validationResult = permissionStore[currentPermission].call(self, toParams, currentPermission);
+          angular.forEach(permissions, function (permission) {
+            var dfd = $q.defer();
 
-            if (!angular.isFunction(validationResult.then)) {
-              validationResult = wrapInPromise(validationResult);
+            if (angular.isFunction(permissionStore[permission])) {
+              var validationResult = permissionStore[permission].call(null, toParams, permission);
+
+              if (!angular.isFunction(validationResult.then)) {
+                validationResult = wrapInPromise(validationResult);
+              }
+
+              $q.when(validationResult)
+                .then(function () {
+                  dfd.resolve(permission);
+                })
+                .catch(function () {
+                  dfd.reject(permission);
+                });
+            } else {
+              dfd.reject(permission);
             }
 
-            $q.when(validationResult)
-              .then(function () {
-                dfd.resolve();
-              })
-              .catch(function () {
-                findMatchingRole(permissions, toParams)
-                  .then(function () {
-                    dfd.resolve();
-                  })
-                  .catch(function () {
-                    dfd.reject();
-                  });
-              });
-          } else {
-            // If no roles left to validate reject promise
-            dfd.reject();
-          }
+            promises.push(dfd.promise);
+          });
 
-          return dfd.promise;
+          return promises;
         }
 
         /**
-         * Resolves promise if search permission is found
+         * Authorize user based on provided permissions map
          * @private
          *
-         * @param permissions {Array} Set of permission names
+         * @param permissionsMap {Object} Map of "only" and "except" permission names
          * @param toParams {Object} UI-Router params object
          * @returns {promise} $q.promise object
          */
-        function resolveIfMatch(permissions, toParams) {
+        function handleAuthorization(permissionsMap, toParams) {
           var deferred = $q.defer();
 
-          findMatchingRole(permissions, toParams)
-            .then(function () {
-              deferred.resolve();
+          var exceptPromises = findMatchingRole(permissionsMap.except, toParams);
+
+          $q.all(exceptPromises)
+            .then(function (rejectedPermissions) {
+              // If any "except" permissions are found reject authorization
+              if (rejectedPermissions.length) {
+                deferred.reject(rejectedPermissions);
+              } else {
+                // If none go to checking "only" permissions
+                return $q.reject(null);
+              }
             })
             .catch(function () {
-              deferred.reject();
-            });
-
-          return deferred.promise;
-        }
-
-        /**
-         * Resolves promise if search permission is missing
-         * @private
-         *
-         * @param permissions {Array} Set of permission names
-         * @param toParams {Object} UI-Router params object
-         * @returns {promise} $q.promise object
-         */
-        function rejectIfMatch(permissions, toParams) {
-          var deferred = $q.defer();
-
-          findMatchingRole(permissions, toParams)
-            .then(function () {
-              deferred.reject();
-            })
-            .catch(function () {
-              deferred.resolve();
+              var onlyPromises = findMatchingRole(permissionsMap.only, toParams);
+              $q.all(onlyPromises)
+                .then(function (resolvedPermissions) {
+                  deferred.resolve(resolvedPermissions);
+                })
+                .catch(function (rejectedPermission) {
+                  deferred.reject(rejectedPermission);
+                });
             });
 
           return deferred.promise;
@@ -288,22 +279,13 @@
           /**
            * Checks if provided permissions are acceptable
            *
-           * @param permissionsMap {Object} Map of "only" or "except" permission names
+           * @param permissionsMap {Object} Map of "only" and "except" permission names
            * @param toParams {Object} UI-Router params object
            * @returns {promise} $q.promise object
            */
           authorize: function (permissionsMap, toParams) {
-            var result;
-
             validatePermissionMap(permissionsMap);
-
-            if (angular.isDefined(permissionsMap.only)) {
-              result = resolveIfMatch(angular.copy(permissionsMap.only), toParams);
-            } else {
-              result = rejectIfMatch(angular.copy(permissionsMap.except), toParams);
-            }
-
-            return result;
+            return handleAuthorization(permissionsMap, toParams);
           }
         };
 
