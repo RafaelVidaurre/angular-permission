@@ -8,7 +8,6 @@
 
       if (areSetStatePermissions()) {
         setStateAuthorizationStatus(true);
-        overwriteStateOptions();
         event.preventDefault();
 
         if (!areStateEventsDefaultPrevented()) {
@@ -35,15 +34,6 @@
        */
       function setStateAuthorizationStatus(status) {
         toState = angular.extend({'$$isAuthorizationFinished': status}, toState);
-      }
-
-      /**
-       * Overwrite ui-router's state "options" defined in permission object by ones passed in "ui-sref-opts"
-       */
-      function overwriteStateOptions() {
-        if (toState.data.options) {
-          options = angular.extend(toState.data.options, options);
-        }
       }
 
       /**
