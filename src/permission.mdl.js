@@ -11,7 +11,7 @@
         event.preventDefault();
 
         if (!areStateEventsDefaultPrevented()) {
-          var permissions = toState.data.permissions;
+          var permissions = resolvePermissionMap(toState.data.permissions);
           authorizeForState(permissions);
         }
       } else {
@@ -36,7 +36,6 @@
         toState = angular.extend({'$$isAuthorizationFinished': status}, toState);
       }
 
-
       /**
        * Checks if state events are not prevented by default
        *
@@ -44,6 +43,53 @@
        */
       function areStateEventsDefaultPrevented() {
         return isStateChangePermissionStartDefaultPrevented() || isStateChangeStartDefaultPrevented();
+      }
+
+      /**
+       * Builds map of permissions resolving passed values to data.permissions object
+       *
+       * @param map {object} Passed state permissions object
+       * @returns {Object} Permission map
+       */
+      function resolvePermissionMap(map) {
+        var permissionMap = {};
+
+        if (angular.isDefined(map.only)) {
+          permissionMap.only = resolvePermissionMapProperty(map.only);
+        }
+
+        if (angular.isDefined(map.except)) {
+          permissionMap.only = resolvePermissionMapProperty(map.except);
+        }
+
+        if (angular.isDefined(map.redirectTo)) {
+          permissionMap.redirectTo = map.redirectTo;
+        }
+
+        return permissionMap;
+      }
+
+      /**
+       * Handles extraction of permission map "only" and "except" properties
+       * @private
+       *
+       * @param property {Array|Function|promise} Permission map property "only" or "except"
+       * @returns {Array}
+       */
+      function resolvePermissionMapProperty(property) {
+        if (angular.isString(property)) {
+          return [property];
+        }
+
+        if (angular.isArray(property)) {
+          return property;
+        }
+
+        if (angular.isFunction(property)) {
+          return property.call(null, toState, toParams, options);
+        }
+
+        throw new TypeError('Parameter "permissionMap" properties "only" and "except" must be either String, Array or Function');
       }
 
       /**
@@ -137,7 +183,7 @@
           handleFunctionRedirect(redirectState, permission);
         }
 
-        if (angular.isString(redirectState)){
+        if (angular.isString(redirectState)) {
           handleStringRedirect(redirectState);
         }
       }
@@ -147,7 +193,7 @@
        *
        * @param state {String} State to which app should be redirected
        */
-      function handleStringRedirect(state){
+      function handleStringRedirect(state) {
         $state.go(state, toParams, options);
       }
 
