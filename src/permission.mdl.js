@@ -62,7 +62,7 @@
        * Builds map of permissions resolving passed values to data.permissions and combine them with all its parents
        * keeping the order of permissions from the newest (children) to the oldest (parent)
        *
-       * @param statePermissionMap {object} Passed current state permission map
+       * @param statePermissionMap {Object} Current state permission map
        * @returns {{only: Array, except: Array}} Permission map
        */
       function compensatePermissionMap(statePermissionMap) {
@@ -75,7 +75,7 @@
 
         angular.forEach(toStatePath, function (state) {
           if (areSetStatePermissions(state.self)) {
-            permissionMap = pushStatePermissionsToMap(permissionMap, state.self.data.permissions);
+            permissionMap = extendStatePermissionsMap(permissionMap, state.self.data.permissions);
           }
         });
 
@@ -88,11 +88,12 @@
 
       /**
        * Extends permission map by pushing to it state's permissions
-       * @param permissionMap
-       * @param statePermissionMap
-       * @returns {Array}
+       *
+       * @param permissionMap {Object} Compensated permission map
+       * @param statePermissionMap {Object} Current state permission map
+       * @returns {Object}
        */
-      function pushStatePermissionsToMap(permissionMap, statePermissionMap) {
+      function extendStatePermissionsMap(permissionMap, statePermissionMap) {
         if (angular.isDefined(statePermissionMap.only)) {
           var onlyPermissionsArray = resolvePermissionMapProperty(statePermissionMap.only);
           permissionMap.only = permissionMap.only.concat(onlyPermissionsArray);
