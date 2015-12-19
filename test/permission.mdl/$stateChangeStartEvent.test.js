@@ -1,7 +1,7 @@
 describe('module: Permission', function () {
   'use strict';
 
-  var $rootScope, $state, $stateProvider, PermissionProvider;
+  var $rootScope, $state, $stateProvider, Permission, PermissionProvider;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {
@@ -15,6 +15,7 @@ describe('module: Permission', function () {
     inject(function ($injector) {
       $state = $injector.get('$state');
       $rootScope = $injector.get('$rootScope');
+      Permission = $injector.get('Permission');
     });
   });
 
@@ -35,7 +36,9 @@ describe('module: Permission', function () {
       .state('home', {})
       .state('accepted', {
         data: {
-          permissions: {only: ['accepted']}
+          permissions: {
+            only: ['accepted']
+          }
         }
       })
       .state('denied', {
@@ -121,7 +124,6 @@ describe('module: Permission', function () {
     it('should not authorize when $stateChangeStart has been prevented', function () {
       // GIVEN
       $rootScope.$on('$stateChangeStart', function (event) {
-        //noinspection JSUnresolvedFunction
         event.preventDefault();
       });
 
@@ -138,6 +140,47 @@ describe('module: Permission', function () {
       // neither of them should have been called because the event was aborted manually
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
+    });
+
+    it('should compensate permissions in permissionMap by including parent states permissions', function () {
+      // GIVEN
+      $stateProvider
+        .state('compensated', {
+          data: {
+            permissions: {
+              only: ['accepted'],
+              except: ['denied']
+            }
+          }
+        })
+        .state('compensated.child', {
+          data: {
+            permissions: {
+              only: ['acceptedChild'],
+              except: ['deniedChild']
+            }
+          }
+        });
+
+      PermissionProvider.setPermission('acceptedChild', function () {
+        return true;
+      });
+
+      PermissionProvider.setPermission('deniedChild', function () {
+        return true;
+      });
+
+      spyOn(Permission, 'authorize').and.callThrough();
+
+      // WHEN
+      $state.go('compensated.child');
+      $rootScope.$apply();
+
+
+      expect(Permission.authorize).toHaveBeenCalledWith({
+        only: ['acceptedChild', 'accepted'],
+        except: ['deniedChild', 'denied']
+      }, {});
     });
   });
 });

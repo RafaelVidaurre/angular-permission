@@ -3,28 +3,41 @@
 
   var permission = angular.module('permission', ['ui.router']);
 
+  /**
+   * This decorator is required to access full state object instead of it's configuration
+   * when trying to obtain full toState state object not it's configuration
+   * Can be removed when implemented https://github.com/angular-ui/ui-router/issues/13.
+   */
+  permission.config(['$stateProvider', function ($stateProvider) {
+    $stateProvider.decorator('parent', function (state, parentFn) {
+      state.self.getState = function () {
+        return state;
+      };
+      return parentFn(state);
+    });
+  }]);
+
   permission.run(['$rootScope', 'Permission', '$state', '$q', function ($rootScope, Permission, $state, $q) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
-      if (areSetStatePermissions()) {
+      if (areSetStatePermissions(toState)) {
         setStateAuthorizationStatus(true);
         event.preventDefault();
 
         if (!areStateEventsDefaultPrevented()) {
-          var permissions = resolvePermissionMap(toState.data.permissions);
+          var permissions = compensatePermissionMap(toState.data.permissions);
           authorizeForState(permissions);
         }
       } else {
         setStateAuthorizationStatus(false);
       }
-
       /**
        * Checks if state is qualified to be permission based verified
        *
        * @returns {boolean}
        */
-      function areSetStatePermissions() {
-        return !toState.$$isAuthorizationFinished && toState.data && toState.data.permissions;
+      function areSetStatePermissions(state) {
+        return !(state.$$isAuthorizationFinished) && state.data && state.data.permissions;
       }
 
       /**
@@ -46,24 +59,49 @@
       }
 
       /**
-       * Builds map of permissions resolving passed values to data.permissions object
+       * Builds map of permissions resolving passed values to data.permissions and combine them with all its parents
+       * keeping the order of permissions from the newest (children) to the oldest (parent)
        *
-       * @param map {object} Passed state permissions object
-       * @returns {Object} Permission map
+       * @param statePermissionMap {Object} Current state permission map
+       * @returns {{only: Array, except: Array}} Permission map
        */
-      function resolvePermissionMap(map) {
-        var permissionMap = {};
+      function compensatePermissionMap(statePermissionMap) {
+        var permissionMap = {only: [], except: []};
 
-        if (angular.isDefined(map.only)) {
-          permissionMap.only = resolvePermissionMapProperty(map.only);
+        var toStatePath = $state
+          .get(toState.name)
+          .getState()
+          .path.reverse();
+
+        angular.forEach(toStatePath, function (state) {
+          if (areSetStatePermissions(state.self)) {
+            permissionMap = extendStatePermissionsMap(permissionMap, state.self.data.permissions);
+          }
+        });
+
+        if (angular.isDefined(statePermissionMap.redirectTo)) {
+          permissionMap.redirectTo = statePermissionMap.redirectTo;
         }
 
-        if (angular.isDefined(map.except)) {
-          permissionMap.only = resolvePermissionMapProperty(map.except);
+        return permissionMap;
+      }
+
+      /**
+       * Extends permission map by pushing to it state's permissions
+       *
+       * @param permissionMap {Object} Compensated permission map
+       * @param statePermissionMap {Object} Current state permission map
+       * @returns {Object}
+       */
+      function extendStatePermissionsMap(permissionMap, statePermissionMap) {
+        if (angular.isDefined(statePermissionMap.only)) {
+          var onlyPermissionsArray = resolvePermissionMapProperty(statePermissionMap.only);
+          permissionMap.only = permissionMap.only.concat(onlyPermissionsArray);
         }
 
-        if (angular.isDefined(map.redirectTo)) {
-          permissionMap.redirectTo = map.redirectTo;
+        if (angular.isDefined(statePermissionMap.except)) {
+          var exceptPermissionsArray = resolvePermissionMapProperty(statePermissionMap.except);
+          permissionMap.except = permissionMap.except.concat(exceptPermissionsArray);
         }
 
         return permissionMap;
