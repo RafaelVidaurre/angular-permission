@@ -119,7 +119,7 @@
        */
       function goToState(name) {
         $state
-          .go(name, toParams, {notify: false})
+          .go(name, toParams, angular.extend({}, options, {notify: false}))
           .then(function () {
             $rootScope
               .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams, options);
