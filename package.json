@@ -6,6 +6,10 @@
     "name": "Rafael Vidaurre",
     "email": "narzerus@gmail.com"
   },
+  "contributors":[{
+    "name": "Blazej Krysiak",
+    "email": "blazej.krysiak@gmail.com"
+  }]
   "main": "dist/angular-permission.js",
   "repository": {
     "type": "git",
