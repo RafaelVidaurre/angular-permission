@@ -93,14 +93,14 @@ describe('module: Permission', function () {
           .state('authorized', {
             data: {
               permissions: {
-                except: 'AUTHORIZED'
+                except: 'UNAUTHORIZED'
               }
             }
           })
           .state('unauthorized', {
             data: {
               permissions: {
-                except: 'UNAUTHORIZED'
+                except: 'AUTHORIZED'
               }
             }
           });
@@ -115,14 +115,14 @@ describe('module: Permission', function () {
           .state('authorized', {
             data: {
               permissions: {
-                except: ['AUTHORIZED']
+                except: ['UNAUTHORIZED']
               }
             }
           })
           .state('unauthorized', {
             data: {
               permissions: {
-                except: ['UNAUTHORIZED']
+                except: ['AUTHORIZED']
               }
             }
           });
@@ -138,7 +138,7 @@ describe('module: Permission', function () {
             data: {
               permissions: {
                 except: function () {
-                  return ['AUTHORIZED'];
+                  return ['UNAUTHORIZED'];
                 }
               }
             }
@@ -147,7 +147,7 @@ describe('module: Permission', function () {
             data: {
               permissions: {
                 except: function () {
-                  return ['UNAUTHORIZED'];
+                  return ['AUTHORIZED'];
                 }
               }
             }
