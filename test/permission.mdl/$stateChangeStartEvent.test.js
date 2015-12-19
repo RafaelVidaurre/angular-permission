@@ -142,7 +142,7 @@ describe('module: Permission', function () {
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
     });
 
-    it('should compensate permissions in permissionMap including parent states permissions', function () {
+    it('should compensate permissions in permissionMap by including parent states permissions', function () {
       // GIVEN
       $stateProvider
         .state('compensated', {
