@@ -1,4 +1,4 @@
-describe('service: Permission', function () {
+describe('service: PermissionStore', function () {
   'use strict';
 
   var $q, $rootScope, PermissionStore;
