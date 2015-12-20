@@ -3,12 +3,12 @@
 
   angular
     .module('permission')
-    .directive('permission', ['$log', 'Permission', function ($log, Permission) {
+    .directive('permission', ['$log', 'Authorization', function ($log, Authorization) {
       return {
         restrict: 'A',
         link: function (scope, element, attrs) {
           try {
-            Permission
+            Authorization
               .authorize({
                 only: scope.$eval(attrs.only),
                 except: scope.$eval(attrs.except)

@@ -24,7 +24,7 @@ module.exports = function(config) {
       'src/**/*.mdl.js',
       'src/**/*.drv.js',
       'src/**/*.svc.js',
-      'src/**/*.ctl.js',
+      'src/**/*.fct.js',
       'test/**/*.test.js'
     ],
 

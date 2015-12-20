@@ -17,7 +17,7 @@
     });
   }]);
 
-  permission.run(['$rootScope', 'Permission', '$state', '$q', function ($rootScope, Permission, $state, $q) {
+  permission.run(['$rootScope', 'Permission', 'Authorization', '$state', '$q', function ($rootScope, Permission, Authorization, $state, $q) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
       if (areSetStatePermissions(toState)) {
@@ -136,7 +136,7 @@
        * @param permissions {Object} Map of "only" or "except" permission names
        */
       function authorizeForState(permissions) {
-        Permission
+        Authorization
           .authorize(permissions, toParams)
           .then(function () {
             $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, options);
