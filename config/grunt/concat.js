@@ -7,7 +7,7 @@ module.exports = function () {
     },
     dist: {
       files: {
-        'dist/<%= pkg.name %>.js': ['<%= paths.src %>/*']
+        'dist/<%= pkg.name %>.js': ['<%= paths.src %>/**/*.js']
       }
     }
   };
