@@ -15,7 +15,7 @@
         customMatchingPermissionsFunction = matchingFunction;
       }
 
-      this.$get = ['$q', 'Permission', function ($q, Permission) {
+      this.$get = ['$q', 'PermissionStore', function ($q, PermissionStore) {
         var findMatchingPermissions = customMatchingPermissionsFunction || defaultFindMatchingPermissions;
 
         return {
@@ -105,8 +105,8 @@
           angular.forEach(permissions, function (permission) {
             var dfd = $q.defer();
 
-            if (Permission.hasPermission(permission)) {
-              var validationResult = Permission
+            if (PermissionStore.hasPermission(permission)) {
+              var validationResult = PermissionStore
                 .getPermission(permission)
                 .call(null, toParams, permission);
 

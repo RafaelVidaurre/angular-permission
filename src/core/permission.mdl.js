@@ -17,7 +17,7 @@
     });
   }]);
 
-  permission.run(['$rootScope', 'Permission', 'Authorization', '$state', '$q', function ($rootScope, Permission, Authorization, $state, $q) {
+  permission.run(['$rootScope', '$state', '$q', 'Authorization', function ($rootScope, $state, $q, Authorization) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
       if (areSetStatePermissions(toState)) {

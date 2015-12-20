@@ -1,21 +1,19 @@
 describe('service: Permission', function () {
   'use strict';
 
-  var Permission, $q, $rootScope, PermissionProvider;
+  var $q, $rootScope, PermissionStore;
 
   beforeEach(function () {
-    module('permission', function (_PermissionProvider_) {
-      PermissionProvider = _PermissionProvider_;
-    });
+    module('permission');
 
     inject(function ($injector) {
-      Permission = $injector.get('Permission');
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
+      PermissionStore = $injector.get('PermissionStore');
     });
   });
 
-  describe('provider: PermissionProvider', function () {
+  describe('provider: PermissionStore', function () {
 
     describe('method: setPermission', function () {
       it('should throw an exception on invalid permission', function () {
@@ -23,7 +21,7 @@ describe('service: Permission', function () {
         // WHEN
         // THEN
         expect(function () {
-          PermissionProvider.setPermission(null, function () {
+          PermissionStore.setPermission(null, function () {
             return true;
           });
         }).toThrow(new TypeError('Parameter "permission" name must be String'));
@@ -34,18 +32,18 @@ describe('service: Permission', function () {
         // WHEN
         // THEN
         expect(function () {
-          PermissionProvider.setPermission('valid-name', undefined);
+          PermissionStore.setPermission('valid-name', undefined);
         }).toThrow(new TypeError('Parameter "validationFunction" must be Function'));
       });
 
       it('should set permission for correct parameters', function () {
         // GIVEN
         // WHEN
-        PermissionProvider.setPermission('user', function () {
+        PermissionStore.setPermission('user', function () {
           return true;
         });
         // THEN
-        expect(Permission.hasPermission('user')).toBe(true);
+        expect(PermissionStore.hasPermission('user')).toBe(true);
       });
     });
 
@@ -55,7 +53,7 @@ describe('service: Permission', function () {
         // WHEN
         // THEN
         expect(function () {
-          PermissionProvider.setManyPermissions(null, function () {
+          PermissionStore.setManyPermissions(null, function () {
           });
         }).toThrow(new TypeError('Parameter "permissions" name must be Array'));
       });
@@ -63,13 +61,13 @@ describe('service: Permission', function () {
       it('should set permissions for correct set of parameters', function () {
         // GIVEN
         // WHEN
-        PermissionProvider.setManyPermissions(['user', 'admin'], function () {
+        PermissionStore.setManyPermissions(['user', 'admin'], function () {
           return true;
         });
 
         // THEN
-        expect(Permission.hasPermission('user')).toBe(true);
-        expect(Permission.hasPermission('admin')).toBe(true);
+        expect(PermissionStore.hasPermission('user')).toBe(true);
+        expect(PermissionStore.hasPermission('admin')).toBe(true);
       });
     });
   });

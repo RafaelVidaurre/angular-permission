@@ -2,7 +2,7 @@
   'use strict';
 
   angular.module('permission')
-    .provider('Permission', function () {
+    .provider('PermissionStore', function () {
       var permissionStore = {};
       var self = this;
 

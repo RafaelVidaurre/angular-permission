@@ -1,28 +1,26 @@
 describe('directive: Permission', function () {
   'use strict';
 
-  var $q, $compile, $rootScope, Permission, Authorization, PermissionProvider;
+  var $q, $compile, $rootScope, Authorization, PermissionStore;
 
 
   beforeEach(function () {
     // Instantiate module
-    module('permission', function ($injector) {
-      PermissionProvider = $injector.get('PermissionProvider');
-    });
+    module('permission');
 
     // Inject services into module
     inject(function ($injector) {
       $compile = $injector.get('$compile');
       $rootScope = $injector.get('$rootScope').$new();
       $q = $injector.get('$q');
-      Permission = $injector.get('Permission');
       Authorization = $injector.get('Authorization');
+      PermissionStore = $injector.get('PermissionStore');
     });
   });
 
   // Initialize permissions
   beforeEach(function () {
-    PermissionProvider.setPermission('USER', function () {
+    PermissionStore.setPermission('USER', function () {
       return true;
     });
   });

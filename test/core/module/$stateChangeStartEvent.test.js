@@ -1,32 +1,30 @@
 describe('module: Permission', function () {
   'use strict';
 
-  var $rootScope, $state, $stateProvider, Permission, PermissionProvider, Authorization;
+  var $rootScope, $state, $stateProvider, PermissionStore, Authorization;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {
       $stateProvider = $injector.get('$stateProvider');
     });
 
-    module('permission', function ($injector) {
-      PermissionProvider = $injector.get('PermissionProvider');
-    });
+    module('permission');
 
     inject(function ($injector) {
       $state = $injector.get('$state');
       $rootScope = $injector.get('$rootScope');
-      Permission = $injector.get('Permission');
       Authorization = $injector.get('Authorization');
+      PermissionStore = $injector.get('PermissionStore');
     });
   });
 
   // Initialize permissions
   beforeEach(function () {
-    PermissionProvider.setPermission('accepted', function () {
+    PermissionStore.setPermission('accepted', function () {
       return true;
     });
 
-    PermissionProvider.setPermission('denied', function () {
+    PermissionStore.setPermission('denied', function () {
       return false;
     });
   });
@@ -163,11 +161,11 @@ describe('module: Permission', function () {
           }
         });
 
-      PermissionProvider.setPermission('acceptedChild', function () {
+      PermissionStore.setPermission('acceptedChild', function () {
         return true;
       });
 
-      PermissionProvider.setPermission('deniedChild', function () {
+      PermissionStore.setPermission('deniedChild', function () {
         return true;
       });
 

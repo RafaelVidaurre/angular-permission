@@ -1,15 +1,13 @@
 describe('service: Authorization', function () {
   'use strict';
 
-  var Permission, $q, $rootScope, PermissionProvider, Authorization;
+  var $q, $rootScope, PermissionStore, Authorization;
 
   beforeEach(function () {
-    module('permission', function (_PermissionProvider_) {
-      PermissionProvider = _PermissionProvider_;
-    });
+    module('permission');
 
     inject(function ($injector) {
-      Permission = $injector.get('Permission');
+      PermissionStore = $injector.get('PermissionStore');
       Authorization = $injector.get('Authorization');
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
@@ -21,7 +19,7 @@ describe('service: Authorization', function () {
     var isResolved;
 
     beforeEach(function () {
-      Permission.setPermission('user', function () {
+      PermissionStore.setPermission('user', function () {
         return true;
       });
 
