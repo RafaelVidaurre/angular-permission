@@ -55,7 +55,7 @@ describe('service: Permission', function () {
         expect(function () {
           PermissionStore.setManyPermissions(null, function () {
           });
-        }).toThrow(new TypeError('Parameter "permissions" name must be Array'));
+        }).toThrow(new TypeError('Parameter "permissionNames" name must be Array'));
       });
 
       it('should set permissions for correct set of parameters', function () {
