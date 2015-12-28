@@ -3,7 +3,7 @@
 
   angular
     .module('permission')
-    .service('Authorization', ['$q', 'PermissionStore', function ($q, PermissionStore) {
+    .service('Authorization', function ($q, PermissionStore) {
       this.authorize = authorize;
 
       /**
@@ -91,11 +91,7 @@
 
           if (PermissionStore.hasPermission(permissionName)) {
             var permission = PermissionStore.getPermission(permissionName);
-            var validationResult = permission.call(null, toParams, permission);
-
-            if (!angular.isFunction(validationResult.then)) {
-              validationResult = wrapInPromise(validationResult);
-            }
+            var validationResult = permission.validatePermission(toParams);
 
             validationResult
               .then(function () {
@@ -113,24 +109,5 @@
 
         return promises;
       }
-
-      /**
-       * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
-       * @private
-       *
-       * @param func {Function} Function to be wrapped into promise
-       * @return {promise} $q.promise object
-       */
-      function wrapInPromise(func) {
-        var dfd = $q.defer();
-
-        if (func) {
-          dfd.resolve();
-        } else {
-          dfd.reject();
-        }
-
-        return dfd.promise;
-      }
-    }]);
+    });
 })();

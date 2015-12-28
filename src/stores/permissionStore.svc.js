@@ -3,7 +3,7 @@
 
   angular
     .module('permission')
-    .service('PermissionStore', [function () {
+    .service('PermissionStore', function (Permission) {
       var permissionStore = {};
 
       this.defineRole = defineRole;
@@ -48,21 +48,7 @@
        * @param validationFunction {Function} Function used to validate if permission is valid
        */
       function setPermission(permissionName, validationFunction) {
-        validatePermission(permissionName, validationFunction);
-        permissionStore[permissionName] = validationFunction;
-      }
-
-      /**
-       * Checks if provided permission has accepted parameter types
-       * @private
-       */
-      function validatePermission(name, validationFunction) {
-        if (!angular.isString(name)) {
-          throw new TypeError('Parameter "permission" name must be String');
-        }
-        if (!angular.isFunction(validationFunction)) {
-          throw new TypeError('Parameter "validationFunction" must be Function');
-        }
+        permissionStore[permissionName] = new Permission(permissionName, validationFunction);
       }
 
       /**
@@ -135,5 +121,5 @@
       function clearPermissions() {
         permissionStore = [];
       }
-    }]);
+    });
 }());

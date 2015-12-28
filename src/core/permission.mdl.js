@@ -8,16 +8,16 @@
    * when trying to obtain full toState state object not it's configuration
    * Can be removed when implemented https://github.com/angular-ui/ui-router/issues/13.
    */
-  permission.config(['$stateProvider', function ($stateProvider) {
+  permission.config(function ($stateProvider) {
     $stateProvider.decorator('parent', function (state, parentFn) {
       state.self.getState = function () {
         return state;
       };
       return parentFn(state);
     });
-  }]);
+  });
 
-  permission.run(['$rootScope', '$state', '$q', 'Authorization', function ($rootScope, $state, $q, Authorization) {
+  permission.run(function ($rootScope, $state, $q, Authorization) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
       if (areSetStatePermissions(toState)) {
@@ -253,5 +253,5 @@
         return $rootScope.$broadcast('$stateChangePermissionStart', toState, toParams, options).defaultPrevented;
       }
     });
-  }]);
+  });
 }());
