@@ -18,17 +18,17 @@
       }
 
       /**
-       * Checks if permission is still valid
+       * Checks if role is still valid
        *
        * @param toParams {Object} UI-Router params object
-       * @returns {promise}
+       * @returns {promise} $q.promise object
        */
       Role.prototype.validateRole = function (toParams) {
         var promises = [];
 
         angular.forEach(this.permissionNames, function (permissionName) {
-          if (PermissionStore.hasPermission(permissionName)) {
-            var permission = PermissionStore.getPermission(permissionName);
+          if (PermissionStore.hasPermissionDefinition(permissionName)) {
+            var permission = PermissionStore.getPermissionDefinition(permissionName);
             var validationResult = permission.validationFunction.call(null, toParams, this.permissionName);
 
             if (!angular.isFunction(validationResult.then)) {
@@ -41,7 +41,8 @@
           }
         });
 
-        return $q.all(promises);
+        return $q.all(promises)
+          .promise;
       };
 
       /**
@@ -67,12 +68,12 @@
        * Checks if provided permission has accepted parameter types
        * @private
        */
-      function validateConstructor(roleName, permissions) {
+      function validateConstructor(roleName, permissionNames) {
         if (!angular.isString(roleName)) {
-          throw new TypeError('Parameter "permission" name must be String');
+          throw new TypeError('Parameter "roleName" name must be String');
         }
-        if (!angular.isFunction(permissions)) {
-          throw new TypeError('Parameter "permissions" must be Array');
+        if (!angular.isArray(permissionNames)) {
+          throw new TypeError('Parameter "permissionNames" must be Array');
         }
       }
 

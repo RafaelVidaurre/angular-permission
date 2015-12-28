@@ -195,7 +195,7 @@ To define many permissions which share one validator callback, use `defineManyPe
 
 ```javascript
 Permission.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
-  return User.hasPermission(permissionName);
+  return User.hasPermissionDefinition(permissionName);
 });
 ```
 
@@ -203,7 +203,7 @@ or use internal `Permission` service to check if user has one of permissions:
 
 ```javascript
 Permission.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
-  return Permission.hasPermission(permissionName);
+  return Permission.hasPermissionDefinition(permissionName);
 });
 ```
 
@@ -212,22 +212,22 @@ Removing Permissions
 You can easily remove _all_ permissions after user logged out or switched profile:  
 
 ```javascript
-Permission.clearPermissions();
+Permission.clearStore();
 ```
 
-Alternatively you can use `removePermission` and `removeManyPermissions` to delete defined permissions manually:
+Alternatively you can use `removePermissionDefinition` and `removeManyPermissions` to delete defined permissions manually:
 
 ```javascript
-Permission.removePermission('user');
+Permission.removePermissionDefinition('user');
 Permission.removeManyPermissions(['admin', 'superAdmin']);
 ```
 
 Helper Method
 -----
-To get all user permissions use method `getPermissions`:
+To get all user permissions use method `getStore`:
 
 ```javascript
-var permissions = Permission.getPermissions();
+var permissions = Permission.getStore();
 ```
 
 Views

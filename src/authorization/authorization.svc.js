@@ -3,7 +3,7 @@
 
   angular
     .module('permission')
-    .service('Authorization', function ($q, PermissionStore, RoleStore) {
+    .service('Authorization', function ($q, PermissionMap, PermissionStore, RoleStore) {
       this.authorize = authorize;
 
       /**
@@ -14,28 +14,7 @@
        * @returns {promise} $q.promise object
        */
       function authorize(permissionsMap, toParams) {
-        validatePermissionMap(permissionsMap);
-        return handleAuthorization(permissionsMap, toParams);
-      }
-
-      /**
-       * Checks if provided permission map has accepted parameter types
-       * @private
-       *
-       * @param permissionMap {Object}
-       */
-      function validatePermissionMap(permissionMap) {
-        if (!angular.isObject(permissionMap)) {
-          throw new TypeError('Parameter "permissionMap" has to be Object');
-        }
-
-        if (angular.isUndefined(permissionMap.only) && angular.isUndefined(permissionMap.except)) {
-          throw new ReferenceError('Either "only" or "except" keys must me defined');
-        }
-
-        if (!(angular.isArray(permissionMap.only) || angular.isArray(permissionMap.except))) {
-          throw new TypeError('Parameter "permissionMap" properties must be Array');
-        }
+        return handleAuthorization(new PermissionMap(permissionsMap), toParams);
       }
 
       /**
@@ -76,6 +55,54 @@
       }
 
       /**
+       * Executes role validation checking
+       * @private
+       *
+       * @param roleName {String} Store permission key
+       * @param toParams {Object} UI-Router params object
+       * @returns {promise}
+       */
+      function handleRoleValidation(roleName, toParams) {
+        var dfd = $q.defer();
+        var role = RoleStore.getRoleDefinition(roleName);
+        var validationResult = role.validateRole(toParams);
+
+        validationResult
+          .then(function () {
+            dfd.resolve(roleName);
+          })
+          .catch(function () {
+            dfd.reject(roleName);
+          });
+
+        return dfd.promise;
+      }
+
+      /**
+       * Executes permission validation checking
+       * @private
+       *
+       * @param permissionName {String} Store permission key
+       * @param toParams {Object} UI-Router params object
+       * @returns {*}
+       */
+      function handlePermissionValidation(permissionName, toParams) {
+        var dfd = $q.defer();
+        var permission = PermissionStore.getPermissionDefinition(permissionName);
+        var validationResult = permission.validatePermission(toParams);
+
+        validationResult
+          .then(function () {
+            dfd.resolve(permissionName);
+          })
+          .catch(function () {
+            dfd.reject(permissionName);
+          });
+
+        return dfd.promise;
+      }
+
+      /**
        * Performs iteration over list of defined permissions looking for matching roles
        * @private
        *
@@ -87,37 +114,15 @@
         var promises = [];
 
         angular.forEach(permissionNames, function (permissionName) {
-          var validationResult, dfd = $q.defer();
-
-          if (RoleStore.hasDefinedRole(permissionName)) {
-            var role = RoleStore.getRoleDefinition(permissionName);
-            validationResult = role.validateRole(toParams);
-
-            validationResult
-              .then(function () {
-                dfd.resolve(permissionName);
-              })
-              .catch(function () {
-                dfd.reject(permissionName);
-              });
+          if (RoleStore.hasRoleDefinition(permissionName)) {
+            promises.push(handleRoleValidation(permissionName, toParams));
           }
 
-          if (PermissionStore.hasPermission(permissionName)) {
-            var permission = PermissionStore.getPermission(permissionName);
-            validationResult = permission.validatePermission(toParams);
-
-            validationResult
-              .then(function () {
-                dfd.resolve(permissionName);
-              })
-              .catch(function () {
-                dfd.reject(permissionName);
-              });
+          if (PermissionStore.hasPermissionDefinition(permissionName)) {
+            promises.push(handlePermissionValidation(permissionName, toParams));
           } else {
-            dfd.reject(permissionName);
+            promises.push($q.reject(permissionName));
           }
-
-          promises.push(dfd.promise);
         });
 
         return promises;

@@ -7,10 +7,9 @@
       var roleStore = {};
 
       this.defineRole = defineRole;
-      this.removeRoleDefinition = removeRoleDefinition;
-      this.removeManyRoleDefinitions = removeManyRoleDefinitions;
-      this.hasDefinedRole = hasDefinedRole;
       this.getRoleDefinition = getRoleDefinition;
+      this.hasRoleDefinition = hasRoleDefinition;
+      this.removeRoleDefinition = removeRoleDefinition;
       this.getStore = getStore;
       this.clearStore = clearStore;
 
@@ -26,55 +25,44 @@
       }
 
       /**
-       * Deletes permission
+       * Deletes role from store
        *
-       * @param permissionName {String} Name of defined permission
+       * @param roleName {String} Name of defined permission
        */
-      function removeRoleDefinition(permissionName) {
-        delete roleStore[permissionName];
+      function removeRoleDefinition(roleName) {
+        delete roleStore[roleName];
       }
 
       /**
-       * Deletes set of permissions
+       * Checks if role is defined in store
        *
-       * @param permissionNames {Array} Set of permission names
-       */
-      function removeManyRoleDefinitions(permissionNames) {
-        angular.forEach(permissionNames, function (permission) {
-          delete roleStore[permission];
-        });
-      }
-
-      /**
-       * Checks if permission exists
-       *
-       * @param permissionName {String} Name of defined permission
+       * @param roleName {String} Name of role
        * @returns {Boolean}
        */
-      function hasDefinedRole(permissionName) {
-        return angular.isDefined(roleStore[permissionName]);
+      function hasRoleDefinition(roleName) {
+        return angular.isDefined(roleStore[roleName]);
       }
 
       /**
-       * Returns permission by it's name
+       * Returns role definition object by it's name
        *
-       * @returns {Object} Permissions collection
+       * @returns {Object} Role definition object
        */
-      function getRoleDefinition(permissionName) {
-        return roleStore[permissionName];
+      function getRoleDefinition(roleName) {
+        return roleStore[roleName];
       }
 
       /**
-       * Returns all permissions
+       * Returns all role definitions
        *
-       * @returns {Object} Permissions collection
+       * @returns {Object} Defined roles collection
        */
       function getStore() {
         return roleStore;
       }
 
       /**
-       * Removes all permissions
+       * Removes all role definitions
        */
       function clearStore() {
         roleStore = [];

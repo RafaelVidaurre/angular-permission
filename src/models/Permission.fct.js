@@ -53,7 +53,7 @@
        */
       function validateConstructor(permissionName, validationFunction) {
         if (!angular.isString(permissionName)) {
-          throw new TypeError('Parameter "permission" name must be String');
+          throw new TypeError('Parameter "permissionName" name must be String');
         }
         if (!angular.isFunction(validationFunction)) {
           throw new TypeError('Parameter "validationFunction" must be Function');

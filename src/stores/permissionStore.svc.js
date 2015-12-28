@@ -6,40 +6,13 @@
     .service('PermissionStore', function (Permission) {
       var permissionStore = {};
 
-      this.defineRole = defineRole;
-      this.defineManyRoles = defineManyRoles;
       this.definePermission = definePermission;
       this.defineManyPermissions = defineManyPermissions;
-      this.removePermission = removePermission;
-      this.removeManyPermissions = removeManyPermissions;
-      this.hasPermission = hasPermission;
-      this.getPermission = getPermission;
-      this.getPermissions = getPermissions;
-      this.clearPermissions = clearPermissions;
-
-      /**
-       * Allows to define permission on application configuration
-       * @deprecated
-       *
-       * @param permissionName {String} Name of defined permission
-       * @param validationFunction {Function} Function used to validate if permission is valid
-       */
-      function defineRole(permissionName, validationFunction) {
-        console.warn('Function "defineRole" will be deprecated. Use "definePermission" instead');
-        definePermission(permissionName, validationFunction);
-      }
-
-      /**
-       * Allows to define set of permissions with shared validation function in runtime
-       * @deprecated
-       *
-       * @param permissionNames {Array} Set of permission names
-       * @param validationFunction {Function} Function used to validate if permission is valid
-       */
-      function defineManyRoles(permissionNames, validationFunction) {
-        console.warn('Function "defineManyRoles" will be deprecated. Use "defineManyPermissions" instead');
-        defineManyPermissions(permissionNames, validationFunction);
-      }
+      this.removePermissionDefinition = removePermissionDefinition;
+      this.hasPermissionDefinition = hasPermissionDefinition;
+      this.getPermissionDefinition = getPermissionDefinition;
+      this.getStore = getStore;
+      this.clearStore = clearStore;
 
       /**
        * Allows to define permission on application configuration
@@ -72,19 +45,8 @@
        *
        * @param permissionName {String} Name of defined permission
        */
-      function removePermission(permissionName) {
+      function removePermissionDefinition(permissionName) {
         delete permissionStore[permissionName];
-      }
-
-      /**
-       * Deletes set of permissions
-       *
-       * @param permissionNames {Array} Set of permission names
-       */
-      function removeManyPermissions(permissionNames) {
-        angular.forEach(permissionNames, function (permission) {
-          delete permissionStore[permission];
-        });
       }
 
       /**
@@ -93,7 +55,7 @@
        * @param permissionName {String} Name of defined permission
        * @returns {Boolean}
        */
-      function hasPermission(permissionName) {
+      function hasPermissionDefinition(permissionName) {
         return angular.isDefined(permissionStore[permissionName]);
       }
 
@@ -102,7 +64,7 @@
        *
        * @returns {Object} Permissions collection
        */
-      function getPermission(permissionName) {
+      function getPermissionDefinition(permissionName) {
         return permissionStore[permissionName];
       }
 
@@ -111,14 +73,14 @@
        *
        * @returns {Object} Permissions collection
        */
-      function getPermissions() {
+      function getStore() {
         return permissionStore;
       }
 
       /**
        * Removes all permissions
        */
-      function clearPermissions() {
+      function clearStore() {
         permissionStore = [];
       }
     });
