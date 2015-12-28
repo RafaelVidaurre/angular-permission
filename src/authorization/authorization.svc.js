@@ -3,7 +3,7 @@
 
   angular
     .module('permission')
-    .service('Authorization', function ($q, PermissionStore) {
+    .service('Authorization', function ($q, PermissionStore, RoleStore) {
       this.authorize = authorize;
 
       /**
@@ -87,11 +87,24 @@
         var promises = [];
 
         angular.forEach(permissionNames, function (permissionName) {
-          var dfd = $q.defer();
+          var validationResult, dfd = $q.defer();
+
+          if (RoleStore.hasDefinedRole(permissionName)) {
+            var role = RoleStore.getRoleDefinition(permissionName);
+            validationResult = role.validateRole(toParams);
+
+            validationResult
+              .then(function () {
+                dfd.resolve(permissionName);
+              })
+              .catch(function () {
+                dfd.reject(permissionName);
+              });
+          }
 
           if (PermissionStore.hasPermission(permissionName)) {
             var permission = PermissionStore.getPermission(permissionName);
-            var validationResult = permission.validatePermission(toParams);
+            validationResult = permission.validatePermission(toParams);
 
             validationResult
               .then(function () {

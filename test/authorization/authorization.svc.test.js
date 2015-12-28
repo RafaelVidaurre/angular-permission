@@ -19,7 +19,7 @@ describe('service: Authorization', function () {
     var isResolved;
 
     beforeEach(function () {
-      PermissionStore.setPermission('user', function () {
+      PermissionStore.definePermission('user', function () {
         return true;
       });
 

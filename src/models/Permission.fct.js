@@ -6,7 +6,7 @@
     .factory('Permission', function ($q) {
 
       function Permission(permissionName, validationFunction) {
-        validatePermissionConstructor(permissionName, validationFunction);
+        validateConstructor(permissionName, validationFunction);
 
         this.permissionName = permissionName;
         this.validationFunction = validationFunction;
@@ -51,7 +51,7 @@
        * Checks if provided permission has accepted parameter types
        * @private
        */
-      function validatePermissionConstructor(permissionName, validationFunction) {
+      function validateConstructor(permissionName, validationFunction) {
         if (!angular.isString(permissionName)) {
           throw new TypeError('Parameter "permission" name must be String');
         }

@@ -20,7 +20,7 @@ describe('directive: Permission', function () {
 
   // Initialize permissions
   beforeEach(function () {
-    PermissionStore.setPermission('USER', function () {
+    PermissionStore.definePermission('USER', function () {
       return true;
     });
   });

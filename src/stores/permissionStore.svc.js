@@ -8,8 +8,8 @@
 
       this.defineRole = defineRole;
       this.defineManyRoles = defineManyRoles;
-      this.setPermission = setPermission;
-      this.setManyPermissions = setManyPermissions;
+      this.definePermission = definePermission;
+      this.defineManyPermissions = defineManyPermissions;
       this.removePermission = removePermission;
       this.removeManyPermissions = removeManyPermissions;
       this.hasPermission = hasPermission;
@@ -25,8 +25,8 @@
        * @param validationFunction {Function} Function used to validate if permission is valid
        */
       function defineRole(permissionName, validationFunction) {
-        console.warn('Function "defineRole" will be deprecated. Use "setPermission" instead');
-        setPermission(permissionName, validationFunction);
+        console.warn('Function "defineRole" will be deprecated. Use "definePermission" instead');
+        definePermission(permissionName, validationFunction);
       }
 
       /**
@@ -37,8 +37,8 @@
        * @param validationFunction {Function} Function used to validate if permission is valid
        */
       function defineManyRoles(permissionNames, validationFunction) {
-        console.warn('Function "defineManyRoles" will be deprecated. Use "setManyPermissions" instead');
-        setManyPermissions(permissionNames, validationFunction);
+        console.warn('Function "defineManyRoles" will be deprecated. Use "defineManyPermissions" instead');
+        defineManyPermissions(permissionNames, validationFunction);
       }
 
       /**
@@ -47,7 +47,7 @@
        * @param permissionName {String} Name of defined permission
        * @param validationFunction {Function} Function used to validate if permission is valid
        */
-      function setPermission(permissionName, validationFunction) {
+      function definePermission(permissionName, validationFunction) {
         permissionStore[permissionName] = new Permission(permissionName, validationFunction);
       }
 
@@ -57,13 +57,13 @@
        * @param permissionNames {Array} Set of permission names
        * @param validationFunction {Function} Function used to validate if permission is valid
        */
-      function setManyPermissions(permissionNames, validationFunction) {
+      function defineManyPermissions(permissionNames, validationFunction) {
         if (!angular.isArray(permissionNames)) {
           throw new TypeError('Parameter "permissionNames" name must be Array');
         }
 
         angular.forEach(permissionNames, function (permissionName) {
-          setPermission(permissionName, validationFunction);
+          definePermission(permissionName, validationFunction);
         });
       }
 

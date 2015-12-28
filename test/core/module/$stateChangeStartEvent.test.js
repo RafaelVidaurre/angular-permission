@@ -20,11 +20,11 @@ describe('module: Permission', function () {
 
   // Initialize permissions
   beforeEach(function () {
-    PermissionStore.setPermission('accepted', function () {
+    PermissionStore.definePermission('accepted', function () {
       return true;
     });
 
-    PermissionStore.setPermission('denied', function () {
+    PermissionStore.definePermission('denied', function () {
       return false;
     });
   });
@@ -161,11 +161,11 @@ describe('module: Permission', function () {
           }
         });
 
-      PermissionStore.setPermission('acceptedChild', function () {
+      PermissionStore.definePermission('acceptedChild', function () {
         return true;
       });
 
-      PermissionStore.setPermission('deniedChild', function () {
+      PermissionStore.definePermission('deniedChild', function () {
         return true;
       });
 
