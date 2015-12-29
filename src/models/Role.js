@@ -5,15 +5,21 @@
     .module('permission')
     .factory('Role', function ($q, PermissionStore) {
 
+      /**
+       * Role definition constructor
+       *
+       * @param roleName {String} Name representing role
+       * @param permissionNames {Array} List of permission names representing role
+       * @param [validationFunction] {Function} Optional function used to validate if permissions are still valid
+       * @constructor
+       */
       function Role(roleName, permissionNames, validationFunction) {
         validateConstructor(roleName, permissionNames);
         this.roleName = roleName;
-        this.permissionNames = permissionNames;
+        this.permissionNames = permissionNames || [];
 
         if (validationFunction) {
-          angular.forEach(permissionNames, function (permissionName) {
-            PermissionStore.defineManyPermissions(permissionName, validationFunction);
-          });
+          PermissionStore.defineManyPermissions(permissionNames, validationFunction);
         }
       }
 
@@ -24,25 +30,23 @@
        * @returns {promise} $q.promise object
        */
       Role.prototype.validateRole = function (toParams) {
-        var promises = [];
 
-        angular.forEach(this.permissionNames, function (permissionName) {
+        var promises = this.permissionNames.map(function (permissionName) {
           if (PermissionStore.hasPermissionDefinition(permissionName)) {
             var permission = PermissionStore.getPermissionDefinition(permissionName);
-            var validationResult = permission.validationFunction.call(null, toParams, this.permissionName);
+            var validationResult = permission.validationFunction.call(null, toParams, permission.permissionName);
 
             if (!angular.isFunction(validationResult.then)) {
               validationResult = wrapInPromise(validationResult);
             }
 
-            promises.push(validationResult);
-          } else {
-            promises.push($q.reject(null));
+            return validationResult;
           }
+
+          return $q.reject(null);
         });
 
-        return $q.all(promises)
-          .promise;
+        return $q.all(promises);
       };
 
       /**

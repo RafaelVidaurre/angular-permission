@@ -13,7 +13,7 @@ describe('model: Permission', function () {
     });
   });
 
-  describe('method: Permission', function () {
+  describe('constructor: Permission', function () {
     it('should throw an exception on invalid permissionName', function () {
       // GIVEN
       // WHEN

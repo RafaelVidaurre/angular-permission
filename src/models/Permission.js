@@ -5,6 +5,13 @@
     .module('permission')
     .factory('Permission', function ($q) {
 
+      /**
+       * Permission definition object constructor
+       *
+       * @param permissionName {String} Name repressing permission
+       * @param validationFunction {Function} Function used to check if permission is valid
+       * @constructor
+       */
       function Permission(permissionName, validationFunction) {
         validateConstructor(permissionName, validationFunction);
 

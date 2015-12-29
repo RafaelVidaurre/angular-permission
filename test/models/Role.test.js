@@ -1,7 +1,7 @@
-describe('model: Permission', function () {
+describe('model: Role', function () {
   'use strict';
 
-  var $q, $rootScope, Role;
+  var $q, $rootScope, Role, PermissionStore;
 
   beforeEach(function () {
     module('permission');
@@ -10,10 +10,11 @@ describe('model: Permission', function () {
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
       Role = $injector.get('Role');
+      PermissionStore = $injector.get('PermissionStore');
     });
   });
 
-  describe('method: Role', function () {
+  describe('constructor: Role', function () {
     it('should throw an exception on invalid roleName', function () {
       // GIVEN
       // WHEN
@@ -36,15 +37,30 @@ describe('model: Permission', function () {
 
     it('should return new role definition instance for correct parameters', function () {
       // GIVEN
-      var permissionName = 'user';
+      var permissionName = 'ACCOUNTANT';
       var permissionNames = [];
 
       // WHEN
-      var role = new Role(permissionName, permissionNames);
+      var role = new Role(permissionName, permissionNames, function () {
+        return true;
+      });
 
       // THEN
       expect(role.roleName).toBe(permissionName);
       expect(role.permissionNames).toBe(permissionNames);
+    });
+
+
+    it('should add permission definitions to PermissionStore when provided validationFunction', function () {
+      // GIVEN
+      var validationFunction = function () {
+        return true;
+      };
+      // WHEN
+      new Role('ACCOUNTANT', ['USER'], validationFunction);
+      // THEN
+      expect(PermissionStore.hasPermissionDefinition('USER')).toBe(true);
+      expect(PermissionStore.getPermissionDefinition('USER').validationFunction).toBe(validationFunction);
     });
   });
 });

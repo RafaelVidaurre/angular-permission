@@ -26,6 +26,15 @@ describe('service: PermissionStore', function () {
   });
 
   describe('method: defineManyPermissions', function () {
+    it('should throw error if permissionNames is not Array', function () {
+      // GIVEN
+      // WHEN
+      // THEN
+      expect(function () {
+        PermissionStore.defineManyPermissions({}, null);
+      }).toThrow(new TypeError('Parameter "permissionNames" name must be Array'));
+    });
+
     it('should add permission definitions to store for correct set of parameters', function () {
       // GIVEN
       // WHEN

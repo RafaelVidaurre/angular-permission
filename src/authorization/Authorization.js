@@ -10,7 +10,7 @@
        * Checks if provided permissions are acceptable
        *
        * @param permissionsMap {Object} Map of "only" and "except" permission names
-       * @param toParams {Object} UI-Router params object
+       * @param [toParams] {Object} UI-Router params object
        * @returns {promise} $q.promise object
        */
       function authorize(permissionsMap, toParams) {
@@ -52,6 +52,28 @@
           });
 
         return deferred.promise;
+      }
+
+      /**
+       * Performs iteration over list of defined permissions looking for matching roles
+       * @private
+       *
+       * @param permissionNames {Array} Set of permission names
+       * @param toParams {Object} UI-Router params object
+       * @returns {Array} Promise collection
+       */
+      function findMatchingPermissions(permissionNames, toParams) {
+        return permissionNames.map(function (permissionName) {
+          if (RoleStore.hasRoleDefinition(permissionName)) {
+            return handleRoleValidation(permissionName, toParams);
+          }
+
+          if (PermissionStore.hasPermissionDefinition(permissionName)) {
+            return handlePermissionValidation(permissionName, toParams);
+          }
+
+          return $q.reject(permissionName);
+        });
       }
 
       /**
@@ -100,32 +122,6 @@
           });
 
         return dfd.promise;
-      }
-
-      /**
-       * Performs iteration over list of defined permissions looking for matching roles
-       * @private
-       *
-       * @param permissionNames {Array} Set of permission names
-       * @param toParams {Object} UI-Router params object
-       * @returns {Array} Promise collection
-       */
-      function findMatchingPermissions(permissionNames, toParams) {
-        var promises = [];
-
-        angular.forEach(permissionNames, function (permissionName) {
-          if (RoleStore.hasRoleDefinition(permissionName)) {
-            promises.push(handleRoleValidation(permissionName, toParams));
-          }
-
-          if (PermissionStore.hasPermissionDefinition(permissionName)) {
-            promises.push(handlePermissionValidation(permissionName, toParams));
-          } else {
-            promises.push($q.reject(permissionName));
-          }
-        });
-
-        return promises;
       }
     });
 })();
