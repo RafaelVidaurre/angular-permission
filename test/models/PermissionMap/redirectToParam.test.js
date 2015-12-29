@@ -1,4 +1,4 @@
-describe('module: Permission', function () {
+describe('model: PermissionMap', function () {
   'use strict';
 
   var $rootScope, $state, $stateProvider, $q, PermissionStore;

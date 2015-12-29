@@ -1,7 +1,7 @@
 describe('service: PermissionStore', function () {
   'use strict';
 
-  var $q, $rootScope, PermissionStore;
+  var $q, $rootScope, PermissionStore, Permission;
 
   beforeEach(function () {
     module('permission');
@@ -10,6 +10,7 @@ describe('service: PermissionStore', function () {
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
       PermissionStore = $injector.get('PermissionStore');
+      Permission = $injector.get('Permission');
     });
   });
 
@@ -45,6 +46,20 @@ describe('service: PermissionStore', function () {
       // THEN
       expect(PermissionStore.hasPermissionDefinition('user')).toBe(true);
       expect(PermissionStore.hasPermissionDefinition('admin')).toBe(true);
+    });
+  });
+
+  describe('method: getPermissionDefinition', function () {
+    it('should return permission definition object', function () {
+      // GIVEN
+      PermissionStore.definePermission('USER', function () {
+        return true;
+      });
+      // WHEN
+      var permission = PermissionStore.getPermissionDefinition('USER');
+
+      // THEN
+      expect(permission instanceof Permission).toBeTruthy();
     });
   });
 
