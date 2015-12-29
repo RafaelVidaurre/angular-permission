@@ -13,9 +13,9 @@
        * @param permissionMap.except {Array} List of exclusive permission/role names denied for authorization
        * @param permissionMap.redirectTo {String|Function|Object|promise} Handling redirection when rejected
        *   authorization
-       * @param toState {Object} UI-Router transition state object
-       * @param toParams {Object} UI-Router transition state params
-       * @param options {Object} UI-Router transition state options
+       * @param [toState] {Object} UI-Router transition state object
+       * @param [toParams] {Object} UI-Router transition state params
+       * @param [options] {Object} UI-Router transition state options
        * @constructor
        */
       function PermissionMap(permissionMap, toState, toParams, options) {
@@ -29,7 +29,7 @@
        *
        * @param permissionMap {PermissionMap} Compensated permission map
        */
-      PermissionMap.prototype.extendPermissionMap = function(permissionMap) {
+      PermissionMap.prototype.extendPermissionMap = function (permissionMap) {
         this.only = this.only.concat(permissionMap.only);
         this.except = this.except.concat(permissionMap.except);
       };
@@ -40,7 +40,7 @@
        *
        * @param rejectedPermissionName {String} Permission name
        */
-      PermissionMap.prototype.redirectToState = function(rejectedPermissionName) {
+      PermissionMap.prototype.redirectToState = function (rejectedPermissionName) {
         if (angular.isFunction(this.redirectTo)) {
           handleFunctionRedirect(this.redirectTo, rejectedPermissionName);
         }
@@ -108,9 +108,9 @@
        * @private
        *
        * @param property {Array|Function|promise} Permission map property "only" or "except"
-       * @param toState {Object} UI-Router transition state object
-       * @param toParams {Object} UI-Router transition state params
-       * @param options {Object} UI-Router transition state options
+       * @param [toState] {Object} UI-Router transition state object
+       * @param [toParams] {Object} UI-Router transition state params
+       * @param [options] {Object} UI-Router transition state options
        * @returns {Array} Array of permission "only" or "except" names
        */
       function resolvePermissionMapProperty(property, toState, toParams, options) {
