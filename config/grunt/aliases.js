@@ -15,6 +15,7 @@ module.exports = function () {
         'karma',
         'clean',
         'concat',
+        'ngAnnotate',
         'uglify'
       ]
     },

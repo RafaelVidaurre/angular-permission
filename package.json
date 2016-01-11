@@ -1,15 +1,17 @@
 {
   "name": "angular-permission",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)",
   "author": {
     "name": "Rafael Vidaurre",
     "email": "narzerus@gmail.com"
   },
-  "contributors":[{
-    "name": "Blazej Krysiak",
-    "email": "blazej.krysiak@gmail.com"
-  }],
+  "contributors": [
+    {
+      "name": "Blazej Krysiak",
+      "email": "blazej.krysiak@gmail.com"
+    }
+  ],
   "main": "dist/angular-permission.js",
   "repository": {
     "type": "git",
@@ -40,6 +42,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-karma": "^0.8.3",
     "grunt-newer": "^0.7.0",
+    "grunt-ng-annotate": "^1.0.1",
     "jshint-stylish": "^2.1.0",
     "karma": "^0.12.17",
     "karma-jasmine": "^0.3.6",

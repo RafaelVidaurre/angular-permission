@@ -1,32 +1,30 @@
-describe('module: Permission', function () {
+describe('model: PermissionMap', function () {
   'use strict';
 
-  var $rootScope, $state, $stateProvider, $q, $exceptionHandler, PermissionProvider;
+  var $rootScope, $state, $stateProvider, $q, PermissionStore;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {
       $stateProvider = $injector.get('$stateProvider');
     });
 
-    module('permission', function ($injector) {
-      PermissionProvider = $injector.get('PermissionProvider');
-    });
+    module('permission');
 
     inject(function ($injector) {
       $state = $injector.get('$state');
       $q = $injector.get('$q');
       $rootScope = $injector.get('$rootScope');
-      $exceptionHandler = $injector.get('$exceptionHandler');
+      PermissionStore = $injector.get('PermissionStore');
     });
   });
 
   // Initialize permissions
   beforeEach(function () {
-    PermissionProvider.setPermission('accepted', function () {
+    PermissionStore.definePermission('accepted', function () {
       return true;
     });
 
-    PermissionProvider.setPermission('denied', function () {
+    PermissionStore.definePermission('denied', function () {
       return false;
     });
   });

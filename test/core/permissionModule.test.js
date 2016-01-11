@@ -1,31 +1,31 @@
 describe('module: Permission', function () {
   'use strict';
 
-  var $rootScope, $state, $stateProvider, Permission, PermissionProvider;
+  var $rootScope, $state, $stateProvider, PermissionStore, PermissionMap, Authorization;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {
       $stateProvider = $injector.get('$stateProvider');
     });
 
-    module('permission', function ($injector) {
-      PermissionProvider = $injector.get('PermissionProvider');
-    });
+    module('permission');
 
     inject(function ($injector) {
       $state = $injector.get('$state');
       $rootScope = $injector.get('$rootScope');
-      Permission = $injector.get('Permission');
+      Authorization = $injector.get('Authorization');
+      PermissionStore = $injector.get('PermissionStore');
+      PermissionMap = $injector.get('PermissionMap');
     });
   });
 
   // Initialize permissions
   beforeEach(function () {
-    PermissionProvider.setPermission('accepted', function () {
+    PermissionStore.definePermission('accepted', function () {
       return true;
     });
 
-    PermissionProvider.setPermission('denied', function () {
+    PermissionStore.definePermission('denied', function () {
       return false;
     });
   });
@@ -162,25 +162,25 @@ describe('module: Permission', function () {
           }
         });
 
-      PermissionProvider.setPermission('acceptedChild', function () {
+      PermissionStore.definePermission('acceptedChild', function () {
         return true;
       });
 
-      PermissionProvider.setPermission('deniedChild', function () {
+      PermissionStore.definePermission('deniedChild', function () {
         return true;
       });
 
-      spyOn(Permission, 'authorize').and.callThrough();
+      spyOn(Authorization, 'authorize').and.callThrough();
 
       // WHEN
       $state.go('compensated.child');
       $rootScope.$apply();
 
 
-      expect(Permission.authorize).toHaveBeenCalledWith({
+      expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
         only: ['acceptedChild', 'accepted'],
         except: ['deniedChild', 'denied']
-      }, {});
+      }), {});
     });
   });
 });

@@ -21,10 +21,8 @@ module.exports = function(config) {
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
-      'src/**/*.mdl.js',
-      'src/**/*.drv.js',
-      'src/**/*.svc.js',
-      'src/**/*.ctl.js',
+      'src/core/permissionModule.js',
+      'src/**/*.js',
       'test/**/*.test.js'
     ],
 

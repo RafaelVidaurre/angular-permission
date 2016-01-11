@@ -1,14 +1,22 @@
 (function () {
   'use strict';
 
+  /**
+   * Show/hide elements based on provided permissions
+   *
+   * @example
+   * <div permission only="'USER'"></div>
+   * <div permission only="['USER','ADMIN']" except="'MANAGER'"></div>
+   * <div permission except="'MANAGER'"></div>
+   */
   angular
     .module('permission')
-    .directive('permission', ['$log', 'Permission', function ($log, Permission) {
+    .directive('permission', function ($log, Authorization) {
       return {
         restrict: 'A',
         link: function (scope, element, attrs) {
           try {
-            Permission
+            Authorization
               .authorize({
                 only: scope.$eval(attrs.only),
                 except: scope.$eval(attrs.except)
@@ -25,5 +33,5 @@
           }
         }
       };
-    }]);
+    });
 }());

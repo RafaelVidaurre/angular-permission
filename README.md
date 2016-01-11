@@ -144,7 +144,7 @@ session belongs to them.
 angular.module('fooModule', ['permission', 'user'])
   .run(function (Permission, User) {
     // Define anonymous permission
-    Permission.setPermission('anonymous', function (stateParams) {
+    Permission.definePermission('anonymous', function (stateParams) {
       // If the returned value is *truthy* then the user has the permission, otherwise they don't
       if (!User) {
         return true; // Is anonymous
@@ -162,7 +162,7 @@ angular.module('barModule', ['permission', 'user'])
   .run(function (Permission, User, $q) {
     Permission
       // Define user permission calling back-end
-      .setPermission('user', function (stateParams) {
+      .definePermission('user', function (stateParams) {
         // This time we will return a promise
         // If the promise *resolves* then the user has the permission, if it *rejects* (you guessed it)
 
@@ -170,7 +170,7 @@ angular.module('barModule', ['permission', 'user'])
         return User.checkSession();
       })
       // A different example for admin
-      .setPermission('admin', function (stateParams) {
+      .definePermission('admin', function (stateParams) {
         var deferred = $q.defer();
 
         User.getAccessLevel().then(function (data) {
@@ -191,19 +191,19 @@ angular.module('barModule', ['permission', 'user'])
 
 You can also set many permissions which share the same validator. This is useful when you have some central service which handles the validation.
 
-To define many permissions which share one validator callback, use `setManyPermissions(<array>, <validator function>)`
+To define many permissions which share one validator callback, use `defineManyPermissions(<array>, <validator function>)`
 
 ```javascript
-Permission.setManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
-  return User.hasPermission(permissionName);
+Permission.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
+  return User.hasPermissionDefinition(permissionName);
 });
 ```
 
 or use internal `Permission` service to check if user has one of permissions:
 
 ```javascript
-Permission.setManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
-  return Permission.hasPermission(permissionName);
+Permission.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
+  return Permission.hasPermissionDefinition(permissionName);
 });
 ```
 
@@ -212,22 +212,22 @@ Removing Permissions
 You can easily remove _all_ permissions after user logged out or switched profile:  
 
 ```javascript
-Permission.clearPermissions();
+Permission.clearStore();
 ```
 
-Alternatively you can use `removePermission` and `removeManyPermissions` to delete defined permissions manually:
+Alternatively you can use `removePermissionDefinition` and `removeManyPermissions` to delete defined permissions manually:
 
 ```javascript
-Permission.removePermission('user');
+Permission.removePermissionDefinition('user');
 Permission.removeManyPermissions(['admin', 'superAdmin']);
 ```
 
 Helper Method
 -----
-To get all user permissions use method `getPermissions`:
+To get all user permissions use method `getStore`:
 
 ```javascript
-var permissions = Permission.getPermissions();
+var permissions = Permission.getStore();
 ```
 
 Views
