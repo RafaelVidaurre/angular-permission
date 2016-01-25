@@ -208,7 +208,6 @@ angular.module('barModule', ['permission', 'user'])
   });
 ```
 
-
 Removing
 ----------------------------
 To remove _all_ roles after user logged out or switched profile use:  
@@ -225,7 +224,7 @@ RoleStore.removePermissionDefinition('user');
 
 Retrieving all roles definitions
 ----------------------------
-To get all user permissions use method `getStore`:
+To get all user roles use method `getStore`:
 
 ```javascript
 var roles = RoleStore.getStore();
