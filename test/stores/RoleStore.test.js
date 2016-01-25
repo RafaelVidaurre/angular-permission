@@ -1,7 +1,7 @@
 describe('service: RoleStore', function () {
   'use strict';
 
-  var $q, $rootScope, RoleStore, Role;
+  var $q, $rootScope, RoleStore, PermissionStore, Role;
 
   beforeEach(function () {
     module('permission');
@@ -13,19 +13,35 @@ describe('service: RoleStore', function () {
       $rootScope = $injector.get('$rootScope');
       Role = $injector.get('Role');
       RoleStore = $injector.get('RoleStore');
+      PermissionStore = $injector.get('PermissionStore');
     });
   });
 
   beforeEach(function () {
-    RoleStore.defineRole('ACCOUNTANT', []);
+    PermissionStore.definePermission('USER', function () {
+      return true;
+    });
+
+    RoleStore.defineRole('ACCOUNTANT', ['USER']);
+
+    RoleStore.defineRole('MANGER', [], function(){
+      return true;
+    });
   });
 
   describe('method: defineRole', function () {
-    it('should add role definition to store for correct parameters', function () {
+    it('should add role definition to store when passed array of permissions', function () {
       // GIVEN
       // WHEN
       // THEN
       expect(RoleStore.hasRoleDefinition('ACCOUNTANT')).toBe(true);
+    });
+
+    it('should add role definition to store when passed validation function', function () {
+      // GIVEN
+      // WHEN
+      // THEN
+      expect(RoleStore.hasRoleDefinition('MANGER')).toBe(true);
     });
   });
 
@@ -41,11 +57,18 @@ describe('service: RoleStore', function () {
   });
 
   describe('method: hasRoleDefinition', function () {
-    it('should check if role is defined', function () {
+    it('should check if role is defined when passed array of permissions', function () {
       // GIVEN
       // WHEN
       // THEN
       expect(RoleStore.hasRoleDefinition('ACCOUNTANT')).toBeTruthy();
+    });
+
+    it('should check if role is defined when passed validation function', function () {
+      // GIVEN
+      // WHEN
+      // THEN
+      expect(RoleStore.hasRoleDefinition('MANGER')).toBeTruthy();
     });
   });
 
@@ -55,7 +78,7 @@ describe('service: RoleStore', function () {
       // WHEN
       var store = RoleStore.getStore();
       // THEN
-      expect(Object.keys(store).length).toEqual(1);
+      expect(Object.keys(store).length).toEqual(2);
     });
   });
 

@@ -14,7 +14,7 @@
        * @constructor
        */
       function Role(roleName, permissionNames, validationFunction) {
-        validateConstructor(roleName, permissionNames);
+        validateConstructor(roleName, permissionNames, validationFunction);
         this.roleName = roleName;
         this.permissionNames = permissionNames || [];
 
@@ -27,26 +27,38 @@
        * Checks if role is still valid
        *
        * @param toParams {Object} UI-Router params object
-       * @returns {promise} $q.promise object
+       * @returns {Promise} $q.promise object
        */
       Role.prototype.validateRole = function (toParams) {
 
-        var promises = this.permissionNames.map(function (permissionName) {
-          if (PermissionStore.hasPermissionDefinition(permissionName)) {
-            var permission = PermissionStore.getPermissionDefinition(permissionName);
-            var validationResult = permission.validationFunction.call(null, toParams, permission.permissionName);
+        // When set permissions is provided check each of them
+        if (this.permissionNames.length) {
+          var promises = this.permissionNames.map(function (permissionName) {
+            if (PermissionStore.hasPermissionDefinition(permissionName)) {
+              var permission = PermissionStore.getPermissionDefinition(permissionName);
+              var validationResult = permission.validationFunction.call(null, toParams, permission.permissionName);
 
-            if (!angular.isFunction(validationResult.then)) {
-              validationResult = wrapInPromise(validationResult);
+              if (!angular.isFunction(validationResult.then)) {
+                validationResult = wrapInPromise(validationResult);
+              }
+
+              return validationResult;
             }
 
-            return validationResult;
-          }
+            return $q.reject(null);
+          });
 
-          return $q.reject(null);
-        });
+          return $q.all(promises);
+        }
 
-        return $q.all(promises);
+        // If not call validation function manually
+        var validationResult = this.validationFunction.call(null, toParams, this.roleName);
+        if (!angular.isFunction(validationResult.then)) {
+          validationResult = wrapInPromise(validationResult);
+        }
+
+        return $q.resolve(validationResult);
+
       };
 
       /**
@@ -72,12 +84,17 @@
        * Checks if provided permission has accepted parameter types
        * @private
        */
-      function validateConstructor(roleName, permissionNames) {
+      function validateConstructor(roleName, permissionNames, validationFunction) {
         if (!angular.isString(roleName)) {
           throw new TypeError('Parameter "roleName" name must be String');
         }
+
         if (!angular.isArray(permissionNames)) {
           throw new TypeError('Parameter "permissionNames" must be Array');
+        }
+
+        if (!permissionNames.length && !angular.isFunction(validationFunction)) {
+          throw new TypeError('Parameter "validationFunction" must be provided for empty "permissionNames" array');
         }
       }
 
