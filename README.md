@@ -392,9 +392,6 @@ $urlRouterProvider.otherwise( function($injector) {
 
 Contributing
 ============================
-This project is still in diapers and I would love your feedback / help in making this a great module
-for angular developers to use.
-
 The correct way to contribute is:
   1. Create a branch from the `development` branch
   2. Implement your new feature
