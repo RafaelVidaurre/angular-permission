@@ -11,7 +11,7 @@ module.exports = function(config) {
     autoWatch: true,
 
     // base path, that will be used to resolve files and exclude
-    basePath: '../',
+    basePath: '../../',
 
     // testing framework to use (jasmine/mocha/qunit/...)
     frameworks: ['jasmine'],
@@ -21,11 +21,9 @@ module.exports = function(config) {
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
-      'src/**/*.mdl.js',
-      'src/**/*.drv.js',
-      'src/**/*.svc.js',
-      'src/**/*.ctl.js',
-      'src/**/*.test.js'
+      'src/core/permissionModule.js',
+      'src/**/*.js',
+      'test/**/*.test.js'
     ],
 
     // list of files / patterns to exclude
@@ -46,9 +44,12 @@ module.exports = function(config) {
       'PhantomJS'
     ],
 
+    reporters: ['mocha'],
+
     // Which plugins to enable
     plugins: [
       'karma-phantomjs-launcher',
+      'karma-mocha-reporter',
       'karma-jasmine'
     ],
 
