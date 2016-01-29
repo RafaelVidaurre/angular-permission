@@ -27,7 +27,7 @@
   "bugs": {
     "url": "https://github.com/Narzerus/angular-permission/issues"
   },
-  "homepage": "https://github.com/Narzerus/angular-permission",
+  "homepage": "http://www.rafaelvidaurre.com",
   "peerDependencies": {
     "angular-ui-router": "^0.2.11"
   },
