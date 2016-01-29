@@ -1,177 +1,11 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.0.0 - 2016-01-25
+ * @version v2.0.1 - 2016-01-29
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
-
-(function () {
-  'use strict';
-
-  angular
-    .module('permission')
-    .service('Authorization', ['$q', 'PermissionMap', 'PermissionStore', 'RoleStore', function ($q, PermissionMap, PermissionStore, RoleStore) {
-      this.authorize = authorize;
-
-      /**
-       * Checks if provided permissions are acceptable
-       *
-       * @param permissionsMap {Object} Map of "only" and "except" permission names
-       * @param [toParams] {Object} UI-Router params object
-       * @returns {promise} $q.promise object
-       */
-      function authorize(permissionsMap, toParams) {
-        return handleAuthorization(new PermissionMap(permissionsMap), toParams);
-      }
-
-      /**
-       * Handles authorization based on provided permissions map
-       * @private
-       *
-       * @param permissionsMap {Object} Map of "only" and "except" permission names
-       * @param toParams {Object} UI-Router params object
-       * @returns {promise} $q.promise object
-       */
-      function handleAuthorization(permissionsMap, toParams) {
-        var deferred = $q.defer();
-
-        var exceptPromises = findMatchingPermissions(permissionsMap.except, toParams);
-
-        $q.all(exceptPromises)
-          .then(function (rejectedPermissions) {
-            // If any "except" permissions are found reject authorization
-            if (rejectedPermissions.length) {
-              deferred.reject(rejectedPermissions);
-            } else {
-              // If none go to checking "only" permissions
-              return $q.reject(null);
-            }
-          })
-          .catch(function () {
-            var onlyPromises = findMatchingPermissions(permissionsMap.only, toParams);
-            $q.all(onlyPromises)
-              .then(function (resolvedPermissions) {
-                deferred.resolve(resolvedPermissions);
-              })
-              .catch(function (rejectedPermission) {
-                deferred.reject(rejectedPermission);
-              });
-          });
-
-        return deferred.promise;
-      }
-
-      /**
-       * Performs iteration over list of defined permissions looking for matching roles
-       * @private
-       *
-       * @param permissionNames {Array} Set of permission names
-       * @param toParams {Object} UI-Router params object
-       * @returns {Array} Promise collection
-       */
-      function findMatchingPermissions(permissionNames, toParams) {
-        return permissionNames.map(function (permissionName) {
-          if (RoleStore.hasRoleDefinition(permissionName)) {
-            return handleRoleValidation(permissionName, toParams);
-          }
-
-          if (PermissionStore.hasPermissionDefinition(permissionName)) {
-            return handlePermissionValidation(permissionName, toParams);
-          }
-
-          return $q.reject(permissionName);
-        });
-      }
-
-      /**
-       * Executes role validation checking
-       * @private
-       *
-       * @param roleName {String} Store permission key
-       * @param toParams {Object} UI-Router params object
-       * @returns {promise}
-       */
-      function handleRoleValidation(roleName, toParams) {
-        var dfd = $q.defer();
-        var role = RoleStore.getRoleDefinition(roleName);
-        var validationResult = role.validateRole(toParams);
-
-        validationResult
-          .then(function () {
-            dfd.resolve(roleName);
-          })
-          .catch(function () {
-            dfd.reject(roleName);
-          });
-
-        return dfd.promise;
-      }
-
-      /**
-       * Executes permission validation checking
-       * @private
-       *
-       * @param permissionName {String} Store permission key
-       * @param toParams {Object} UI-Router params object
-       * @returns {*}
-       */
-      function handlePermissionValidation(permissionName, toParams) {
-        var dfd = $q.defer();
-        var permission = PermissionStore.getPermissionDefinition(permissionName);
-        var validationResult = permission.validatePermission(toParams);
-
-        validationResult
-          .then(function () {
-            dfd.resolve(permissionName);
-          })
-          .catch(function () {
-            dfd.reject(permissionName);
-          });
-
-        return dfd.promise;
-      }
-    }]);
-})();
-
-(function () {
-  'use strict';
-
-  /**
-   * Show/hide elements based on provided permissions
-   *
-   * @example
-   * <div permission only="'USER'"></div>
-   * <div permission only="['USER','ADMIN']" except="'MANAGER'"></div>
-   * <div permission except="'MANAGER'"></div>
-   */
-  angular
-    .module('permission')
-    .directive('permission', ['$log', 'Authorization', function ($log, Authorization) {
-      return {
-        restrict: 'A',
-        link: function (scope, element, attrs) {
-          try {
-            Authorization
-              .authorize({
-                only: scope.$eval(attrs.only),
-                except: scope.$eval(attrs.except)
-              }, null)
-              .then(function () {
-                element.removeClass('ng-hide');
-              })
-              .catch(function () {
-                element.addClass('ng-hide');
-              });
-          } catch (e) {
-            element.addClass('ng-hide');
-            $log.error(e.message);
-          }
-        }
-      };
-    }]);
-}());
 
 (function () {
   'use strict';
@@ -318,78 +152,6 @@
 
   angular
     .module('permission')
-    .factory('Permission', ['$q', function ($q) {
-
-      /**
-       * Permission definition object constructor
-       *
-       * @param permissionName {String} Name repressing permission
-       * @param validationFunction {Function} Function used to check if permission is valid
-       * @constructor
-       */
-      function Permission(permissionName, validationFunction) {
-        validateConstructor(permissionName, validationFunction);
-
-        this.permissionName = permissionName;
-        this.validationFunction = validationFunction;
-      }
-
-      /**
-       * Checks if permission is still valid
-       *
-       * @param toParams {Object} UI-Router params object
-       * @returns {promise}
-       */
-      Permission.prototype.validatePermission = function (toParams) {
-        var validationResult = this.validationFunction.call(null, toParams, this.permissionName);
-
-        if (!angular.isFunction(validationResult.then)) {
-          validationResult = wrapInPromise(validationResult);
-        }
-
-        return validationResult;
-      };
-
-      /**
-       * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
-       * @private
-       *
-       * @param func {Function} Function to be wrapped into promise
-       * @return {promise} $q.promise object
-       */
-      function wrapInPromise(func) {
-        var dfd = $q.defer();
-
-        if (func) {
-          dfd.resolve();
-        } else {
-          dfd.reject();
-        }
-
-        return dfd.promise;
-      }
-
-      /**
-       * Checks if provided permission has accepted parameter types
-       * @private
-       */
-      function validateConstructor(permissionName, validationFunction) {
-        if (!angular.isString(permissionName)) {
-          throw new TypeError('Parameter "permissionName" name must be String');
-        }
-        if (!angular.isFunction(validationFunction)) {
-          throw new TypeError('Parameter "validationFunction" must be Function');
-        }
-      }
-
-      return Permission;
-    }]);
-}());
-(function () {
-  'use strict';
-
-  angular
-    .module('permission')
     .factory('PermissionMap', ['$q', '$state', function ($q, $state) {
 
       /**
@@ -517,6 +279,78 @@
       }
 
       return PermissionMap;
+    }]);
+}());
+(function () {
+  'use strict';
+
+  angular
+    .module('permission')
+    .factory('Permission', ['$q', function ($q) {
+
+      /**
+       * Permission definition object constructor
+       *
+       * @param permissionName {String} Name repressing permission
+       * @param validationFunction {Function} Function used to check if permission is valid
+       * @constructor
+       */
+      function Permission(permissionName, validationFunction) {
+        validateConstructor(permissionName, validationFunction);
+
+        this.permissionName = permissionName;
+        this.validationFunction = validationFunction;
+      }
+
+      /**
+       * Checks if permission is still valid
+       *
+       * @param toParams {Object} UI-Router params object
+       * @returns {promise}
+       */
+      Permission.prototype.validatePermission = function (toParams) {
+        var validationResult = this.validationFunction.call(null, toParams, this.permissionName);
+
+        if (!angular.isFunction(validationResult.then)) {
+          validationResult = wrapInPromise(validationResult);
+        }
+
+        return validationResult;
+      };
+
+      /**
+       * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
+       * @private
+       *
+       * @param func {Function} Function to be wrapped into promise
+       * @return {promise} $q.promise object
+       */
+      function wrapInPromise(func) {
+        var dfd = $q.defer();
+
+        if (func) {
+          dfd.resolve();
+        } else {
+          dfd.reject();
+        }
+
+        return dfd.promise;
+      }
+
+      /**
+       * Checks if provided permission has accepted parameter types
+       * @private
+       */
+      function validateConstructor(permissionName, validationFunction) {
+        if (!angular.isString(permissionName)) {
+          throw new TypeError('Parameter "permissionName" name must be String');
+        }
+        if (!angular.isFunction(validationFunction)) {
+          throw new TypeError('Parameter "validationFunction" must be Function');
+        }
+      }
+
+      return Permission;
     }]);
 }());
 (function () {
@@ -780,3 +614,168 @@
       }
     }]);
 }());
+(function () {
+  'use strict';
+
+  /**
+   * Show/hide elements based on provided permissions
+   *
+   * @example
+   * <div permission only="'USER'"></div>
+   * <div permission only="['USER','ADMIN']" except="'MANAGER'"></div>
+   * <div permission except="'MANAGER'"></div>
+   */
+  angular
+    .module('permission')
+    .directive('permission', ['$log', 'Authorization', function ($log, Authorization) {
+      return {
+        restrict: 'A',
+        link: function (scope, element, attrs) {
+          try {
+            Authorization
+              .authorize({
+                only: scope.$eval(attrs.only),
+                except: scope.$eval(attrs.except)
+              }, null)
+              .then(function () {
+                element.removeClass('ng-hide');
+              })
+              .catch(function () {
+                element.addClass('ng-hide');
+              });
+          } catch (e) {
+            element.addClass('ng-hide');
+            $log.error(e.message);
+          }
+        }
+      };
+    }]);
+}());
+
+(function () {
+  'use strict';
+
+  angular
+    .module('permission')
+    .service('Authorization', ['$q', 'PermissionMap', 'PermissionStore', 'RoleStore', function ($q, PermissionMap, PermissionStore, RoleStore) {
+      this.authorize = authorize;
+
+      /**
+       * Checks if provided permissions are acceptable
+       *
+       * @param permissionsMap {Object} Map of "only" and "except" permission names
+       * @param [toParams] {Object} UI-Router params object
+       * @returns {promise} $q.promise object
+       */
+      function authorize(permissionsMap, toParams) {
+        return handleAuthorization(new PermissionMap(permissionsMap), toParams);
+      }
+
+      /**
+       * Handles authorization based on provided permissions map
+       * @private
+       *
+       * @param permissionsMap {Object} Map of "only" and "except" permission names
+       * @param toParams {Object} UI-Router params object
+       * @returns {promise} $q.promise object
+       */
+      function handleAuthorization(permissionsMap, toParams) {
+        var deferred = $q.defer();
+
+        var exceptPromises = findMatchingPermissions(permissionsMap.except, toParams);
+
+        $q.all(exceptPromises)
+          .then(function (rejectedPermissions) {
+            // If any "except" permissions are found reject authorization
+            if (rejectedPermissions.length) {
+              deferred.reject(rejectedPermissions);
+            } else {
+              // If none go to checking "only" permissions
+              return $q.reject(null);
+            }
+          })
+          .catch(function () {
+            var onlyPromises = findMatchingPermissions(permissionsMap.only, toParams);
+            $q.all(onlyPromises)
+              .then(function (resolvedPermissions) {
+                deferred.resolve(resolvedPermissions);
+              })
+              .catch(function (rejectedPermission) {
+                deferred.reject(rejectedPermission);
+              });
+          });
+
+        return deferred.promise;
+      }
+
+      /**
+       * Performs iteration over list of defined permissions looking for matching roles
+       * @private
+       *
+       * @param permissionNames {Array} Set of permission names
+       * @param toParams {Object} UI-Router params object
+       * @returns {Array} Promise collection
+       */
+      function findMatchingPermissions(permissionNames, toParams) {
+        return permissionNames.map(function (permissionName) {
+          if (RoleStore.hasRoleDefinition(permissionName)) {
+            return handleRoleValidation(permissionName, toParams);
+          }
+
+          if (PermissionStore.hasPermissionDefinition(permissionName)) {
+            return handlePermissionValidation(permissionName, toParams);
+          }
+
+          return $q.reject(permissionName);
+        });
+      }
+
+      /**
+       * Executes role validation checking
+       * @private
+       *
+       * @param roleName {String} Store permission key
+       * @param toParams {Object} UI-Router params object
+       * @returns {promise}
+       */
+      function handleRoleValidation(roleName, toParams) {
+        var dfd = $q.defer();
+        var role = RoleStore.getRoleDefinition(roleName);
+        var validationResult = role.validateRole(toParams);
+
+        validationResult
+          .then(function () {
+            dfd.resolve(roleName);
+          })
+          .catch(function () {
+            dfd.reject(roleName);
+          });
+
+        return dfd.promise;
+      }
+
+      /**
+       * Executes permission validation checking
+       * @private
+       *
+       * @param permissionName {String} Store permission key
+       * @param toParams {Object} UI-Router params object
+       * @returns {*}
+       */
+      function handlePermissionValidation(permissionName, toParams) {
+        var dfd = $q.defer();
+        var permission = PermissionStore.getPermissionDefinition(permissionName);
+        var validationResult = permission.validatePermission(toParams);
+
+        validationResult
+          .then(function () {
+            dfd.resolve(permissionName);
+          })
+          .catch(function () {
+            dfd.reject(permissionName);
+          });
+
+        return dfd.promise;
+      }
+    }]);
+})();
