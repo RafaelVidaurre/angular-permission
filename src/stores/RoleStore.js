@@ -65,7 +65,7 @@
        * Removes all role definitions
        */
       function clearStore() {
-        roleStore = [];
+        roleStore = {};
       }
     });
 }());

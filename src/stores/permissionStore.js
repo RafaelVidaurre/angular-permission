@@ -81,7 +81,7 @@
        * Removes all permissions
        */
       function clearStore() {
-        permissionStore = [];
+        permissionStore = {};
       }
     });
 }());
