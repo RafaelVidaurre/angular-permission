@@ -88,7 +88,7 @@ describe('service: PermissionStore', function () {
       PermissionStore.clearStore();
 
       // THEN
-      expect(PermissionStore.getStore().length).toBe(0);
+      expect(Object.keys(PermissionStore.getStore()).length).toBe(0);
     });
   });
 

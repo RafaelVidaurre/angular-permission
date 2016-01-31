@@ -89,7 +89,7 @@ describe('service: RoleStore', function () {
       RoleStore.clearStore();
 
       // THEN
-      expect(RoleStore.getStore().length).toBe(0);
+      expect(Object.keys(RoleStore.getStore()).length).toBe(0);
     });
   });
 
