@@ -1,7 +1,7 @@
 {
   "name": "angular-permission",
   "version": "2.0.2",
-  "description": "![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)",
+  "description": "Simple route authorization via roles/permissions",
   "author": {
     "name": "Rafael Vidaurre",
     "email": "narzerus@gmail.com"
