@@ -298,7 +298,7 @@ Permission module exposes directive `permission` that can show/hide elements of 
 Directives accepts either single permission that has to be met in order to display it's content:
  
 ```html
-<div permission-only="'loggedIn'">
+<div permission only="'loggedIn'">
   <span>Congrats! You are logged in.</span>  
 </div>
 ```
@@ -306,7 +306,7 @@ Directives accepts either single permission that has to be met in order to displ
 Or set of permissions separated by 'coma':
 
 ```html
-<div permission-except="['user','admin']">
+<div permission except="['user','admin']">
   <span>You are not 'admin' nor 'user'.</span>  
 </div>
 ```
