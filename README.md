@@ -85,6 +85,8 @@ angular.module('barModule', ['permission', 'user'])
         // Let's assume this returns a promise that resolves or rejects if session is active
         return User.checkSession();
       })
+      
+    PermissionStore
       // A different example for admin
       .definePermission('admin', function (stateParams) {
         var deferred = $q.defer();
@@ -162,48 +164,13 @@ angular
     RoleStore
       // Permission array validated role
       // Library will internally validate if 'user' and 'editor' permissions are valid when checking if role is valid   
-      .defineRole('admin', ['user', 'editor'])      
+      .defineRole('admin', ['user', 'editor']);  
+      
+    RoleStore    
       // Server side validated role
       .defineRole('accountant', [], function (stateParams) {
         // Let's assume that we are making a request to server here and return response as promise        
         return User.hasRole('accountant');
-      });
-  });
-```
-
-Sometimes you will need to call some a back-end api or some other asynchronous task to define the permission.
-For that you can use promises:
-
-```javascript
-angular.module('barModule', ['permission', 'user'])
-  .run(function (PermissionStore, User, $q) {
-    PermissionStore
-      // Define user permission calling back-end
-      .definePermission('user', function (stateParams) {
-        // This time we will return a promise
-        // If the promise *resolves* then the user has the permission, if it *rejects* (you guessed it)
-
-        // Let's assume this returns a promise that resolves or rejects if session is active
-        return User.checkSession();
-      })
-      // A different example for admin
-      .definePermission('admin', function (stateParams) {
-        var deferred = $q.defer();
-
-        User.getAccessLevel()
-          .then(function (data) {
-            if (data.accessLevel === 'admin') {
-              deferred.resolve();
-            } else {
-              deferred.reject();
-            }
-          }
-          .catch(function () {
-            // Error with request
-            deferred.reject();
-          });
-
-        return deferred.promise;
       });
   });
 ```
@@ -219,7 +186,7 @@ RoleStore.clearStore();
 Alternatively you can use `removeRoleDefinition` to delete defined role manually:
 
 ```javascript
-RoleStore.removePermissionDefinition('user');
+RoleStore.removeRoleDefinition('user');
 ```
 
 Retrieving all roles definitions

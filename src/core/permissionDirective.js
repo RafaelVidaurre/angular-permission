@@ -11,16 +11,16 @@
    */
   angular
     .module('permission')
-    .directive('permission', function ($log, Authorization) {
+    .directive('permission', function ($log, Authorization, PermissionMap) {
       return {
         restrict: 'A',
         link: function (scope, element, attrs) {
           try {
             Authorization
-              .authorize({
+              .authorize(new PermissionMap({
                 only: scope.$eval(attrs.only),
                 except: scope.$eval(attrs.except)
-              }, null)
+              }), null)
               .then(function () {
                 element.removeClass('ng-hide');
               })

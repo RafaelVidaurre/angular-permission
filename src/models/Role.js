@@ -54,7 +54,7 @@
         // If not call validation function manually
         var validationResult = this.validationFunction.call(null, toParams, this.roleName);
         if (!angular.isFunction(validationResult.then)) {
-          validationResult = wrapInPromise(validationResult);
+          validationResult = wrapInPromise(validationResult, this.roleName);
         }
 
         return $q.resolve(validationResult);
@@ -65,16 +65,17 @@
        * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
        * @private
        *
-       * @param func {Function} Function to be wrapped into promise
-       * @return {promise} $q.promise object
+       * @param result {Boolean} Function to be wrapped into promise
+       * @param roleName {String} Returned value in promise
+       * @return {Promise}
        */
-      function wrapInPromise(func) {
+      function wrapInPromise(result, roleName) {
         var dfd = $q.defer();
 
-        if (func) {
-          dfd.resolve();
+        if (result) {
+          dfd.resolve(roleName);
         } else {
-          dfd.reject();
+          dfd.reject(roleName);
         }
 
         return dfd.promise;

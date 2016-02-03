@@ -9,19 +9,19 @@
       /**
        * Checks if provided permissions are acceptable
        *
-       * @param permissionsMap {Object} Map of "only" and "except" permission names
+       * @param permissionsMap {PermissionMap} Map of permission names
        * @param [toParams] {Object} UI-Router params object
        * @returns {promise} $q.promise object
        */
       function authorize(permissionsMap, toParams) {
-        return handleAuthorization(new PermissionMap(permissionsMap), toParams);
+        return handleAuthorization(permissionsMap, toParams);
       }
 
       /**
        * Handles authorization based on provided permissions map
        * @private
        *
-       * @param permissionsMap {Object} Map of "only" and "except" permission names
+       * @param permissionsMap {Object} Map of permission names
        * @param toParams {Object} UI-Router params object
        * @returns {promise} $q.promise object
        */
@@ -72,7 +72,9 @@
             return handlePermissionValidation(permissionName, toParams);
           }
 
-          return $q.reject(permissionName);
+          if (permissionName) {
+            return $q.reject(permissionName);
+          }
         });
       }
 
@@ -82,22 +84,11 @@
        *
        * @param roleName {String} Store permission key
        * @param toParams {Object} UI-Router params object
-       * @returns {promise}
+       * @returns {Promise}
        */
       function handleRoleValidation(roleName, toParams) {
-        var dfd = $q.defer();
         var role = RoleStore.getRoleDefinition(roleName);
-        var validationResult = role.validateRole(toParams);
-
-        validationResult
-          .then(function () {
-            dfd.resolve(roleName);
-          })
-          .catch(function () {
-            dfd.reject(roleName);
-          });
-
-        return dfd.promise;
+        return role.validateRole(toParams);
       }
 
       /**
@@ -106,22 +97,11 @@
        *
        * @param permissionName {String} Store permission key
        * @param toParams {Object} UI-Router params object
-       * @returns {*}
+       * @returns {Promise}
        */
       function handlePermissionValidation(permissionName, toParams) {
-        var dfd = $q.defer();
         var permission = PermissionStore.getPermissionDefinition(permissionName);
-        var validationResult = permission.validatePermission(toParams);
-
-        validationResult
-          .then(function () {
-            dfd.resolve(permissionName);
-          })
-          .catch(function () {
-            dfd.reject(permissionName);
-          });
-
-        return dfd.promise;
+        return permission.validatePermission(toParams);
       }
     });
 })();

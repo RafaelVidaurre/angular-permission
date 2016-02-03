@@ -23,13 +23,13 @@
        * Checks if permission is still valid
        *
        * @param toParams {Object} UI-Router params object
-       * @returns {promise}
+       * @returns {Promise}
        */
       Permission.prototype.validatePermission = function (toParams) {
         var validationResult = this.validationFunction.call(null, toParams, this.permissionName);
 
         if (!angular.isFunction(validationResult.then)) {
-          validationResult = wrapInPromise(validationResult);
+          validationResult = wrapInPromise(validationResult, this.permissionName);
         }
 
         return validationResult;
@@ -39,16 +39,17 @@
        * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
        * @private
        *
-       * @param func {Function} Function to be wrapped into promise
-       * @return {promise} $q.promise object
+       * @param result {Boolean} Function to be wrapped into promise
+       * @param permissionName {String} Returned value in promise
+       * @return {Promise}
        */
-      function wrapInPromise(func) {
+      function wrapInPromise(result, permissionName) {
         var dfd = $q.defer();
 
-        if (func) {
-          dfd.resolve();
+        if (result) {
+          dfd.resolve(permissionName);
         } else {
-          dfd.reject();
+          dfd.reject(permissionName);
         }
 
         return dfd.promise;
