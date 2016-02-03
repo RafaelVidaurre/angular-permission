@@ -22,7 +22,7 @@
     "src"
   ],
   "devDependencies": {
-    "angular-mocks": "1.x"
+    "angular-mocks": "*"
   },
   "dependencies": {
     "angular": "1.x",
