@@ -22,10 +22,10 @@
     "src"
   ],
   "devDependencies": {
-    "angular": "*",
-    "angular-mocks": "*"
+    "angular-mocks": "1.x"
   },
   "dependencies": {
-    "angular-ui-router": "~0.2.11"
+    "angular": "1.x",
+    "angular-ui-router": "0.2.x"
   }
 }

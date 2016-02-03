@@ -1,7 +1,7 @@
 describe('directive: Permission', function () {
   'use strict';
 
-  var $q, $compile, $rootScope, Authorization, PermissionStore;
+  var $q, $compile, $rootScope, Authorization, PermissionStore, PermissionMap;
 
 
   beforeEach(function () {
@@ -15,6 +15,7 @@ describe('directive: Permission', function () {
       $q = $injector.get('$q');
       Authorization = $injector.get('Authorization');
       PermissionStore = $injector.get('PermissionStore');
+      PermissionMap = $injector.get('PermissionMap');
     });
   });
 
@@ -59,6 +60,6 @@ describe('directive: Permission', function () {
     $rootScope.$digest();
 
     // THEN
-    expect(Authorization.authorize).toHaveBeenCalledWith({only: undefined, except: ['USER']}, null);
+    expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({only: undefined, except: ['USER']}), null);
   });
 });

@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.0.1 - 2016-01-29
+ * @version v2.0.1 - 2016-02-03
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -29,16 +29,19 @@
   permission.run(['$rootScope', '$state', '$q', 'Authorization', 'PermissionMap', function ($rootScope, $state, $q, Authorization, PermissionMap) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
+      if (toState.$$isAuthorizationFinished) {
+        return;
+      }
+
       if (areSetStatePermissions(toState)) {
-        setStateAuthorizationStatus(true);
         event.preventDefault();
+        setStateAuthorizationStatus(true);
+
 
         if (!areStateEventsDefaultPrevented()) {
           var compensatedPermissionMap = compensatePermissionMap(toState.data.permissions);
           authorizeForState(compensatedPermissionMap);
         }
-      } else {
-        setStateAuthorizationStatus(false);
       }
 
       /**
@@ -47,7 +50,7 @@
        * @returns {boolean}
        */
       function areSetStatePermissions(state) {
-        return !(state.$$isAuthorizationFinished) && state.data && state.data.permissions;
+        return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
       }
 
       /**
@@ -56,7 +59,7 @@
        * @param status {boolean} When true authorization has been already preceded
        */
       function setStateAuthorizationStatus(status) {
-        toState = angular.extend({'$$isAuthorizationFinished': status}, toState);
+        angular.extend(toState, {'$$isAuthorizationFinished': status});
       }
 
       /**
@@ -80,12 +83,13 @@
 
         var toStatePath = $state
           .get(toState.name)
-          .getState()
-          .path.reverse();
+          .getState().path
+          .slice()
+          .reverse();
 
         angular.forEach(toStatePath, function (state) {
-          if (areSetStatePermissions(state.self)) {
-            permissionMap.extendPermissionMap(new PermissionMap(state.self.data.permissions));
+          if (areSetStatePermissions(state)) {
+            permissionMap.extendPermissionMap(new PermissionMap(state.data.permissions));
           }
         });
 
@@ -121,8 +125,7 @@
         $state
           .go(name, toParams, angular.extend({}, options, {notify: false}))
           .then(function () {
-            $rootScope
-              .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams, options);
+            $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams, options);
           });
       }
 
@@ -306,13 +309,13 @@
        * Checks if permission is still valid
        *
        * @param toParams {Object} UI-Router params object
-       * @returns {promise}
+       * @returns {Promise}
        */
       Permission.prototype.validatePermission = function (toParams) {
         var validationResult = this.validationFunction.call(null, toParams, this.permissionName);
 
         if (!angular.isFunction(validationResult.then)) {
-          validationResult = wrapInPromise(validationResult);
+          validationResult = wrapInPromise(validationResult, this.permissionName);
         }
 
         return validationResult;
@@ -322,16 +325,17 @@
        * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
        * @private
        *
-       * @param func {Function} Function to be wrapped into promise
-       * @return {promise} $q.promise object
+       * @param result {Boolean} Function to be wrapped into promise
+       * @param permissionName {String} Returned value in promise
+       * @return {Promise}
        */
-      function wrapInPromise(func) {
+      function wrapInPromise(result, permissionName) {
         var dfd = $q.defer();
 
-        if (func) {
-          dfd.resolve();
+        if (result) {
+          dfd.resolve(permissionName);
         } else {
-          dfd.reject();
+          dfd.reject(permissionName);
         }
 
         return dfd.promise;
@@ -409,7 +413,7 @@
         // If not call validation function manually
         var validationResult = this.validationFunction.call(null, toParams, this.roleName);
         if (!angular.isFunction(validationResult.then)) {
-          validationResult = wrapInPromise(validationResult);
+          validationResult = wrapInPromise(validationResult, this.roleName);
         }
 
         return $q.resolve(validationResult);
@@ -420,16 +424,17 @@
        * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
        * @private
        *
-       * @param func {Function} Function to be wrapped into promise
-       * @return {promise} $q.promise object
+       * @param result {Boolean} Function to be wrapped into promise
+       * @param roleName {String} Returned value in promise
+       * @return {Promise}
        */
-      function wrapInPromise(func) {
+      function wrapInPromise(result, roleName) {
         var dfd = $q.defer();
 
-        if (func) {
-          dfd.resolve();
+        if (result) {
+          dfd.resolve(roleName);
         } else {
-          dfd.reject();
+          dfd.reject(roleName);
         }
 
         return dfd.promise;
@@ -539,7 +544,7 @@
        * Removes all permissions
        */
       function clearStore() {
-        permissionStore = [];
+        permissionStore = {};
       }
     }]);
 }());
@@ -610,7 +615,7 @@
        * Removes all role definitions
        */
       function clearStore() {
-        roleStore = [];
+        roleStore = {};
       }
     }]);
 }());
@@ -627,16 +632,16 @@
    */
   angular
     .module('permission')
-    .directive('permission', ['$log', 'Authorization', function ($log, Authorization) {
+    .directive('permission', ['$log', 'Authorization', 'PermissionMap', function ($log, Authorization, PermissionMap) {
       return {
         restrict: 'A',
         link: function (scope, element, attrs) {
           try {
             Authorization
-              .authorize({
+              .authorize(new PermissionMap({
                 only: scope.$eval(attrs.only),
                 except: scope.$eval(attrs.except)
-              }, null)
+              }), null)
               .then(function () {
                 element.removeClass('ng-hide');
               })
@@ -663,19 +668,19 @@
       /**
        * Checks if provided permissions are acceptable
        *
-       * @param permissionsMap {Object} Map of "only" and "except" permission names
+       * @param permissionsMap {PermissionMap} Map of permission names
        * @param [toParams] {Object} UI-Router params object
        * @returns {promise} $q.promise object
        */
       function authorize(permissionsMap, toParams) {
-        return handleAuthorization(new PermissionMap(permissionsMap), toParams);
+        return handleAuthorization(permissionsMap, toParams);
       }
 
       /**
        * Handles authorization based on provided permissions map
        * @private
        *
-       * @param permissionsMap {Object} Map of "only" and "except" permission names
+       * @param permissionsMap {Object} Map of permission names
        * @param toParams {Object} UI-Router params object
        * @returns {promise} $q.promise object
        */
@@ -726,7 +731,9 @@
             return handlePermissionValidation(permissionName, toParams);
           }
 
-          return $q.reject(permissionName);
+          if (permissionName) {
+            return $q.reject(permissionName);
+          }
         });
       }
 
@@ -736,22 +743,11 @@
        *
        * @param roleName {String} Store permission key
        * @param toParams {Object} UI-Router params object
-       * @returns {promise}
+       * @returns {Promise}
        */
       function handleRoleValidation(roleName, toParams) {
-        var dfd = $q.defer();
         var role = RoleStore.getRoleDefinition(roleName);
-        var validationResult = role.validateRole(toParams);
-
-        validationResult
-          .then(function () {
-            dfd.resolve(roleName);
-          })
-          .catch(function () {
-            dfd.reject(roleName);
-          });
-
-        return dfd.promise;
+        return role.validateRole(toParams);
       }
 
       /**
@@ -760,22 +756,11 @@
        *
        * @param permissionName {String} Store permission key
        * @param toParams {Object} UI-Router params object
-       * @returns {*}
+       * @returns {Promise}
        */
       function handlePermissionValidation(permissionName, toParams) {
-        var dfd = $q.defer();
         var permission = PermissionStore.getPermissionDefinition(permissionName);
-        var validationResult = permission.validatePermission(toParams);
-
-        validationResult
-          .then(function () {
-            dfd.resolve(permissionName);
-          })
-          .catch(function () {
-            dfd.reject(permissionName);
-          });
-
-        return dfd.promise;
+        return permission.validatePermission(toParams);
       }
     }]);
 })();

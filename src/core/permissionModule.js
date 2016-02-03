@@ -20,16 +20,19 @@
   permission.run(function ($rootScope, $state, $q, Authorization, PermissionMap) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
+      if (toState.$$isAuthorizationFinished) {
+        return;
+      }
+
       if (areSetStatePermissions(toState)) {
-        setStateAuthorizationStatus(true);
         event.preventDefault();
+        setStateAuthorizationStatus(true);
+
 
         if (!areStateEventsDefaultPrevented()) {
           var compensatedPermissionMap = compensatePermissionMap(toState.data.permissions);
           authorizeForState(compensatedPermissionMap);
         }
-      } else {
-        setStateAuthorizationStatus(false);
       }
 
       /**
@@ -38,7 +41,7 @@
        * @returns {boolean}
        */
       function areSetStatePermissions(state) {
-        return !(state.$$isAuthorizationFinished) && state.data && state.data.permissions;
+        return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
       }
 
       /**
@@ -47,7 +50,7 @@
        * @param status {boolean} When true authorization has been already preceded
        */
       function setStateAuthorizationStatus(status) {
-        toState = angular.extend({'$$isAuthorizationFinished': status}, toState);
+        angular.extend(toState, {'$$isAuthorizationFinished': status});
       }
 
       /**
@@ -71,12 +74,13 @@
 
         var toStatePath = $state
           .get(toState.name)
-          .getState()
-          .path.reverse();
+          .getState().path
+          .slice()
+          .reverse();
 
         angular.forEach(toStatePath, function (state) {
-          if (areSetStatePermissions(state.self)) {
-            permissionMap.extendPermissionMap(new PermissionMap(state.self.data.permissions));
+          if (areSetStatePermissions(state)) {
+            permissionMap.extendPermissionMap(new PermissionMap(state.data.permissions));
           }
         });
 
@@ -112,8 +116,7 @@
         $state
           .go(name, toParams, angular.extend({}, options, {notify: false}))
           .then(function () {
-            $rootScope
-              .$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams, options);
+            $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams, options);
           });
       }
 
