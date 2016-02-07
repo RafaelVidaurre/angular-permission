@@ -31,9 +31,11 @@ npm install angular-permission --save
 
 Include to your dependencies
 ----------------------------
+
 ```javascript
-angular.module('yourModule', [..., 'permission']);
+angular.module('yourModule', [..., 'permission', 'ui-router', ...]);
 ```
+**Important!** Angular permission is using ui-router state decoration to be able to inherit permissions/roles from parent states. So make sure that permission dependency is included before ui-router as in example above.
 
 Defining permissions
 ============================

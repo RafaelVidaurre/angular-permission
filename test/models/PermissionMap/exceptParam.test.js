@@ -62,6 +62,20 @@ describe('model: PermissionMap', function () {
         expect($state.current.name).toBe('authorized.child');
       });
 
+      it('should go to authorized state even if called multiple time', function () {
+        // GIVEN
+        $stateProvider.state('authorized.child', {});
+
+        // WHEN
+        $state.go('authorized.child');
+        $rootScope.$digest();
+        $state.go('authorized.child');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('authorized.child');
+      });
+
       it('should not go to state if unauthorized', function () {
         // GIVEN
         // WHEN
@@ -78,6 +92,21 @@ describe('model: PermissionMap', function () {
 
 
         // WHEN
+        $state.go('unauthorized.child');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('home');
+      });
+
+      it('should not go to unauthorized state even if accessed multiple times', function () {
+        // GIVEN
+        $stateProvider.state('unauthorized.child', {});
+
+
+        // WHEN
+        $state.go('unauthorized.child');
+        $rootScope.$digest();
         $state.go('unauthorized.child');
         $rootScope.$digest();
 
