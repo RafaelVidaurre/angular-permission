@@ -55,7 +55,7 @@
       }
 
       /**
-       * Performs iteration over list of defined permissions looking for matching roles
+       * Performs iteration over list of defined permissions looking for matches
        * @private
        *
        * @param permissionNames {Array} Set of permission names
@@ -64,44 +64,20 @@
        */
       function findMatchingPermissions(permissionNames, toParams) {
         return permissionNames.map(function (permissionName) {
-          if (RoleStore.hasRoleDefinition(permissionName)) {
-            return handleRoleValidation(permissionName, toParams);
-          }
+            if (RoleStore.hasRoleDefinition(permissionName)) {
+              var role = RoleStore.getRoleDefinition(permissionName);
+              return role.validateRole(toParams);
+            }
 
-          if (PermissionStore.hasPermissionDefinition(permissionName)) {
-            return handlePermissionValidation(permissionName, toParams);
-          }
+            if (PermissionStore.hasPermissionDefinition(permissionName)) {
+              var permission = PermissionStore.getPermissionDefinition(permissionName);
+              return permission.validatePermission(toParams);
+            }
 
-          if (permissionName) {
-            return $q.reject(permissionName);
-          }
-        });
-      }
-
-      /**
-       * Executes role validation checking
-       * @private
-       *
-       * @param roleName {String} Store permission key
-       * @param toParams {Object} UI-Router params object
-       * @returns {Promise}
-       */
-      function handleRoleValidation(roleName, toParams) {
-        var role = RoleStore.getRoleDefinition(roleName);
-        return role.validateRole(toParams);
-      }
-
-      /**
-       * Executes permission validation checking
-       * @private
-       *
-       * @param permissionName {String} Store permission key
-       * @param toParams {Object} UI-Router params object
-       * @returns {Promise}
-       */
-      function handlePermissionValidation(permissionName, toParams) {
-        var permission = PermissionStore.getPermissionDefinition(permissionName);
-        return permission.validatePermission(toParams);
+            if (permissionName) {
+              return $q.reject(permissionName);
+            }
+          });
       }
     });
 })();
