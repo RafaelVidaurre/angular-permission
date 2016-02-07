@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.0.2 - 2016-02-03
+ * @version v2.0.4 - 2016-02-07
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -59,7 +59,7 @@
        * @param status {boolean} When true authorization has been already preceded
        */
       function setStateAuthorizationStatus(status) {
-        angular.extend(toState, {'$$isAuthorizationFinished': status});
+        toState = angular.extend({'$$isAuthorizationFinished': status}, toState);
       }
 
       /**
