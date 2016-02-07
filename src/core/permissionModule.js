@@ -50,7 +50,7 @@
        * @param status {boolean} When true authorization has been already preceded
        */
       function setStateAuthorizationStatus(status) {
-        angular.extend(toState, {'$$isAuthorizationFinished': status});
+        toState = angular.extend({'$$isAuthorizationFinished': status}, toState);
       }
 
       /**
