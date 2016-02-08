@@ -17,6 +17,7 @@
         validateConstructor(roleName, permissionNames, validationFunction);
         this.roleName = roleName;
         this.permissionNames = permissionNames || [];
+        this.validationFunction = validationFunction;
 
         if (validationFunction) {
           PermissionStore.defineManyPermissions(permissionNames, validationFunction);
@@ -26,7 +27,7 @@
       /**
        * Checks if role is still valid
        *
-       * @param toParams {Object} UI-Router params object
+       * @param [toParams] {Object} UI-Router params object
        * @returns {Promise} $q.promise object
        */
       Role.prototype.validateRole = function (toParams) {
