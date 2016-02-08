@@ -62,5 +62,34 @@ describe('model: Role', function () {
       expect(PermissionStore.hasPermissionDefinition('USER')).toBe(true);
       expect(PermissionStore.getPermissionDefinition('USER').validationFunction).toBe(validationFunction);
     });
+
+    it('should call directly validationFunction when no permissions were provided', function () {
+      // GIVEN
+      var role = new Role('ACCOUNTANT', [], function () {
+        return true;
+      });
+      spyOn(role, 'validationFunction').and.callThrough();
+
+      // WHEN
+      role.validateRole();
+
+      // THEN
+      expect(role.validationFunction).toHaveBeenCalled();
+    });
+
+    it('should call validationFunction through permission definitions when provided', function () {
+      // GIVEN
+      var role = new Role('ACCOUNTANT', ['USER'], function () {
+        return true;
+      });
+      var userDefinition = PermissionStore.getPermissionDefinition('USER');
+      spyOn(userDefinition, 'validationFunction').and.callThrough();
+
+      // WHEN
+      role.validateRole();
+
+      // THEN
+      expect(userDefinition.validationFunction).toHaveBeenCalled();
+    });
   });
 });
