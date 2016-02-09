@@ -336,13 +336,31 @@ And in app module:
 
 Events
 ============================
-- **$stateChangePermissionStart**: This event is broadcasted before perform authorize.
+- **$stateChangePermissionStart**:
+    This event is broadcasted before perform authorize.
 
-- **$stateChangePermissionAccepted**: This event is broadcasted when one of the permissions has been accepted and the state changes successfully.
+    ```javascript
+    $rootScope.$on('$stateChangePermissionStart',
+    function(event, toState, toParams, options) { ... });
+    ```
 
-- **$stateChangePermissionDenied**: This event is broadcasted when the access to the target state is not granted (no permissions found on the `only` array or at least one permission found on the `except` array). This is when the state stays the same or is changed based on the `redirectTo` option.
+- **$stateChangePermissionAccepted**:
+    This event is broadcasted when one of the permissions has been accepted and the state changes successfully.
+    
+    ```javascript
+    $rootScope.$on('$stateChangePermissionAccepted',
+    function(event, toState, toParams, options) { ... });
+    ```
+    
+- **$stateChangePermissionDenied**: 
+    This event is broadcasted when the access to the target state is not granted (no permissions found on the `only` array or at least one permission found on the `except` array). This is when the state stays the same or is changed based on the `redirectTo` option.
+    
+    ```javascript
+    $rootScope.$on('$stateChangePermissionDenied',
+    function(event, toState, toParams, options) { ... });
+    ```
 
-
+ 
 Known issues
 ============================
 Because of a bug in ui-router, when using `$urlStateProvider.otherwise` we get an **infinite digest** loop error.
