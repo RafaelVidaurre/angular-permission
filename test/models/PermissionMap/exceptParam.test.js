@@ -23,6 +23,10 @@ describe('model: PermissionMap', function () {
       return true;
     });
 
+    PermissionStore.definePermission('ADMIN', function () {
+      return false;
+    });
+
     PermissionStore.definePermission('UNAUTHORIZED', function () {
       return false;
     });
@@ -143,7 +147,7 @@ describe('model: PermissionMap', function () {
           .state('authorized', {
             data: {
               permissions: {
-                except: ['UNAUTHORIZED']
+                except: ['UNAUTHORIZED', 'ADMIN']
               }
             }
           })
@@ -166,7 +170,7 @@ describe('model: PermissionMap', function () {
             data: {
               permissions: {
                 except: function () {
-                  return ['UNAUTHORIZED'];
+                  return ['UNAUTHORIZED', 'ADMIN'];
                 }
               }
             }
