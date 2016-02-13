@@ -73,23 +73,22 @@
        * @returns {Promise} Rejected or fulfilled promise collection
        */
       function allSettled(promises) {
-        var wrapped = angular.isArray(promises) ? [] : {};
+        var results = angular.isArray(promises) ? [] : {};
+
         angular.forEach(promises, function (promise, key) {
-          if (!wrapped.hasOwnProperty(key)) {
-            wrapped[key] = wrap(promise);
+          if (results.hasOwnProperty(key)) {
+            return;
           }
+
+          results[key] = $q.when(promise)
+            .then(function (value) {
+              return $q.resolve(value);
+            }, function (reason) {
+              return $q.reject(reason);
+            });
         });
-        return $q.all(wrapped);
-      }
 
-
-      function wrap(promise) {
-        return $q.when(promise)
-          .then(function (value) {
-            return $q.resolve(value);
-          }, function (reason) {
-            return $q.reject(reason);
-          });
+        return $q.all(results);
       }
 
       /**
