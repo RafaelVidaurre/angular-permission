@@ -30,35 +30,23 @@
 
         var exceptPromises = findMatchingPermissions(permissionsMap.except, toParams);
 
-        allSettled(exceptPromises)
+        only(exceptPromises)
           .then(function (rejectedPermissions) {
-            if (rejectedPermissions.length) {
-              deferred.reject(rejectedPermissions[0]);
-            }
-
-            return $q.reject(null);
+            deferred.reject(rejectedPermissions);
           })
           .catch(function () {
             if (!permissionsMap.only.length) {
               deferred.resolve(null);
             }
+
             var onlyPromises = findMatchingPermissions(permissionsMap.only, toParams);
 
-            allSettled(onlyPromises)
+            only(onlyPromises)
               .then(function (resolvedPermissions) {
-                deferred.resolve(resolvedPermissions[0]);
+                deferred.resolve(resolvedPermissions);
               })
               .catch(function (rejectedPermission) {
-
-                var resolved = onlyPromises.filter(function (promise) {
-                  return promise.$$state.status === 1;
-                });
-
-                if (resolved.length) {
-                  deferred.resolve(resolved);
-                } else {
-                  deferred.reject(rejectedPermission);
-                }
+                deferred.reject(rejectedPermission);
               });
           });
 
@@ -66,29 +54,46 @@
       }
 
       /**
-       * Waits for all promises to be settled
+       * Implementation of missing $q `only` method that wits for first
+       * resolution of provided promise set.
        * @private
        *
-       * @param promises {Array|promise} Set of promises
-       * @returns {Promise} Rejected or fulfilled promise collection
+       * @param promises {Array|promise} Single or set of promises
+       * @returns {Promise} Returns a single promise that will be rejected with an array/hash of values,
+       *  each value corresponding to the promise at the same index/key in the `promises` array/hash.
+       *  If any of the promises is resolved, this resulting promise will be returned
+       *  with the same resolution value.
        */
-      function allSettled(promises) {
-        var results = angular.isArray(promises) ? [] : {};
+      function only(promises) {
+        var deferred = $q.defer(),
+          counter = 0,
+          results = angular.isArray(promises) ? [] : {};
 
         angular.forEach(promises, function (promise, key) {
-          if (results.hasOwnProperty(key)) {
-            return;
-          }
-
-          results[key] = $q.when(promise)
+          counter++;
+          $q.when(promise)
             .then(function (value) {
-              return $q.resolve(value);
-            }, function (reason) {
-              return $q.reject(reason);
+              if (results.hasOwnProperty(key)) {
+                return;
+              }
+              deferred.resolve(value);
+            })
+            .catch(function (reason) {
+              if (results.hasOwnProperty(key)) {
+                return;
+              }
+              results[key] = reason;
+              if (!(--counter)) {
+                deferred.reject(reason);
+              }
             });
         });
 
-        return $q.all(results);
+        if (counter === 0) {
+          deferred.reject(results);
+        }
+
+        return deferred.promise;
       }
 
       /**
