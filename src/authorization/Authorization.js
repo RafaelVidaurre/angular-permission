@@ -30,28 +30,66 @@
 
         var exceptPromises = findMatchingPermissions(permissionsMap.except, toParams);
 
-        $q.all(exceptPromises)
+        allSettled(exceptPromises)
           .then(function (rejectedPermissions) {
-            // If any "except" permissions are found reject authorization
             if (rejectedPermissions.length) {
-              deferred.reject(rejectedPermissions);
-            } else {
-              // If none go to checking "only" permissions
-              return $q.reject(null);
+              deferred.reject(rejectedPermissions[0]);
             }
+
+            return $q.reject(null);
           })
           .catch(function () {
+            if (!permissionsMap.only.length) {
+              deferred.resolve(null);
+            }
             var onlyPromises = findMatchingPermissions(permissionsMap.only, toParams);
-            $q.all(onlyPromises)
+
+            allSettled(onlyPromises)
               .then(function (resolvedPermissions) {
-                deferred.resolve(resolvedPermissions);
+                deferred.resolve(resolvedPermissions[0]);
               })
               .catch(function (rejectedPermission) {
-                deferred.reject(rejectedPermission);
+
+                var resolved = onlyPromises.filter(function (promise) {
+                  return promise.$$state.status === 1;
+                });
+
+                if (resolved.length) {
+                  deferred.resolve(resolved);
+                } else {
+                  deferred.reject(rejectedPermission);
+                }
               });
           });
 
         return deferred.promise;
+      }
+
+      /**
+       * Waits for all promises to be settled
+       * @private
+       *
+       * @param promises {Array|promise} Set of promises
+       * @returns {Promise} Rejected or fulfilled promise collection
+       */
+      function allSettled(promises) {
+        var wrapped = angular.isArray(promises) ? [] : {};
+        angular.forEach(promises, function (promise, key) {
+          if (!wrapped.hasOwnProperty(key)) {
+            wrapped[key] = wrap(promise);
+          }
+        });
+        return $q.all(wrapped);
+      }
+
+
+      function wrap(promise) {
+        return $q.when(promise)
+          .then(function (value) {
+            return $q.resolve(value);
+          }, function (reason) {
+            return $q.reject(reason);
+          });
       }
 
       /**
