@@ -14,21 +14,28 @@
     .directive('permission', function ($log, Authorization, PermissionMap) {
       return {
         restrict: 'A',
-        link: function (scope, element, attrs) {
+        bindToController: {
+          only: '=',
+          except: '='
+        },
+        controllerAs: 'permission',
+        controller: function ($element) {
+          var permission = this;
+
           try {
             Authorization
               .authorize(new PermissionMap({
-                only: scope.$eval(attrs.only),
-                except: scope.$eval(attrs.except)
+                only: permission.only,
+                except: permission.except
               }), null)
               .then(function () {
-                element.removeClass('ng-hide');
+                $element.removeClass('ng-hide');
               })
               .catch(function () {
-                element.addClass('ng-hide');
+                $element.addClass('ng-hide');
               });
           } catch (e) {
-            element.addClass('ng-hide');
+            $element.addClass('ng-hide');
             $log.error(e.message);
           }
         }
