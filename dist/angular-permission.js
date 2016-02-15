@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.0.8 - 2016-02-13
+ * @version v2.0.9 - 2016-02-15
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -641,25 +641,28 @@
           except: '='
         },
         controllerAs: 'permission',
-        controller: ['$element', function ($element) {
+        controller: ['$scope', '$element', function ($scope, $element) {
           var permission = this;
 
-          try {
-            Authorization
-              .authorize(new PermissionMap({
-                only: permission.only,
-                except: permission.except
-              }), null)
-              .then(function () {
-                $element.removeClass('ng-hide');
-              })
-              .catch(function () {
+          $scope.$watchGroup(['permission.only', 'permission.except'],
+            function () {
+              try {
+                Authorization
+                  .authorize(new PermissionMap({
+                    only: permission.only,
+                    except: permission.except
+                  }), null)
+                  .then(function () {
+                    $element.removeClass('ng-hide');
+                  })
+                  .catch(function () {
+                    $element.addClass('ng-hide');
+                  });
+              } catch (e) {
                 $element.addClass('ng-hide');
-              });
-          } catch (e) {
-            $element.addClass('ng-hide');
-            $log.error(e.message);
-          }
+                $log.error(e.message);
+              }
+            });
         }]
       };
     }]);
