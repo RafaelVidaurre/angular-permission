@@ -19,25 +19,28 @@
           except: '='
         },
         controllerAs: 'permission',
-        controller: function ($element) {
+        controller: function ($scope, $element) {
           var permission = this;
 
-          try {
-            Authorization
-              .authorize(new PermissionMap({
-                only: permission.only,
-                except: permission.except
-              }), null)
-              .then(function () {
-                $element.removeClass('ng-hide');
-              })
-              .catch(function () {
+          $scope.$watchGroup(['permission.only', 'permission.except'],
+            function () {
+              try {
+                Authorization
+                  .authorize(new PermissionMap({
+                    only: permission.only,
+                    except: permission.except
+                  }), null)
+                  .then(function () {
+                    $element.removeClass('ng-hide');
+                  })
+                  .catch(function () {
+                    $element.addClass('ng-hide');
+                  });
+              } catch (e) {
                 $element.addClass('ng-hide');
-              });
-          } catch (e) {
-            $element.addClass('ng-hide');
-            $log.error(e.message);
-          }
+                $log.error(e.message);
+              }
+            });
         }
       };
     });

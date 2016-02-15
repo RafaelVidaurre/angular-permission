@@ -89,7 +89,6 @@ describe('directive: Permission', function () {
 
     // WHEN
     $rootScope.only = ['ADMIN'];
-    $compile(element)($rootScope);
     $rootScope.$digest();
 
     // THEN
