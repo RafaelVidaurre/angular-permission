@@ -2,7 +2,7 @@
   'use strict';
 
   /**
-   * Show/hide elements based on provided permissions
+   * Show/hide elements based on provided permissions/roles
    *
    * @example
    * <div permission only="'USER'"></div>

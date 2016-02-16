@@ -20,14 +20,9 @@
   permission.run(function ($rootScope, $state, $q, Authorization, PermissionMap) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
-      if (toState.$$isAuthorizationFinished) {
-        return;
-      }
-
-      if (areSetStatePermissions(toState)) {
+      if (!isAuthorizationFinished() && areSetStatePermissions(toState)) {
         event.preventDefault();
         setStateAuthorizationStatus(true);
-
 
         if (!areStateEventsDefaultPrevented()) {
           var compensatedPermissionMap = compensatePermissionMap(toState.data.permissions);
@@ -50,7 +45,17 @@
        * @param status {boolean} When true authorization has been already preceded
        */
       function setStateAuthorizationStatus(status) {
-        toState = angular.extend({'$$isAuthorizationFinished': status}, toState);
+        angular.extend(toState, {'$$isAuthorizationFinished': status});
+      }
+
+
+      /**
+       * Checks if state has been already checked for authorization
+       *
+       * @returns {boolean}
+       */
+      function isAuthorizationFinished() {
+        return toState.$$isAuthorizationFinished;
       }
 
       /**
@@ -67,7 +72,7 @@
        * keeping the order of permissions from the newest (children) to the oldest (parent)
        *
        * @param statePermissionMap {Object} Current state permission map
-       * @returns {{only: Array, except: Array}} Permission map
+       * @returns {PermissionMap} Permission map
        */
       function compensatePermissionMap(statePermissionMap) {
         var permissionMap = new PermissionMap({redirectTo: statePermissionMap.redirectTo});
@@ -90,33 +95,21 @@
       /**
        * Handles state authorization
        *
-       * @param permissions {Object} Map of "only" or "except" permission names
+       * @param permissions {PermissionMap} Map of permission names
        */
       function authorizeForState(permissions) {
         Authorization
           .authorize(permissions, toParams)
           .then(function () {
             $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, options);
-            goToState(toState.name);
+            $state.go(toState.name, toParams, options);
           })
           .catch(function (rejectedPermission) {
             $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
             permissions.redirectToState(rejectedPermission);
-          });
-      }
-
-      /**
-       * Redirects to states when permissions are met
-       *
-       * If authorized, use call state.go without triggering the event.
-       * Then trigger $stateChangeSuccess manually to resume the rest of the process
-       * Note: This is a pseudo-hacky fix which should be fixed in future ui-router versions
-       */
-      function goToState(name) {
-        $state
-          .go(name, toParams, angular.extend({}, options, {notify: false}))
-          .then(function () {
-            $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams, options);
+          })
+          .finally(function () {
+            setStateAuthorizationStatus(false);
           });
       }
 
