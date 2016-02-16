@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.0.4 - 2016-02-07
+ * @version v2.0.9 - 2016-02-15
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -376,6 +376,7 @@
         validateConstructor(roleName, permissionNames, validationFunction);
         this.roleName = roleName;
         this.permissionNames = permissionNames || [];
+        this.validationFunction = validationFunction;
 
         if (validationFunction) {
           PermissionStore.defineManyPermissions(permissionNames, validationFunction);
@@ -385,7 +386,7 @@
       /**
        * Checks if role is still valid
        *
-       * @param toParams {Object} UI-Router params object
+       * @param [toParams] {Object} UI-Router params object
        * @returns {Promise} $q.promise object
        */
       Role.prototype.validateRole = function (toParams) {
@@ -635,24 +636,34 @@
     .directive('permission', ['$log', 'Authorization', 'PermissionMap', function ($log, Authorization, PermissionMap) {
       return {
         restrict: 'A',
-        link: function (scope, element, attrs) {
-          try {
-            Authorization
-              .authorize(new PermissionMap({
-                only: scope.$eval(attrs.only),
-                except: scope.$eval(attrs.except)
-              }), null)
-              .then(function () {
-                element.removeClass('ng-hide');
-              })
-              .catch(function () {
-                element.addClass('ng-hide');
-              });
-          } catch (e) {
-            element.addClass('ng-hide');
-            $log.error(e.message);
-          }
-        }
+        bindToController: {
+          only: '=',
+          except: '='
+        },
+        controllerAs: 'permission',
+        controller: ['$scope', '$element', function ($scope, $element) {
+          var permission = this;
+
+          $scope.$watchGroup(['permission.only', 'permission.except'],
+            function () {
+              try {
+                Authorization
+                  .authorize(new PermissionMap({
+                    only: permission.only,
+                    except: permission.except
+                  }), null)
+                  .then(function () {
+                    $element.removeClass('ng-hide');
+                  })
+                  .catch(function () {
+                    $element.addClass('ng-hide');
+                  });
+              } catch (e) {
+                $element.addClass('ng-hide');
+                $log.error(e.message);
+              }
+            });
+        }]
       };
     }]);
 }());
@@ -689,19 +700,18 @@
 
         var exceptPromises = findMatchingPermissions(permissionsMap.except, toParams);
 
-        $q.all(exceptPromises)
+        only(exceptPromises)
           .then(function (rejectedPermissions) {
-            // If any "except" permissions are found reject authorization
-            if (rejectedPermissions.length) {
-              deferred.reject(rejectedPermissions);
-            } else {
-              // If none go to checking "only" permissions
-              return $q.reject(null);
-            }
+            deferred.reject(rejectedPermissions);
           })
           .catch(function () {
+            if (!permissionsMap.only.length) {
+              deferred.resolve(null);
+            }
+
             var onlyPromises = findMatchingPermissions(permissionsMap.only, toParams);
-            $q.all(onlyPromises)
+
+            only(onlyPromises)
               .then(function (resolvedPermissions) {
                 deferred.resolve(resolvedPermissions);
               })
@@ -709,6 +719,49 @@
                 deferred.reject(rejectedPermission);
               });
           });
+
+        return deferred.promise;
+      }
+
+      /**
+       * Implementation of missing $q `only` method that wits for first
+       * resolution of provided promise set.
+       * @private
+       *
+       * @param promises {Array|promise} Single or set of promises
+       * @returns {Promise} Returns a single promise that will be rejected with an array/hash of values,
+       *  each value corresponding to the promise at the same index/key in the `promises` array/hash.
+       *  If any of the promises is resolved, this resulting promise will be returned
+       *  with the same resolution value.
+       */
+      function only(promises) {
+        var deferred = $q.defer(),
+          counter = 0,
+          results = angular.isArray(promises) ? [] : {};
+
+        angular.forEach(promises, function (promise, key) {
+          counter++;
+          $q.when(promise)
+            .then(function (value) {
+              if (results.hasOwnProperty(key)) {
+                return;
+              }
+              deferred.resolve(value);
+            })
+            .catch(function (reason) {
+              if (results.hasOwnProperty(key)) {
+                return;
+              }
+              results[key] = reason;
+              if (!(--counter)) {
+                deferred.reject(reason);
+              }
+            });
+        });
+
+        if (counter === 0) {
+          deferred.reject(results);
+        }
 
         return deferred.promise;
       }
