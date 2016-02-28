@@ -120,7 +120,6 @@ describe('module: Permission', function () {
       expect(called).toBeTruthy();
     });
 
-
     it('should not authorize when $stateChangeStart has been prevented', function () {
       // GIVEN
       $rootScope.$on('$stateChangeStart', function (event) {

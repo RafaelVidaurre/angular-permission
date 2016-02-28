@@ -102,7 +102,10 @@
           .authorize(permissions, toParams)
           .then(function () {
             $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, options);
-            $state.go(toState.name, toParams, options);
+            $state.go(toState.name, toParams, {notify: false})
+              .then(function(){
+                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams, options);
+              });
           })
           .catch(function (rejectedPermission) {
             $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
