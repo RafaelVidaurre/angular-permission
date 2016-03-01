@@ -166,7 +166,7 @@ describe('module: Permission', function () {
       });
 
       PermissionStore.definePermission('deniedChild', function () {
-        return true;
+        return false;
       });
 
       spyOn(Authorization, 'authorize').and.callThrough();

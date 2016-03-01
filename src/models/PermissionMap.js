@@ -3,7 +3,7 @@
 
   angular
     .module('permission')
-    .factory('PermissionMap', function ($q, $state) {
+    .factory('PermissionMap', function ($q) {
 
       /**
        * Constructs map object instructing authorization service how to handle authorizing
@@ -21,9 +21,6 @@
       function PermissionMap(permissionMap, toState, toParams, options) {
         this.only = resolvePermissionMapProperty(permissionMap.only, toState, toParams, options);
         this.except = resolvePermissionMapProperty(permissionMap.except, toState, toParams, options);
-        this.toState = toState;
-        this.toParams = toParams;
-        this.options = toParams;
         this.redirectTo = permissionMap.redirectTo;
       }
 
@@ -37,24 +34,29 @@
         this.except = this.except.concat(permissionMap.except);
       };
 
-
       /**
        * Redirects to fallback states when permissions fail
        *
        * @param rejectedPermissionName {String} Permission name
+       * @param defaultStateName {String} Permission name
+       *
+       * @return {Promise}
        */
-      PermissionMap.prototype.redirectToState = function (rejectedPermissionName) {
+      PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName, defaultStateName) {
         if (angular.isFunction(this.redirectTo)) {
-          return handleFunctionRedirect(this.redirectTo, rejectedPermissionName);
+          return resolveFunctionRedirect(this.redirectTo, rejectedPermissionName);
         }
 
         if (angular.isObject(this.redirectTo)) {
-          return handleObjectRedirect(this.redirectTo, rejectedPermissionName);
+          return resolveObjectRedirect(this.redirectTo, rejectedPermissionName);
         }
 
         if (angular.isString(this.redirectTo)) {
-          return handleStringRedirect(this.redirectTo, this.toParams, this.options);
+          return $q.resolve(this.redirectTo);
         }
+
+        // If redirectTo state is not defined stay where you are
+        return $q.reject(null);
       };
 
       /**
@@ -63,16 +65,16 @@
        * @param redirectFunction {Function} Redirection function
        * @param permission {String} Rejected permission
        *
-       * @return {promise}
+       * @return {Promise}
        */
-      function handleFunctionRedirect(redirectFunction, permission) {
+      function resolveFunctionRedirect(redirectFunction, permission) {
         return $q
           .when(redirectFunction.call(null, permission))
           .then(function (redirectState) {
             if (!angular.isString(redirectState)) {
               throw new TypeError('When used "redirectTo" as function, returned value must be string with state name');
             }
-            return handleStringRedirect(redirectState);
+            return redirectState;
           });
       }
 
@@ -82,9 +84,9 @@
        * @param redirectObject {Object} Redirection function
        * @param permission {String} Rejected permission
        *
-       * @return {promise}
+       * @return {Promise}
        */
-      function handleObjectRedirect(redirectObject, permission) {
+      function resolveObjectRedirect(redirectObject, permission) {
         if (!angular.isDefined(redirectObject['default'])) {
           throw new ReferenceError('When used "redirectTo" as object, property "default" must be defined');
         }
@@ -96,24 +98,12 @@
         }
 
         if (angular.isFunction(redirectState)) {
-          return handleFunctionRedirect(redirectState, permission);
+          return resolveFunctionRedirect(redirectState, permission);
         }
 
         if (angular.isString(redirectState)) {
-          return handleStringRedirect(redirectState);
+          return $q.resolve(redirectState);
         }
-      }
-
-      /**
-       * Handles string based redirection for rejected permissions
-       * @param [toState] {Object} UI-Router transition state object
-       * @param [toParams] {Object} UI-Router transition state params
-       * @param [options] {Object} UI-Router transition state options
-       *
-       * @return {promise}
-       */
-      function handleStringRedirect(toState, toParams, options) {
-        return $state.go(toState, toParams, angular.extend({}, options, {notify: false}));
       }
 
       /**
@@ -124,6 +114,7 @@
        * @param [toState] {Object} UI-Router transition state object
        * @param [toParams] {Object} UI-Router transition state params
        * @param [options] {Object} UI-Router transition state options
+       *
        * @returns {Array} Array of permission "only" or "except" names
        */
       function resolvePermissionMapProperty(property, toState, toParams, options) {
