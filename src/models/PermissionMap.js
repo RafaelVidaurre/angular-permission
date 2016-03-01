@@ -38,11 +38,10 @@
        * Redirects to fallback states when permissions fail
        *
        * @param rejectedPermissionName {String} Permission name
-       * @param defaultStateName {String} Permission name
        *
        * @return {Promise}
        */
-      PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName, defaultStateName) {
+      PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName) {
         if (angular.isFunction(this.redirectTo)) {
           return resolveFunctionRedirect(this.redirectTo, rejectedPermissionName);
         }
