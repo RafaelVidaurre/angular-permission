@@ -14,6 +14,7 @@
     .directive('permission', function ($log, Authorization, PermissionMap) {
       return {
         restrict: 'A',
+        scope: true,
         bindToController: {
           only: '=',
           except: '='
