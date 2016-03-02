@@ -1,6 +1,6 @@
 {
   "name": "angular-permission",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "authors": ["Rafael Vidaurre <narzerus@gmail.com>"],
   "contributors": ["Blazej Krysiak <blazej.krysiak@gmail.com>"],
   "description": "Route permission and access control as simple as it can get",
@@ -17,9 +17,13 @@
     "**/.*",
     "node_modules",
     "bower_components",
+    "config",
     "test",
-    "tests",
-    "src"
+    "src",
+    "Gruntfile.js",
+    ".jshintrc",
+    ".gitignore",
+    ".travis.yml"
   ],
   "devDependencies": {
     "angular-mocks": "*"

@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.1.0 - 2016-03-01
+ * @version v2.1.1 - 2016-03-02
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -156,6 +156,7 @@
   }]);
 }());
 
+
 (function () {
   'use strict';
 
@@ -293,6 +294,7 @@
       return PermissionMap;
     }]);
 }());
+
 (function () {
   'use strict';
 
@@ -366,6 +368,7 @@
       return Permission;
     }]);
 }());
+
 (function () {
   'use strict';
 
@@ -471,6 +474,7 @@
       return Role;
     }]);
 }());
+
 (function () {
   'use strict';
 
@@ -558,6 +562,7 @@
       }
     }]);
 }());
+
 (function () {
   'use strict';
 
@@ -629,6 +634,7 @@
       }
     }]);
 }());
+
 (function () {
   'use strict';
 
@@ -645,6 +651,7 @@
     .directive('permission', ['$log', 'Authorization', 'PermissionMap', function ($log, Authorization, PermissionMap) {
       return {
         restrict: 'A',
+        scope: true,
         bindToController: {
           only: '=',
           except: '='
@@ -676,6 +683,7 @@
       };
     }]);
 }());
+
 
 (function () {
   'use strict';

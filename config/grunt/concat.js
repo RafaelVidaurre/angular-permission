@@ -3,7 +3,8 @@ module.exports = function () {
 
   return {
     options: {
-      banner: '<%= meta.banner %>\n'
+      banner: '<%= meta.banner %>\n',
+      separator: '\n\n'
     },
     dist: {
       files: {
