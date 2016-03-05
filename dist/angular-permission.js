@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.1.1 - 2016-03-02
+ * @version v2.1.2 - 2016-03-06
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -115,18 +115,16 @@
             $state
               .go(toState.name, toParams, {notify: false})
               .then(function () {
-                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, options);
+                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams);
               });
           })
           .catch(function (rejectedPermission) {
             $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
 
-            return permissions.resolveRedirectState(rejectedPermission)
+            return permissions
+              .resolveRedirectState(rejectedPermission)
               .then(function (redirectStateName) {
-                $state.go(redirectStateName, toParams, {notify: false});
-              })
-              .then(function () {
-                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, options);
+                $state.go(redirectStateName, toParams);
               });
           })
           .finally(function () {
