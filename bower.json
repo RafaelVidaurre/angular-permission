@@ -29,7 +29,7 @@
     "angular-mocks": "*"
   },
   "dependencies": {
-    "angular": "1.x",
-    "angular-ui-router": "0.2.x"
+    "angular": "^1.4.0",
+    "angular-ui-router": "^0.2.0"
   }
 }

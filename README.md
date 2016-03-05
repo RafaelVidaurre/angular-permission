@@ -6,7 +6,7 @@ Permission
 
 Dependencies
 ----------------------------
-- [Angular](https://github.com/angular/angular) as MV* framework
+- [Angular 1.4+](https://github.com/angular/angular) as MV* framework
 - [UI-Router](https://github.com/angular-ui/ui-router) as your router module
 
 Permission is the gatekeeper for your routes
