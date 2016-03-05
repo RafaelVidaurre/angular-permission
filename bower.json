@@ -1,6 +1,6 @@
 {
   "name": "angular-permission",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "authors": ["Rafael Vidaurre <narzerus@gmail.com>"],
   "contributors": ["Blazej Krysiak <blazej.krysiak@gmail.com>"],
   "description": "Route permission and access control as simple as it can get",
@@ -29,7 +29,7 @@
     "angular-mocks": "*"
   },
   "dependencies": {
-    "angular": "1.x",
-    "angular-ui-router": "0.2.x"
+    "angular": "^1.4.0",
+    "angular-ui-router": "^0.2.0"
   }
 }

@@ -112,12 +112,10 @@
           .catch(function (rejectedPermission) {
             $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
 
-            return permissions.resolveRedirectState(rejectedPermission)
+            return permissions
+              .resolveRedirectState(rejectedPermission)
               .then(function (redirectStateName) {
-                $state.go(redirectStateName, toParams, {notify: false});
-              })
-              .then(function () {
-                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams);
+                $state.go(redirectStateName, toParams);
               });
           })
           .finally(function () {
