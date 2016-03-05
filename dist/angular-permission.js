@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.1.1 - 2016-03-02
+ * @version v2.1.1 - 2016-03-04
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -123,7 +123,7 @@
 
             return permissions.resolveRedirectState(rejectedPermission)
               .then(function (redirectStateName) {
-                $state.go(redirectStateName, toParams, {notify: false});
+                $state.go(redirectStateName, toParams, {notify: toState.data.permissions.notify || false});
               })
               .then(function () {
                 $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, options);
