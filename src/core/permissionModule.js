@@ -106,7 +106,7 @@
             $state
               .go(toState.name, toParams, {notify: false})
               .then(function () {
-                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, options);
+                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams);
               });
           })
           .catch(function (rejectedPermission) {
@@ -117,7 +117,7 @@
                 $state.go(redirectStateName, toParams, {notify: false});
               })
               .then(function () {
-                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, options);
+                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams);
               });
           })
           .finally(function () {
