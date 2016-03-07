@@ -51,7 +51,7 @@
         }
 
         if (angular.isString(this.redirectTo)) {
-          return $q.resolve(this.redirectTo);
+          return $q.resolve({ to: this.redirectTo, params: null, options: null });
         }
 
         // If redirectTo state is not defined stay where you are
@@ -73,7 +73,7 @@
             if (!angular.isString(redirectState)) {
               throw new TypeError('When used "redirectTo" as function, returned value must be string with state name');
             }
-            return redirectState;
+            return { to: redirectState, params: null, options: null };
           });
       }
 
@@ -101,7 +101,7 @@
         }
 
         if (angular.isString(redirectState)) {
-          return $q.resolve(redirectState);
+          return $q.resolve({ to: redirectState, params: null, options: null });
         }
       }
 
