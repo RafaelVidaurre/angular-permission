@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.1.2 - 2016-03-06
+ * @version v2.1.3 - 2016-03-08
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -129,7 +129,6 @@
           })
           .finally(function () {
             setStateAuthorizationStatus(false);
-            $rootScope.$broadcast('$stateChangeSuccess');
           });
       }
 
