@@ -120,7 +120,6 @@
           })
           .finally(function () {
             setStateAuthorizationStatus(false);
-            $rootScope.$broadcast('$stateChangeSuccess');
           });
       }
 
