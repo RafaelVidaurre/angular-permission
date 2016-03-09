@@ -33,9 +33,9 @@ Include to your dependencies
 ----------------------------
 
 ```javascript
-angular.module('yourModule', [..., 'permission', 'ui-router', ...]);
+angular.module('yourModule', [..., 'ui.router', ('ct.ui.router.extras.core',) 'permission',  ...]);
 ```
-**Important!** Angular permission is using ui-router state decoration to be able to inherit permissions/roles from parent states. So make sure that permission dependency is included before ui-router as in example above.
+**Important!** Angular permission is using ui-router state decoration to be able to inherit permissions/roles from parent states. So make sure that permission dependency is included just after ui-router (and ui-router-extras) as in example above.
 
 Defining permissions
 ============================
