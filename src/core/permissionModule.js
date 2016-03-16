@@ -32,6 +32,7 @@
 
       /**
        * Checks if state is qualified to be permission based verified
+       * @private
        *
        * @returns {boolean}
        */
@@ -41,6 +42,7 @@
 
       /**
        * Sets internal state `$$finishedAuthorization` variable to prevent looping
+       * @private
        *
        * @param status {boolean} When true authorization has been already preceded
        */
@@ -51,6 +53,7 @@
 
       /**
        * Checks if state has been already checked for authorization
+       * @private
        *
        * @returns {boolean}
        */
@@ -60,6 +63,7 @@
 
       /**
        * Checks if state events are not prevented by default
+       * @private
        *
        * @returns {boolean}
        */
@@ -70,6 +74,7 @@
       /**
        * Builds map of permissions resolving passed values to data.permissions and combine them with all its parents
        * keeping the order of permissions from the newest (children) to the oldest (parent)
+       * @private
        *
        * @param statePermissionMap {Object} Current state permission map
        * @returns {PermissionMap} Permission map
@@ -94,6 +99,7 @@
 
       /**
        * Handles state authorization
+       * @private
        *
        * @param permissions {PermissionMap} Map of permission names
        */
@@ -125,6 +131,7 @@
 
       /**
        * Checks if event $stateChangeStart hasn't been disabled by default
+       * @private
        *
        * @returns {boolean}
        */
@@ -134,6 +141,7 @@
 
       /**
        * Checks if event $stateChangePermissionStart hasn't been disabled by default
+       * @private
        *
        * @returns {boolean}
        */
