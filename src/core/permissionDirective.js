@@ -2,12 +2,36 @@
   'use strict';
 
   /**
-   * Show/hide elements based on provided permissions/roles
+   * Handles authorization based on provided permissions/roles.
+   *
+   * Directive accepts single or combined attributes `permission-only` and `permission-except` that checks on
+   * DOM rendering if permissions/roles are met. Attributes can be passed either as String, Array or variable from
+   * parent scope. Directive also will watch for changes if applied and automatically update the view.
    *
    * @example
-   * <div permission only="'USER'"></div>
-   * <div permission only="['USER','ADMIN']" except="'MANAGER'"></div>
-   * <div permission except="'MANAGER'"></div>
+   * <div permission
+   *      permission-only="'USER'">
+   * </div>
+   * <div permission
+   *      permission-only="['USER','ADMIN']"
+   *      permission-except="'MANAGER'">
+   * </div>
+   *
+   * By default directive will show/hide elements if provided permissions matches.
+   * You can override this behaviour by passing `permission-on-authorized` and `permission-on-unauthorized` attributes
+   * that will pass to your function `$element` as argument that you can freely manipulate your DOM behaviour.
+   *
+   * @example
+   * <div permission
+   *      permission-only="['USER','ADMIN']"
+   *      permission-on-authorized="vm.disableElement()"
+   *      permission-on-unauthorized="vm.removeContent()">
+   * </div>
+   * <div permission
+   *      permission-except="'MANAGER'"
+   *      permission-on-authorized="vm.renderContent()"
+   *      permission-on-unauthorized="vm.removeContent()">
+   * </div>
    */
   angular
     .module('permission')
@@ -16,12 +40,35 @@
         restrict: 'A',
         scope: true,
         bindToController: {
-          only: '=',
-          except: '='
+          only: '=?permissionOnly',
+          except: '=?permissionExcept',
+          onAuthorized: '&?permissionOnAuthorized',
+          onUnauthorized: '&?permissionOnUnauthorized'
         },
         controllerAs: 'permission',
-        controller: function ($scope, $element) {
+        controller: function ($scope, $element, $attrs, $log, $parse) {
           var permission = this;
+
+
+          if (angular.isDefined($attrs.only) || angular.isDefined($attrs.except)) {
+            $log.warn(
+              'Attributes "only" and "except" are deprecated since 2.2.0+ and their support will be removed from 2.3.0. ' +
+              'Use scoped "permission-only" and "permission-except" instead.');
+          }
+
+          /**
+           * Observing attribute `only` will be removed with 2.3.0
+           */
+          $attrs.$observe('only', function (onlyString) {
+            permission.only = $scope.$parent[onlyString] || $parse(onlyString);
+          });
+
+          /**
+           * Observing attribute `except` will be removed with version 2.3.0+
+           */
+          $attrs.$observe('except', function (exceptString) {
+            permission.except = $scope.$parent[exceptString] || $parse(exceptString);
+          });
 
           $scope.$watchGroup(['permission.only', 'permission.except'],
             function () {
@@ -32,16 +79,40 @@
                     except: permission.except
                   }), null)
                   .then(function () {
-                    $element.removeClass('ng-hide');
+                    onAuthorizedAccess();
                   })
                   .catch(function () {
-                    $element.addClass('ng-hide');
+                    onUnauthorizedAccess();
                   });
               } catch (e) {
-                $element.addClass('ng-hide');
+                onUnauthorizedAccess();
                 $log.error(e.message);
               }
             });
+
+          /**
+           * Calls `onAuthorized` function if provided or show element
+           * @private
+           */
+          function onAuthorizedAccess() {
+            if (angular.isFunction(permission.onAuthorized)) {
+              permission.onAuthorized()($element);
+            } else {
+              $element.removeClass('ng-hide');
+            }
+          }
+
+          /**
+           * Calls `onUnauthorized` function if provided or hide element
+           * @private
+           */
+          function onUnauthorizedAccess() {
+            if (angular.isFunction(permission.onUnauthorized)) {
+              permission.onUnauthorized()($element);
+            } else {
+              $element.addClass('ng-hide');
+            }
+          }
         }
       };
     });
