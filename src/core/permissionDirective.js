@@ -21,8 +21,6 @@
         },
         controllerAs: 'permission',
         controller: function ($scope, $element, $attrs) {
-          var permission = this;
-
           $scope.$watchGroup(['permission.only', 'permission.except'],
             function () {
               try {
