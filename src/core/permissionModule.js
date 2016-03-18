@@ -112,7 +112,7 @@
             $state
               .go(toState.name, toParams, {notify: false})
               .then(function () {
-                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams);
+                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
               });
           })
           .catch(function (rejectedPermission) {
