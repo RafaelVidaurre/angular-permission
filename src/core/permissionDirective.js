@@ -20,7 +20,7 @@
           except: '='
         },
         controllerAs: 'permission',
-        controller: function ($scope, $element) {
+        controller: function ($scope, $element, $attrs) {
           var permission = this;
 
           $scope.$watchGroup(['permission.only', 'permission.except'],
@@ -28,8 +28,8 @@
               try {
                 Authorization
                   .authorize(new PermissionMap({
-                    only: permission.only,
-                    except: permission.except
+                    only: $scope.$eval($attrs.only),
+                    except: $scope.$eval($attrs.except)
                   }), null)
                   .then(function () {
                     $element.removeClass('ng-hide');
