@@ -21,21 +21,19 @@
    * You can override this behaviour by passing `permission-on-authorized` and `permission-on-unauthorized` attributes
    * that will pass to your function `$element` as argument that you can freely manipulate your DOM behaviour.
    *
+   * Important! Function should be as references - `vm.disableElement` not `vm.disableElement()` to be able to accept
+   * passed $element reference from inside of permissionDirective
+   *
    * @example
    * <div permission
    *      permission-only="['USER','ADMIN']"
-   *      permission-on-authorized="vm.disableElement()"
-   *      permission-on-unauthorized="vm.removeContent()">
-   * </div>
-   * <div permission
-   *      permission-except="'MANAGER'"
-   *      permission-on-authorized="vm.renderContent()"
-   *      permission-on-unauthorized="vm.removeContent()">
+   *      permission-on-authorized="PermissionStrategies.disableElement"
+   *      permission-on-unauthorized="PermissionStrategies.enableElement">
    * </div>
    */
   angular
     .module('permission')
-    .directive('permission', function ($log, Authorization, PermissionMap) {
+    .directive('permission', function ($log, Authorization, PermissionMap, PermissionStrategies) {
       return {
         restrict: 'A',
         scope: true,
@@ -46,7 +44,7 @@
           onUnauthorized: '&?permissionOnUnauthorized'
         },
         controllerAs: 'permission',
-        controller: function ($scope, $element, $attrs, $log, $parse) {
+        controller: function ($scope, $element, $attrs, $parse) {
           var permission = this;
 
 
@@ -98,7 +96,7 @@
             if (angular.isFunction(permission.onAuthorized)) {
               permission.onAuthorized()($element);
             } else {
-              $element.removeClass('ng-hide');
+              PermissionStrategies.showElement($element);
             }
           }
 
@@ -110,7 +108,7 @@
             if (angular.isFunction(permission.onUnauthorized)) {
               permission.onUnauthorized()($element);
             } else {
-              $element.addClass('ng-hide');
+              PermissionStrategies.hideElement($element);
             }
           }
         }
