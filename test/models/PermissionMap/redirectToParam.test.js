@@ -154,7 +154,46 @@ describe('model: PermissionMap', function () {
         expect($state.current.name).not.toBe('default');
       });
 
-      it('should redirect based on results of rejected permission with function', function () {
+      it('should redirect based on results of rejected permission with redirection object', function () {
+        // GIVEN
+        var sut = {
+          state: 'redirected',
+          params: {
+            paramOne: 'one',
+            paramTwo: 'two'
+          },
+          options: {
+            reload: true
+          }
+        };
+
+        $stateProvider
+          .state('redirect', {
+            data: {
+              permissions: {
+                only: ['denied'],
+                redirectTo: {
+                  denied: sut,
+                  default: 'default'
+                }
+              }
+            }
+          })
+          .state('default', {})
+          .state('redirected', {});
+
+        // WHEN
+        $state.go('redirect');
+        $rootScope.$apply();
+
+        // THEN
+        expect($state.current.name).toBe('redirected');
+        expect($state.current.name).not.toBe('default');
+        expect($state.current.params).not.toBe(sut.params);
+        expect($state.current.params).not.toBe(sut.options);
+      });
+
+      it('should redirect based on results of rejected permission with function returning string', function () {
         // GIVEN
         $stateProvider
           .state('redirect', {
@@ -164,6 +203,37 @@ describe('model: PermissionMap', function () {
                 redirectTo: {
                   denied: function () {
                     return 'redirected';
+                  },
+                  default: 'default'
+                }
+              }
+            }
+          })
+          .state('default', {})
+          .state('redirected', {});
+
+        // WHEN
+        $state.go('redirect');
+        $rootScope.$apply();
+
+        // THEN
+        expect($state.current.name).toBe('redirected');
+        expect($state.current.name).not.toBe('default');
+      });
+
+
+      it('should redirect based on results of rejected permission with function returning object', function () {
+        // GIVEN
+        $stateProvider
+          .state('redirect', {
+            data: {
+              permissions: {
+                only: ['denied'],
+                redirectTo: {
+                  denied: function () {
+                    return {
+                      state: 'redirected'
+                    };
                   },
                   default: 'default'
                 }
@@ -212,7 +282,7 @@ describe('model: PermissionMap', function () {
     });
 
     describe('used as function/promise', function () {
-      it('should throw error when function do not return state string', function () {
+      it('should throw error when function do not return state string or object', function () {
         // GIVEN
         var error;
 
@@ -238,10 +308,10 @@ describe('model: PermissionMap', function () {
         }
 
         // THEN
-        expect(error.message).toBe('When used "redirectTo" as function, returned value must be string with state name');
+        expect(error.message).toBe('When used "redirectTo" as function, returned value must be string or object');
       });
 
-      it('should redirect based on results of function', function () {
+      it('should redirect based on string returned results of function', function () {
         // GIVEN
         $stateProvider
           .state('redirect', {
@@ -250,6 +320,31 @@ describe('model: PermissionMap', function () {
                 only: ['denied'],
                 redirectTo: function () {
                   return 'other';
+                }
+              }
+            }
+          })
+          .state('other', {});
+
+        // WHEN
+        $state.go('redirect');
+        $rootScope.$apply();
+
+        // THEN
+        expect($state.current.name).toBe('other');
+      });
+
+      it('should redirect based on object returned results of function', function () {
+        // GIVEN
+        $stateProvider
+          .state('redirect', {
+            data: {
+              permissions: {
+                only: ['denied'],
+                redirectTo: function () {
+                  return {
+                    state: 'other'
+                  };
                 }
               }
             }
