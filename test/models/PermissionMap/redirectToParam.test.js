@@ -73,6 +73,29 @@ describe('model: PermissionMap', function () {
         // THEN
         expect($state.current.name).toBe('redirected');
       });
+
+      it('should redirect based on state name and parameters present in "redirectTo"', function () {
+        // GIVEN
+        $stateProvider
+          .state('redirected', {
+            url:'/?redirectionParam'
+          })
+          .state('redirect', {
+            data: {
+              permissions: {
+                only: ['denied'],
+                redirectTo: 'redirected({ redirectionParam: "here"})'
+              }
+            }
+          });
+
+        // WHEN
+        $state.go('redirect');
+        $rootScope.$apply();
+
+        expect($state.current.name).toBe('redirected');
+        expect($state.params.redirectionParam).toBe('here');
+      });
     });
 
     describe('used as object', function () {

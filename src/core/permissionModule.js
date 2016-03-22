@@ -120,8 +120,8 @@
 
             return permissions
               .resolveRedirectState(rejectedPermission)
-              .then(function (redirectStateName) {
-                $state.go(redirectStateName, toParams);
+              .then(function (sref) {
+                $state.go(sref.to, sref.params || toParams, sref.options);
               });
           })
           .finally(function () {

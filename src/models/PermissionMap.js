@@ -3,7 +3,7 @@
 
   angular
     .module('permission')
-    .factory('PermissionMap', function ($q) {
+    .factory('PermissionMap', function ($q, $parse) {
 
       /**
        * Constructs map object instructing authorization service how to handle authorizing
@@ -51,7 +51,7 @@
         }
 
         if (angular.isString(this.redirectTo)) {
-          return $q.resolve(this.redirectTo);
+          return $q.resolve(parseStateRef(this.redirectTo));
         }
 
         // If redirectTo state is not defined stay where you are
@@ -73,7 +73,7 @@
             if (!angular.isString(redirectState)) {
               throw new TypeError('When used "redirectTo" as function, returned value must be string with state name');
             }
-            return redirectState;
+            return parseStateRef(redirectState);
           });
       }
 
@@ -101,9 +101,40 @@
         }
 
         if (angular.isString(redirectState)) {
-          return $q.resolve(redirectState);
+          return $q.resolve(parseStateRef(redirectState));
         }
       }
+
+      /**
+       * Parse a stateRef expression like in ui-sref directive. The state is mandatory but stateParameters are optional.
+       * @private
+       *
+       * @param sref
+       * @returns {{to: String, params: (Object|null), options: (Object| null)}}
+       */
+      function parseStateRef(sref) {
+        var parsed = sref.replace(/\n/g, ' ').match(/^([^(]+?)\s*(\((.*)\))?$/);
+        if (!parsed || parsed.length !== 4){
+          throw new SyntaxError('Invalid state ref \'' + sref + '\'');
+        }
+
+        var params = null;
+        if(parsed[3]) {
+          try {
+            var getter = $parse(parsed[3]);
+            params = getter();
+          } catch(e) {
+            throw new SyntaxError('Failed to parse state parameters');
+          }
+        }
+
+        if(params !== null && !angular.isObject(params)) {
+          throw new TypeError('State parameters must be an object');
+        }
+
+        return { to: parsed[1], params: params || null, options: null };
+      }
+
 
       /**
        * Handles extraction of permission map "only" and "except" properties
