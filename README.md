@@ -238,7 +238,7 @@ $stateProvider
   });
 ```
 
-Another thing you can do is set `redirectTo` property that will handle unmatched permission redirection:
+You can also set `redirectTo` property that will handle unmatched permission redirection:
 
 ```javascript
 $stateProvider
@@ -263,13 +263,29 @@ $stateProvider
         only: ['manager'],
         redirectTo: function(){
           return 'auth';
+        },
+        // or alternatively return customizable redirection object
+        redirectTo: function(){
+          return {
+            state: 'dashboard',
+            params: {
+              // custom redirection parameters
+              paramOne: 'one'
+              paramTwo: 'two'
+            },
+            options: {
+             // custom ui-router transition params
+             location: false
+             reload: true
+            }
+          }
         }
       }
     }
   })
 ```
 
-**Important!** Remember to always return _route's state_. Otherwise errors will thrown from either Permission or UI-Router library.
+**Important!** Remember to always return _route's state name or object_. Otherwise errors will thrown from either Permission or UI-Router library.
 
 or object with map of permissions/roles:
 ```javascript
@@ -282,6 +298,19 @@ $stateProvider
           account: 'profile',
           user: function(){
             return 'dashboard';
+          },
+          admin: {
+            state: 'dashboard',
+            params: {
+              // custom redirection parameters
+              paramOne: 'one'
+              paramTwo: 'two'
+            },
+            options: {
+              // custom ui-router transition params
+              location: false
+              reload: true
+            }
           },
           default: 'auth'
         }

@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.2.2 - 2016-03-22
+ * @version v2.2.3 - 2016-03-22
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -129,8 +129,8 @@
 
             return permissions
               .resolveRedirectState(rejectedPermission)
-              .then(function (redirectStateName) {
-                $state.go(redirectStateName, toParams);
+              .then(function (redirect) {
+                $state.go(redirect.state, redirect.params, redirect.options);
               });
           })
           .finally(function () {
@@ -215,7 +215,9 @@
         }
 
         if (angular.isString(this.redirectTo)) {
-          return $q.resolve(this.redirectTo);
+          return $q.resolve({
+            state: this.redirectTo
+          });
         }
 
         // If redirectTo state is not defined stay where you are
@@ -234,10 +236,17 @@
         return $q
           .when(redirectFunction.call(null, permission))
           .then(function (redirectState) {
-            if (!angular.isString(redirectState)) {
-              throw new TypeError('When used "redirectTo" as function, returned value must be string with state name');
+            if (angular.isString(redirectState)) {
+              return {
+                state: redirectState
+              };
             }
-            return redirectState;
+
+            if (angular.isObject(redirectState)) {
+              return redirectState;
+            }
+
+            throw new TypeError('When used "redirectTo" as function, returned value must be string or object');
           });
       }
 
@@ -264,8 +273,14 @@
           return resolveFunctionRedirect(redirectState, permission);
         }
 
-        if (angular.isString(redirectState)) {
+        if (angular.isObject(redirectState)) {
           return $q.resolve(redirectState);
+        }
+
+        if (angular.isString(redirectState)) {
+          return $q.resolve({
+            state: redirectState
+          });
         }
       }
 
