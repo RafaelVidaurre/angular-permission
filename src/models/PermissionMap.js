@@ -51,7 +51,9 @@
         }
 
         if (angular.isString(this.redirectTo)) {
-          return $q.resolve(this.redirectTo);
+          return $q.resolve({
+            state: this.redirectTo
+          });
         }
 
         // If redirectTo state is not defined stay where you are
@@ -70,10 +72,17 @@
         return $q
           .when(redirectFunction.call(null, permission))
           .then(function (redirectState) {
-            if (!angular.isString(redirectState)) {
-              throw new TypeError('When used "redirectTo" as function, returned value must be string with state name');
+            if (angular.isString(redirectState)) {
+              return {
+                state: redirectState
+              };
             }
-            return redirectState;
+
+            if (angular.isObject(redirectState)) {
+              return redirectState;
+            }
+
+            throw new TypeError('When used "redirectTo" as function, returned value must be string or object');
           });
       }
 
@@ -100,8 +109,14 @@
           return resolveFunctionRedirect(redirectState, permission);
         }
 
-        if (angular.isString(redirectState)) {
+        if (angular.isObject(redirectState)) {
           return $q.resolve(redirectState);
+        }
+
+        if (angular.isString(redirectState)) {
+          return $q.resolve({
+            state: redirectState
+          });
         }
       }
 
