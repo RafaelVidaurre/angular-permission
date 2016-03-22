@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.2.1 - 2016-03-22
+ * @version v2.2.2 - 2016-03-22
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -683,40 +683,32 @@
           only: '=?permissionOnly',
           except: '=?permissionExcept',
           onAuthorized: '&?permissionOnAuthorized',
-          onUnauthorized: '&?permissionOnUnauthorized'
+          onUnauthorized: '&?permissionOnUnauthorized',
+          // Observing attribute `only` and `except` will be removed with version 2.3.0+
+          deprecatedOnly: '=only',
+          deprecatedExcept: '=except'
         },
         controllerAs: 'permission',
-        controller: ['$scope', '$element', '$attrs', '$parse', function ($scope, $element, $attrs, $parse) {
+        controller: ['$scope', '$element', function ($scope, $element) {
           var permission = this;
 
-
-          if (angular.isDefined($attrs.only) || angular.isDefined($attrs.except)) {
+          if (angular.isDefined(permission.deprecatedOnly) || angular.isDefined(permission.deprecatedExcept)) {
             $log.warn(
               'Attributes "only" and "except" are deprecated since 2.2.0+ and their support will be removed from 2.3.0. ' +
               'Use scoped "permission-only" and "permission-except" instead.');
           }
 
           /**
-           * Observing attribute `only` will be removed with version 2.3.0+
+           * Observing attribute `only` and `except` will be removed with version 2.3.0+
            */
-          $attrs.$observe('only', function (onlyString) {
-            permission.only = $scope.$parent[onlyString] || $parse(onlyString);
-          });
-
-          /**
-           * Observing attribute `except` will be removed with version 2.3.0+
-           */
-          $attrs.$observe('except', function (exceptString) {
-            permission.except = $scope.$parent[exceptString] || $parse(exceptString);
-          });
-
-          $scope.$watchGroup(['permission.only', 'permission.except'],
+          $scope.$watchGroup(['permission.only', 'permission.except',
+              'permission.deprecatedOnly', 'permission.deprecatedExcept'],
             function () {
               try {
                 Authorization
                   .authorize(new PermissionMap({
-                    only: permission.only,
-                    except: permission.except
+                    only: permission.only || permission.deprecatedOnly,
+                    except: permission.except || permission.deprecatedExcept
                   }), null)
                   .then(function () {
                     onAuthorizedAccess();

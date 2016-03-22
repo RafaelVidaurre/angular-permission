@@ -154,9 +154,24 @@ describe('directive: Permission', function () {
     expect(element.hasClass('ng-hide')).toBeTruthy();
   });
 
-  it('should watch for changes in "only" and "except" attributes', function () {
+  it('should watch for changes in "permission-only" and "permission-except" attributes', function () {
     // GIVEN
     var element = angular.element('<div permission permission-only="only"></div>');
+    $rootScope.only = ['USER'];
+    $compile(element)($rootScope);
+    $rootScope.$digest();
+
+    // WHEN
+    $rootScope.only = ['ADMIN'];
+    $rootScope.$digest();
+
+    // THEN
+    expect(element.hasClass('ng-hide')).toBeTruthy();
+  });
+
+  it('should watch for changes in "only" and "except" attributes [deprecated]', function () {
+    // GIVEN
+    var element = angular.element('<div permission only="only"></div>');
     $rootScope.only = ['USER'];
     $compile(element)($rootScope);
     $rootScope.$digest();
