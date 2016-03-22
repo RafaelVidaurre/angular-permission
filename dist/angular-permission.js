@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.2.0 - 2016-03-22
+ * @version v2.2.1 - 2016-03-22
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -884,3 +884,34 @@
       }
     }]);
 })();
+
+
+(function () {
+  'use strict';
+
+  /**
+   * Pre-defined available configurable behaviours of directive `permission`
+   * @example
+   * <div permission
+   *      permission-except="'MANAGER'"
+   *      permission-on-authorized="PermissionStrategies.renderContent"
+   *      permission-on-unauthorized="PermissionStrategies.removeContent">
+   * </div>
+   */
+  angular
+    .module('permission')
+    .constant('PermissionStrategies', {
+      enableElement: function ($element) {
+        $element.removeAttr('disabled');
+      },
+      disableElement: function ($element) {
+        $element.attr('disabled', 'disabled');
+      },
+      showElement: function ($element) {
+        $element.removeClass('ng-hide');
+      },
+      hideElement: function ($element) {
+        $element.addClass('ng-hide');
+      }
+    });
+}());

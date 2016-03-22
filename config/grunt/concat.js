@@ -16,7 +16,8 @@ module.exports = function () {
           '<%= paths.src %>/stores/PermissionStore.js',
           '<%= paths.src %>/stores/RoleStore.js',
           '<%= paths.src %>/core/permissionDirective.js',
-          '<%= paths.src %>/authorization/Authorization.js'
+          '<%= paths.src %>/authorization/Authorization.js',
+          '<%= paths.src %>/strategies/PermissionStrategies.js'
         ]
       }
     }
