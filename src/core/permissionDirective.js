@@ -55,7 +55,7 @@
           }
 
           /**
-           * Observing attribute `only` will be removed with 2.3.0
+           * Observing attribute `only` will be removed with version 2.3.0+
            */
           $attrs.$observe('only', function (onlyString) {
             permission.only = $scope.$parent[onlyString] || $parse(onlyString);
