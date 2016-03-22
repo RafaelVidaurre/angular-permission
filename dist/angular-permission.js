@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.1.3 - 2016-03-18
+ * @version v2.2.0 - 2016-03-22
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -663,21 +663,19 @@
    * You can override this behaviour by passing `permission-on-authorized` and `permission-on-unauthorized` attributes
    * that will pass to your function `$element` as argument that you can freely manipulate your DOM behaviour.
    *
+   * Important! Function should be as references - `vm.disableElement` not `vm.disableElement()` to be able to accept
+   * passed $element reference from inside of permissionDirective
+   *
    * @example
    * <div permission
    *      permission-only="['USER','ADMIN']"
-   *      permission-on-authorized="vm.disableElement()"
-   *      permission-on-unauthorized="vm.removeContent()">
-   * </div>
-   * <div permission
-   *      permission-except="'MANAGER'"
-   *      permission-on-authorized="vm.renderContent()"
-   *      permission-on-unauthorized="vm.removeContent()">
+   *      permission-on-authorized="PermissionStrategies.disableElement"
+   *      permission-on-unauthorized="PermissionStrategies.enableElement">
    * </div>
    */
   angular
     .module('permission')
-    .directive('permission', ['$log', 'Authorization', 'PermissionMap', function ($log, Authorization, PermissionMap) {
+    .directive('permission', ['$log', 'Authorization', 'PermissionMap', 'PermissionStrategies', function ($log, Authorization, PermissionMap, PermissionStrategies) {
       return {
         restrict: 'A',
         scope: true,
@@ -688,7 +686,7 @@
           onUnauthorized: '&?permissionOnUnauthorized'
         },
         controllerAs: 'permission',
-        controller: ['$scope', '$element', '$attrs', '$log', '$parse', function ($scope, $element, $attrs, $log, $parse) {
+        controller: ['$scope', '$element', '$attrs', '$parse', function ($scope, $element, $attrs, $parse) {
           var permission = this;
 
 
@@ -699,7 +697,7 @@
           }
 
           /**
-           * Observing attribute `only` will be removed with 2.3.0
+           * Observing attribute `only` will be removed with version 2.3.0+
            */
           $attrs.$observe('only', function (onlyString) {
             permission.only = $scope.$parent[onlyString] || $parse(onlyString);
@@ -740,7 +738,7 @@
             if (angular.isFunction(permission.onAuthorized)) {
               permission.onAuthorized()($element);
             } else {
-              $element.removeClass('ng-hide');
+              PermissionStrategies.showElement($element);
             }
           }
 
@@ -752,7 +750,7 @@
             if (angular.isFunction(permission.onUnauthorized)) {
               permission.onUnauthorized()($element);
             } else {
-              $element.addClass('ng-hide');
+              PermissionStrategies.hideElement($element);
             }
           }
         }]
