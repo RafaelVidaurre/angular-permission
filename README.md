@@ -33,7 +33,7 @@ Include to your dependencies
 ----------------------------
 
 ```javascript
-angular.module('yourModule', [..., 'ui.router', 'permission',  ...]);
+angular.module('yourModule', [..., 'ui.router', ('ct.ui.router.extras.core',) 'permission',  ...]);
 ```
 **Important!** Angular permission is using ui-router state decoration to be able to inherit permissions/roles from parent states. So make sure that permission dependency is included just after ui-router as in example above.
 
@@ -405,11 +405,6 @@ $urlRouterProvider.otherwise( function($injector) {
   $state.go('/somestate');
 });
 ```
-
-Working with [angular-ui-router-extras](https://github.com/christopherthielen/ui-router-extras) is not supported.
-This library is triggering additional `transitionTo` events that can not be fixed with current implementation of 
-ui-router, that will be heavily refactored in 1.0 and presumably those problems will be fixed to. 
-Sorry guys, but we can not anything with that.
 
 Contributing
 ============================

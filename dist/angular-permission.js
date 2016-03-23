@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.2.3 - 2016-03-22
+ * @version v2.2.4 - 2016-03-24
  * @link http://www.rafaelvidaurre.com
  * @author Rafael Vidaurre <narzerus@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -26,7 +26,7 @@
     });
   }]);
 
-  permission.run(['$rootScope', '$state', '$q', 'Authorization', 'PermissionMap', function ($rootScope, $state, $q, Authorization, PermissionMap) {
+  permission.run(['$rootScope', '$state', '$q', '$location', 'Authorization', 'PermissionMap', function ($rootScope, $state, $q, $location, Authorization, PermissionMap) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
       if (!isAuthorizationFinished() && areSetStatePermissions(toState)) {
@@ -118,6 +118,7 @@
           .then(function () {
             $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, options);
 
+            $location.replace();
             $state
               .go(toState.name, toParams, {notify: false})
               .then(function () {

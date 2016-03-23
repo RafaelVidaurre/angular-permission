@@ -17,7 +17,7 @@
     });
   });
 
-  permission.run(function ($rootScope, $state, $q, Authorization, PermissionMap) {
+  permission.run(function ($rootScope, $state, $q, $location, Authorization, PermissionMap) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
       if (!isAuthorizationFinished() && areSetStatePermissions(toState)) {
@@ -108,6 +108,8 @@
           .authorize(permissions, toParams)
           .then(function () {
             $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, options);
+
+            $location.replace();
 
             $state
               .go(toState.name, toParams, {notify: false})
