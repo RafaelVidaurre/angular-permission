@@ -94,10 +94,6 @@
       function compensatePermissionMap() {
         var permissionMap = new PermissionMap();
 
-        if (areSetStatePermissions(toState)) {
-          permissionMap = new PermissionMap({redirectTo: toState.data.permissions.redirectTo});
-        }
-
         var toStatePath = $state
           .get(toState.name)
           .$$state().path

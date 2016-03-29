@@ -50,6 +50,7 @@
           if (permissionMap.except.length) {
             this.except = this.except.concat([permissionMap.except]);
           }
+          this.redirectTo = permissionMap.redirectTo;
         };
 
         /**
