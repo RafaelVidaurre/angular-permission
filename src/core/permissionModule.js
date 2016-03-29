@@ -10,7 +10,7 @@
    */
   permission.config(function ($stateProvider) {
     $stateProvider.decorator('parent', function (state, parentFn) {
-      state.self.getState = function () {
+      state.self.$$state = function () {
         return state;
       };
       return parentFn(state);
@@ -34,6 +34,7 @@
 
       /**
        * Checks if state is qualified to be permission based verified
+       * @method
        * @private
        *
        * @returns {boolean}
@@ -44,6 +45,7 @@
 
       /**
        * Sets internal state `$$finishedAuthorization` variable to prevent looping
+       * @method
        * @private
        *
        * @param status {boolean} When true authorization has been already preceded
@@ -55,6 +57,7 @@
 
       /**
        * Checks if state has been already checked for authorization
+       * @method
        * @private
        *
        * @returns {boolean}
@@ -65,6 +68,7 @@
 
       /**
        * Checks if state events are not prevented by default
+       * @method
        * @private
        *
        * @returns {boolean}
@@ -76,26 +80,25 @@
       /**
        * Builds map of permissions resolving passed values to data.permissions and combine them with all its parents
        * keeping the order of permissions from the newest (children) to the oldest (parent)
+       * @method
        * @private
        *
        * @returns {PermissionMap} Permission map
        */
       function compensatePermissionMap() {
-        var permissionMap;
+        var permissionMap = new PermissionMap();
 
         if (areSetStatePermissions(toState)) {
           permissionMap = new PermissionMap({redirectTo: toState.data.permissions.redirectTo});
-        } else {
-          permissionMap = new PermissionMap({});
         }
 
         var toStatePath = $state
           .get(toState.name)
-          .getState().path
+          .$$state().path
           .slice()
           .reverse();
 
-        angular.forEach(toStatePath, function (state) {
+        toStatePath.forEach(function (state) {
           if (areSetStatePermissions(state)) {
             permissionMap.extendPermissionMap(new PermissionMap(state.data.permissions));
           }
@@ -106,32 +109,19 @@
 
       /**
        * Handles state authorization
+       * @method
        * @private
        *
-       * @param permissions {PermissionMap} Map of permission names
+       * @param permissionMap {PermissionMap} Map of permission names
        */
-      function authorizeForState(permissions) {
+      function authorizeForState(permissionMap) {
         Authorization
-          .authorize(permissions, toParams)
+          .authorize(permissionMap, toParams)
           .then(function () {
-            $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, options);
-
-            $location.replace();
-
-            $state
-              .go(toState.name, toParams, {notify: false})
-              .then(function () {
-                $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
-              });
+            handleAuthorizedState();
           })
           .catch(function (rejectedPermission) {
-            $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
-
-            return permissions
-              .resolveRedirectState(rejectedPermission)
-              .then(function (redirect) {
-                $state.go(redirect.state, redirect.params, redirect.options);
-              });
+            return handleUnauthorizedState(permissionMap, rejectedPermission);
           })
           .finally(function () {
             setStateAuthorizationStatus(false);
@@ -139,7 +129,44 @@
       }
 
       /**
+       * Handles redirection for authorized access
+       * @method
+       * @private
+       */
+      function handleAuthorizedState() {
+        $rootScope.$broadcast('$stateChangePermissionAccepted', toState, toParams, options);
+
+        $location.replace();
+
+        $state
+          .go(toState.name, toParams, {notify: false})
+          .then(function () {
+            $rootScope.$broadcast('$stateChangeSuccess', toState, toParams, fromState, fromParams);
+          });
+      }
+
+      /**
+       * Handles redirection for unauthorized access
+       * @method
+       * @private
+       *
+       * @param permissionMap {PermissionMap} Map of access rights names
+       * @param rejectedPermission {String} Rejected access right
+       * @returns {*}
+       */
+      function handleUnauthorizedState(permissionMap, rejectedPermission) {
+        $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
+
+        return permissionMap
+          .resolveRedirectState(rejectedPermission)
+          .then(function (redirect) {
+            $state.go(redirect.state, redirect.params, redirect.options);
+          });
+      }
+
+      /**
        * Checks if event $stateChangeStart hasn't been disabled by default
+       * @method
        * @private
        *
        * @returns {boolean}
@@ -150,6 +177,7 @@
 
       /**
        * Checks if event $stateChangePermissionStart hasn't been disabled by default
+       * @method
        * @private
        *
        * @returns {boolean}

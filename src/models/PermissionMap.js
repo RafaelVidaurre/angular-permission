@@ -7,18 +7,21 @@
 
       /**
        * Constructs map object instructing authorization service how to handle authorizing
+       * @class PermissionMap
        *
-       * @param permissionMap {Object} Map of permissions provided to authorization service
-       * @param permissionMap.only {Array} List of exclusive permission/role names allowed for authorization
-       * @param permissionMap.except {Array} List of exclusive permission/role names denied for authorization
-       * @param permissionMap.redirectTo {String|Function|Object|promise} Handling redirection when rejected
+       * @param [permissionMap] {Object} Map of permissions provided to authorization service
+       * @param [permissionMap.only] {Array} List of exclusive access right names allowed for authorization
+       * @param [permissionMap.except] {Array} List of exclusive access right names denied for authorization
+       * @param [permissionMap.redirectTo] {String|Function|Object|promise} Handling redirection when rejected
        *   authorization
        * @param [toState] {Object} UI-Router transition state object
        * @param [toParams] {Object} UI-Router transition state params
        * @param [options] {Object} UI-Router transition state options
-       * @constructor
        */
       function PermissionMap(permissionMap, toState, toParams, options) {
+        // Suppress not defined object errors
+        permissionMap = permissionMap || {};
+
         this.only = resolvePermissionMapProperty(permissionMap.only, toState, toParams, options);
         this.except = resolvePermissionMapProperty(permissionMap.except, toState, toParams, options);
         this.redirectTo = permissionMap.redirectTo;
@@ -133,15 +136,20 @@
        */
       function resolvePermissionMapProperty(property, toState, toParams, options) {
         if (angular.isString(property)) {
-          return [property];
+          return [[property]];
         }
 
         if (angular.isArray(property)) {
-          return property;
+          // Naive checking if provided array is already compensated one
+          if (angular.isArray(property[0])) {
+            return property;
+          }
+
+          return [property];
         }
 
         if (angular.isFunction(property)) {
-          return property.call(null, toState, toParams, options);
+          return [property.call(null, toState, toParams, options)];
         }
 
         return [];
