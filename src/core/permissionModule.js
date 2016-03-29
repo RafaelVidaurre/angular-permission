@@ -20,14 +20,12 @@
   permission.run(function ($rootScope, $state, $q, $location, Authorization, PermissionMap) {
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
-      if (!isAuthorizationFinished()) {
+      if (!isAuthorizationFinished() && areSetStatePermissions(toState)) {
         event.preventDefault();
         setStateAuthorizationStatus(true);
 
         if (!areStateEventsDefaultPrevented()) {
-          $rootScope.$broadcast('$stateChangePermissionStart', toState, toParams, options);
-
-          var compensatedPermissionMap = compensatePermissionMap();
+          var compensatedPermissionMap = compensatePermissionMap(toState.data.permissions);
           authorizeForState(compensatedPermissionMap);
         }
       }
@@ -78,16 +76,11 @@
        * keeping the order of permissions from the newest (children) to the oldest (parent)
        * @private
        *
+       * @param statePermissionMap {Object} Current state permission map
        * @returns {PermissionMap} Permission map
        */
-      function compensatePermissionMap() {
-        var permissionMap;
-
-        if (areSetStatePermissions(toState)) {
-          permissionMap = new PermissionMap({redirectTo: toState.data.permissions.redirectTo});
-        } else {
-          permissionMap = new PermissionMap({});
-        }
+      function compensatePermissionMap(statePermissionMap) {
+        var permissionMap = new PermissionMap({redirectTo: statePermissionMap.redirectTo});
 
         var toStatePath = $state
           .get(toState.name)
