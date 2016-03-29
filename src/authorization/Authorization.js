@@ -25,22 +25,89 @@
          * @returns {promise} $q.promise object
          */
         function authorize(permissionsMap, toParams) {
+
+          if (isCompensatedMap(permissionsMap)) {
+            return authorizeCompensatedMap(permissionsMap, toParams);
+          }
+
+          return authorizeDecompensatedMap(permissionsMap, toParams);
+        }
+
+        /**
+         * Checks if provided map is compensated or not
+         *
+         * @param permissionMap {Object} Map of permission names
+         * @returns {boolean}
+         */
+        function isCompensatedMap(permissionMap) {
+          return !!((angular.isArray(permissionMap.only[0])) || angular.isArray(permissionMap.except[0]));
+        }
+
+
+        /**
+         * Checks authorization for complex state inheritance
+         * @method
+         * @private
+         *
+         * @param permissionMap {Object} Map of permission names
+         * @param [toParams] {Object} UI-Router params object
+         *
+         * @returns {promise} $q.promise object
+         */
+        function authorizeCompensatedMap(permissionMap, toParams) {
           var deferred = $q.defer();
 
-          var exceptPromises = resolveAccessRights(permissionsMap.except, toParams);
+          var exceptPromises = resolveAccessRights(permissionMap.except, toParams);
 
           $q.all(exceptPromises)
             .then(function (rejectedPermissions) {
               deferred.reject(rejectedPermissions);
             })
             .catch(function () {
-              if (!permissionsMap.only.length) {
+              if (!permissionMap.only.length) {
                 deferred.resolve(null);
               }
 
-              var onlyPromises = resolveAccessRights(permissionsMap.only, toParams);
+              var onlyPromises = resolveAccessRights(permissionMap.only, toParams);
 
               $q.all(onlyPromises)
+                .then(function (resolvedPermissions) {
+                  deferred.resolve(resolvedPermissions);
+                })
+                .catch(function (rejectedPermission) {
+                  deferred.reject(rejectedPermission);
+                });
+            });
+
+          return deferred.promise;
+        }
+
+        /**
+         * Checks authorization for simple view based access
+         * @method
+         * @private
+         *
+         * @param permissionMap {Object} Map of permission names
+         * @param [toParams] {Object} UI-Router params object
+         *
+         * @returns {promise} $q.promise object
+         */
+        function authorizeDecompensatedMap(permissionMap, toParams) {
+          var deferred = $q.defer();
+          var exceptPromises = resolveStateAccessRights(permissionMap.except, toParams);
+
+          only(exceptPromises)
+            .then(function (rejectedPermissions) {
+              deferred.reject(rejectedPermissions);
+            })
+            .catch(function () {
+              if (!permissionMap.only.length) {
+                deferred.resolve(null);
+              }
+
+              var onlyPromises = resolveStateAccessRights(permissionMap.only, toParams);
+
+              only(onlyPromises)
                 .then(function (resolvedPermissions) {
                   deferred.resolve(resolvedPermissions);
                 })
@@ -63,7 +130,7 @@
          * @returns {Array} Promise collection
          */
         function resolveAccessRights(accessRightSet, toParams) {
-          if (accessRightSet.length === 0) {
+          if (!accessRightSet.length) {
             return [$q.reject()];
           }
 
@@ -83,6 +150,10 @@
          * @returns {Array}
          */
         function resolveStateAccessRights(stateAccessRights, toParams) {
+          if (stateAccessRights.length === 0) {
+            return [];
+          }
+
           return stateAccessRights.map(function (accessRightName) {
             if (RoleStore.hasRoleDefinition(accessRightName)) {
               var role = RoleStore.getRoleDefinition(accessRightName);

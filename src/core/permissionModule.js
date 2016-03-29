@@ -89,7 +89,7 @@
        * @method
        * @private
        *
-       * @returns {PermissionMapFactory} Permission map
+       * @returns {permission.PermissionMap} Permission map
        */
       function compensatePermissionMap() {
         var permissionMap = new PermissionMap();
@@ -118,7 +118,7 @@
        * @method
        * @private
        *
-       * @param permissionMap {PermissionMapFactory} Map of permission names
+       * @param permissionMap {permission.PermissionMap} Map of permission names
        */
       function authorizeForState(permissionMap) {
         Authorization
@@ -127,7 +127,7 @@
             handleAuthorizedState();
           })
           .catch(function (rejectedPermission) {
-            return handleUnauthorizedState(permissionMap, rejectedPermission);
+            handleUnauthorizedState(permissionMap, rejectedPermission);
           })
           .finally(function () {
             setStateAuthorizationStatus(false);
@@ -156,14 +156,13 @@
        * @method
        * @private
        *
-       * @param permissionMap {PermissionMapFactory} Map of access rights names
+       * @param permissionMap {permission.PermissionMap} Map of access rights names
        * @param rejectedPermission {String} Rejected access right
-       * @returns {*}
        */
       function handleUnauthorizedState(permissionMap, rejectedPermission) {
         $rootScope.$broadcast('$stateChangePermissionDenied', toState, toParams, options);
 
-        return permissionMap
+        permissionMap
           .resolveRedirectState(rejectedPermission)
           .then(function (redirect) {
             $state.go(redirect.state, redirect.params, redirect.options);

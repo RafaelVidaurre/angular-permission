@@ -44,8 +44,12 @@
          * @param permissionMap {permission.PermissionMap} Compensated permission map
          */
         PermissionMap.prototype.extendPermissionMap = function (permissionMap) {
-          this.only = this.only.concat(permissionMap.only);
-          this.except = this.except.concat(permissionMap.except);
+          if (permissionMap.only.length) {
+            this.only = this.only.concat([permissionMap.only]);
+          }
+          if (permissionMap.except.length) {
+            this.except = this.except.concat([permissionMap.except]);
+          }
         };
 
         /**
@@ -151,20 +155,15 @@
          */
         function resolvePermissionMapProperty(property, toState, toParams, options) {
           if (angular.isString(property)) {
-            return [[property]];
-          }
-
-          if (angular.isArray(property)) {
-            // @todo: Naive checking if provided array is already compensated one
-            if (angular.isArray(property[0])) {
-              return property;
-            }
-
             return [property];
           }
 
+          if (angular.isArray(property)) {
+            return property;
+          }
+
           if (angular.isFunction(property)) {
-            return [property.call(null, toState, toParams, options)];
+            return property.call(null, toState, toParams, options);
           }
 
           return [];
