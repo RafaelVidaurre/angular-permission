@@ -8,7 +8,6 @@
        * Role definition factory
        * @class RoleFactory
        * @memberOf permission
-       * @constructs Role
        *
        * @param $q {$q} Angular promise implementation
        * @param PermissionStore {permission.PermissionStore} Permission definition storage

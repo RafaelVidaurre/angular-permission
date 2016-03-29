@@ -4,12 +4,10 @@
   angular
     .module('permission')
     .factory('PermissionMap',
-
       /**
        * Access rights map factory
        * @class PermissionMapFactory
        * @memberOf permission
-       * @constructs PermissionMap
        *
        * @param $q {$q} Angular promise implementation
        *

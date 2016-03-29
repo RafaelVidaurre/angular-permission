@@ -6,9 +6,8 @@
     .factory('Permission',
       /**
        * Permission definition factory
-       * @class PermissionFactory
+       * @class Permission
        * @memberOf permission
-       * @constructs permission.Permission
        *
        * @param $q {$q} Angular promise implementation
        *
@@ -18,8 +17,7 @@
 
         /**
          * Permission definition object constructor
-         * @constructor Permission
-         * @memberOf permission
+         * @constructor
          *
          * @param permissionName {String} Name repressing permission
          * @param validationFunction {Function} Function used to check if permission is valid
