@@ -150,9 +150,6 @@
          * @returns {Array}
          */
         function resolveStateAccessRights(stateAccessRights, toParams) {
-          if (stateAccessRights.length === 0) {
-            return [];
-          }
 
           return stateAccessRights.map(function (accessRightName) {
             if (RoleStore.hasRoleDefinition(accessRightName)) {
