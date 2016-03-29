@@ -42,7 +42,7 @@
          * Allows to define set of permissionNames with shared validation function on application configuration
          * @method
          *
-         * @param permissionNames {permission.Permission.permissionName} Set of permission names
+         * @param permissionNames {Array} Set of permission names
          * @param validationFunction {Function} Function used to validate if permission is valid
          */
         function defineManyPermissions(permissionNames, validationFunction) {

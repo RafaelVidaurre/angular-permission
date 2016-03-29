@@ -19,6 +19,7 @@
         /**
          * Permission definition object constructor
          * @constructor Permission
+         * @memberOf permission
          *
          * @param permissionName {String} Name repressing permission
          * @param validationFunction {Function} Function used to check if permission is valid

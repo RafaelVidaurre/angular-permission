@@ -13,12 +13,13 @@
        * @param $q {$q} Angular promise implementation
        * @param PermissionStore {permission.PermissionStore} Permission definition storage
        *
-       * @returns {Role} Role instance
+       * @returns {permission.Role}
        */
       function ($q, PermissionStore) {
         /**
          * Role definition constructor
          * @constructor Role
+         * @memberOf permission
          *
          * @param roleName {String} Name representing role
          * @param permissionNames {Array} List of permission names representing role
@@ -80,7 +81,7 @@
          * @private
          *
          * @param result {Boolean} Function to be wrapped into promise
-         * @param roleName {String} Returned value in promise
+         * @param [roleName] {String} Returned value in promise
          * @return {Promise}
          */
         function wrapInPromise(result, roleName) {

@@ -13,12 +13,13 @@
        *
        * @param $q {$q} Angular promise implementation
        *
-       * @return {PermissionMap} PermissionMap instance
+       * @return {permission.PermissionMap}
        */
       function ($q) {
         /**
          * Constructs map object instructing authorization service how to handle authorizing
          * @constructor PermissionMap
+         * @memberOf permission
          *
          * @param [permissionMap] {Object} Map of permissions provided to authorization service
          * @param [permissionMap.only] {Array} List of exclusive access right names allowed for authorization
@@ -156,7 +157,7 @@
           }
 
           if (angular.isArray(property)) {
-            // Naive checking if provided array is already compensated one
+            // @todo: Naive checking if provided array is already compensated one
             if (angular.isArray(property[0])) {
               return property;
             }
