@@ -40,8 +40,9 @@
 
         /**
          * Extends permission map by pushing to it state's permissions
+         * @method
          *
-         * @param permissionMap {PermissionMap} Compensated permission map
+         * @param permissionMap {permission.PermissionMap} Compensated permission map
          */
         PermissionMap.prototype.extendPermissionMap = function (permissionMap) {
           this.only = this.only.concat(permissionMap.only);
@@ -50,6 +51,7 @@
 
         /**
          * Redirects to fallback states when permissions fail
+         * @method
          *
          * @param rejectedPermissionName {String} Permission name
          *
@@ -76,6 +78,7 @@
 
         /**
          * Handles function based redirection for rejected permissions
+         * @method
          *
          * @param redirectFunction {Function} Redirection function
          * @param permission {String} Rejected permission
@@ -102,6 +105,7 @@
 
         /**
          * Handles object based redirection for rejected permissions
+         * @method
          *
          * @param redirectObject {Object} Redirection function
          * @param permission {String} Rejected permission
@@ -136,6 +140,7 @@
 
         /**
          * Handles extraction of permission map "only" and "except" properties
+         * @method
          * @private
          *
          * @param property {Array|Function|promise} Permission map property "only" or "except"

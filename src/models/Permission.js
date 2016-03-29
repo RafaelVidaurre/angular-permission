@@ -8,6 +8,7 @@
        * Permission definition factory
        * @class PermissionFactory
        * @memberOf permission
+       * @constructs permission.Permission
        *
        * @param $q {$q} Angular promise implementation
        *
@@ -31,6 +32,7 @@
 
         /**
          * Checks if permission is still valid
+         * @method
          *
          * @param toParams {Object} UI-Router params object
          * @returns {Promise}
@@ -47,6 +49,7 @@
 
         /**
          * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
+         * @method
          * @private
          *
          * @param result {Boolean} Function to be wrapped into promise
@@ -67,6 +70,7 @@
 
         /**
          * Checks if provided permission has accepted parameter types
+         * @method
          * @private
          */
         function validateConstructor(permissionName, validationFunction) {
