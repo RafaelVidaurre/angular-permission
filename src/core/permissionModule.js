@@ -1,6 +1,9 @@
 (function () {
   'use strict';
 
+  /**
+   * @namespace permission
+   */
   var permission = angular.module('permission', ['ui.router']);
 
   /**
@@ -18,6 +21,9 @@
   });
 
   permission.run(function ($rootScope, $state, $q, $location, Authorization, PermissionMap) {
+    /**
+     * State transition interceptor
+     */
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
       if (!isAuthorizationFinished()) {
@@ -83,7 +89,7 @@
        * @method
        * @private
        *
-       * @returns {PermissionMap} Permission map
+       * @returns {PermissionMapFactory} Permission map
        */
       function compensatePermissionMap() {
         var permissionMap = new PermissionMap();
@@ -112,7 +118,7 @@
        * @method
        * @private
        *
-       * @param permissionMap {PermissionMap} Map of permission names
+       * @param permissionMap {PermissionMapFactory} Map of permission names
        */
       function authorizeForState(permissionMap) {
         Authorization
@@ -150,7 +156,7 @@
        * @method
        * @private
        *
-       * @param permissionMap {PermissionMap} Map of access rights names
+       * @param permissionMap {PermissionMapFactory} Map of access rights names
        * @param rejectedPermission {String} Rejected access right
        * @returns {*}
        */
