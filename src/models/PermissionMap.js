@@ -83,6 +83,7 @@
         /**
          * Handles function based redirection for rejected permissions
          * @method
+         * @throws {TypeError}
          *
          * @param redirectFunction {Function} Redirection function
          * @param permission {String} Rejected permission
@@ -110,6 +111,7 @@
         /**
          * Handles object based redirection for rejected permissions
          * @method
+         * @throws {ReferenceError}
          *
          * @param redirectObject {Object} Redirection function
          * @param permission {String} Rejected permission

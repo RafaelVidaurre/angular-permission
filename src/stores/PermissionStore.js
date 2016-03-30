@@ -41,6 +41,7 @@
         /**
          * Allows to define set of permissionNames with shared validation function on application configuration
          * @method
+         * @throws {TypeError}
          *
          * @param permissionNames {Array} Set of permission names
          * @param validationFunction {Function} Function used to validate if permission is valid

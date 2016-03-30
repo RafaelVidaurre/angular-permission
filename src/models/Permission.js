@@ -71,6 +71,7 @@
          * Checks if provided permission has accepted parameter types
          * @method
          * @private
+         * @throws {TypeError}
          */
         function validateConstructor(permissionName, validationFunction) {
           if (!angular.isString(permissionName)) {

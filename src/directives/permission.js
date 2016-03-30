@@ -3,7 +3,7 @@
 
   angular
     .module('permission')
-    .directive('permission', permission);
+    .directive('permission', permissionDirective);
 
   /**
    * Handles authorization based on provided permissions/roles.
@@ -44,7 +44,7 @@
    *
    * @return {Object} Directive instance
    */
-  function permission($log, Authorization, PermissionMap, PermissionStrategies) {
+  function permissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
     return {
       restrict: 'A',
       scope: true,
