@@ -1,8 +1,10 @@
 {
   "name": "angular-permission",
-  "version": "2.2.4",
-  "authors": ["Rafael Vidaurre <narzerus@gmail.com>"],
-  "contributors": ["Blazej Krysiak <blazej.krysiak@gmail.com>"],
+  "version": "2.3.0",
+  "authors": [
+    "Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com)",
+    "Blazej Krysiak <blazej.krysiak@gmail.com>"
+  ],
   "description": "Route permission and access control as simple as it can get",
   "main": "dist/angular-permission.js",
   "keywords": [
@@ -12,7 +14,7 @@
     "route"
   ],
   "license": "MIT",
-  "homepage": "http://www.rafaelvidaurre.com",
+  "homepage": "https://github.com/Narzerus/angular-permission",
   "ignore": [
     "**/.*",
     "node_modules",

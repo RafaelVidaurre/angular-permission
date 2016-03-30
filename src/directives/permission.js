@@ -63,11 +63,11 @@
 
         if (angular.isDefined(permission.deprecatedOnly) || angular.isDefined(permission.deprecatedExcept)) {
           $log.warn('Attributes "only" and "except" are deprecated since 2.2.0+ and their support ' +
-            'will be removed from 2.3.0. Use scoped "permission-only" and "permission-except" instead.');
+            'will be removed from 2.4.0. Use scoped "permission-only" and "permission-except" instead.');
         }
 
         /**
-         * Observing attribute `only` and `except` will be removed with version 2.3.0+
+         * Observing attribute `only` and `except` will be removed with version 2.4.0+
          */
         $scope.$watchGroup(['permission.only', 'permission.except',
             'permission.deprecatedOnly', 'permission.deprecatedExcept'],

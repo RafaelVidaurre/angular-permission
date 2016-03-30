@@ -1,10 +1,11 @@
 {
   "name": "angular-permission",
-  "version": "2.2.4",
+  "version": "2.3.0",
   "description": "Route permission and access control as simple as it can get",
   "author": {
     "name": "Rafael Vidaurre",
-    "email": "narzerus@gmail.com"
+    "email": "narzerus@gmail.com",
+    "url": "http://www.rafaelvidaurre.com"
   },
   "contributors": [
     {
@@ -27,7 +28,7 @@
   "bugs": {
     "url": "https://github.com/Narzerus/angular-permission/issues"
   },
-  "homepage": "http://www.rafaelvidaurre.com",
+  "homepage": "https://github.com/Narzerus/angular-permission",
   "peerDependencies": {
     "angular": "^1.4.0",
     "angular-ui-router": "^0.2.11"

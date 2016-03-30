@@ -414,8 +414,11 @@ The correct way to contribute is:
   3. Submit a pull request to be merged in the `development` branch
   4. Remember to run `grunt build` before your last commit
 
-Author
+Authors
 ============================
 - Rafael Vidaurre
 - @narzerus
 - I'm a full-stack developer currenly working as CTO and Co-Founder at [Finciero](http://www.finciero.com)
+
+- Blazej Krysiak
+- @masterspambot
