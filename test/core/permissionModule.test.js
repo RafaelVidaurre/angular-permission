@@ -175,11 +175,29 @@ describe('module: Permission', function () {
       $state.go('compensated.child');
       $rootScope.$apply();
 
-
       expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
-        only: ['acceptedChild', 'accepted'],
-        except: ['deniedChild', 'denied']
-      }), {});
+        only: [['acceptedChild'], ['accepted']],
+        except: [['deniedChild'], ['denied']],
+        redirectTo: undefined
+      }), jasmine.any(Object));
+    });
+
+
+    it('should inherit down access rights by including parent states permissions', function () {
+      // GIVEN
+      $stateProvider.state('denied.child', {
+        data: {
+          permissions: {
+            only: ['accepted']
+          }
+        }
+      });
+
+      // WHEN
+      $state.go('denied.child');
+      $rootScope.$apply();
+
+      expect($state.current.name).toBe('home');
     });
   });
 });

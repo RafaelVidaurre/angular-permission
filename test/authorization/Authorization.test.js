@@ -38,7 +38,7 @@ describe('service: Authorization', function () {
     it('should resolve promise when "only" matches permissions', function () {
       // GIVEN
       Authorization
-        .authorize(new PermissionMap({only: ['USER']}), null)
+        .authorize(new PermissionMap({only: ['USER']}))
         .then(function () {
           isResolved = true;
         });

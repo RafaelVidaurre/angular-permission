@@ -230,6 +230,10 @@ describe('directive: Permission', function () {
     $rootScope.$digest();
 
     // THEN
-    expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({only: undefined, except: ['USER']}), null);
+    expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+      only: undefined,
+      except: ['USER'],
+      redirectTo: undefined
+    }));
   });
 });
