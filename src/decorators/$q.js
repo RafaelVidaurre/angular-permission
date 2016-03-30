@@ -5,6 +5,7 @@
     .module('permission')
     .decorator('$q',
       /**
+       * Extends $q implementation by A+ *only* method
        * @class $q
        * @memberOf permission
        *
