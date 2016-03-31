@@ -3,7 +3,7 @@ module.exports = function () {
 
   return {
     options: {
-      debug: true,
+      debug: false,
       dryRun: false,
       coverageDir: 'coverage',
       force: true,
