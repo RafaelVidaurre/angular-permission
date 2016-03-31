@@ -35,6 +35,15 @@ describe('model: Role', function () {
       }).toThrow(new TypeError('Parameter "permissionNames" must be Array'));
     });
 
+    it('should throw an exception when neither permission names nor validationFunction are provided', function () {
+      // GIVEN
+      // WHEN
+      // THEN
+      expect(function () {
+        new Role('valid-name',[]);
+      }).toThrow(new TypeError('Parameter "validationFunction" must be provided for empty "permissionNames" array'));
+    });
+
     it('should return new role definition instance for correct parameters', function () {
       // GIVEN
       var permissionName = 'ACCOUNTANT';
@@ -90,6 +99,23 @@ describe('model: Role', function () {
 
       // THEN
       expect(userDefinition.validationFunction).toHaveBeenCalled();
+    });
+
+    it('should return rejected promise when at leas one of permissions is not defined', function () {
+      // GIVEN
+      var isCalled = false;
+      var role = new Role('ACCOUNTANT', ['FAKE']);
+
+      // WHEN
+      role.validateRole()
+        .catch(function(){
+          isCalled = true;
+        });
+
+      $rootScope.$apply();
+
+      // THEN
+      expect(isCalled).toBeTruthy();
     });
   });
 });

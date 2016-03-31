@@ -44,7 +44,7 @@
          */
         Role.prototype.validateRole = function (toParams) {
 
-          // When set permissions is provided check each of them
+          // When permission set is provided check each of them
           if (this.permissionNames.length) {
             var promises = this.permissionNames.map(function (permissionName) {
               if (PermissionStore.hasPermissionDefinition(permissionName)) {
@@ -58,7 +58,7 @@
                 return validationResult;
               }
 
-              return $q.reject(null);
+              return $q.reject();
             });
 
             return $q.all(promises);

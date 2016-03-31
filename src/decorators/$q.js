@@ -5,7 +5,7 @@
     .module('permission')
     .decorator('$q',
       /**
-       * Extends $q implementation by A+ *only* method
+       * Extends $q implementation by A+ *any* method
        * @class $q
        * @memberOf permission
        *
@@ -13,12 +13,11 @@
        */
       function ($delegate) {
 
-        $delegate.only = only;
+        $delegate.any = any;
 
         /**
-         * Implementation of missing $q `only` method that wits for first resolution of provided promise set
+         * Implementation of missing $q `any` method that wits for first resolution of provided promise set
          * @method
-         * @private
          *
          * @param promises {Array|promise} Single or set of promises
          *
@@ -27,24 +26,19 @@
          *  If any of the promises is resolved, this resulting promise will be returned
          *  with the same resolution value.
          */
-        function only(promises) {
+        function any(promises) {
           var deferred = $delegate.defer(),
             counter = 0,
             results = angular.isArray(promises) ? [] : {};
 
           angular.forEach(promises, function (promise, key) {
             counter++;
-            $delegate.when(promise)
+            $delegate
+              .when(promise)
               .then(function (value) {
-                if (results.hasOwnProperty(key)) {
-                  return;
-                }
                 deferred.resolve(value);
               })
               .catch(function (reason) {
-                if (results.hasOwnProperty(key)) {
-                  return;
-                }
                 results[key] = reason;
                 if (!(--counter)) {
                   deferred.reject(reason);

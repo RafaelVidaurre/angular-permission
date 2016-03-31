@@ -139,7 +139,7 @@
         function resolveFlatExceptPrivilegeMap(permissionMap, deferred) {
           var exceptPromises = resolvePrivilegeMap(permissionMap.except);
 
-          $q.only(exceptPromises)
+          $q.any(exceptPromises)
             .then(function (rejectedPermissions) {
               deferred.reject(rejectedPermissions);
             })
@@ -163,7 +163,7 @@
           }
 
           var onlyPromises = resolvePrivilegeMap(permissionMap.only);
-          $q.only(onlyPromises)
+          $q.any(onlyPromises)
             .then(function (resolvedPermissions) {
               deferred.resolve(resolvedPermissions);
             })
@@ -188,7 +188,7 @@
 
           return privilegesNames.map(function (statePrivileges) {
             var resolvedStatePrivileges = resolvePrivilegeMap(statePrivileges);
-            return $q.only(resolvedStatePrivileges);
+            return $q.any(resolvedStatePrivileges);
           });
         }
 
