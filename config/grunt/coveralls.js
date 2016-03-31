@@ -4,6 +4,7 @@ module.exports = function () {
   return {
     options: {
       debug: true,
+      dryRun: false,
       coverageDir: 'coverage',
       force: true,
       recursive: true
