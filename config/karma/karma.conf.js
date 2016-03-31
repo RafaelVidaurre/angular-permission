@@ -16,6 +16,13 @@ module.exports = function(config) {
     // testing framework to use (jasmine/mocha/qunit/...)
     frameworks: ['jasmine'],
 
+    preprocessors: {
+      // source files, that you wanna generate coverage for
+      // do not include tests or libraries
+      // (these files will be instrumented by Istanbul)
+      'src/**/*.js': ['coverage']
+    },
+
     // list of files / patterns to load in the browser
     files: [
       'bower_components/angular/angular.js',
@@ -44,13 +51,19 @@ module.exports = function(config) {
       'PhantomJS'
     ],
 
-    reporters: ['mocha'],
+    reporters: ['mocha', 'coverage'],
+
+    coverageReporter: {
+      type: 'lcov',
+      dir: 'coverage/'
+    },
 
     // Which plugins to enable
     plugins: [
       'karma-phantomjs-launcher',
       'karma-mocha-reporter',
-      'karma-jasmine'
+      'karma-jasmine',
+      'karma-coverage'
     ],
 
     // Continuous Integration mode

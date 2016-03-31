@@ -20,7 +20,8 @@ module.exports = function(grunt) {
       paths: {
         src: 'src',
         dist: 'dist',
-        test: 'test'
+        test: 'test',
+        coverage: 'coverage'
       }
     }
   });

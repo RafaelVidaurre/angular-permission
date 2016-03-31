@@ -4,7 +4,10 @@ module.exports = function () {
   return {
     dist: {
       files: [{
-        src: ['<%= paths.dist %>']
+        src: [
+          '<%= paths.dist %>',
+          '<%= paths.coverage %>'
+        ]
       }]
     }
   };

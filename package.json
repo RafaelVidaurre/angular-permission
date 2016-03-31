@@ -42,6 +42,7 @@
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-uglify": "^1.0.0",
     "grunt-karma": "^0.12.1",
+    "grunt-karma-coveralls": "^2.5.4",
     "grunt-ng-annotate": "^1.0.1",
     "jasmine-core": "^2.4.1",
     "jshint-stylish": "^2.1.0",

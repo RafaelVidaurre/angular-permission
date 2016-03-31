@@ -5,6 +5,7 @@ module.exports = function () {
     build: [
       'jshint',
       'karma',
+      'coveralls',
       'clean',
       'concat',
       'ngAnnotate',
