@@ -47,7 +47,7 @@
   function permissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
     return {
       restrict: 'A',
-      scope: true,
+      scope: false,
       bindToController: {
         only: '=?permissionOnly',
         except: '=?permissionExcept',
