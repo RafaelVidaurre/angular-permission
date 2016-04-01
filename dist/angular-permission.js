@@ -1,9 +1,9 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.3.0 - 2016-03-30
- * @link http://www.rafaelvidaurre.com
- * @author Rafael Vidaurre <narzerus@gmail.com>, Blazej Krysiak <blazej.krysiak@gmail.com>
+ * @version v2.3.1 - 2016-04-01
+ * @link https://github.com/Narzerus/angular-permission
+ * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
@@ -207,7 +207,7 @@
     .module('permission')
     .decorator('$q',
       /**
-       * Extends $q implementation by A+ *only* method
+       * Extends $q implementation by A+ *any* method
        * @class $q
        * @memberOf permission
        *
@@ -215,12 +215,11 @@
        */
       ['$delegate', function ($delegate) {
 
-        $delegate.only = only;
+        $delegate.any = any;
 
         /**
-         * Implementation of missing $q `only` method that wits for first resolution of provided promise set
+         * Implementation of missing $q `any` method that wits for first resolution of provided promise set
          * @method
-         * @private
          *
          * @param promises {Array|promise} Single or set of promises
          *
@@ -229,24 +228,19 @@
          *  If any of the promises is resolved, this resulting promise will be returned
          *  with the same resolution value.
          */
-        function only(promises) {
+        function any(promises) {
           var deferred = $delegate.defer(),
             counter = 0,
             results = angular.isArray(promises) ? [] : {};
 
           angular.forEach(promises, function (promise, key) {
             counter++;
-            $delegate.when(promise)
+            $delegate
+              .when(promise)
               .then(function (value) {
-                if (results.hasOwnProperty(key)) {
-                  return;
-                }
                 deferred.resolve(value);
               })
               .catch(function (reason) {
-                if (results.hasOwnProperty(key)) {
-                  return;
-                }
                 results[key] = reason;
                 if (!(--counter)) {
                   deferred.reject(reason);
@@ -578,7 +572,7 @@
          */
         Role.prototype.validateRole = function (toParams) {
 
-          // When set permissions is provided check each of them
+          // When permission set is provided check each of them
           if (this.permissionNames.length) {
             var promises = this.permissionNames.map(function (permissionName) {
               if (PermissionStore.hasPermissionDefinition(permissionName)) {
@@ -592,7 +586,7 @@
                 return validationResult;
               }
 
-              return $q.reject(null);
+              return $q.reject();
             });
 
             return $q.all(promises);
@@ -898,7 +892,7 @@
   function permissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
     return {
       restrict: 'A',
-      scope: true,
+      scope: false,
       bindToController: {
         only: '=?permissionOnly',
         except: '=?permissionExcept',
@@ -1113,7 +1107,7 @@
         function resolveFlatExceptPrivilegeMap(permissionMap, deferred) {
           var exceptPromises = resolvePrivilegeMap(permissionMap.except);
 
-          $q.only(exceptPromises)
+          $q.any(exceptPromises)
             .then(function (rejectedPermissions) {
               deferred.reject(rejectedPermissions);
             })
@@ -1137,7 +1131,7 @@
           }
 
           var onlyPromises = resolvePrivilegeMap(permissionMap.only);
-          $q.only(onlyPromises)
+          $q.any(onlyPromises)
             .then(function (resolvedPermissions) {
               deferred.resolve(resolvedPermissions);
             })
@@ -1162,7 +1156,7 @@
 
           return privilegesNames.map(function (statePrivileges) {
             var resolvedStatePrivileges = resolvePrivilegeMap(statePrivileges);
-            return $q.only(resolvedStatePrivileges);
+            return $q.any(resolvedStatePrivileges);
           });
         }
 
