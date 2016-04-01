@@ -3,8 +3,10 @@ Permission
 ============================
 *Access Control List based authentication on routes made as simple as it can get.*
 
-![alt tag](https://travis-ci.org/Narzerus/angular-permission.svg?branch=master)
-[![Coverage Status](https://coveralls.io/repos/github/Narzerus/angular-permission/badge.svg?branch=master)](https://coveralls.io/github/Narzerus/angular-permission?branch=master)
+[![Bower](https://img.shields.io/bower/v/angular-permission.svg?style=flat-square)]()
+[![npm](https://img.shields.io/npm/v/angular-permission.svg?style=flat-square)]()
+[![Travis](https://img.shields.io/travis/Narzerus/angular-permission.svg?style=flat-square)]()
+[![Coveralls](https://img.shields.io/coveralls/Narzerus/angular-permission.svg?style=flat-square)]()
 
 Dependencies
 ----------------------------
