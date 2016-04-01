@@ -6,18 +6,20 @@
     .factory('Permission',
       /**
        * Permission definition factory
-       * @class Permission
+       * @class PermissionFactory
        * @memberOf permission
        *
        * @param $q {$q} Angular promise implementation
+       * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
        *
        * @return {permission.Permission}
        */
-      function ($q) {
+      function ($q, TransitionProperties) {
 
         /**
          * Permission definition object constructor
-         * @constructor
+         * @constructor Permission
+         * @memberOf permission
          *
          * @param permissionName {String} Name repressing permission
          * @param validationFunction {Function} Function used to check if permission is valid
@@ -33,11 +35,11 @@
          * Checks if permission is still valid
          * @method
          *
-         * @param toParams {Object} UI-Router params object
          * @returns {Promise}
          */
-        Permission.prototype.validatePermission = function (toParams) {
-          var validationResult = this.validationFunction.call(null, toParams, this.permissionName);
+        Permission.prototype.validatePermission = function () {
+          var transitionProperties = TransitionProperties.get();
+          var validationResult = this.validationFunction.call(null, this.permissionName, transitionProperties);
 
           if (!angular.isFunction(validationResult.then)) {
             validationResult = wrapInPromise(validationResult, this.permissionName);

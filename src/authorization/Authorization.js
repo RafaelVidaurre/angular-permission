@@ -13,26 +13,21 @@
        * @param RoleStore {permission.RoleStore} Role definition storage
        */
       function ($q, PermissionStore, RoleStore) {
-        this.authorize = authorize;
 
-        var $$toParams;
+        this.authorize = authorize;
 
         /**
          * Handles authorization based on provided permissions map
          * @method
          *
          * @param permissionsMap {permission.PermissionMap} Map of permission names
-         * @param [toParams] {Object} UI-Router params object
          *
          * @returns {promise} $q.promise object
          */
-        function authorize(permissionsMap, toParams) {
-          $$toParams = toParams;
-
+        function authorize(permissionsMap) {
           if (isCompensatedMap(permissionsMap)) {
             return authorizeCompensatedMap(permissionsMap);
           }
-
           return authorizeFlatPrivilegedMap(permissionsMap);
         }
 
@@ -201,16 +196,17 @@
          * @returns {Array}
          */
         function resolvePrivilegeMap(privilegesNames) {
+
           return privilegesNames.map(function (privilegeName) {
 
             if (RoleStore.hasRoleDefinition(privilegeName)) {
               var role = RoleStore.getRoleDefinition(privilegeName);
-              return role.validateRole($$toParams);
+              return role.validateRole();
             }
 
             if (PermissionStore.hasPermissionDefinition(privilegeName)) {
               var permission = PermissionStore.getPermissionDefinition(privilegeName);
-              return permission.validatePermission($$toParams);
+              return permission.validatePermission();
             }
 
             return $q.reject(privilegeName);

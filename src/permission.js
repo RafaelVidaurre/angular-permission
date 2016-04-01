@@ -20,7 +20,7 @@
     });
   });
 
-  permission.run(function ($rootScope, $state, $q, $location, Authorization, PermissionMap) {
+  permission.run(function ($rootScope, $state, $q, $location, Authorization, PermissionMap, TransitionProperties) {
     /**
      * State transition interceptor
      */
@@ -32,6 +32,8 @@
 
         if (!areStateEventsDefaultPrevented()) {
           $rootScope.$broadcast('$stateChangePermissionStart', toState, toParams, options);
+
+          TransitionProperties.set(toState, toParams, fromState, fromParams, options);
 
           var compensatedPermissionMap = compensatePermissionMap();
           authorizeForState(compensatedPermissionMap);
@@ -118,7 +120,7 @@
        */
       function authorizeForState(permissionMap) {
         Authorization
-          .authorize(permissionMap, toParams)
+          .authorize(permissionMap)
           .then(function () {
             handleAuthorizedState();
           })
