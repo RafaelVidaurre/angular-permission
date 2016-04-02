@@ -38,8 +38,7 @@
          * @returns {Promise}
          */
         Permission.prototype.validatePermission = function () {
-          var transitionProperties = TransitionProperties.get();
-          var validationResult = this.validationFunction.call(null, this.permissionName, transitionProperties);
+          var validationResult = this.validationFunction.call(null, this.permissionName, TransitionProperties);
 
           if (!angular.isFunction(validationResult.then)) {
             validationResult = wrapInPromise(validationResult, this.permissionName);

@@ -45,14 +45,12 @@
          * @returns {Promise} $q.promise object
          */
         Role.prototype.validateRole = function () {
-          var transitionProperties = TransitionProperties.get();
-
           // When permission set is provided check each of them
           if (this.permissionNames.length) {
             var promises = this.permissionNames.map(function (permissionName) {
               if (PermissionStore.hasPermissionDefinition(permissionName)) {
                 var permission = PermissionStore.getPermissionDefinition(permissionName);
-                var validationResult = permission.validationFunction.call(null, permission.permissionName, transitionProperties);
+                var validationResult = permission.validationFunction.call(null, permission.permissionName, TransitionProperties);
 
                 if (!angular.isFunction(validationResult.then)) {
                   validationResult = wrapInPromise(validationResult);
@@ -68,7 +66,7 @@
           }
 
           // If not call validation function manually
-          var validationResult = this.validationFunction.call(null, this.roleName, transitionProperties);
+          var validationResult = this.validationFunction.call(null, this.roleName, TransitionProperties);
           if (!angular.isFunction(validationResult.then)) {
             validationResult = wrapInPromise(validationResult, this.roleName);
           }

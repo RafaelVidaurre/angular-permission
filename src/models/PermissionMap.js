@@ -78,6 +78,17 @@
           return $q.reject(null);
         };
 
+
+        /**
+         * Checks if provided map is compensated or not
+         * @method
+         *
+         * @returns {boolean}
+         */
+        PermissionMap.prototype.isStatePermissionMap = function () {
+          return !!((angular.isArray(this.only[0])) || angular.isArray(this.except[0]));
+        };
+
         /**
          * Handles function based redirection for rejected permissions
          * @method
@@ -161,8 +172,7 @@
           }
 
           if (angular.isFunction(property)) {
-            var transitionProperties = TransitionProperties.get();
-            return property.call(null, transitionProperties);
+            return property.call(null, TransitionProperties);
           }
 
           return [];

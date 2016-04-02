@@ -25,20 +25,11 @@
          * @returns {promise} $q.promise object
          */
         function authorize(permissionsMap) {
-          if (isCompensatedMap(permissionsMap)) {
-            return authorizeCompensatedMap(permissionsMap);
+          if (permissionsMap.isStatePermissionMap()) {
+            return authorizeStatePermissionMap(permissionsMap);
+          } else {
+            return authorizePermissionMap(permissionsMap);
           }
-          return authorizeFlatPrivilegedMap(permissionsMap);
-        }
-
-        /**
-         * Checks if provided map is compensated or not
-         *
-         * @param permissionMap {Object} Map of permission names
-         * @returns {boolean}
-         */
-        function isCompensatedMap(permissionMap) {
-          return !!((angular.isArray(permissionMap.only[0])) || angular.isArray(permissionMap.except[0]));
         }
 
         /**
@@ -50,10 +41,10 @@
          *
          * @returns {promise} $q.promise object
          */
-        function authorizeCompensatedMap(permissionMap) {
+        function authorizeStatePermissionMap(permissionMap) {
           var deferred = $q.defer();
 
-          resolveCompensatedExceptPrivilegeMap(permissionMap, deferred);
+          resolveExceptStatePermissionMap(permissionMap, deferred);
 
           return deferred.promise;
         }
@@ -66,15 +57,15 @@
          * @param permissionMap {permission.PermissionMap} Map of privileges
          * @param deferred {Object} Promise defer
          */
-        function resolveCompensatedExceptPrivilegeMap(permissionMap, deferred) {
-          var exceptPromises = resolveCompensatedPrivilegeMap(permissionMap.except);
+        function resolveExceptStatePermissionMap(permissionMap, deferred) {
+          var exceptPromises = resolveStatePermissionMap(permissionMap.except);
 
           $q.all(exceptPromises)
             .then(function (rejectedPermissions) {
               deferred.reject(rejectedPermissions);
             })
             .catch(function () {
-              resolveCompensatedOnlyPrivilegeMap(permissionMap, deferred);
+              resolveOnlyStatePermissionMap(permissionMap, deferred);
             });
 
         }
@@ -87,13 +78,13 @@
          * @param permissionMap {permission.PermissionMap} Map of privileges
          * @param deferred {Object} Promise defer
          */
-        function resolveCompensatedOnlyPrivilegeMap(permissionMap, deferred) {
+        function resolveOnlyStatePermissionMap(permissionMap, deferred) {
           if (!permissionMap.only.length) {
             deferred.resolve();
             return;
           }
 
-          var onlyPromises = resolveCompensatedPrivilegeMap(permissionMap.only);
+          var onlyPromises = resolveStatePermissionMap(permissionMap.only);
 
           $q.all(onlyPromises)
             .then(function (resolvedPermissions) {
@@ -113,10 +104,10 @@
          *
          * @returns {promise} $q.promise object
          */
-        function authorizeFlatPrivilegedMap(permissionMap) {
+        function authorizePermissionMap(permissionMap) {
           var deferred = $q.defer();
 
-          resolveFlatExceptPrivilegeMap(permissionMap, deferred);
+          resolveExceptPrivilegeMap(permissionMap, deferred);
 
           return deferred.promise;
         }
@@ -131,15 +122,15 @@
          *
          * @returns {promise} $q.promise object
          */
-        function resolveFlatExceptPrivilegeMap(permissionMap, deferred) {
-          var exceptPromises = resolvePrivilegeMap(permissionMap.except);
+        function resolveExceptPrivilegeMap(permissionMap, deferred) {
+          var exceptPromises = resolvePermissionMap(permissionMap.except);
 
           $q.any(exceptPromises)
             .then(function (rejectedPermissions) {
               deferred.reject(rejectedPermissions);
             })
             .catch(function () {
-              resolveFlatOnlyPrivilegeMap(permissionMap, deferred);
+              resolveOnlyPermissionMap(permissionMap, deferred);
             });
         }
 
@@ -151,13 +142,13 @@
          * @param permissionMap {permission.PermissionMap} Map of privileges
          * @param deferred {Object} Promise defer
          */
-        function resolveFlatOnlyPrivilegeMap(permissionMap, deferred) {
+        function resolveOnlyPermissionMap(permissionMap, deferred) {
           if (!permissionMap.only.length) {
             deferred.resolve();
             return;
           }
 
-          var onlyPromises = resolvePrivilegeMap(permissionMap.only);
+          var onlyPromises = resolvePermissionMap(permissionMap.only);
           $q.any(onlyPromises)
             .then(function (resolvedPermissions) {
               deferred.resolve(resolvedPermissions);
@@ -176,13 +167,13 @@
          *
          * @returns {Array} Promise collection
          */
-        function resolveCompensatedPrivilegeMap(privilegesNames) {
+        function resolveStatePermissionMap(privilegesNames) {
           if (!privilegesNames.length) {
             return [$q.reject()];
           }
 
           return privilegesNames.map(function (statePrivileges) {
-            var resolvedStatePrivileges = resolvePrivilegeMap(statePrivileges);
+            var resolvedStatePrivileges = resolvePermissionMap(statePrivileges);
             return $q.any(resolvedStatePrivileges);
           });
         }
@@ -195,7 +186,7 @@
          * @param privilegesNames {Array} Set of privileges
          * @returns {Array}
          */
-        function resolvePrivilegeMap(privilegesNames) {
+        function resolvePermissionMap(privilegesNames) {
 
           return privilegesNames.map(function (privilegeName) {
 
