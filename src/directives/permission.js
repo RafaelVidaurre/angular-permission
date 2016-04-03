@@ -61,61 +61,61 @@
       controller: function ($scope, $element) {
         var permission = this;
 
-        if (angular.isDefined(permission.deprecatedOnly) || angular.isDefined(permission.deprecatedExcept)) {
-          $log.warn('Attributes "only" and "except" are deprecated since 2.2.0+ and their support ' +
-            'will be removed from 2.4.0. Use scoped "permission-only" and "permission-except" instead.');
-        }
+            if (angular.isDefined(permission.deprecatedOnly) || angular.isDefined(permission.deprecatedExcept)) {
+              $log.warn('Attributes "only" and "except" are deprecated since 2.2.0+ and their support ' +
+                'will be removed from 2.4.0. Use scoped "permission-only" and "permission-except" instead.');
+            }
 
-        /**
-         * Observing attribute `only` and `except` will be removed with version 2.4.0+
-         */
-        $scope.$watchGroup(['permission.only', 'permission.except',
-            'permission.deprecatedOnly', 'permission.deprecatedExcept'],
-          function () {
-            try {
-              var permissionMap = new PermissionMap({
-                only: permission.only || permission.deprecatedOnly,
-                except: permission.except || permission.deprecatedExcept
+            /**
+             * Observing attribute `only` and `except` will be removed with version 2.4.0+
+             */
+            $scope.$watchGroup(['permission.only', 'permission.except',
+                'permission.deprecatedOnly', 'permission.deprecatedExcept'],
+              function () {
+                try {
+                  var permissionMap = new PermissionMap({
+                    only: permission.only || permission.deprecatedOnly,
+                    except: permission.except || permission.deprecatedExcept
+                  });
+
+                  Authorization
+                    .authorize(permissionMap)
+                    .then(function () {
+                      onAuthorizedAccess();
+                    })
+                    .catch(function () {
+                      onUnauthorizedAccess();
+                    });
+                } catch (e) {
+                  onUnauthorizedAccess();
+                  $log.error(e.message);
+                }
               });
 
-              Authorization
-                .authorize(permissionMap)
-                .then(function () {
-                  onAuthorizedAccess();
-                })
-                .catch(function () {
-                  onUnauthorizedAccess();
-                });
-            } catch (e) {
-              onUnauthorizedAccess();
-              $log.error(e.message);
+            /**
+             * Calls `onAuthorized` function if provided or show element
+             * @private
+             */
+            function onAuthorizedAccess() {
+              if (angular.isFunction(permission.onAuthorized)) {
+                permission.onAuthorized()($element);
+              } else {
+                PermissionStrategies.showElement($element);
+              }
             }
-          });
 
-        /**
-         * Calls `onAuthorized` function if provided or show element
-         * @private
-         */
-        function onAuthorizedAccess() {
-          if (angular.isFunction(permission.onAuthorized)) {
-            permission.onAuthorized()($element);
-          } else {
-            PermissionStrategies.showElement($element);
+            /**
+             * Calls `onUnauthorized` function if provided or hide element
+             * @private
+             */
+            function onUnauthorizedAccess() {
+              if (angular.isFunction(permission.onUnauthorized)) {
+                permission.onUnauthorized()($element);
+              } else {
+                PermissionStrategies.hideElement($element);
+              }
+            }
           }
-        }
-
-        /**
-         * Calls `onUnauthorized` function if provided or hide element
-         * @private
-         */
-        function onUnauthorizedAccess() {
-          if (angular.isFunction(permission.onUnauthorized)) {
-            permission.onUnauthorized()($element);
-          } else {
-            PermissionStrategies.hideElement($element);
-          }
-        }
-      }
-    };
-  }
+        };
+      });
 }());

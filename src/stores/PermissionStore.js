@@ -9,7 +9,7 @@
        * @class PermissionStore
        * @memberOf permission
        *
-       * @param Permission {permission.Permission} Permission definition factory
+       * @param Permission {permission.Permission|Function} Permission definition factory
        */
       function (Permission) {
         /**

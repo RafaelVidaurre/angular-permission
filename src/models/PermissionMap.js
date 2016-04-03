@@ -10,10 +10,11 @@
        * @memberOf permission
        *
        * @param $q {$q} Angular promise implementation
+       * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
        *
        * @return {permission.PermissionMap}
        */
-      function ($q) {
+      function ($q, TransitionProperties) {
         /**
          * Constructs map object instructing authorization service how to handle authorizing
          * @constructor PermissionMap
@@ -24,16 +25,13 @@
          * @param [permissionMap.except] {Array} List of exclusive access right names denied for authorization
          * @param [permissionMap.redirectTo] {String|Function|Object|promise} Handling redirection when rejected
          *   authorization
-         * @param [toState] {Object} UI-Router transition state object
-         * @param [toParams] {Object} UI-Router transition state params
-         * @param [options] {Object} UI-Router transition state options
          */
-        function PermissionMap(permissionMap, toState, toParams, options) {
+        function PermissionMap(permissionMap) {
           // Suppress not defined object errors
           permissionMap = permissionMap || {};
 
-          this.only = resolvePermissionMapProperty(permissionMap.only, toState, toParams, options);
-          this.except = resolvePermissionMapProperty(permissionMap.except, toState, toParams, options);
+          this.only = resolvePermissionMapProperty(permissionMap.only);
+          this.except = resolvePermissionMapProperty(permissionMap.except);
           this.redirectTo = permissionMap.redirectTo;
         }
 
@@ -78,6 +76,17 @@
 
           // If redirectTo state is not defined stay where you are
           return $q.reject(null);
+        };
+
+
+        /**
+         * Checks if provided map is compensated or not
+         * @method
+         *
+         * @returns {boolean}
+         */
+        PermissionMap.prototype.isStatePermissionMap = function () {
+          return !!((angular.isArray(this.only[0])) || angular.isArray(this.except[0]));
         };
 
         /**
@@ -150,13 +159,10 @@
          * @private
          *
          * @param property {Array|Function|promise} Permission map property "only" or "except"
-         * @param [toState] {Object} UI-Router transition state object
-         * @param [toParams] {Object} UI-Router transition state params
-         * @param [options] {Object} UI-Router transition state options
          *
          * @returns {Array} Array of permission "only" or "except" names
          */
-        function resolvePermissionMapProperty(property, toState, toParams, options) {
+        function resolvePermissionMapProperty(property) {
           if (angular.isString(property)) {
             return [property];
           }
@@ -166,7 +172,7 @@
           }
 
           if (angular.isFunction(property)) {
-            return property.call(null, toState, toParams, options);
+            return property.call(null, TransitionProperties);
           }
 
           return [];

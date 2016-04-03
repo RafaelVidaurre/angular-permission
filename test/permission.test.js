@@ -179,7 +179,7 @@ describe('module: Permission', function () {
         only: [['acceptedChild'], ['accepted']],
         except: [['deniedChild'], ['denied']],
         redirectTo: undefined
-      }), jasmine.any(Object));
+      }));
     });
 
 

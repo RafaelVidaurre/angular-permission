@@ -11,10 +11,11 @@
        *
        * @param $q {$q} Angular promise implementation
        * @param PermissionStore {permission.PermissionStore} Permission definition storage
+       * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
        *
        * @returns {permission.Role}
        */
-      function ($q, PermissionStore) {
+      function ($q, PermissionStore, TransitionProperties) {
         /**
          * Role definition constructor
          * @constructor Role
@@ -33,23 +34,23 @@
           if (validationFunction) {
             PermissionStore.defineManyPermissions(permissionNames, validationFunction);
           }
+
+          return this;
         }
 
         /**
          * Checks if role is still valid
          * @method
          *
-         * @param [toParams] {Object} UI-Router params object
          * @returns {Promise} $q.promise object
          */
-        Role.prototype.validateRole = function (toParams) {
-
+        Role.prototype.validateRole = function () {
           // When permission set is provided check each of them
           if (this.permissionNames.length) {
             var promises = this.permissionNames.map(function (permissionName) {
               if (PermissionStore.hasPermissionDefinition(permissionName)) {
                 var permission = PermissionStore.getPermissionDefinition(permissionName);
-                var validationResult = permission.validationFunction.call(null, toParams, permission.permissionName);
+                var validationResult = permission.validationFunction.call(null, permission.permissionName, TransitionProperties);
 
                 if (!angular.isFunction(validationResult.then)) {
                   validationResult = wrapInPromise(validationResult);
@@ -65,13 +66,12 @@
           }
 
           // If not call validation function manually
-          var validationResult = this.validationFunction.call(null, toParams, this.roleName);
+          var validationResult = this.validationFunction.call(null, this.roleName, TransitionProperties);
           if (!angular.isFunction(validationResult.then)) {
             validationResult = wrapInPromise(validationResult, this.roleName);
           }
 
           return $q.resolve(validationResult);
-
         };
 
         /**
