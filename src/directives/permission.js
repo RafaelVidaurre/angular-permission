@@ -3,63 +3,63 @@
 
   angular
     .module('permission')
-    .directive('permission', permissionDirective);
-
-  /**
-   * Handles authorization based on provided permissions/roles.
-   * @class permissionDirective
-   * @memberOf permission
-   *
-   * Directive accepts single or combined attributes `permission-only` and `permission-except` that checks on
-   * DOM rendering if permissions/roles are met. Attributes can be passed either as String, Array or variable from
-   * parent scope. Directive also will watch for changes if applied and automatically update the view.
-   *
-   * @example
-   * <div permission
-   *      permission-only="'USER'">
-   * </div>
-   * <div permission
-   *      permission-only="['USER','ADMIN']"
-   *      permission-except="'MANAGER'">
-   * </div>
-   *
-   * By default directive will show/hide elements if provided permissions matches.
-   * You can override this behaviour by passing `permission-on-authorized` and `permission-on-unauthorized` attributes
-   * that will pass to your function `$element` as argument that you can freely manipulate your DOM behaviour.
-   *
-   * Important! Function should be as references - `vm.disableElement` not `vm.disableElement()` to be able to accept
-   * passed $element reference from inside of permissionDirective
-   *
-   * @example
-   * <div permission
-   *      permission-only="['USER','ADMIN']"
-   *      permission-on-authorized="PermissionStrategies.disableElement"
-   *      permission-on-unauthorized="PermissionStrategies.enableElement">
-   * </div>
-   *
-   * @param $log {Object} Logging service
-   * @param Authorization {permission.Authorization} Authorization service
-   * @param PermissionMap {permission.PermissionMap} Map of state access rights
-   * @param PermissionStrategies {permission.PermissionStrategies} Set of pre-defined directive behaviours
-   *
-   * @return {Object} Directive instance
-   */
-  function permissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
-    return {
-      restrict: 'A',
-      scope: false,
-      bindToController: {
-        only: '=?permissionOnly',
-        except: '=?permissionExcept',
-        onAuthorized: '&?permissionOnAuthorized',
-        onUnauthorized: '&?permissionOnUnauthorized',
-        // Observing attribute `only` and `except` will be removed with version 2.3.0+
-        deprecatedOnly: '=only',
-        deprecatedExcept: '=except'
-      },
-      controllerAs: 'permission',
-      controller: function ($scope, $element) {
-        var permission = this;
+    .directive('permission',
+      /**
+       * Handles authorization based on provided permissions/roles.
+       * @class permissionDirective
+       * @memberOf permission
+       *
+       * Directive accepts single or combined attributes `permission-only` and `permission-except` that checks on
+       * DOM rendering if permissions/roles are met. Attributes can be passed either as String, Array or variable from
+       * parent scope. Directive also will watch for changes if applied and automatically update the view.
+       *
+       * @example
+       * <div permission
+       *      permission-only="'USER'">
+       * </div>
+       * <div permission
+       *      permission-only="['USER','ADMIN']"
+       *      permission-except="'MANAGER'">
+       * </div>
+       *
+       * By default directive will show/hide elements if provided permissions matches.
+       * You can override this behaviour by passing `permission-on-authorized` and `permission-on-unauthorized`
+       *   attributes that will pass to your function `$element` as argument that you can freely manipulate your DOM
+       *   behaviour.
+       *
+       * Important! Function should be as references - `vm.disableElement` not `vm.disableElement()` to be able to
+       *   accept passed $element reference from inside of permissionDirective
+       *
+       * @example
+       * <div permission
+       *      permission-only="['USER','ADMIN']"
+       *      permission-on-authorized="PermissionStrategies.disableElement"
+       *      permission-on-unauthorized="PermissionStrategies.enableElement">
+       * </div>
+       *
+       * @param $log {Object} Logging service
+       * @param Authorization {permission.Authorization} Authorization service
+       * @param PermissionMap {permission.PermissionMap} Map of state access rights
+       * @param PermissionStrategies {permission.PermissionStrategies} Set of pre-defined directive behaviours
+       *
+       * @return {Object} Directive instance
+       */
+      function ($log, Authorization, PermissionMap, PermissionStrategies) {
+        return {
+          restrict: 'A',
+          scope: false,
+          bindToController: {
+            only: '=?permissionOnly',
+            except: '=?permissionExcept',
+            onAuthorized: '&?permissionOnAuthorized',
+            onUnauthorized: '&?permissionOnUnauthorized',
+            // Observing attribute `only` and `except` will be removed with version 2.3.0+
+            deprecatedOnly: '=only',
+            deprecatedExcept: '=except'
+          },
+          controllerAs: 'permission',
+          controller: function ($scope, $element) {
+            var permission = this;
 
             if (angular.isDefined(permission.deprecatedOnly) || angular.isDefined(permission.deprecatedExcept)) {
               $log.warn('Attributes "only" and "except" are deprecated since 2.2.0+ and their support ' +
