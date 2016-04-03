@@ -2,16 +2,21 @@ language: node_js
 sudo: false
 cache:
   directories:
-    - node_modules
-    - bower_components
+  - node_modules
+  - bower_components
 node_js:
-  - 5.4.0
+- 5.4.0
 before_install:
-  - npm install -g grunt-cli
+- npm install -g grunt-cli
 install:
-  - npm install
+- npm install
 before_script:
-  - npm install -g bower
-  - bower install
+- npm install -g bower
+- bower install
 script:
-  - grunt build
+- grunt build
+deploy:
+  provider: npm
+  on:
+    tags: true
+    repo: Narzerus/angular-permission
