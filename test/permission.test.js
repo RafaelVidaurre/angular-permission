@@ -179,9 +179,38 @@ describe('module: Permission', function () {
         only: [['acceptedChild'], ['accepted']],
         except: [['deniedChild'], ['denied']],
         redirectTo: undefined
-      }), jasmine.any(Object));
+      }));
     });
 
+    it('should pass transition params and options passed', function () {
+      // GIVEN
+      spyOn($state, 'go').and.callThrough();
+
+      $stateProvider.state('acceptedWithParamsAndOptions', {
+        params: {
+          param: undefined
+        },
+        data: {
+          permissions: {
+            only: ['accepted']
+          }
+        }
+      });
+
+      // WHEN
+      $state.go('acceptedWithParamsAndOptions', {param: 'param'}, {relative: true});
+      $rootScope.$apply();
+
+      // THEN
+      expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
+        location: true,
+        inherit: true,
+        relative: true,
+        notify: false,
+        reload: false,
+        $retry: false
+      });
+    });
 
     it('should inherit down access rights by including parent states permissions', function () {
       // GIVEN

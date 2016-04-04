@@ -7,9 +7,10 @@
       /**
        * Role definition storage
        * @class RoleStore
+       * @function
        * @memberOf permission
        *
-       * @param Role {permission.Role} Role definition constructor
+       * @param Role {permission.Role|Function} Role definition constructor
        */
       function (Role) {
         var roleStore = {};
