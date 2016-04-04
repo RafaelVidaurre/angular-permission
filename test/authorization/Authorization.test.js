@@ -1,25 +1,25 @@
 describe('service: Authorization', function () {
   'use strict';
 
-  var $q, $rootScope, PermissionStore, RoleStore, PermissionMap, Authorization;
+  var PermissionStore;
+  var RoleStore;
+  var PermissionMap;
+  var Authorization;
 
   beforeEach(function () {
     module('permission');
+
+    installPromiseMatchers(); // jshint ignore:line
 
     inject(function ($injector) {
       PermissionStore = $injector.get('PermissionStore');
       RoleStore = $injector.get('RoleStore');
       PermissionMap = $injector.get('PermissionMap');
       Authorization = $injector.get('Authorization');
-      $q = $injector.get('$q');
-      $rootScope = $injector.get('$rootScope');
     });
   });
 
   describe('method: authorize', function () {
-
-    var isResolved;
-
     beforeEach(function () {
       PermissionStore.definePermission('USER', function () {
         return true;
@@ -31,143 +31,106 @@ describe('service: Authorization', function () {
 
       RoleStore.defineRole('ACCOUNTANT', ['USER']);
       RoleStore.defineRole('ADMIN_ACCOUNTANT', ['ADMIN']);
-
-      isResolved = false;
     });
 
     it('should resolve promise when "only" matches permissions', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({only: ['USER']}))
-        .then(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({only: ['USER']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization.authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeResolved();
     });
 
     it('should resolve promise when "only" matches roles', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({only: ['ACCOUNTANT']}))
-        .then(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({only: ['ACCOUNTANT']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization.authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeResolved();
     });
 
     it('should reject promise when "only" mismatches permissions', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({only: ['ADMIN']}))
-        .catch(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({only: ['ADMIN']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization.authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeRejected();
     });
 
     it('should reject promise when "only" mismatches roles', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({only: ['ADMIN_ACCOUNTANT']}))
-        .catch(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({only: ['ADMIN_ACCOUNTANT']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization.authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeRejected();
     });
 
     it('should resolve promise when "except" mismatches permissions', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({except: ['ADMIN']}))
-        .then(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({except: ['ADMIN']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization.authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeResolved();
     });
 
     it('should resolve promise when "except" mismatches roles', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({except: ['ADMIN_ACCOUNTANT']}))
-        .then(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({except: ['ADMIN_ACCOUNTANT']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization.authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeResolved();
     });
 
     it('should reject promise when "except" matches permissions', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({except: ['USER']}))
-        .catch(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({except: ['USER']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization.authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeRejected();
     });
 
     it('should reject promise when "except" matches roles', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({except: ['ACCOUNTANT']}))
-        .catch(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({except: ['ACCOUNTANT']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization.authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeRejected();
     });
 
     it('should reject promise when permission/role is undefined', function () {
       // GIVEN
-      Authorization
-        .authorize(new PermissionMap({only: ['SUPER_ADMIN']}))
-        .catch(function () {
-          isResolved = true;
-        });
+      var permissionMap = new PermissionMap({only: ['SUPER_ADMIN']});
 
       // WHEN
-      $rootScope.$apply();
+      var promise = Authorization
+        .authorize(permissionMap);
 
       // THEN
-      expect(isResolved).toEqual(true);
+      expect(promise).toBeRejected();
     });
   });
 });

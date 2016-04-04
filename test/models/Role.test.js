@@ -1,14 +1,18 @@
-describe('model: Role', function () {
+describe('model: Role', /**
+ *
+ */
+function () {
   'use strict';
 
-  var $q, $rootScope, Role, PermissionStore;
+  var Role;
+  var PermissionStore;
 
   beforeEach(function () {
     module('permission');
 
+    installPromiseMatchers(); // jshint ignore:line
+
     inject(function ($injector) {
-      $q = $injector.get('$q');
-      $rootScope = $injector.get('$rootScope');
       Role = $injector.get('Role');
       PermissionStore = $injector.get('PermissionStore');
     });
@@ -103,19 +107,13 @@ describe('model: Role', function () {
 
     it('should return rejected promise when at leas one of permissions is not defined', function () {
       // GIVEN
-      var isCalled = false;
       var role = new Role('ACCOUNTANT', ['FAKE']);
 
       // WHEN
-      role.validateRole()
-        .catch(function(){
-          isCalled = true;
-        });
-
-      $rootScope.$apply();
+      var promise = role.validateRole();
 
       // THEN
-      expect(isCalled).toBeTruthy();
+      expect(promise).toBeRejected();
     });
   });
 });

@@ -1,7 +1,10 @@
 describe('module: Permission', function () {
   'use strict';
 
-  var $rootScope, $state, $stateProvider, PermissionStore, PermissionMap, Authorization;
+  var $rootScope;
+  var $state;
+  var $stateProvider;
+  var PermissionStore;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {
@@ -13,9 +16,7 @@ describe('module: Permission', function () {
     inject(function ($injector) {
       $state = $injector.get('$state');
       $rootScope = $injector.get('$rootScope');
-      Authorization = $injector.get('Authorization');
       PermissionStore = $injector.get('PermissionStore');
-      PermissionMap = $injector.get('PermissionMap');
     });
   });
 
@@ -139,94 +140,6 @@ describe('module: Permission', function () {
       // neither of them should have been called because the event was aborted manually
       expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
       expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
-    });
-
-    it('should compensate permissions in permissionMap by including parent states permissions', function () {
-      // GIVEN
-      $stateProvider
-        .state('compensated', {
-          data: {
-            permissions: {
-              only: ['accepted'],
-              except: ['denied']
-            }
-          }
-        })
-        .state('compensated.child', {
-          data: {
-            permissions: {
-              only: ['acceptedChild'],
-              except: ['deniedChild']
-            }
-          }
-        });
-
-      PermissionStore.definePermission('acceptedChild', function () {
-        return true;
-      });
-
-      PermissionStore.definePermission('deniedChild', function () {
-        return false;
-      });
-
-      spyOn(Authorization, 'authorize').and.callThrough();
-
-      // WHEN
-      $state.go('compensated.child');
-      $rootScope.$apply();
-
-      expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
-        only: [['acceptedChild'], ['accepted']],
-        except: [['deniedChild'], ['denied']],
-        redirectTo: undefined
-      }));
-    });
-
-    it('should pass transition params and options passed', function () {
-      // GIVEN
-      spyOn($state, 'go').and.callThrough();
-
-      $stateProvider.state('acceptedWithParamsAndOptions', {
-        params: {
-          param: undefined
-        },
-        data: {
-          permissions: {
-            only: ['accepted']
-          }
-        }
-      });
-
-      // WHEN
-      $state.go('acceptedWithParamsAndOptions', {param: 'param'}, {relative: true});
-      $rootScope.$apply();
-
-      // THEN
-      expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
-        location: true,
-        inherit: true,
-        relative: true,
-        notify: false,
-        reload: false,
-        $retry: false
-      });
-    });
-
-    it('should inherit down access rights by including parent states permissions', function () {
-      // GIVEN
-      $stateProvider.state('denied.child', {
-        data: {
-          permissions: {
-            only: ['accepted']
-          }
-        }
-      });
-
-      // WHEN
-      $state.go('denied.child');
-      $rootScope.$apply();
-
-      expect($state.current.name).toBe('home');
     });
   });
 });

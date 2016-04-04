@@ -100,6 +100,5 @@
               $state.go(redirect.state, redirect.params, redirect.options);
             });
         }
-
       });
 })();

@@ -1,7 +1,9 @@
 describe('service: RoleStore', function () {
   'use strict';
 
-  var $q, $rootScope, RoleStore, PermissionStore, Role;
+  var RoleStore;
+  var PermissionStore;
+  var Role;
 
   beforeEach(function () {
     module('permission');
@@ -9,8 +11,6 @@ describe('service: RoleStore', function () {
 
   beforeEach(function () {
     inject(function ($injector) {
-      $q = $injector.get('$q');
-      $rootScope = $injector.get('$rootScope');
       Role = $injector.get('Role');
       RoleStore = $injector.get('RoleStore');
       PermissionStore = $injector.get('PermissionStore');
@@ -24,7 +24,7 @@ describe('service: RoleStore', function () {
 
     RoleStore.defineRole('ACCOUNTANT', ['USER']);
 
-    RoleStore.defineRole('MANGER', [], function(){
+    RoleStore.defineRole('MANGER', [], function () {
       return true;
     });
   });

@@ -1,14 +1,13 @@
 describe('service: PermissionStore', function () {
   'use strict';
 
-  var $q, $rootScope, PermissionStore, Permission;
+  var PermissionStore;
+  var Permission;
 
   beforeEach(function () {
     module('permission');
 
     inject(function ($injector) {
-      $q = $injector.get('$q');
-      $rootScope = $injector.get('$rootScope');
       PermissionStore = $injector.get('PermissionStore');
       Permission = $injector.get('Permission');
     });

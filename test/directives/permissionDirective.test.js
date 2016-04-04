@@ -1,19 +1,25 @@
 describe('directive: Permission', function () {
   'use strict';
 
-  var $q, $log, $compile, $rootScope, Authorization, PermissionStore, PermissionMap;
+  var $log;
+  var $compile;
+  var $rootScope;
+  var Authorization;
+  var PermissionStore;
+  var PermissionMap;
 
 
   beforeEach(function () {
     // Instantiate module
     module('permission');
 
+    installPromiseMatchers(); // jshint ignore:line
+
     // Inject services into module
     inject(function ($injector) {
-      $q = $injector.get('$q');
       $log = $injector.get('$log');
       $compile = $injector.get('$compile');
-      $rootScope = $injector.get('$rootScope').$new();
+      $rootScope = $injector.get('$rootScope');
       Authorization = $injector.get('Authorization');
       PermissionStore = $injector.get('PermissionStore');
       PermissionMap = $injector.get('PermissionMap');

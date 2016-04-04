@@ -1,7 +1,10 @@
 describe('strategies: PermissionStrategies', function () {
   'use strict';
 
-  var $q, $log, $timeout, $compile, $rootScope, Authorization, PermissionStore, PermissionStrategies;
+  var $compile;
+  var $rootScope;
+  var PermissionStore;
+  var PermissionStrategies;
 
   beforeEach(function () {
     // Instantiate module
@@ -9,12 +12,8 @@ describe('strategies: PermissionStrategies', function () {
 
     // Inject services into module
     inject(function ($injector) {
-      $q = $injector.get('$q');
-      $log = $injector.get('$log');
-      $timeout = $injector.get('$timeout');
       $compile = $injector.get('$compile');
       $rootScope = $injector.get('$rootScope').$new();
-      Authorization = $injector.get('Authorization');
       PermissionStore = $injector.get('PermissionStore');
       PermissionStrategies = $injector.get('PermissionStrategies');
     });

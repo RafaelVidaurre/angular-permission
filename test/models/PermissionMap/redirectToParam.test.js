@@ -1,7 +1,11 @@
 describe('model: PermissionMap', function () {
   'use strict';
 
-  var $rootScope, $state, $stateProvider, $q, PermissionStore;
+  var $q;
+  var $state;
+  var $rootScope;
+  var $stateProvider;
+  var PermissionStore;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {

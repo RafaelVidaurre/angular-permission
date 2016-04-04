@@ -45,6 +45,7 @@
     "grunt-karma-coveralls": "^2.5.4",
     "grunt-ng-annotate": "^1.0.1",
     "jasmine-core": "^2.4.1",
+    "jasmine-promise-matchers": "^2.0.2",
     "jshint-stylish": "^2.1.0",
     "karma": "^0.13.21",
     "karma-jasmine": "^0.3.6",

@@ -1,14 +1,12 @@
 describe('model: Permission', function () {
   'use strict';
 
-  var $q, $rootScope, Permission;
+  var Permission;
 
   beforeEach(function () {
     module('permission');
 
     inject(function ($injector) {
-      $q = $injector.get('$q');
-      $rootScope = $injector.get('$rootScope');
       Permission = $injector.get('Permission');
     });
   });
