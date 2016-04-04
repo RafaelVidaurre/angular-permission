@@ -18,48 +18,23 @@
        */
       function ($location, $state, PermissionMap, Authorization, TransitionEvents, TransitionProperties) {
 
-        this.authorizeForState = authorizeForState;
-        this.isAuthorizationFinished = isAuthorizationFinished;
-        this.setStateAuthorizationStatus = setStateAuthorizationStatus;
+        this.authorize = authorize;
 
         /**
          * Handles state authorization
          * @method
          */
-        function authorizeForState() {
+        function authorize() {
           var statePermissionMap = buildStatePermissionMap();
 
-          Authorization
+          return Authorization
             .authorize(statePermissionMap)
             .then(function () {
               handleAuthorizedState();
             })
             .catch(function (rejectedPermission) {
               handleUnauthorizedState(statePermissionMap, rejectedPermission);
-            })
-            .finally(function () {
-              setStateAuthorizationStatus(false);
             });
-        }
-
-        /**
-         * Sets internal state `$$finishedAuthorization` variable to prevent looping
-         * @method
-         *
-         * @param status {boolean} When true authorization has been already preceded
-         */
-        function setStateAuthorizationStatus(status) {
-          angular.extend(TransitionProperties.toState, {'$$isAuthorizationFinished': status});
-        }
-
-        /**
-         * Checks if state has been already checked for authorization
-         * @method
-         *
-         * @returns {boolean}
-         */
-        function isAuthorizationFinished() {
-          return TransitionProperties.toState.$$isAuthorizationFinished;
         }
 
         /**
@@ -98,8 +73,11 @@
           TransitionEvents.broadcastStateChangePermissionAccepted();
           $location.replace();
 
+          // Overwrite notify option to broadcast it later
+          angular.extend(TransitionProperties.options, {notify: false});
+
           $state
-            .go(TransitionProperties.toState.name, TransitionProperties.toParams, {notify: false})
+            .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)
             .then(function () {
               TransitionEvents.broadcastStateChangeSuccess();
             });

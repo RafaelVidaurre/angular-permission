@@ -31,15 +31,20 @@
      */
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
-      setTransitionProperties();
-
-      if (!StateAuthorization.isAuthorizationFinished()) {
+      if (!isAuthorizationFinished()) {
         event.preventDefault();
-        StateAuthorization.setStateAuthorizationStatus(true);
+
+        setStateAuthorizationStatus(true);
+        setTransitionProperties();
 
         if (!TransitionEvents.areStateEventsDefaultPrevented()) {
           TransitionEvents.broadcastStateChangePermissionStart();
-          StateAuthorization.authorizeForState();
+
+          StateAuthorization
+            .authorize()
+            .finally(function () {
+              setStateAuthorizationStatus(false);
+            });
         }
       }
 
@@ -54,6 +59,29 @@
         TransitionProperties.fromState = fromState;
         TransitionProperties.fromParams = fromParams;
         TransitionProperties.options = options;
+      }
+
+      /**
+       * Sets internal state `$$finishedAuthorization` variable to prevent looping
+       * @method
+       * @private
+       *
+       *
+       * @param status {boolean} When true authorization has been already preceded
+       */
+      function setStateAuthorizationStatus(status) {
+        angular.extend(toState, {'$$isAuthorizationFinished': status});
+      }
+
+      /**
+       * Checks if state has been already checked for authorization
+       * @method
+       * @private
+       *
+       * @returns {boolean}
+       */
+      function isAuthorizationFinished() {
+        return toState.$$isAuthorizationFinished;
       }
     });
   });
