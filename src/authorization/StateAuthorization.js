@@ -74,7 +74,7 @@
           $location.replace();
 
           // Overwrite notify option to broadcast it later
-          angular.extend(TransitionProperties.options, {notify: false});
+          TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
 
           $state
             .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)

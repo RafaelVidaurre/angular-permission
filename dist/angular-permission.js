@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.3.2 - 2016-04-04
+ * @version v2.3.3 - 2016-04-05
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -1323,7 +1323,7 @@
           $location.replace();
 
           // Overwrite notify option to broadcast it later
-          angular.extend(TransitionProperties.options, {notify: false});
+          TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
 
           $state
             .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)
@@ -1349,6 +1349,5 @@
               $state.go(redirect.state, redirect.params, redirect.options);
             });
         }
-
       }]);
 })();
