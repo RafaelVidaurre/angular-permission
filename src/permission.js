@@ -4,9 +4,8 @@
   /**
    * @namespace permission
    */
-  var permission = angular.module('permission', ['ui.router']);
 
-  permission.config(function ($stateProvider) {
+  function config($stateProvider) {
     /**
      * This decorator is required to access full state object instead of it's configuration
      * when trying to obtain full toState state object not it's configuration
@@ -23,9 +22,10 @@
 
       return parentFn(state);
     });
-  });
+  }
 
-  permission.run(function ($rootScope, TransitionProperties, TransitionEvents, StateAuthorization) {
+
+  function run($rootScope, TransitionProperties, TransitionEvents, StateAuthorization) {
     /**
      * State transition interceptor
      */
@@ -84,5 +84,9 @@
         return toState.$$isAuthorizationFinished;
       }
     });
-  });
+  }
+
+  angular.module('permission', ['ui.router'])
+    .config(config)
+    .run(run);
 }());

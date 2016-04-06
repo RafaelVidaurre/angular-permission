@@ -1,7 +1,6 @@
 {
   "node": true,
   "browser": true,
-  "esnext": true,
   "bitwise": true,
   "camelcase": true,
   "curly": true,
@@ -16,9 +15,9 @@
   "unused": true,
   "strict": true,
   "trailing": true,
+  "expr": true,
   "globals": {
     "angular": false,
-    "_": false,
     "it": false,
     "fit": false,
     "describe": false,
