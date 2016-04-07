@@ -3,15 +3,16 @@
 
   /**
    * Access rights map factory
-   * @function
-   * @lends {permission.PermissionMap}
+   * @name PermissionMapFactory
    *
-   * @param $q {$q} Angular promise implementation
+   * @param $q {Object} Angular promise implementation
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
+   * @param RoleStore {permission.RoleStore} Role definition storage
+   * @param PermissionStore {permission.PermissionStore} Permission definition storage
    *
    * @return {permission.PermissionMap}
    */
-  function PermissionMapFactory($q, TransitionProperties) {
+  function PermissionMapFactory($q, TransitionProperties, RoleStore, PermissionStore) {
     /**
      * Constructs map object instructing authorization service how to handle authorizing
      * @constructor PermissionMap
@@ -27,27 +28,10 @@
       // Suppress not defined object errors
       permissionMap = permissionMap || {};
 
-      this.only = resolvePermissionMapProperty(permissionMap.only);
-      this.except = resolvePermissionMapProperty(permissionMap.except);
+      this.only = normalizeMapProperty(permissionMap.only);
+      this.except = normalizeMapProperty(permissionMap.except);
       this.redirectTo = permissionMap.redirectTo;
     }
-
-    /**
-     * Extends permission map by pushing to it state's permissions
-     * @method
-     * @methodOf permission.PermissionMap
-     *
-     * @param permissionMap {permission.PermissionMap} Compensated permission map
-     */
-    PermissionMap.prototype.extendPermissionMap = function (permissionMap) {
-      if (permissionMap.only.length) {
-        this.only = this.only.concat([permissionMap.only]);
-      }
-      if (permissionMap.except.length) {
-        this.except = this.except.concat([permissionMap.except]);
-      }
-      this.redirectTo = permissionMap.redirectTo;
-    };
 
     /**
      * Redirects to fallback states when permissions fail
@@ -77,16 +61,29 @@
       return $q.reject(null);
     };
 
-
     /**
-     * Checks if provided map is compensated or not
+     * Resolves weather permissions set for "only" or "except" property are valid
      * @method
-     * @methodOf permission.PermissionMap
      *
-     * @returns {boolean}
+     * @param property {permissionMap.only|permissionMap.except} "only" or "except" map property
+     * @returns {Array<Promise>}
      */
-    PermissionMap.prototype.isStatePermissionMap = function () {
-      return !!((angular.isArray(this.only[0])) || angular.isArray(this.except[0]));
+    PermissionMap.prototype.resolvePropertyValidity = function (property) {
+
+      return property.map(function (privilegeName) {
+
+        if (RoleStore.hasRoleDefinition(privilegeName)) {
+          var role = RoleStore.getRoleDefinition(privilegeName);
+          return role.validateRole();
+        }
+
+        if (PermissionStore.hasPermissionDefinition(privilegeName)) {
+          var permission = PermissionStore.getPermissionDefinition(privilegeName);
+          return permission.validatePermission();
+        }
+
+        return $q.reject(privilegeName);
+      });
     };
 
     /**
@@ -155,15 +152,15 @@
     }
 
     /**
-     * Handles extraction of permission map "only" and "except" properties
+     * Handles extraction of permission map "only" and "except" properties and converts them into array objects
      * @method
      * @private
      *
-     * @param property {Array|Function|promise} Permission map property "only" or "except"
+     * @param property {String|Array|Function|Promise} Permission map property "only" or "except"
      *
-     * @returns {Array} Array of permission "only" or "except" names
+     * @returns {Array<String>} Array of permission "only" or "except" names
      */
-    function resolvePermissionMapProperty(property) {
+    function normalizeMapProperty(property) {
       if (angular.isString(property)) {
         return [property];
       }

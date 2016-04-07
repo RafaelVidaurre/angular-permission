@@ -23,7 +23,7 @@
      * @method
      *
      * @param roleName {String} Name of defined role
-     * @param permissions {Array} Set of permission names
+     * @param permissions {Array<String>} Set of permission names
      * @param [validationFunction] {Function} Function used to validate if permissions in role are valid
      */
     function defineRole(roleName, permissions, validationFunction) {

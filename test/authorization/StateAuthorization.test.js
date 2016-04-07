@@ -1,7 +1,7 @@
-describe('module: Permission', function () {
+describe('service: StateAuthorization', function () {
   'use strict';
 
-  var $rootScope, $state, $stateProvider, PermissionStore, PermissionMap, Authorization;
+  var $rootScope, $state, $stateProvider, PermissionStore, StatePermissionMap, StateAuthorization;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {
@@ -13,9 +13,9 @@ describe('module: Permission', function () {
     inject(function ($injector) {
       $state = $injector.get('$state');
       $rootScope = $injector.get('$rootScope');
-      Authorization = $injector.get('Authorization');
+      StateAuthorization = $injector.get('StateAuthorization');
       PermissionStore = $injector.get('PermissionStore');
-      PermissionMap = $injector.get('PermissionMap');
+      StatePermissionMap = $injector.get('StatePermissionMap');
     });
   });
 
@@ -98,14 +98,14 @@ describe('module: Permission', function () {
         return false;
       });
 
-      spyOn(Authorization, 'authorize').and.callThrough();
+      spyOn(StateAuthorization, 'authorize').and.callThrough();
 
       // WHEN
       $state.go('compensated.child');
       $rootScope.$apply();
 
       // THEN
-      expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+      expect(StateAuthorization.authorize).toHaveBeenCalledWith(new StatePermissionMap({
         only: [['acceptedChild'], ['accepted']],
         except: [['deniedChild'], ['denied']],
         redirectTo: undefined

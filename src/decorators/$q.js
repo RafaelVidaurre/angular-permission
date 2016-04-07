@@ -4,6 +4,7 @@
   /**
    * Extends $q implementation by A+ *any* method
    * @name $q
+   * @extends {angular.$q}
    * @memberOf permission
    *
    * @param $delegate {Object} Angular promise implementation

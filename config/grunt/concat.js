@@ -15,6 +15,7 @@ module.exports = function () {
           '<%= paths.src %>/transition/TransitionProperties.js',
           '<%= paths.src %>/transition/TransitionEvents.js',
           '<%= paths.src %>/models/PermissionMap.js',
+          '<%= paths.src %>/models/StatePermissionMap.js',
           '<%= paths.src %>/models/Permission.js',
           '<%= paths.src %>/models/Role.js',
           '<%= paths.src %>/stores/PermissionStore.js',

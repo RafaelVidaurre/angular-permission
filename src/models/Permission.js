@@ -3,10 +3,9 @@
 
   /**
    * Permission definition factory
-   * @function
-   * @alias {permission.Permission}
+   * @name PermissionFactory
    *
-   * @param $q {$q} Angular promise implementation
+   * @param $q {Object} Angular promise implementation
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
    *
    * @return {permission.Permission}

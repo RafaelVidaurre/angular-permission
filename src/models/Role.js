@@ -3,10 +3,9 @@
 
   /**
    * Role definition factory
-   * @function
-   * @lends {permission.Role}
+   * @name RoleFactory
    *
-   * @param $q {$q} Angular promise implementation
+   * @param $q {Object} Angular promise implementation
    * @param PermissionStore {permission.PermissionStore} Permission definition storage
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
    *
@@ -31,8 +30,6 @@
       if (validationFunction) {
         PermissionStore.defineManyPermissions(permissionNames, validationFunction);
       }
-
-      return this;
     }
 
     /**

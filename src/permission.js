@@ -25,7 +25,7 @@
   }
 
 
-  function run($rootScope, TransitionProperties, TransitionEvents, StateAuthorization) {
+  function run($rootScope, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
      */
@@ -40,8 +40,10 @@
         if (!TransitionEvents.areStateEventsDefaultPrevented()) {
           TransitionEvents.broadcastStateChangePermissionStart();
 
+          var statePermissionMap = new StatePermissionMap();
+
           StateAuthorization
-            .authorize()
+            .authorize(statePermissionMap)
             .finally(function () {
               setStateAuthorizationStatus(false);
             });

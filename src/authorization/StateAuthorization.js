@@ -6,58 +6,117 @@
    * @name StateAuthorization
    * @memberOf permission
    *
+   * @param $q {Object} Angular promise implementation
    * @param $location {Object} Angular location helper service
    * @param $state {Object} Current state provider
-   * @param PermissionMap {permission.PermissionMap|Function} Map access rights
-   * @param Authorization {permission.Authorization} Authorizing service
    * @param TransitionEvents {permission.TransitionEvents} Event management service
    * @param TransitionProperties {permission.TransitionProperties} Transition properties holder
    */
-  function StateAuthorization($location, $state, PermissionMap, Authorization, TransitionEvents, TransitionProperties) {
+  function StateAuthorization($q, $location, $state, TransitionEvents, TransitionProperties) {
+
+    /**
+     * @type {permission.StatePermissionMap}
+     * @private
+     */
+    var map;
 
     this.authorize = authorize;
 
     /**
      * Handles state authorization
-     * @method
+     * @method {permission.StatePermissionMap}
+     * @param statePermissionMap
+     *
+     * @return {promise}
      */
-    function authorize() {
-      var statePermissionMap = buildStatePermissionMap();
+    function authorize(statePermissionMap) {
+      map = statePermissionMap;
 
-      return Authorization
-        .authorize(statePermissionMap)
+      return authorizeStatePermissionMap()
         .then(function () {
           handleAuthorizedState();
         })
         .catch(function (rejectedPermission) {
-          handleUnauthorizedState(statePermissionMap, rejectedPermission);
+          handleUnauthorizedState(rejectedPermission);
         });
     }
 
     /**
-     * Builds map of permissions resolving passed values to data.permissions and combine them with all its parents
-     * keeping the order of permissions from the newest (children) to the oldest (parent)
+     * Checks authorization for complex state inheritance
      * @method
      * @private
      *
-     * @returns {permission.PermissionMap} Permission map
+     * @returns {promise} $q.promise object
      */
-    function buildStatePermissionMap() {
-      var permissionMap = new PermissionMap();
+    function authorizeStatePermissionMap() {
+      var deferred = $q.defer();
 
-      var toStatePath = $state
-        .get(TransitionProperties.toState.name)
-        .$$state().path
-        .slice()
-        .reverse();
+      resolveExceptStatePermissionMap(deferred);
 
-      toStatePath.forEach(function (state) {
-        if (state.areSetStatePermissions()) {
-          permissionMap.extendPermissionMap(new PermissionMap(state.data.permissions));
-        }
+      return deferred.promise;
+    }
+
+    /**
+     * Resolves compensated set of "except" privileges
+     * @method
+     * @private
+     *
+     * @param deferred {Object} Promise defer
+     */
+    function resolveExceptStatePermissionMap(deferred) {
+      var exceptPromises = resolveStatePermissionMap(map.except);
+
+      $q.all(exceptPromises)
+        .then(function (rejectedPermissions) {
+          deferred.reject(rejectedPermissions);
+        })
+        .catch(function () {
+          resolveOnlyStatePermissionMap(deferred);
+        });
+    }
+
+    /**
+     * Resolves compensated set of "only" privileges
+     * @method
+     * @private
+     *
+     * @param deferred {Object} Promise defer
+     */
+    function resolveOnlyStatePermissionMap(deferred) {
+      if (!map.only.length) {
+        deferred.resolve();
+        return;
+      }
+
+      var onlyPromises = resolveStatePermissionMap(map.only);
+
+      $q.all(onlyPromises)
+        .then(function (resolvedPermissions) {
+          deferred.resolve(resolvedPermissions);
+        })
+        .catch(function (rejectedPermission) {
+          deferred.reject(rejectedPermission);
+        });
+    }
+
+    /**
+     * Performs iteration over list of privileges looking for matches
+     * @method
+     * @private
+     *
+     * @param privilegesNames {Array} Array of sets of access rights
+     *
+     * @returns {Array<Promise>} Promise collection
+     */
+    function resolveStatePermissionMap(privilegesNames) {
+      if (!privilegesNames.length) {
+        return [$q.reject()];
+      }
+
+      return privilegesNames.map(function (statePrivileges) {
+        var resolvedStatePrivileges = map.resolvePropertyValidity(statePrivileges);
+        return $q.any(resolvedStatePrivileges);
       });
-
-      return permissionMap;
     }
 
     /**
@@ -85,13 +144,12 @@
      * @method
      * @private
      *
-     * @param permissionMap {permission.PermissionMap} Map of access rights names
      * @param rejectedPermission {String} Rejected access right
      */
-    function handleUnauthorizedState(permissionMap, rejectedPermission) {
+    function handleUnauthorizedState(rejectedPermission) {
       TransitionEvents.broadcastStateChangePermissionDenied();
 
-      permissionMap
+      map
         .resolveRedirectState(rejectedPermission)
         .then(function (redirect) {
           $state.go(redirect.state, redirect.params, redirect.options);
