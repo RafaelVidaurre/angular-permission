@@ -8,6 +8,7 @@
    *
    * @type {Object.<String,Object>}
    *
+   * UI-router transition properties:
    * @property toState {Object} Target state object
    * @property toParams {Object} Target state params
    * @property fromState {Object} Source state object

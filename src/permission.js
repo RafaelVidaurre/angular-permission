@@ -24,8 +24,7 @@
     });
   }
 
-
-  function run($rootScope, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
+  function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
      */
@@ -44,6 +43,12 @@
 
           StateAuthorization
             .authorize(statePermissionMap)
+            .then(function () {
+              handleAuthorizedState();
+            })
+            .catch(function (rejectedPermission) {
+              handleUnauthorizedState(rejectedPermission, statePermissionMap);
+            })
             .finally(function () {
               setStateAuthorizationStatus(false);
             });
@@ -84,6 +89,44 @@
        */
       function isAuthorizationFinished() {
         return toState.$$isAuthorizationFinished;
+      }
+
+      /**
+       * Handles redirection for authorized access
+       * @method
+       * @private
+       */
+      function handleAuthorizedState() {
+
+        TransitionEvents.broadcastStateChangePermissionAccepted();
+        $location.replace();
+
+        // Overwrite notify option to broadcast it later
+        TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
+
+        $state
+          .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)
+          .then(function () {
+            TransitionEvents.broadcastStateChangeSuccess();
+          });
+      }
+
+      /**
+       * Handles redirection for unauthorized access
+       * @method
+       * @private
+       *
+       * @param rejectedPermission {String} Rejected access right
+       * @param statePermissionMap {permission.StatePermissionMap} State permission map
+       */
+      function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
+        TransitionEvents.broadcastStateChangePermissionDenied();
+
+        statePermissionMap
+          .resolveRedirectState(rejectedPermission)
+          .then(function (redirect) {
+            $state.go(redirect.state, redirect.params, redirect.options);
+          });
       }
     });
   }

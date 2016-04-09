@@ -45,7 +45,7 @@
         var promises = this.permissionNames.map(function (permissionName) {
           if (PermissionStore.hasPermissionDefinition(permissionName)) {
             var permission = PermissionStore.getPermissionDefinition(permissionName);
-            var validationResult = permission.validationFunction.call(null, permission.permissionName, TransitionProperties);
+            var validationResult = permission.validatePermission();
 
             if (!angular.isFunction(validationResult.then)) {
               validationResult = wrapInPromise(validationResult);

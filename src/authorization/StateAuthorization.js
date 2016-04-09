@@ -7,12 +7,8 @@
    * @memberOf permission
    *
    * @param $q {Object} Angular promise implementation
-   * @param $location {Object} Angular location helper service
-   * @param $state {Object} Current state provider
-   * @param TransitionEvents {permission.TransitionEvents} Event management service
-   * @param TransitionProperties {permission.TransitionProperties} Transition properties holder
    */
-  function StateAuthorization($q, $location, $state, TransitionEvents, TransitionProperties) {
+  function StateAuthorization($q) {
 
     /**
      * @type {permission.StatePermissionMap}
@@ -32,13 +28,7 @@
     function authorize(statePermissionMap) {
       map = statePermissionMap;
 
-      return authorizeStatePermissionMap()
-        .then(function () {
-          handleAuthorizedState();
-        })
-        .catch(function (rejectedPermission) {
-          handleUnauthorizedState(rejectedPermission);
-        });
+      return authorizeStatePermissionMap();
     }
 
     /**
@@ -117,43 +107,6 @@
         var resolvedStatePrivileges = map.resolvePropertyValidity(statePrivileges);
         return $q.any(resolvedStatePrivileges);
       });
-    }
-
-    /**
-     * Handles redirection for authorized access
-     * @method
-     * @private
-     */
-    function handleAuthorizedState() {
-
-      TransitionEvents.broadcastStateChangePermissionAccepted();
-      $location.replace();
-
-      // Overwrite notify option to broadcast it later
-      TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
-
-      $state
-        .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)
-        .then(function () {
-          TransitionEvents.broadcastStateChangeSuccess();
-        });
-    }
-
-    /**
-     * Handles redirection for unauthorized access
-     * @method
-     * @private
-     *
-     * @param rejectedPermission {String} Rejected access right
-     */
-    function handleUnauthorizedState(rejectedPermission) {
-      TransitionEvents.broadcastStateChangePermissionDenied();
-
-      map
-        .resolveRedirectState(rejectedPermission)
-        .then(function (redirect) {
-          $state.go(redirect.state, redirect.params, redirect.options);
-        });
     }
   }
 
