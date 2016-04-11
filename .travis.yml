@@ -20,14 +20,7 @@ deploy:
   email:
     secure: XKH1lS9lPGUZc1Gb6FDA68+0Kb868nfumVyhqb5TZilPRT9aYA9fAsoU75WEI9sw1ZUTM5K3YQHk1MX4JS9SdtMyd5rBSWJZyN5kfkpUOILaC15Gd8O3k6TO70lCA8Ymf/CgCY04SG613nNkT5Jr9yp6Ad+q+8ijdzTcT5+vznc=
   api_key:
-    secure: WW6KpzNcbywvfG0psLYswZbKF3/kRGUoNl8EC6/r3jeC4vdqUhIiX+gaxS8Us9WabbZ6PiyPlhUyK8BJf5LPlLwv49FIQpW2Tzx9ZoXOAOrTky1/PRkxngs2dfmxocV22B3rgTm1qaYsxe/bU0hcvsCFhbWSu9I5yKqucgWLAaM=
+    secure: CrmL61gpAr9scMoLc1qQXqzinegzPbLhSj5NjC39hDtZR3ynRiAcwSfqGQjnGLJFdWBXgirM/Xyd8+R1CCd1esnWqC9qS4gRvj0AupeiKNCL/t1jfjBpERpD1a282nfpDxut/SYjNA/HgGld7j8LQg3hwmnxIpNX1Zv2DgbrxWg=
   on:
     tags: true
-    email:
-    - npm_email
-    api_key:
-    - npm_api_key
-    branch: master
     repo: Narzerus/angular-permission
-env:
-  global:
