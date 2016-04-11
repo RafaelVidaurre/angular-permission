@@ -11,7 +11,7 @@ describe('module: Permission', function () {
       $stateProvider = $injector.get('$stateProvider');
     });
 
-    module('permission');
+    module('permission.ui', 'permission');
 
     inject(function ($injector) {
       $state = $injector.get('$state');

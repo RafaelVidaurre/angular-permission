@@ -2,7 +2,7 @@
   'use strict';
 
   /**
-   * @namespace permission
+   * @namespace permission.ui
    */
 
   function config($stateProvider) {
@@ -131,7 +131,8 @@
     });
   }
 
-  angular.module('permission', ['ui.router'])
+  angular
+    .module('permission.ui', ['permission', 'ui.router'])
     .config(config)
     .run(run);
 }());

@@ -4,10 +4,11 @@
   /**
    * Extends $q implementation by A+ *any* method
    * @name $q
-   * @extends {angular.$q}
    * @memberOf permission
    *
-   * @param $delegate {Object} Angular promise implementation
+   * @extends {angular.$q}
+   *
+   * @param $delegate {Object} Parent instance being extended
    */
   function $q($delegate) {
 

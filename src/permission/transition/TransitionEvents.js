@@ -11,21 +11,10 @@
    */
   function TransitionEvents($rootScope, TransitionProperties) {
 
-    this.areStateEventsDefaultPrevented = areStateEventsDefaultPrevented;
     this.broadcastStateChangePermissionStart = broadcastStateChangePermissionStart;
     this.broadcastStateChangePermissionAccepted = broadcastStateChangePermissionAccepted;
     this.broadcastStateChangePermissionDenied = broadcastStateChangePermissionDenied;
-    this.broadcastStateChangeSuccess = broadcastStateChangeSuccess;
-
-    /**
-     * Checks if state events are not prevented by default
-     * @method
-     *
-     * @returns {boolean}
-     */
-    function areStateEventsDefaultPrevented() {
-      return isStateChangePermissionStartDefaultPrevented() || isStateChangeStartDefaultPrevented();
-    }
+    this.isStateChangePermissionStartDefaultPrevented = isStateChangePermissionStartDefaultPrevented;
 
     /**
      * Broadcasts "$stateChangePermissionStart" event from $rootScope
@@ -48,16 +37,6 @@
     }
 
     /**
-     * Broadcasts "$stateChangeSuccess" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangeSuccess() {
-      $rootScope.$broadcast('$stateChangeSuccess',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.fromState, TransitionProperties.fromParams);
-    }
-
-    /**
      * Broadcasts "$tateChangePermissionDenied" event from $rootScope
      * @method
      */
@@ -65,20 +44,6 @@
       $rootScope.$broadcast('$stateChangePermissionDenied',
         TransitionProperties.toState, TransitionProperties.toParams,
         TransitionProperties.options);
-    }
-
-    /**
-     * Checks if event $stateChangeStart hasn't been disabled by default
-     * @method
-     * @private
-     *
-     * @returns {boolean}
-     */
-    function isStateChangeStartDefaultPrevented() {
-      return $rootScope.$broadcast('$stateChangeStart',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.fromState, TransitionProperties.fromParams,
-        TransitionProperties.options).defaultPrevented;
     }
 
     /**
