@@ -19,4 +19,5 @@ deploy:
   provider: npm
   on:
     tags: true
+    branch: master
     repo: Narzerus/angular-permission
