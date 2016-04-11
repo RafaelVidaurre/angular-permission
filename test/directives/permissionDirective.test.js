@@ -19,7 +19,7 @@ describe('directive: Permission', function () {
     inject(function ($injector) {
       $log = $injector.get('$log');
       $compile = $injector.get('$compile');
-      $rootScope = $injector.get('$rootScope');
+      $rootScope = $injector.get('$rootScope').$new();
       Authorization = $injector.get('Authorization');
       PermissionStore = $injector.get('PermissionStore');
       PermissionMap = $injector.get('PermissionMap');
@@ -29,6 +29,10 @@ describe('directive: Permission', function () {
   // Initialize permissions
   beforeEach(function () {
     PermissionStore.definePermission('USER', function () {
+      return true;
+    });
+
+    PermissionStore.definePermission('AUTHORIZED', function () {
       return true;
     });
 
@@ -241,5 +245,45 @@ describe('directive: Permission', function () {
       except: ['USER'],
       redirectTo: undefined
     }));
+  });
+
+  it('should resolve multiple authorization calls properly', function () {
+    // GIVEN
+    var element = angular.element(
+      '<div permission permission-only="\'ADMIN\'"></div>' +
+      '<div permission permission-only="\'USER\'"></div>' +
+      '<div permission permission-only="\'AUTHORIZED\'"></div>'
+    );
+
+    spyOn(Authorization, 'authorize').and.callThrough();
+
+    // WHEN
+    $compile(element)($rootScope);
+    $rootScope.$digest();
+
+    // THEN
+    expect(Authorization.authorize).toHaveBeenCalledTimes(3);
+
+    expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+      only: ['USER'],
+      except: undefined,
+      redirectTo: undefined
+    }));
+
+    expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+      only: ['ADMIN'],
+      except: undefined,
+      redirectTo: undefined
+    }));
+
+    expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+      only: ['AUTHORIZED'],
+      except: undefined,
+      redirectTo: undefined
+    }));
+
+    expect(angular.element(element[0]).hasClass('ng-hide')).toBeTruthy();
+    expect(angular.element(element[1]).hasClass('ng-hide')).toBeFalsy();
+    expect(angular.element(element[2]).hasClass('ng-hide')).toBeFalsy();
   });
 });
