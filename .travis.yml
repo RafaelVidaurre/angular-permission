@@ -17,6 +17,10 @@ script:
 - grunt build
 deploy:
   provider: npm
+  email:
+    secure: XKH1lS9lPGUZc1Gb6FDA68+0Kb868nfumVyhqb5TZilPRT9aYA9fAsoU75WEI9sw1ZUTM5K3YQHk1MX4JS9SdtMyd5rBSWJZyN5kfkpUOILaC15Gd8O3k6TO70lCA8Ymf/CgCY04SG613nNkT5Jr9yp6Ad+q+8ijdzTcT5+vznc=
+  api_key:
+    secure: CrmL61gpAr9scMoLc1qQXqzinegzPbLhSj5NjC39hDtZR3ynRiAcwSfqGQjnGLJFdWBXgirM/Xyd8+R1CCd1esnWqC9qS4gRvj0AupeiKNCL/t1jfjBpERpD1a282nfpDxut/SYjNA/HgGld7j8LQg3hwmnxIpNX1Zv2DgbrxWg=
   on:
     tags: true
     repo: Narzerus/angular-permission

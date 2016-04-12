@@ -10,12 +10,6 @@
    */
   function StateAuthorization($q) {
 
-    /**
-     * @type {permission.StatePermissionMap}
-     * @private
-     */
-    var map;
-
     this.authorize = authorize;
 
     /**
@@ -26,9 +20,7 @@
      * @return {promise}
      */
     function authorize(statePermissionMap) {
-      map = statePermissionMap;
-
-      return authorizeStatePermissionMap();
+      return authorizeStatePermissionMap(statePermissionMap);
     }
 
     /**
@@ -36,12 +28,14 @@
      * @method
      * @private
      *
+     * @param map {permission.StatePermissionMap} State access rights map
+     *
      * @returns {promise} $q.promise object
      */
-    function authorizeStatePermissionMap() {
+    function authorizeStatePermissionMap(map) {
       var deferred = $q.defer();
 
-      resolveExceptStatePermissionMap(deferred);
+      resolveExceptStatePermissionMap(deferred, map);
 
       return deferred.promise;
     }
@@ -52,16 +46,17 @@
      * @private
      *
      * @param deferred {Object} Promise defer
+     * @param map {permission.StatePermissionMap} State access rights map
      */
-    function resolveExceptStatePermissionMap(deferred) {
-      var exceptPromises = resolveStatePermissionMap(map.except);
+    function resolveExceptStatePermissionMap(deferred, map) {
+      var exceptPromises = resolveStatePermissionMap(map.except, map);
 
       $q.all(exceptPromises)
         .then(function (rejectedPermissions) {
           deferred.reject(rejectedPermissions);
         })
         .catch(function () {
-          resolveOnlyStatePermissionMap(deferred);
+          resolveOnlyStatePermissionMap(deferred, map);
         });
     }
 
@@ -71,14 +66,15 @@
      * @private
      *
      * @param deferred {Object} Promise defer
+     * @param map {permission.StatePermissionMap} State access rights map
      */
-    function resolveOnlyStatePermissionMap(deferred) {
+    function resolveOnlyStatePermissionMap(deferred, map) {
       if (!map.only.length) {
         deferred.resolve();
         return;
       }
 
-      var onlyPromises = resolveStatePermissionMap(map.only);
+      var onlyPromises = resolveStatePermissionMap(map.only, map);
 
       $q.all(onlyPromises)
         .then(function (resolvedPermissions) {
@@ -95,10 +91,11 @@
      * @private
      *
      * @param privilegesNames {Array} Array of sets of access rights
+     * @param map {permission.StatePermissionMap} State access rights map
      *
      * @returns {Array<Promise>} Promise collection
      */
-    function resolveStatePermissionMap(privilegesNames) {
+    function resolveStatePermissionMap(privilegesNames, map) {
       if (!privilegesNames.length) {
         return [$q.reject()];
       }

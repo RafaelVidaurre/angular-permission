@@ -44,13 +44,12 @@
   function permissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
     return {
       restrict: 'A',
-      scope: false,
       bindToController: {
         only: '=?permissionOnly',
         except: '=?permissionExcept',
         onAuthorized: '&?permissionOnAuthorized',
         onUnauthorized: '&?permissionOnUnauthorized',
-        // Observing attribute `only` and `except` will be removed with version 2.3.0+
+        // Observing attribute `only` and `except` will be removed with version 2.4.0+
         deprecatedOnly: '=only',
         deprecatedExcept: '=except'
       },
