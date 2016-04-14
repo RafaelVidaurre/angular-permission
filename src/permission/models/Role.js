@@ -4,6 +4,7 @@
   /**
    * Role definition factory
    * @name RoleFactory
+   * @memberOf permission
    *
    * @param $q {Object} Angular promise implementation
    * @param PermissionStore {permission.PermissionStore} Permission definition storage
@@ -45,13 +46,8 @@
         var promises = this.permissionNames.map(function (permissionName) {
           if (PermissionStore.hasPermissionDefinition(permissionName)) {
             var permission = PermissionStore.getPermissionDefinition(permissionName);
-            var validationResult = permission.validatePermission();
 
-            if (!angular.isFunction(validationResult.then)) {
-              validationResult = wrapInPromise(validationResult);
-            }
-
-            return validationResult;
+            return permission.validatePermission();
           }
 
           return $q.reject();

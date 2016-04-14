@@ -2,7 +2,7 @@
   'use strict';
 
   /**
-   * Service responsible for handling state based authorization
+   * Service responsible for handling inheritance-enabled state-based authorization in ui-router
    * @name StateAuthorization
    * @memberOf permission
    *

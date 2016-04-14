@@ -4,6 +4,7 @@
   /**
    * Permission definition factory
    * @name PermissionFactory
+   * @memberOf permission
    *
    * @param $q {Object} Angular promise implementation
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters

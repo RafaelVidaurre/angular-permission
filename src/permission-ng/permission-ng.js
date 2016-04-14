@@ -14,8 +14,8 @@
       event.preventDefault();
       setTransitionProperties();
 
-      if (!TransitionEvents.areStateEventsDefaultPrevented()) {
-        TransitionEvents.broadcastStateChangePermissionStart();
+      if (!TransitionEvents.areEventsDefaultPrevented()) {
+        TransitionEvents.broadcastPermissionStartEvent();
 
         var permissionMap = new PermissionMap();
 
@@ -45,7 +45,7 @@
        * @private
        */
       function handleAuthorizedState() {
-        TransitionEvents.broadcastStateChangePermissionAccepted();
+        TransitionEvents.broadcastPermissionAcceptedEvent();
         $location.replace(next);
       }
 
@@ -58,7 +58,7 @@
        * @param statePermissionMap {permission.PermissionMap} State permission map
        */
       function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
-        TransitionEvents.broadcastStateChangePermissionDenied();
+        TransitionEvents.broadcastPermissionDeniedEvent();
 
         statePermissionMap
           .resolveRedirectState(rejectedPermission)

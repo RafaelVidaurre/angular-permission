@@ -9,7 +9,13 @@
   "main": "dist/angular-permission.js",
   "keywords": [
     "angular",
+    "ui-router",
+    "ng-route",
+    "access-control",
     "permissions",
+    "access",
+    "acl",
+    "rbac",
     "roles",
     "route"
   ],
@@ -20,6 +26,7 @@
     "node_modules",
     "bower_components",
     "config",
+    "coverage",
     "test",
     "src",
     "Gruntfile.js",
@@ -28,10 +35,11 @@
     ".travis.yml"
   ],
   "devDependencies": {
-    "angular-mocks": "*"
+    "angular-mocks": "*",
+    "angular-route": "^1.4.0",
+    "angular-ui-router": "^0.2.0"
   },
   "dependencies": {
-    "angular": "^1.4.0",
-    "angular-ui-router": "^0.2.0"
+    "angular": "^1.4.0"
   }
 }

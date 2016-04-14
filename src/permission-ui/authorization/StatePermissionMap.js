@@ -4,6 +4,7 @@
   /**
    * State Access rights map factory
    * @name StatePermissionMapFactory
+   * @alias StatePermissionMap
    *
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
    * @param PermissionMap {permission.PermissionMap}

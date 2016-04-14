@@ -23,7 +23,6 @@
       return parentFn(state);
     });
   }
-
   function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
@@ -36,8 +35,8 @@
         setStateAuthorizationStatus(true);
         setTransitionProperties();
 
-        if (!TransitionEvents.areStateEventsDefaultPrevented()) {
-          TransitionEvents.broadcastStateChangePermissionStart();
+        if (!TransitionEvents.areEventsDefaultPrevented()) {
+          TransitionEvents.broadcastPermissionStartEvent();
 
           var statePermissionMap = new StatePermissionMap();
 
@@ -98,7 +97,7 @@
        */
       function handleAuthorizedState() {
 
-        TransitionEvents.broadcastStateChangePermissionAccepted();
+        TransitionEvents.broadcastPermissionAcceptedEvent();
         $location.replace();
 
         // Overwrite notify option to broadcast it later
@@ -107,7 +106,7 @@
         $state
           .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)
           .then(function () {
-            TransitionEvents.broadcastStateChangeSuccess();
+            TransitionEvents.broadcastStateChangeSuccessEvent();
           });
       }
 
@@ -120,7 +119,7 @@
        * @param statePermissionMap {permission.StatePermissionMap} State permission map
        */
       function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
-        TransitionEvents.broadcastStateChangePermissionDenied();
+        TransitionEvents.broadcastPermissionDeniedEvent();
 
         statePermissionMap
           .resolveRedirectState(rejectedPermission)

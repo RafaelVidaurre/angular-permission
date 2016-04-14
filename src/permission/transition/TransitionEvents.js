@@ -2,62 +2,23 @@
   'use strict';
 
   /**
-   * Service responsible for managing and emitting events
+   * Interface responsible for managing and emitting events dependent on router implementation
    * @name TransitionEvents
    * @memberOf permission
-   *
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
-   * @param $rootScope {Object} Top-level angular scope
    */
-  function TransitionEvents($rootScope, TransitionProperties) {
+  function TransitionEvents() {
 
-    this.broadcastStateChangePermissionStart = broadcastStateChangePermissionStart;
-    this.broadcastStateChangePermissionAccepted = broadcastStateChangePermissionAccepted;
-    this.broadcastStateChangePermissionDenied = broadcastStateChangePermissionDenied;
-    this.isStateChangePermissionStartDefaultPrevented = isStateChangePermissionStartDefaultPrevented;
+    this.broadcastPermissionStartEvent = function () {
+      throw new Error('Method broadcastPermissionStartEvent in TransitionEvents interface must be implemented');
+    };
 
-    /**
-     * Broadcasts "$stateChangePermissionStart" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangePermissionStart() {
-      $rootScope.$broadcast('$stateChangePermissionStart',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.options);
-    }
+    this.broadcastPermissionAcceptedEvent = function () {
+      throw new Error('Method broadcastPermissionAcceptedEvent in TransitionEvents interface must be implemented');
+    };
 
-    /**
-     * Broadcasts "$stateChangePermissionAccepted" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangePermissionAccepted() {
-      $rootScope.$broadcast('$stateChangePermissionAccepted',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.options);
-    }
-
-    /**
-     * Broadcasts "$tateChangePermissionDenied" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangePermissionDenied() {
-      $rootScope.$broadcast('$stateChangePermissionDenied',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.options);
-    }
-
-    /**
-     * Checks if event $stateChangePermissionStart hasn't been disabled by default
-     * @method
-     * @private
-     *
-     * @returns {boolean}
-     */
-    function isStateChangePermissionStartDefaultPrevented() {
-      return $rootScope.$broadcast('$stateChangePermissionStart',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.options).defaultPrevented;
-    }
+    this.broadcastPermissionDeniedEvent = function () {
+      throw new Error('Method broadcastPermissionDeniedEvent in TransitionEvents interface must be implemented');
+    };
   }
 
   angular

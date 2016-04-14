@@ -1,4 +1,4 @@
-describe('module: Permission', function () {
+describe('module: permission.ui', function () {
   'use strict';
 
   var $rootScope;
@@ -51,23 +51,7 @@ describe('module: Permission', function () {
       });
 
     $state.go('home');
-    $rootScope.$apply();
-  });
-
-  var changePermissionAcceptedHasBeenCalled, changePermissionDeniedHasBeenCalled;
-
-  // Bind event listeners
-  beforeEach(function () {
-    changePermissionAcceptedHasBeenCalled = false;
-    changePermissionDeniedHasBeenCalled = false;
-
-    $rootScope.$on('$stateChangePermissionAccepted', function () {
-      changePermissionAcceptedHasBeenCalled = true;
-    });
-
-    $rootScope.$on('$stateChangePermissionDenied', function () {
-      changePermissionDeniedHasBeenCalled = true;
-    });
+    $rootScope.$digest();
   });
 
   describe('event: $stateChangeStart', function () {
@@ -83,7 +67,7 @@ describe('module: Permission', function () {
 
       // WHEN
       $state.go('accepted');
-      $rootScope.$apply();
+      $rootScope.$digest();
 
       //THEN
       expect(called).toBeTruthy();
@@ -95,30 +79,33 @@ describe('module: Permission', function () {
       $rootScope.$on('$stateChangePermissionStart', function (event) {
         event.preventDefault();
       });
+      
+      spyOn($rootScope, '$broadcast').and.callThrough();
 
       // WHEN
       $state.go('accepted');
-      $rootScope.$apply();
+      $rootScope.$digest();
 
       // THEN
       expect($state.current.name).toBe('home');
-      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
-      expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
+      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted',
+        jasmine.any(Object), jasmine.any(Object), jasmine.any(Object));
+      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied',
+        jasmine.any(Object), jasmine.any(Object), jasmine.any(Object));
     });
 
     it('should broadcast $stateChangeStart event', function () {
       // GIVEN
-      var called = false;
-
-      $rootScope.$on('$stateChangeStart', function () {
-        called = true;
-      });
+      spyOn($rootScope, '$broadcast').and.callThrough();
 
       // WHEN
       $state.go('accepted');
-      $rootScope.$apply();
+      $rootScope.$digest();
 
-      expect(called).toBeTruthy();
+      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangeStart',
+        jasmine.any(Object), jasmine.any(Object),
+        jasmine.any(Object), jasmine.any(Object),
+        jasmine.any(Object));
     });
 
     it('should not authorize when $stateChangeStart has been prevented', function () {
@@ -127,19 +114,22 @@ describe('module: Permission', function () {
         event.preventDefault();
       });
 
+      spyOn($rootScope, '$broadcast').and.callThrough();
+
       // WHEN
       $state.go('accepted');
-      $rootScope.$apply();
-
+      $rootScope.$digest();
 
       $state.go('denied');
-      $rootScope.$apply();
+      $rootScope.$digest();
 
       // THEN
       expect($state.current.name).toBe('home');
       // neither of them should have been called because the event was aborted manually
-      expect(changePermissionAcceptedHasBeenCalled).not.toBeTruthy();
-      expect(changePermissionDeniedHasBeenCalled).not.toBeTruthy();
+      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted',
+        jasmine.any(Object), jasmine.any(Object), jasmine.any(Object));
+      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied',
+        jasmine.any(Object), jasmine.any(Object), jasmine.any(Object));
     });
   });
 });
