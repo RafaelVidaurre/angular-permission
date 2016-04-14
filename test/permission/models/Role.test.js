@@ -1,7 +1,4 @@
-describe('model: Role', /**
- *
- */
-function () {
+describe('model: Role', function () {
   'use strict';
 
   var Role;
@@ -61,6 +58,19 @@ function () {
       // THEN
       expect(role.roleName).toBe(permissionName);
       expect(role.permissionNames).toBe(permissionNames);
+    });
+
+
+    it('should add permission definitions to PermissionStore when provided validationFunction', function () {
+      // GIVEN
+      var validationFunction = function () {
+        return true;
+      };
+      // WHEN
+      new Role('ACCOUNTANT', ['USER'], validationFunction);
+      // THEN
+      expect(PermissionStore.hasPermissionDefinition('USER')).toBe(true);
+      expect(PermissionStore.getPermissionDefinition('USER').validationFunction).toBe(validationFunction);
     });
 
     it('should call directly validationFunction when no permissions were provided', function () {

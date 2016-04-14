@@ -1,4 +1,4 @@
-describe('service: Authorization', function () {
+describe('authorization: Authorization', function () {
   'use strict';
 
   var PermissionStore;

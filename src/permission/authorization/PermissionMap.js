@@ -21,8 +21,10 @@
      * @memberOf permission
      *
      * @param [permissionMap] {Object} Map of permissions provided to authorization service
-     * @param [permissionMap.only] {Array} List of exclusive access right names allowed for authorization
-     * @param [permissionMap.except] {Array} List of exclusive access right names denied for authorization
+     * @param [permissionMap.only] {String|Array|Function} List of exclusive access right names allowed for
+     *   authorization
+     * @param [permissionMap.except] {String|Array|Function} List of exclusive access right names denied for
+     *   authorization
      * @param [permissionMap.redirectTo] {String|Function|Object|promise} Handling redirection when rejected
      *   authorization
      */
@@ -40,7 +42,7 @@
      * @method
      * @methodOf permission.PermissionMap
      *
-     * @param rejectedPermissionName {String} Permission name
+     * @param [rejectedPermissionName] {String} Permission name
      *
      * @return {Promise}
      */
@@ -60,14 +62,14 @@
       }
 
       // If redirectTo state is not defined stay where you are
-      return $q.reject(null);
+      return $q.reject();
     };
 
     /**
      * Resolves weather permissions set for "only" or "except" property are valid
      * @method
      *
-     * @param property {permissionMap.only|permissionMap.except} "only" or "except" map property
+     * @param property {String|Array|Function} "only" or "except" map property
      * @returns {Array<Promise>}
      */
     PermissionMap.prototype.resolvePropertyValidity = function (property) {
@@ -95,13 +97,13 @@
      * @throws {TypeError}
      *
      * @param redirectFunction {Function} Redirection function
-     * @param permission {String} Rejected permission
+     * @param rejectedPermissionName {String} Rejected permission
      *
      * @return {Promise}
      */
-    function resolveFunctionRedirect(redirectFunction, permission) {
+    function resolveFunctionRedirect(redirectFunction, rejectedPermissionName) {
       return $q
-        .when(redirectFunction.call(null, permission))
+        .when(redirectFunction.call(null, rejectedPermissionName))
         .then(function (redirectState) {
           if (angular.isString(redirectState)) {
             return {
@@ -113,7 +115,7 @@
             return redirectState;
           }
 
-          throw new TypeError('When used "redirectTo" as function, returned value must be string or object');
+          return $q.reject();
         });
     }
 
@@ -158,7 +160,7 @@
      * @method
      * @private
      *
-     * @param property {String|Array|Function|Promise} Permission map property "only" or "except"
+     * @param property {String|Array|Function} Permission map property "only" or "except"
      *
      * @returns {Array<String>} Array of permission "only" or "except" names
      */
