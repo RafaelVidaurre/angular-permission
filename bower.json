@@ -35,8 +35,8 @@
     ".travis.yml"
   ],
   "devDependencies": {
-    "angular-mocks": "*",
-    "angular-route": "*",
+    "angular-mocks": "^1.4.0",
+    "angular-route": "^1.4.0",
     "angular-ui-router": "^0.2.0"
   },
   "dependencies": {
