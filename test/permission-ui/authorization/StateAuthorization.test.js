@@ -1,7 +1,7 @@
 describe('module: permission.ui', function () {
   'use strict';
 
-  describe('service: StateAuthorization', function () {
+  describe('authorization: StateAuthorization', function () {
 
     var $rootScope, $state, $stateProvider, PermissionStore, StatePermissionMap, StateAuthorization;
 
@@ -10,7 +10,7 @@ describe('module: permission.ui', function () {
         $stateProvider = $injector.get('$stateProvider');
       });
 
-      module('permission.ui', 'permission');
+      module('permission.ui');
 
       inject(function ($injector) {
         $state = $injector.get('$state');

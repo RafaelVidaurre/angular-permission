@@ -1,293 +1,296 @@
-describe('authorization: PermissionMap', function () {
+describe('module: permission', function () {
   'use strict';
 
-  var RoleStore;
-  var PermissionMap;
-  var PermissionStore;
+  describe('authorization: PermissionMap', function () {
 
-  beforeEach(function () {
-    module('permission');
+    var RoleStore;
+    var PermissionMap;
+    var PermissionStore;
 
-    installPromiseMatchers(); // jshint ignore:line
+    beforeEach(function () {
+      module('permission');
 
-    inject(function ($injector) {
-      RoleStore = $injector.get('RoleStore');
-      PermissionMap = $injector.get('PermissionMap');
-      PermissionStore = $injector.get('PermissionStore');
-    });
-  });
+      installPromiseMatchers(); // jshint ignore:line
 
-  describe('method: constructor', function () {
-    it('should normalize except/only params into array of strings when passed as string', function () {
-      // GIVEN
-      var mapProperties = {except: 'USER'};
-
-      // WHEN
-      var permissionMap = new PermissionMap(mapProperties);
-
-      // THEN
-      expect(permissionMap.except).toEqual(['USER']);
+      inject(function ($injector) {
+        RoleStore = $injector.get('RoleStore');
+        PermissionMap = $injector.get('PermissionMap');
+        PermissionStore = $injector.get('PermissionStore');
+      });
     });
 
-    it('should normalize except/only params into array of strings when passed as array', function () {
-      //GIVEN
-      var mapProperties = {except: ['USER']};
+    describe('method: constructor', function () {
+      it('should normalize except/only params into array of strings when passed as string', function () {
+        // GIVEN
+        var mapProperties = {except: 'USER'};
 
-      // WHEN
-      var permissionMap = new PermissionMap(mapProperties);
+        // WHEN
+        var permissionMap = new PermissionMap(mapProperties);
 
-      // THEN
-      expect(permissionMap.except).toEqual(['USER']);
-    });
+        // THEN
+        expect(permissionMap.except).toEqual(['USER']);
+      });
 
-    it('should normalize except/only params into array of strings when passed as function', function () {
-      //GIVEN
-      var mapProperties = {
-        except: function () {
-          return ['USER'];
-        }
-      };
+      it('should normalize except/only params into array of strings when passed as array', function () {
+        //GIVEN
+        var mapProperties = {except: ['USER']};
 
-      // WHEN
-      var permissionMap = new PermissionMap(mapProperties);
+        // WHEN
+        var permissionMap = new PermissionMap(mapProperties);
 
-      // THEN
-      expect(permissionMap.except).toEqual(['USER']);
-    });
+        // THEN
+        expect(permissionMap.except).toEqual(['USER']);
+      });
 
-    it('should normalize except/only params into empty array when passed in any other format', function () {
-      //GIVEN
-      var mapProperties = {
-        except: {
-          example: 'object'
-        }
-      };
-
-      // WHEN
-      var permissionMap = new PermissionMap(mapProperties);
-
-      // THEN
-      expect(permissionMap.except).toEqual([]);
-    });
-  });
-
-  describe('method: resolveRedirectState', function () {
-    it('should return resolved promise of redirectTo value when passed as string', function () {
-      // GIVEN
-      var redirectToProperty = 'redirectStateName';
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
-
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState();
-
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
-    });
-
-    it('should return resolved promise of redirectTo value when passed as object with default property', function () {
-      // GIVEN
-      var redirectToProperty = {default: 'redirectStateName'};
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
-
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState();
-
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
-    });
-
-    it('should throw error when redirectTo value passed as object has not defined default property', function () {
-      // GIVEN
-      var redirectToProperty = {};
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
-
-      // WHEN
-      // THEN
-      expect(function () {
-        permissionMap.resolveRedirectState();
-      }).toThrow(new ReferenceError('When used "redirectTo" as object, property "default" must be defined'));
-    });
-
-    it('should return resolved promise of redirectTo value when passed as object with function value property', function () {
-      // GIVEN
-      var redirectToProperty = {
-        /**
-         * @return {string}
-         */
-        ADMIN: function () {
-          return 'adminRedirect';
-        },
-        default: 'defaultRedirect'
-      };
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
-
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
-
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
-    });
-
-    it('should return resolved promise of redirectTo value when passed as object with object value property', function () {
-      // GIVEN
-      var redirectToProperty = {
-        ADMIN: {
-          state: 'adminRedirect'
-        },
-        default: 'defaultRedirect'
-      };
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
-
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
-
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
-    });
-
-    it('should return resolved promise of redirectTo value when passed as object with string value property', function () {
-      // GIVEN
-      var redirectToProperty = {
-        ADMIN: {
-          state: 'adminRedirect'
-        },
-        default: 'defaultRedirect'
-      };
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
-
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
-
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
-    });
-
-    it('should return resolved promise of redirectTo value when passed as function returning string', function () {
-      // GIVEN
-      var redirectToProperty = function () {
-        return 'redirectStateName';
-      };
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
-
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState();
-
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
-    });
-
-    it('should return resolved promise of redirectTo value when passed as function returning string', function () {
-      // GIVEN
-      var redirectToProperty = function () {
-        return 'redirectStateName';
-      };
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
-
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState();
-
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
-    });
-
-    it('should return resolved promise of redirectTo value when passed as function returning object', function () {
-      // GIVEN
-      var redirectToProperty = function () {
-        return {
-          state: 'redirectStateName'
+      it('should normalize except/only params into array of strings when passed as function', function () {
+        //GIVEN
+        var mapProperties = {
+          except: function () {
+            return ['USER'];
+          }
         };
-      };
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
 
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState();
+        // WHEN
+        var permissionMap = new PermissionMap(mapProperties);
 
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
+        // THEN
+        expect(permissionMap.except).toEqual(['USER']);
+      });
+
+      it('should normalize except/only params into empty array when passed in any other format', function () {
+        //GIVEN
+        var mapProperties = {
+          except: {
+            example: 'object'
+          }
+        };
+
+        // WHEN
+        var permissionMap = new PermissionMap(mapProperties);
+
+        // THEN
+        expect(permissionMap.except).toEqual([]);
+      });
     });
 
-    it('should return rejected promise when redirectTo value passed as function returns neither object nor string', function () {
-      // GIVEN
-      var redirectToProperty = function () {
-        return 2;
-      };
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+    describe('method: resolveRedirectState', function () {
+      it('should return resolved promise of redirectTo value when passed as string', function () {
+        // GIVEN
+        var redirectToProperty = 'redirectStateName';
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
 
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState();
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState();
 
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeRejected();
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
+      });
+
+      it('should return resolved promise of redirectTo value when passed as object with default property', function () {
+        // GIVEN
+        var redirectToProperty = {default: 'redirectStateName'};
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState();
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
+      });
+
+      it('should throw error when redirectTo value passed as object has not defined default property', function () {
+        // GIVEN
+        var redirectToProperty = {};
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        // THEN
+        expect(function () {
+          permissionMap.resolveRedirectState();
+        }).toThrow(new ReferenceError('When used "redirectTo" as object, property "default" must be defined'));
+      });
+
+      it('should return resolved promise of redirectTo value when passed as object with function value property', function () {
+        // GIVEN
+        var redirectToProperty = {
+          /**
+           * @return {string}
+           */
+          ADMIN: function () {
+            return 'adminRedirect';
+          },
+          default: 'defaultRedirect'
+        };
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
+      });
+
+      it('should return resolved promise of redirectTo value when passed as object with object value property', function () {
+        // GIVEN
+        var redirectToProperty = {
+          ADMIN: {
+            state: 'adminRedirect'
+          },
+          default: 'defaultRedirect'
+        };
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
+      });
+
+      it('should return resolved promise of redirectTo value when passed as object with string value property', function () {
+        // GIVEN
+        var redirectToProperty = {
+          ADMIN: {
+            state: 'adminRedirect'
+          },
+          default: 'defaultRedirect'
+        };
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
+      });
+
+      it('should return resolved promise of redirectTo value when passed as function returning string', function () {
+        // GIVEN
+        var redirectToProperty = function () {
+          return 'redirectStateName';
+        };
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState();
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
+      });
+
+      it('should return resolved promise of redirectTo value when passed as function returning string', function () {
+        // GIVEN
+        var redirectToProperty = function () {
+          return 'redirectStateName';
+        };
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState();
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
+      });
+
+      it('should return resolved promise of redirectTo value when passed as function returning object', function () {
+        // GIVEN
+        var redirectToProperty = function () {
+          return {
+            state: 'redirectStateName'
+          };
+        };
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState();
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
+      });
+
+      it('should return rejected promise when redirectTo value passed as function returns neither object nor string', function () {
+        // GIVEN
+        var redirectToProperty = function () {
+          return 2;
+        };
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState();
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeRejected();
+      });
+
+      it('should return rejected promise when redirectTo value is neither String, Function, Object nor Promise', function () {
+        // GIVEN
+        var redirectToProperty = 2;
+        var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+
+        // WHEN
+        var redirectStateName = permissionMap.resolveRedirectState();
+
+        // THEN
+        expect(redirectStateName).toBePromise();
+        expect(redirectStateName).toBeRejected();
+      });
     });
 
-    it('should return rejected promise when redirectTo value is neither String, Function, Object nor Promise', function () {
-      // GIVEN
-      var redirectToProperty = 2;
-      var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+    describe('method: resolvePropertyValidity', function () {
+      it('should call validation of existing permissions', function () {
+        // GIVEN
+        var map = new PermissionMap();
+        var fakePermission = jasmine.createSpyObj('fakePermission', ['validatePermission']);
 
-      // WHEN
-      var redirectStateName = permissionMap.resolveRedirectState();
+        spyOn(PermissionStore, 'hasPermissionDefinition').and.returnValue(true);
+        spyOn(PermissionStore, 'getPermissionDefinition').and.returnValue(fakePermission);
 
-      // THEN
-      expect(redirectStateName).toBePromise();
-      expect(redirectStateName).toBeRejected();
-    });
-  });
+        // WHEN
+        map.resolvePropertyValidity(['fakePermission']);
 
-  describe('method: resolvePropertyValidity', function () {
-    it('should call validation of existing permissions', function () {
-      // GIVEN
-      var map = new PermissionMap();
-      var fakePermission = jasmine.createSpyObj('fakePermission', ['validatePermission']);
+        //THEN
+        expect(PermissionStore.hasPermissionDefinition).toHaveBeenCalled();
+        expect(PermissionStore.getPermissionDefinition).toHaveBeenCalled();
+        expect(fakePermission.validatePermission).toHaveBeenCalled();
+      });
 
-      spyOn(PermissionStore,'hasPermissionDefinition').and.returnValue(true);
-      spyOn(PermissionStore,'getPermissionDefinition').and.returnValue(fakePermission);
+      it('should call validation of existing roles', function () {
+        // GIVEN
+        var map = new PermissionMap();
+        var fakeRole = jasmine.createSpyObj('fakeRole', ['validateRole']);
 
-      // WHEN
-      map.resolvePropertyValidity(['fakePermission']);
+        spyOn(RoleStore, 'hasRoleDefinition').and.returnValue(true);
+        spyOn(RoleStore, 'getRoleDefinition').and.returnValue(fakeRole);
 
-      //THEN
-      expect(PermissionStore.hasPermissionDefinition).toHaveBeenCalled();
-      expect(PermissionStore.getPermissionDefinition).toHaveBeenCalled();
-      expect(fakePermission.validatePermission).toHaveBeenCalled();
-    });
+        // WHEN
+        map.resolvePropertyValidity(['fakeRole']);
 
-    it('should call validation of existing roles', function () {
-      // GIVEN
-      var map = new PermissionMap();
-      var fakeRole = jasmine.createSpyObj('fakeRole', ['validateRole']);
+        //THEN
+        expect(RoleStore.hasRoleDefinition).toHaveBeenCalled();
+        expect(RoleStore.getRoleDefinition).toHaveBeenCalled();
+        expect(fakeRole.validateRole).toHaveBeenCalled();
+      });
 
-      spyOn(RoleStore,'hasRoleDefinition').and.returnValue(true);
-      spyOn(RoleStore,'getRoleDefinition').and.returnValue(fakeRole);
+      it('should return rejected promise when neither role nor permission definition found', function () {
+        // GIVEN
+        var map = new PermissionMap();
 
-      // WHEN
-      map.resolvePropertyValidity(['fakeRole']);
+        // WHEN
+        var result = map.resolvePropertyValidity(['fakeRole']);
 
-      //THEN
-      expect(RoleStore.hasRoleDefinition).toHaveBeenCalled();
-      expect(RoleStore.getRoleDefinition).toHaveBeenCalled();
-      expect(fakeRole.validateRole).toHaveBeenCalled();
-    });
-
-    it('should return rejected promise when neither role nor permission definition found', function () {
-      // GIVEN
-      var map = new PermissionMap();
-
-      // WHEN
-      var result = map.resolvePropertyValidity(['fakeRole']);
-
-      //THEN
-      expect(result[0]).toBePromise();
-      expect(result[0]).toBeRejected();
+        //THEN
+        expect(result[0]).toBePromise();
+        expect(result[0]).toBeRejected();
+      });
     });
   });
 });

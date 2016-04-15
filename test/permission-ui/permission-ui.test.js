@@ -5,18 +5,24 @@ describe('module: permission.ui', function () {
   var $state;
   var $stateProvider;
   var PermissionStore;
+  var TransitionEvents;
+  var TransitionProperties;
+  var StateAuthorization;
 
   beforeEach(function () {
     module('ui.router', function ($injector) {
       $stateProvider = $injector.get('$stateProvider');
     });
 
-    module('permission.ui', 'permission');
+    module('permission.ui');
 
     inject(function ($injector) {
       $state = $injector.get('$state');
       $rootScope = $injector.get('$rootScope');
       PermissionStore = $injector.get('PermissionStore');
+      TransitionEvents = $injector.get('TransitionEvents');
+      TransitionProperties = $injector.get('TransitionProperties');
+      StateAuthorization = $injector.get('StateAuthorization');
     });
   });
 
@@ -45,91 +51,126 @@ describe('module: permission.ui', function () {
       .state('denied', {
         data: {
           permissions: {
-            only: ['denied']
+            only: ['denied'],
+            redirectTo: 'redirected'
           }
         }
-      });
+      })
+      .state('redirected', {});
 
     $state.go('home');
     $rootScope.$digest();
   });
 
-  describe('event: $stateChangeStart', function () {
-    it('should broadcast $stateChangePermissionStart event', inject(function ($rootScope) {
+
+  describe('method: config', function () {
+    it('should decorate $state object', function () {
       // GIVEN
-      var called = false;
-      var toState = null;
-
-      $rootScope.$on('$stateChangePermissionStart', function (event, _toState) {
-        called = true;
-        toState = _toState;
-      });
-
       // WHEN
-      $state.go('accepted');
-      $rootScope.$digest();
-
-      //THEN
-      expect(called).toBeTruthy();
-      expect(toState.name).toBe('accepted');
-    }));
-
-    it('should not authorize when $stateChangePermissionStart was prevented', function () {
-      // GIVEN
-      $rootScope.$on('$stateChangePermissionStart', function (event) {
-        event.preventDefault();
-      });
-      
-      spyOn($rootScope, '$broadcast').and.callThrough();
-
-      // WHEN
-      $state.go('accepted');
-      $rootScope.$digest();
-
       // THEN
-      expect($state.current.name).toBe('home');
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted',
-        jasmine.any(Object), jasmine.any(Object), jasmine.any(Object));
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied',
-        jasmine.any(Object), jasmine.any(Object), jasmine.any(Object));
+      expect($state.current.$$state).toBeDefined();
+      expect($state.current.$$isAuthorizationFinished).toBeDefined();
+      expect($state.current.areSetStatePermissions).toBeDefined();
     });
+  });
 
-    it('should broadcast $stateChangeStart event', function () {
-      // GIVEN
-      spyOn($rootScope, '$broadcast').and.callThrough();
+  describe('method: run', function () {
+    describe('event: $stateChangeStart', function () {
+      it('should set transitionProperties when authorization is not finished', function () {
+        // GIVEN
+        // WHEN
+        $state.go('accepted');
+        $rootScope.$digest();
 
-      // WHEN
-      $state.go('accepted');
-      $rootScope.$digest();
-
-      expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangeStart',
-        jasmine.any(Object), jasmine.any(Object),
-        jasmine.any(Object), jasmine.any(Object),
-        jasmine.any(Object));
-    });
-
-    it('should not authorize when $stateChangeStart has been prevented', function () {
-      // GIVEN
-      $rootScope.$on('$stateChangeStart', function (event) {
-        event.preventDefault();
+        // THEN
+        expect(TransitionProperties.toState).toBeDefined();
+        expect(TransitionProperties.toParams).toBeDefined();
+        expect(TransitionProperties.fromState).toBeDefined();
+        expect(TransitionProperties.fromParams).toBeDefined();
+        expect(TransitionProperties.options).toBeDefined();
       });
 
-      spyOn($rootScope, '$broadcast').and.callThrough();
+      it('should set $$isAuthorizationFinished flag when authorization is not finished', function () {
+        // GIVEN
+        $rootScope.$on('$stateChangePermissionStart', function (event) {
+          event.preventDefault();
+        });
 
-      // WHEN
-      $state.go('accepted');
-      $rootScope.$digest();
+        // WHEN
+        $state.go('accepted');
+        $rootScope.$digest();
 
-      $state.go('denied');
-      $rootScope.$digest();
+        // THEN
+        expect(TransitionProperties.toState.$$isAuthorizationFinished).toBeTruthy();
+      });
 
-      // THEN
-      expect($state.current.name).toBe('home');
-      // neither of them should have been called because the event was aborted manually
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionAccepted',
-        jasmine.any(Object), jasmine.any(Object), jasmine.any(Object));
-      expect($rootScope.$broadcast).not.toHaveBeenCalledWith('$stateChangePermissionDenied',
-        jasmine.any(Object), jasmine.any(Object), jasmine.any(Object));
+      it('should not start authorizing when $stateChangePermissionStart was prevented', function () {
+        // GIVEN
+        $rootScope.$on('$stateChangePermissionStart', function (event) {
+          event.preventDefault();
+        });
+
+        spyOn(TransitionEvents, 'broadcastPermissionStartEvent');
+
+        // WHEN
+        $state.go('accepted');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('home');
+
+        expect(TransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
+      });
+
+      it('should not start authorizing when $stateChangeStart has been prevented', function () {
+        // GIVEN
+        $rootScope.$on('$stateChangeStart', function (event) {
+          event.preventDefault();
+        });
+
+        spyOn(TransitionEvents, 'broadcastPermissionStartEvent');
+
+        // WHEN
+        $state.go('accepted');
+        $rootScope.$digest();
+
+        $state.go('denied');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('home');
+        expect(TransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
+      });
+
+      it('should handle unauthorized state access', function () {
+        // GIVEN
+        spyOn(TransitionEvents, 'broadcastPermissionDeniedEvent');
+        spyOn(StateAuthorization, 'authorize').and.callThrough();
+
+        // WHEN
+        $state.go('denied');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('redirected');
+        expect(StateAuthorization.authorize).toHaveBeenCalled();
+        expect(TransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
+      });
+
+      it('should handle authorized state access', function () {
+        // GIVEN
+        spyOn(TransitionEvents, 'broadcastPermissionAcceptedEvent');
+        spyOn(StateAuthorization, 'authorize').and.callThrough();
+
+        // WHEN
+        $state.go('accepted');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('accepted');
+        expect(StateAuthorization.authorize).toHaveBeenCalled();
+        expect(TransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
+      });
     });
   });
 });

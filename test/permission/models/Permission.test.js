@@ -1,50 +1,110 @@
-describe('model: Permission', function () {
+describe('module: permission', function () {
   'use strict';
 
-  var Permission;
+  describe('models: Permission', function () {
 
-  beforeEach(function () {
-    module('permission');
+    var $q;
+    var Permission;
 
-    inject(function ($injector) {
-      Permission = $injector.get('Permission');
+    beforeEach(function () {
+      module('permission');
+
+      installPromiseMatchers(); // jshint ignore:line
+
+      inject(function ($injector) {
+        $q = $injector.get('$q');
+        Permission = $injector.get('Permission');
+      });
     });
-  });
 
-  describe('constructor: Permission', function () {
-    it('should throw an exception on invalid permissionName', function () {
-      // GIVEN
-      // WHEN
-      // THEN
-      expect(function () {
-        new Permission(null, function () {
+    describe('constructor: Permission', function () {
+      it('should throw an exception on invalid permissionName', function () {
+        // GIVEN
+        // WHEN
+        // THEN
+        expect(function () {
+          new Permission(null, function () {
+            return true;
+          });
+        }).toThrow(new TypeError('Parameter "permissionName" name must be String'));
+      });
+
+      it('should throw an exception on invalid validationFunction', function () {
+        // GIVEN
+        // WHEN
+        // THEN
+        expect(function () {
+          new Permission('valid-name', undefined);
+        }).toThrow(new TypeError('Parameter "validationFunction" must be Function'));
+      });
+
+      it('should return new permission definition instance for correct parameters', function () {
+        // GIVEN
+        var permissionName = 'USER';
+        var validationFunction = function () {
           return true;
-        });
-      }).toThrow(new TypeError('Parameter "permissionName" name must be String'));
+        };
+
+        // WHEN
+        var permission = new Permission(permissionName, validationFunction);
+
+        // THEN
+        expect(permission.permissionName).toBe(permissionName);
+        expect(permission.validationFunction).toBe(validationFunction);
+      });
     });
 
-    it('should throw an exception on invalid validationFunction', function () {
-      // GIVEN
-      // WHEN
-      // THEN
-      expect(function () {
-        new Permission('valid-name', undefined);
-      }).toThrow(new TypeError('Parameter "validationFunction" must be Function'));
-    });
+    describe('method: validatePermission', function () {
+      it('should call validation function and return results in promise', function () {
+        var permissionName = 'USER';
+        var validationFunction = jasmine.createSpy('validationFunction')
+          .and.callFake(function () {
+            return $q.resolve();
+          });
+        var permission = new Permission(permissionName, validationFunction);
 
-    it('should return new permission definition instance for correct parameters', function () {
-      // GIVEN
-      var permissionName = 'user';
-      var validationFunction = function () {
-        return true;
-      };
+        // WHEN
+        var validationResult = permission.validatePermission();
 
-      // WHEN
-      var permission = new Permission(permissionName, validationFunction);
+        // THEN
+        expect(validationFunction).toHaveBeenCalledWith(permissionName, jasmine.any(Object));
+        expect(validationResult).toBePromise();
+        expect(validationResult).toBeResolved();
+      });
 
-      // THEN
-      expect(permission.permissionName).toBe(permissionName);
-      expect(permission.validationFunction).toBe(validationFunction);
+      it('should wrap validation function result into resolved promise returns true boolean value', function () {
+        var permissionName = 'USER';
+        var validationFunction = jasmine.createSpy('validationFunction')
+          .and.callFake(function () {
+            return true;
+          });
+        var permission = new Permission(permissionName, validationFunction);
+
+        // WHEN
+        var validationResult = permission.validatePermission();
+
+        // THEN
+        expect(validationFunction).toHaveBeenCalledWith(permissionName, jasmine.any(Object));
+        expect(validationResult).toBePromise();
+        expect(validationResult).toBeResolved();
+      });
+
+      it('should wrap validation function result into rejected promise returns false boolean value', function () {
+        var permissionName = 'USER';
+        var validationFunction = jasmine.createSpy('validationFunction')
+          .and.callFake(function () {
+            return false;
+          });
+        var permission = new Permission(permissionName, validationFunction);
+
+        // WHEN
+        var validationResult = permission.validatePermission();
+
+        // THEN
+        expect(validationFunction).toHaveBeenCalledWith(permissionName, jasmine.any(Object));
+        expect(validationResult).toBePromise();
+        expect(validationResult).toBeRejected();
+      });
     });
   });
 });

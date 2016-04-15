@@ -12,10 +12,27 @@
      * Can be removed when implemented https://github.com/angular-ui/ui-router/issues/13.
      */
     $stateProvider.decorator('parent', function (state, parentFn) {
+      /**
+       * Property containing full state object definition
+       *
+       * @returns {Object}
+       */
       state.self.$$state = function () {
         return state;
       };
 
+      /**
+       * Flag used to prevent authorization looping
+       * @type {boolean}
+       */
+      state.self.$$isAuthorizationFinished = false;
+
+      /**
+       * Checks if state has set permissions
+       * @method
+       *
+       * @returns {boolean}
+       */
       state.self.areSetStatePermissions = function () {
         return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
       };
@@ -23,6 +40,7 @@
       return parentFn(state);
     });
   }
+
   function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
@@ -72,7 +90,6 @@
        * @method
        * @private
        *
-       *
        * @param status {boolean} When true authorization has been already preceded
        */
       function setStateAuthorizationStatus(status) {
@@ -96,7 +113,6 @@
        * @private
        */
       function handleAuthorizedState() {
-
         TransitionEvents.broadcastPermissionAcceptedEvent();
         $location.replace();
 
