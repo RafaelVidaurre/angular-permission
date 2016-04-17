@@ -6,7 +6,6 @@
    * @name PermissionMapFactory
    * @memberOf permission
    *
-   *
    * @param $q {Object} Angular promise implementation
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
    * @param RoleStore {permission.RoleStore} Role definition storage

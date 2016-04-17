@@ -3,7 +3,12 @@ describe('module: permission.ui', function () {
 
   describe('authorization: StatePermissionMap', function () {
 
-    var $rootScope, $state, $stateProvider, PermissionStore, StatePermissionMap, StateAuthorization;
+    var $rootScope;
+    var $state;
+    var $stateProvider;
+    var PermissionStore;
+    var StatePermissionMap;
+    var StateAuthorization;
 
     beforeEach(function () {
       module('ui.router', function ($injector) {
@@ -32,7 +37,7 @@ describe('module: permission.ui', function () {
       });
     });
 
-    describe('event: $stateChangeStart', function () {
+    describe('method: constructor', function () {
       it('should build PermissionMap including parent states permissions', function () {
         // GIVEN
         $stateProvider
@@ -94,5 +99,7 @@ describe('module: permission.ui', function () {
         }));
       });
     });
+
+
   });
 });

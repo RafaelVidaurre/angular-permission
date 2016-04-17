@@ -11,22 +11,32 @@
      */
     $rootScope.$on('$routeChangeStart', function (event, next, current) {
 
-      event.preventDefault();
-      setTransitionProperties();
+      if (areSetRoutePermissions()) {
+        setTransitionProperties();
 
-      if (!TransitionEvents.areEventsDefaultPrevented()) {
-        TransitionEvents.broadcastPermissionStartEvent();
+        if (!TransitionEvents.areEventsDefaultPrevented()) {
+          TransitionEvents.broadcastPermissionStartEvent();
 
-        var permissionMap = new PermissionMap();
-
-        Authorization
-          .authorize(permissionMap)
-          .then(function () {
-            handleAuthorizedState();
-          })
-          .catch(function (rejectedPermission) {
-            handleUnauthorizedState(rejectedPermission, permissionMap);
+          var permissionMap = new PermissionMap({
+            only: next.$$route.permissions.only,
+            except: next.$$route.permissions.except,
+            redirectTo: next.$$route.permissions.redirectTo
           });
+
+          Authorization
+            .authorize(permissionMap)
+            .then(function () {
+              handleAuthorizedState();
+            })
+            .catch(function (rejectedPermission) {
+              event.preventDefault();
+              handleUnauthorizedState(rejectedPermission, permissionMap);
+            });
+        }
+      }
+
+      function areSetRoutePermissions(){
+        return angular.isDefined(next.$$route.permissions);
       }
 
       /**
@@ -46,7 +56,6 @@
        */
       function handleAuthorizedState() {
         TransitionEvents.broadcastPermissionAcceptedEvent();
-        $location.replace(next);
       }
 
       /**
@@ -55,15 +64,15 @@
        * @private
        *
        * @param rejectedPermission {String} Rejected access right
-       * @param statePermissionMap {permission.PermissionMap} State permission map
+       * @param permissionMap {permission.PermissionMap} State permission map
        */
-      function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
+      function handleUnauthorizedState(rejectedPermission, permissionMap) {
         TransitionEvents.broadcastPermissionDeniedEvent();
 
-        statePermissionMap
+        permissionMap
           .resolveRedirectState(rejectedPermission)
           .then(function (redirect) {
-            $location.replace(redirect);
+            $location.path(redirect.state).replace();
           });
       }
     });

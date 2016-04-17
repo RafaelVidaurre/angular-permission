@@ -27,7 +27,7 @@
      * @returns {boolean}
      */
     function areEventsDefaultPrevented() {
-      return isRouteChangePermissionStartDefaultPrevented() || isRouteChangeStartDefaultPrevented();
+      return isRouteChangePermissionStartDefaultPrevented();
     }
 
     /**
@@ -66,18 +66,6 @@
      */
     function isRouteChangePermissionStartDefaultPrevented() {
       return $rootScope.$broadcast(TransitionEventNames.permissionStart,
-        TransitionProperties.next, TransitionProperties.current).defaultPrevented;
-    }
-
-    /**
-     * Checks if event $routeChangeStart hasn't been disabled by default
-     * @method
-     * @private
-     *
-     * @returns {boolean}
-     */
-    function isRouteChangeStartDefaultPrevented() {
-      return $rootScope.$broadcast('$routeChangeStart',
         TransitionProperties.next, TransitionProperties.current).defaultPrevented;
     }
 

@@ -3,7 +3,11 @@ describe('module: permission.ui', function () {
 
   describe('authorization: StateAuthorization', function () {
 
-    var $rootScope, $state, $stateProvider, PermissionStore, StatePermissionMap, StateAuthorization;
+    var $state;
+    var $rootScope;
+    var $stateProvider;
+    var PermissionStore;
+    var StateAuthorization;
 
     beforeEach(function () {
       module('ui.router', function ($injector) {
@@ -17,7 +21,6 @@ describe('module: permission.ui', function () {
         $rootScope = $injector.get('$rootScope');
         StateAuthorization = $injector.get('StateAuthorization');
         PermissionStore = $injector.get('PermissionStore');
-        StatePermissionMap = $injector.get('StatePermissionMap');
       });
     });
 
@@ -35,41 +38,104 @@ describe('module: permission.ui', function () {
     // Set default states and go home
     beforeEach(function () {
       $stateProvider
-        .state('home', {})
-        .state('accepted', {
-          data: {
-            permissions: {
-              only: ['accepted']
-            }
-          }
-        })
-        .state('denied', {
-          data: {
-            permissions: {
-              only: ['denied']
-            }
-          }
-        });
+        .state('home', {});
 
       $state.go('home');
       $rootScope.$apply();
     });
 
-    describe('event: $stateChangeStart', function () {
-      it('should pass transition params and options passed', function () {
+    describe('method: authorize', function () {
+      it('should return resolved promise when "except" permissions are met', function () {
+        // GIVEN
+        $stateProvider
+          .state('acceptedExcept', {
+            data: {
+              permissions: {
+                except: ['denied']
+              }
+            }
+          });
+
+        // WHEN
+        $state.go('acceptedExcept');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('acceptedExcept');
+      });
+
+      it('should return rejected promise when "except" permissions are not met', function () {
+        // GIVEN
+        $stateProvider
+          .state('deniedExcept', {
+            data: {
+              permissions: {
+                except: ['accepted']
+              }
+            }
+          });
+
+        // WHEN
+        $state.go('deniedExcept');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('home');
+      });
+
+      it('should return resolved promise when "only" permissions are met', function () {
+        // GIVEN
+        $stateProvider
+          .state('acceptedOnly', {
+            data: {
+              permissions: {
+                only: ['accepted']
+              }
+            }
+          });
+
+        // WHEN
+        $state.go('acceptedOnly');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('acceptedOnly');
+      });
+
+      it('should return rejected promise when "only" permissions are not met', function () {
+        // GIVEN
+        $stateProvider
+          .state('deniedOnly', {
+            data: {
+              permissions: {
+                only: ['denied']
+              }
+            }
+          });
+
+        // WHEN
+        $state.go('deniedOnly');
+        $rootScope.$digest();
+
+        // THEN
+        expect($state.current.name).toBe('home');
+      });
+
+      it('should honor params and options passed to "transitionTo" or "go" function', function () {
         // GIVEN
         spyOn($state, 'go').and.callThrough();
 
-        $stateProvider.state('acceptedWithParamsAndOptions', {
-          params: {
-            param: undefined
-          },
-          data: {
-            permissions: {
-              only: ['accepted']
+        $stateProvider
+          .state('acceptedWithParamsAndOptions', {
+            params: {
+              param: undefined
+            },
+            data: {
+              permissions: {
+                only: ['accepted']
+              }
             }
-          }
-        });
+          });
 
         // WHEN
         $state.go('acceptedWithParamsAndOptions', {param: 'param'}, {relative: true});

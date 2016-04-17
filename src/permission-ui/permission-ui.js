@@ -6,26 +6,18 @@
    */
 
   function config($stateProvider) {
-    /**
-     * This decorator is required to access full state object instead of it's configuration
-     * when trying to obtain full toState state object not it's configuration
-     * Can be removed when implemented https://github.com/angular-ui/ui-router/issues/13.
-     */
     $stateProvider.decorator('parent', function (state, parentFn) {
       /**
        * Property containing full state object definition
+       *
+       * This decorator is required to access full state object instead of just it's configuration
+       * Can be removed when implemented https://github.com/angular-ui/ui-router/issues/13.
        *
        * @returns {Object}
        */
       state.self.$$state = function () {
         return state;
       };
-
-      /**
-       * Flag used to prevent authorization looping
-       * @type {boolean}
-       */
-      state.self.$$isAuthorizationFinished = false;
 
       /**
        * Checks if state has set permissions
