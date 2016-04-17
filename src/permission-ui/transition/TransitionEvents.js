@@ -3,8 +3,7 @@
 
   /**
    * Service responsible for managing and emitting events
-   * @name TransitionEvents
-   * @memberOf permission.ui
+   * @name permission.ui.TransitionEvents
    *
    * @extends {permission.TransitionEvents}
    *
@@ -24,6 +23,7 @@
     /**
      * Checks if state events are not prevented by default
      * @method
+     * @methodOf permission.ui.TransitionEvents
      *
      * @returns {boolean}
      */
@@ -34,6 +34,7 @@
     /**
      * Broadcasts "$stateChangePermissionStart" event from $rootScope
      * @method
+     * @methodOf permission.ui.TransitionEvents
      */
     function broadcastPermissionStartEvent() {
       $rootScope.$broadcast(TransitionEventNames.permissionStart,
@@ -44,6 +45,7 @@
     /**
      * Broadcasts "$stateChangePermissionAccepted" event from $rootScope
      * @method
+     * @methodOf permission.ui.TransitionEvents
      */
     function broadcastPermissionAcceptedEvent() {
       $rootScope.$broadcast(TransitionEventNames.permissionAccepted,
@@ -54,6 +56,7 @@
     /**
      * Broadcasts "$tateChangePermissionDenied" event from $rootScope
      * @method
+     * @methodOf permission.ui.TransitionEvents
      */
     function broadcastPermissionDeniedEvent() {
       $rootScope.$broadcast(TransitionEventNames.permissionDenies,
@@ -62,8 +65,20 @@
     }
 
     /**
+     * Broadcasts "$stateChangeSuccess" event from $rootScope
+     * @method
+     * @methodOf permission.ui.TransitionEvents
+     */
+    function broadcastStateChangeSuccessEvent() {
+      $rootScope.$broadcast('$stateChangeSuccess',
+        TransitionProperties.toState, TransitionProperties.toParams,
+        TransitionProperties.fromState, TransitionProperties.fromParams);
+    }
+
+    /**
      * Checks if event $stateChangePermissionStart hasn't been disabled by default
      * @method
+     * @methodOf permission.ui.TransitionEvents
      * @private
      *
      * @returns {boolean}
@@ -75,18 +90,9 @@
     }
 
     /**
-     * Broadcasts "$stateChangeSuccess" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangeSuccessEvent() {
-      $rootScope.$broadcast('$stateChangeSuccess',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.fromState, TransitionProperties.fromParams);
-    }
-
-    /**
      * Checks if event $stateChangeStart hasn't been disabled by default
      * @method
+     * @methodOf permission.ui.TransitionEvents
      * @private
      *
      * @returns {boolean}

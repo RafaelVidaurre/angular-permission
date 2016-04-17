@@ -23,6 +23,7 @@
     /**
      * Checks if state events are not prevented by default
      * @method
+     * @methodOf permission.ng.TransitionEvents
      *
      * @returns {boolean}
      */
@@ -33,6 +34,7 @@
     /**
      * Broadcasts "$routeChangePermissionStart" event from $rootScope
      * @method
+     * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionStartEvent() {
       $rootScope.$broadcast(TransitionEventNames.permissionStart,
@@ -42,6 +44,7 @@
     /**
      * Broadcasts "$routeChangePermissionAccepted" event from $rootScope
      * @method
+     * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionAcceptedEvent() {
       $rootScope.$broadcast(TransitionEventNames.permissionAccepted,
@@ -51,6 +54,7 @@
     /**
      * Broadcasts "$routeChangePermissionDenied" event from $rootScope
      * @method
+     * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionDeniedEvent() {
       $rootScope.$broadcast(TransitionEventNames.permissionDenied,
@@ -60,6 +64,7 @@
     /**
      * Checks if event $routeChangePermissionStart hasn't been disabled by default
      * @method
+     * @methodOf permission.ng.TransitionEvents
      * @private
      *
      * @returns {boolean}

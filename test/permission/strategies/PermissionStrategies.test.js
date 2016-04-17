@@ -1,97 +1,100 @@
-describe('module: permission', function () {
+describe('permission', function () {
   'use strict';
-  describe('strategies: PermissionStrategies', function () {
 
-    var $compile;
-    var $rootScope;
-    var PermissionStore;
-    var PermissionStrategies;
+  describe('strategies', function () {
+    describe('service: PermissionStrategies', function () {
 
-    beforeEach(function () {
-      // Instantiate module
-      module('permission');
+      var $compile;
+      var $rootScope;
+      var PermissionStore;
+      var PermissionStrategies;
 
-      // Inject services into module
-      inject(function ($injector) {
-        $compile = $injector.get('$compile');
-        $rootScope = $injector.get('$rootScope').$new();
-        PermissionStore = $injector.get('PermissionStore');
-        PermissionStrategies = $injector.get('PermissionStrategies');
-      });
-    });
+      beforeEach(function () {
+        // Instantiate module
+        module('permission');
 
-    // Initialize permissions
-    beforeEach(function () {
-      PermissionStore.definePermission('USER', function () {
-        return true;
+        // Inject services into module
+        inject(function ($injector) {
+          $compile = $injector.get('$compile');
+          $rootScope = $injector.get('$rootScope').$new();
+          PermissionStore = $injector.get('PermissionStore');
+          PermissionStrategies = $injector.get('PermissionStrategies');
+        });
       });
 
-      PermissionStore.definePermission('ADMIN', function () {
-        return false;
+      // Initialize permissions
+      beforeEach(function () {
+        PermissionStore.definePermission('USER', function () {
+          return true;
+        });
+
+        PermissionStore.definePermission('ADMIN', function () {
+          return false;
+        });
       });
-    });
 
-    it('should disable element when "disableElement" strategy is applied', function () {
-      // GIVEN
-      $rootScope.onUnauthorized = PermissionStrategies.disableElement;
-      $rootScope.only = ['ADMIN'];
+      it('should disable element when "disableElement" strategy is applied', function () {
+        // GIVEN
+        $rootScope.onUnauthorized = PermissionStrategies.disableElement;
+        $rootScope.only = ['ADMIN'];
 
-      // WHEN
-      var element = $compile('<input permission ' +
-        'permission-only="only" ' +
-        'permission-on-unauthorized="onUnauthorized">')($rootScope);
+        // WHEN
+        var element = $compile('<input permission ' +
+          'permission-only="only" ' +
+          'permission-on-unauthorized="onUnauthorized">')($rootScope);
 
-      $rootScope.$digest();
+        $rootScope.$digest();
 
-      // THEN
-      expect(element.attr('disabled')).toEqual('disabled');
-    });
+        // THEN
+        expect(element.attr('disabled')).toEqual('disabled');
+      });
 
-    it('should enable element when "enableElement" strategy is applied', function () {
-      // GIVEN
-      $rootScope.onAuthorized = PermissionStrategies.enableElement;
-      $rootScope.only = ['USER'];
+      it('should enable element when "enableElement" strategy is applied', function () {
+        // GIVEN
+        $rootScope.onAuthorized = PermissionStrategies.enableElement;
+        $rootScope.only = ['USER'];
 
-      // WHEN
-      var element = $compile('<input permission ' +
-        'permission-only="only" ' +
-        'permission-on-authorized="onAuthorized" ' +
-        'disabled="disabled">')($rootScope);
+        // WHEN
+        var element = $compile('<input permission ' +
+          'permission-only="only" ' +
+          'permission-on-authorized="onAuthorized" ' +
+          'disabled="disabled">')($rootScope);
 
-      $rootScope.$digest();
+        $rootScope.$digest();
 
-      expect(element.attr('disabled')).not.toBeDefined();
-    });
+        expect(element.attr('disabled')).not.toBeDefined();
+      });
 
-    it('should hide element when "hideElement" strategy is applied', function () {
-      // GIVEN
-      $rootScope.onUnauthorized = PermissionStrategies.hideElement;
-      $rootScope.only = ['ADMIN'];
+      it('should hide element when "hideElement" strategy is applied', function () {
+        // GIVEN
+        $rootScope.onUnauthorized = PermissionStrategies.hideElement;
+        $rootScope.only = ['ADMIN'];
 
-      // WHEN
-      var element = $compile('<input permission ' +
-        'permission-only="only" ' +
-        'permission-on-unauthorized="onUnauthorized">')($rootScope);
+        // WHEN
+        var element = $compile('<input permission ' +
+          'permission-only="only" ' +
+          'permission-on-unauthorized="onUnauthorized">')($rootScope);
 
-      $rootScope.$digest();
+        $rootScope.$digest();
 
-      // THEN
-      expect(element.hasClass('ng-hide')).toBeTruthy();
-    });
+        // THEN
+        expect(element.hasClass('ng-hide')).toBeTruthy();
+      });
 
-    it('should show element when "showElement" strategy is applied', function () {
-      // GIVEN
-      $rootScope.onAuthorized = PermissionStrategies.showElement;
-      $rootScope.only = ['USER'];
+      it('should show element when "showElement" strategy is applied', function () {
+        // GIVEN
+        $rootScope.onAuthorized = PermissionStrategies.showElement;
+        $rootScope.only = ['USER'];
 
-      // WHEN
-      var element = $compile('<input permission ' +
-        'permission-only="only" ' +
-        'permission-on-authorized="onAuthorized">')($rootScope);
+        // WHEN
+        var element = $compile('<input permission ' +
+          'permission-only="only" ' +
+          'permission-on-authorized="onAuthorized">')($rootScope);
 
-      $rootScope.$digest();
+        $rootScope.$digest();
 
-      expect(element.hasClass('ng-hide')).toBeFalsy();
+        expect(element.hasClass('ng-hide')).toBeFalsy();
+      });
     });
   });
 });

@@ -1,122 +1,124 @@
-describe('module: permission.ng', function () {
+describe('permission.ng', function () {
   'use strict';
+  describe('module', function () {
 
-  var $rootScope;
-  var $location;
-  var $routeProvider;
-  var PermissionStore;
-  var TransitionEvents;
-  var TransitionProperties;
-  var Authorization;
+    var $rootScope;
+    var $location;
+    var $routeProvider;
+    var PermissionStore;
+    var TransitionEvents;
+    var TransitionProperties;
+    var Authorization;
 
-  beforeEach(function () {
-    module('ngRoute', function ($injector) {
-      $routeProvider = $injector.get('$routeProvider');
+    beforeEach(function () {
+      module('ngRoute', function ($injector) {
+        $routeProvider = $injector.get('$routeProvider');
+      });
+
+      module('permission.ng');
+
+      inject(function ($injector) {
+        $location = $injector.get('$location');
+        $rootScope = $injector.get('$rootScope');
+        PermissionStore = $injector.get('PermissionStore');
+        TransitionEvents = $injector.get('TransitionEvents');
+        TransitionProperties = $injector.get('TransitionProperties');
+        Authorization = $injector.get('Authorization');
+      });
     });
 
-    module('permission.ng');
+    // Initialize permissions
+    beforeEach(function () {
+      PermissionStore.definePermission('accepted', function () {
+        return true;
+      });
 
-    inject(function ($injector) {
-      $location = $injector.get('$location');
-      $rootScope = $injector.get('$rootScope');
-      PermissionStore = $injector.get('PermissionStore');
-      TransitionEvents = $injector.get('TransitionEvents');
-      TransitionProperties = $injector.get('TransitionProperties');
-      Authorization = $injector.get('Authorization');
-    });
-  });
-
-  // Initialize permissions
-  beforeEach(function () {
-    PermissionStore.definePermission('accepted', function () {
-      return true;
+      PermissionStore.definePermission('denied', function () {
+        return false;
+      });
     });
 
-    PermissionStore.definePermission('denied', function () {
-      return false;
-    });
-  });
-
-  // Set default states and go home
-  beforeEach(function () {
-    $routeProvider
-      .when('/', {})
-      .when('/accepted', {
+    // Set default states and go home
+    beforeEach(function () {
+      $routeProvider
+        .when('/', {})
+        .when('/accepted', {
           permissions: {
             only: ['accepted']
           }
-      })
-      .when('/denied', {
+        })
+        .when('/denied', {
           permissions: {
             only: ['denied'],
             redirectTo: 'redirected'
           }
-      })
-      .when('/redirected', {});
+        })
+        .when('/redirected', {});
 
-    $location.path('/');
-    $rootScope.$digest();
-  });
+      $location.path('/');
+      $rootScope.$digest();
+    });
 
-  describe('method: run', function () {
-    describe('event: $routeChangeStart', function () {
-      it('should set transitionProperties when authorization is not finished', function () {
-        // GIVEN
-        // WHEN
-        $location.path('/accepted');
-        $rootScope.$digest();
+    describe('method: run', function () {
+      describe('event: $routeChangeStart', function () {
+        it('should set transitionProperties when authorization is not finished', function () {
+          // GIVEN
+          // WHEN
+          $location.path('/accepted');
+          $rootScope.$digest();
 
-        // THEN
-        expect(TransitionProperties.next).toBeDefined();
-        expect(TransitionProperties.current).toBeDefined();
-      });
-
-      it('should not start authorizing when $routeChangePermissionStart was prevented', function () {
-        // GIVEN
-        $rootScope.$on('$routeChangePermissionStart', function (event) {
-          event.preventDefault();
+          // THEN
+          expect(TransitionProperties.next).toBeDefined();
+          expect(TransitionProperties.current).toBeDefined();
         });
 
-        spyOn(TransitionEvents, 'broadcastPermissionStartEvent');
+        it('should not start authorizing when $routeChangePermissionStart was prevented', function () {
+          // GIVEN
+          $rootScope.$on('$routeChangePermissionStart', function (event) {
+            event.preventDefault();
+          });
 
-        // WHEN
-        $location.path('/accepted');
-        $rootScope.$digest();
+          spyOn(TransitionEvents, 'broadcastPermissionStartEvent');
 
-        // THEN
-        expect($location.path()).toBe('/accepted');
+          // WHEN
+          $location.path('/accepted');
+          $rootScope.$digest();
 
-        expect(TransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
-      });
+          // THEN
+          expect($location.path()).toBe('/accepted');
 
-      it('should handle unauthorized state access', function () {
-        // GIVEN
-        spyOn(TransitionEvents, 'broadcastPermissionDeniedEvent');
-        spyOn(Authorization, 'authorize').and.callThrough();
+          expect(TransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
+        });
 
-        // WHEN
-        $location.path('/denied');
-        $rootScope.$digest();
+        it('should handle unauthorized state access', function () {
+          // GIVEN
+          spyOn(TransitionEvents, 'broadcastPermissionDeniedEvent');
+          spyOn(Authorization, 'authorize').and.callThrough();
 
-        // THEN
-        expect($location.path()).toBe('/redirected');
-        expect(Authorization.authorize).toHaveBeenCalled();
-        expect(TransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
-      });
+          // WHEN
+          $location.path('/denied');
+          $rootScope.$digest();
 
-      it('should handle authorized state access', function () {
-        // GIVEN
-        spyOn(TransitionEvents, 'broadcastPermissionAcceptedEvent');
-        spyOn(Authorization, 'authorize').and.callThrough();
+          // THEN
+          expect($location.path()).toBe('/redirected');
+          expect(Authorization.authorize).toHaveBeenCalled();
+          expect(TransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
+        });
 
-        // WHEN
-        $location.path('/accepted');
-        $rootScope.$digest();
+        it('should handle authorized state access', function () {
+          // GIVEN
+          spyOn(TransitionEvents, 'broadcastPermissionAcceptedEvent');
+          spyOn(Authorization, 'authorize').and.callThrough();
 
-        // THEN
-        expect($location.path()).toBe('/accepted');
-        expect(Authorization.authorize).toHaveBeenCalled();
-        expect(TransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
+          // WHEN
+          $location.path('/accepted');
+          $rootScope.$digest();
+
+          // THEN
+          expect($location.path()).toBe('/accepted');
+          expect(Authorization.authorize).toHaveBeenCalled();
+          expect(TransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
+        });
       });
     });
   });
