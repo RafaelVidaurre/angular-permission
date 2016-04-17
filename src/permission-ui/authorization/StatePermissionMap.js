@@ -13,17 +13,14 @@
   function StatePermissionMapFactory(TransitionProperties, PermissionMap) {
 
     StatePermissionMap.prototype = new PermissionMap();
-    StatePermissionMap.prototype.parent = PermissionMap.prototype;
 
     /**
      * Constructs map object instructing authorization service how to handle authorizing
      * @constructor StatePermissionMap
      * @extends PermissionMap
-     * @memberOf permission
+     * @memberOf permission.ui
      */
     function StatePermissionMap() {
-      this.parent.constructor.call(this);
-
       var toStateObject = TransitionProperties.toState.$$state();
       var toStatePath = toStateObject.path.slice().reverse();
 
@@ -38,7 +35,6 @@
     /**
      * Extends permission map by pushing to it state's permissions
      * @method
-     * @methodOf permission.StatePermissionMap
      *
      * @param permissionMap {permission.PermissionMap} Compensated permission map
      */
@@ -56,6 +52,7 @@
     /**
      * Checks if state has set permissions
      * @method
+     * @private
      *
      * @returns {boolean}
      */

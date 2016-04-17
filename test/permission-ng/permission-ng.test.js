@@ -43,14 +43,18 @@ describe('permission.ng', function () {
       $routeProvider
         .when('/', {})
         .when('/accepted', {
-          permissions: {
-            only: ['accepted']
+          data: {
+            permissions: {
+              only: ['accepted']
+            }
           }
         })
         .when('/denied', {
-          permissions: {
-            only: ['denied'],
-            redirectTo: 'redirected'
+          data: {
+            permissions: {
+              only: ['denied'],
+              redirectTo: 'redirected'
+            }
           }
         })
         .when('/redirected', {});
