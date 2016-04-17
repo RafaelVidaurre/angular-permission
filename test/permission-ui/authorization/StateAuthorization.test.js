@@ -3,24 +3,21 @@ describe('module: permission.ui', function () {
 
   describe('authorization: StateAuthorization', function () {
 
-    var $state;
-    var $rootScope;
-    var $stateProvider;
     var PermissionStore;
+    var StatePermissionMap;
     var StateAuthorization;
+    var TransitionProperties;
 
     beforeEach(function () {
-      module('ui.router', function ($injector) {
-        $stateProvider = $injector.get('$stateProvider');
-      });
-
       module('permission.ui');
 
+      installPromiseMatchers(); // jshint ignore:line
+
       inject(function ($injector) {
-        $state = $injector.get('$state');
-        $rootScope = $injector.get('$rootScope');
         StateAuthorization = $injector.get('StateAuthorization');
+        StatePermissionMap = $injector.get('StatePermissionMap');
         PermissionStore = $injector.get('PermissionStore');
+        TransitionProperties = $injector.get('TransitionProperties');
       });
     });
 
@@ -35,121 +32,70 @@ describe('module: permission.ui', function () {
       });
     });
 
-    // Set default states and go home
-    beforeEach(function () {
-      $stateProvider
-        .state('home', {});
-
-      $state.go('home');
-      $rootScope.$apply();
+    beforeEach(function(){
+      TransitionProperties.toState = jasmine.createSpyObj('toState', ['$$state']);
     });
 
     describe('method: authorize', function () {
       it('should return resolved promise when "except" permissions are met', function () {
         // GIVEN
-        $stateProvider
-          .state('acceptedExcept', {
-            data: {
-              permissions: {
-                except: ['denied']
-              }
-            }
-          });
+        TransitionProperties.toState.$$state.and.callFake(function () {
+          return {path: [{data: {permissions: {except: ['denied']}}}]};
+        });
+
 
         // WHEN
-        $state.go('acceptedExcept');
-        $rootScope.$digest();
+        var map = new StatePermissionMap();
+        var authorizationResult = StateAuthorization.authorize(map);
 
         // THEN
-        expect($state.current.name).toBe('acceptedExcept');
+        expect(authorizationResult).toBePromise();
+        expect(authorizationResult).toBeResolved();
       });
 
       it('should return rejected promise when "except" permissions are not met', function () {
         // GIVEN
-        $stateProvider
-          .state('deniedExcept', {
-            data: {
-              permissions: {
-                except: ['accepted']
-              }
-            }
-          });
+        TransitionProperties.toState.$$state.and.callFake(function () {
+          return {path: [{data: {permissions: {except: ['accepted']}}}]};
+        });
 
         // WHEN
-        $state.go('deniedExcept');
-        $rootScope.$digest();
+        var map = new StatePermissionMap();
+        var authorizationResult = StateAuthorization.authorize(map);
 
         // THEN
-        expect($state.current.name).toBe('home');
+        expect(authorizationResult).toBePromise();
+        expect(authorizationResult).toBeRejected();
       });
 
       it('should return resolved promise when "only" permissions are met', function () {
         // GIVEN
-        $stateProvider
-          .state('acceptedOnly', {
-            data: {
-              permissions: {
-                only: ['accepted']
-              }
-            }
-          });
+        TransitionProperties.toState.$$state.and.callFake(function () {
+          return {path: [{data: {permissions: {only: ['accepted']}}}]};
+        });
 
         // WHEN
-        $state.go('acceptedOnly');
-        $rootScope.$digest();
+        var map = new StatePermissionMap();
+        var authorizationResult = StateAuthorization.authorize(map);
 
         // THEN
-        expect($state.current.name).toBe('acceptedOnly');
+        expect(authorizationResult).toBePromise();
+        expect(authorizationResult).toBeResolved();
       });
 
       it('should return rejected promise when "only" permissions are not met', function () {
         // GIVEN
-        $stateProvider
-          .state('deniedOnly', {
-            data: {
-              permissions: {
-                only: ['denied']
-              }
-            }
-          });
-
-        // WHEN
-        $state.go('deniedOnly');
-        $rootScope.$digest();
-
-        // THEN
-        expect($state.current.name).toBe('home');
-      });
-
-      it('should honor params and options passed to "transitionTo" or "go" function', function () {
-        // GIVEN
-        spyOn($state, 'go').and.callThrough();
-
-        $stateProvider
-          .state('acceptedWithParamsAndOptions', {
-            params: {
-              param: undefined
-            },
-            data: {
-              permissions: {
-                only: ['accepted']
-              }
-            }
-          });
-
-        // WHEN
-        $state.go('acceptedWithParamsAndOptions', {param: 'param'}, {relative: true});
-        $rootScope.$apply();
-
-        // THEN
-        expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
-          location: true,
-          inherit: true,
-          relative: true,
-          notify: false,
-          reload: false,
-          $retry: false
+        TransitionProperties.toState.$$state.and.callFake(function () {
+          return {path: [{data: {permissions: {only: ['denied']}}}]};
         });
+
+        // WHEN
+        var map = new StatePermissionMap();
+        var authorizationResult = StateAuthorization.authorize(map);
+
+        // THEN
+        expect(authorizationResult).toBePromise();
+        expect(authorizationResult).toBeRejected();
       });
     });
   });

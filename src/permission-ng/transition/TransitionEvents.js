@@ -53,7 +53,7 @@
      * @method
      */
     function broadcastPermissionDeniedEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionDenies,
+      $rootScope.$broadcast(TransitionEventNames.permissionDenied,
         TransitionProperties.next, TransitionProperties.current);
     }
 

@@ -70,7 +70,6 @@ describe('module: permission.ui', function () {
       // THEN
       expect($state.current.$$state).toBeDefined();
       expect($state.current.$$isAuthorizationFinished).toBeDefined();
-      expect($state.current.areSetStatePermissions).toBeDefined();
     });
   });
 
@@ -117,7 +116,7 @@ describe('module: permission.ui', function () {
         $rootScope.$digest();
 
         // THEN
-        expect($state.current.name).toBe('home');
+        expect($state.current.name).toBe('accepted');
 
         expect(TransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
       });
@@ -170,6 +169,32 @@ describe('module: permission.ui', function () {
         expect($state.current.name).toBe('accepted');
         expect(StateAuthorization.authorize).toHaveBeenCalled();
         expect(TransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
+      });
+
+      it('should honor params and options passed to "transitionTo" or "go" function', function () {
+        // GIVEN
+        spyOn($state, 'go').and.callThrough();
+
+        $stateProvider
+          .state('acceptedWithParamsAndOptions', {
+            params: {
+              param: undefined
+            },
+            data: {
+              permissions: {
+                only: ['accepted']
+              }
+            }
+          });
+
+        // WHEN
+        $state.go('acceptedWithParamsAndOptions', {param: 'param'}, {relative: true});
+        $rootScope.$apply();
+
+        // THEN
+        expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
+          location: true, inherit: true, relative: true, notify: false, reload: false, $retry: false
+        });
       });
     });
   });

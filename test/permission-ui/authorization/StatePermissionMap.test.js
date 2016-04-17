@@ -3,103 +3,39 @@ describe('module: permission.ui', function () {
 
   describe('authorization: StatePermissionMap', function () {
 
-    var $rootScope;
-    var $state;
-    var $stateProvider;
-    var PermissionStore;
     var StatePermissionMap;
-    var StateAuthorization;
+    var TransitionProperties;
 
     beforeEach(function () {
-      module('ui.router', function ($injector) {
-        $stateProvider = $injector.get('$stateProvider');
-      });
-
       module('permission.ui');
 
       inject(function ($injector) {
-        $state = $injector.get('$state');
-        $rootScope = $injector.get('$rootScope');
-        StateAuthorization = $injector.get('StateAuthorization');
-        PermissionStore = $injector.get('PermissionStore');
         StatePermissionMap = $injector.get('StatePermissionMap');
-      });
-    });
-
-    // Initialize permissions
-    beforeEach(function () {
-      PermissionStore.definePermission('accepted', function () {
-        return true;
-      });
-
-      PermissionStore.definePermission('denied', function () {
-        return false;
+        TransitionProperties = $injector.get('TransitionProperties');
       });
     });
 
     describe('method: constructor', function () {
-      it('should build PermissionMap including parent states permissions', function () {
+      it('should build map including permissions inherited from parent states', function () {
         // GIVEN
-        $stateProvider
-          .state('home', {})
-          .state('accepted', {
-            data: {
-              permissions: {
-                only: ['accepted']
-              }
-            }
-          })
-          .state('denied', {
-            data: {
-              permissions: {
-                only: ['denied']
-              }
-            }
-          })
-          .state('compensated', {
-            data: {
-              permissions: {
-                only: ['accepted'],
-                except: ['denied']
-              }
-            }
-          })
-          .state('compensated.child', {
-            data: {
-              permissions: {
-                only: ['acceptedChild'],
-                except: ['deniedChild']
-              }
-            }
-          });
-
-
-        PermissionStore.definePermission('acceptedChild', function () {
-          return true;
+        TransitionProperties.toState = jasmine.createSpyObj('toState', ['$$state']);
+        TransitionProperties.toState.$$state.and.callFake(function () {
+          return {
+            path: [
+              {data: {permissions: {only: ['accepted'], except: ['denied']}}},
+              {data: {permissions: {only: ['acceptedChild'], except: ['deniedChild']}}}
+            ]
+          };
         });
-
-        PermissionStore.definePermission('deniedChild', function () {
-          return false;
-        });
-
-        spyOn(StateAuthorization, 'authorize').and.callThrough();
 
         // WHEN
-        $state.go('home');
-        $rootScope.$digest();
-
-        $state.go('compensated.child');
-        $rootScope.$digest();
+        var map = new StatePermissionMap();
 
         // THEN
-        expect(StateAuthorization.authorize).toHaveBeenCalledWith(new StatePermissionMap({
-          only: [['acceptedChild'], ['accepted']],
-          except: [['deniedChild'], ['denied']],
-          redirectTo: undefined
-        }));
+        expect(map.only).toEqual([['acceptedChild'], ['accepted']]);
+        expect(map.except).toEqual([['deniedChild'], ['denied']]);
+        expect(map.redirectTo).not.toBeDefined();
       });
     });
-
-
   });
 });

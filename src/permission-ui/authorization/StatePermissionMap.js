@@ -28,7 +28,7 @@
       var toStatePath = toStateObject.path.slice().reverse();
 
       angular.forEach(toStatePath, function (state) {
-        if (state.areSetStatePermissions()) {
+        if (areSetStatePermissions(state)) {
           var permissionMap = new PermissionMap(state.data.permissions);
           this.extendPermissionMap(permissionMap);
         }
@@ -51,6 +51,17 @@
       }
       this.redirectTo = permissionMap.redirectTo;
     };
+
+
+    /**
+     * Checks if state has set permissions
+     * @method
+     *
+     * @returns {boolean}
+     */
+    function areSetStatePermissions (state) {
+      return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
+    }
 
     return StatePermissionMap;
   }

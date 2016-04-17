@@ -19,16 +19,6 @@
         return state;
       };
 
-      /**
-       * Checks if state has set permissions
-       * @method
-       *
-       * @returns {boolean}
-       */
-      state.self.areSetStatePermissions = function () {
-        return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
-      };
-
       return parentFn(state);
     });
   }
@@ -40,14 +30,13 @@
     $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
 
       if (!isAuthorizationFinished()) {
-        event.preventDefault();
-
         setStateAuthorizationStatus(true);
         setTransitionProperties();
 
         if (!TransitionEvents.areEventsDefaultPrevented()) {
           TransitionEvents.broadcastPermissionStartEvent();
 
+          event.preventDefault();
           var statePermissionMap = new StatePermissionMap();
 
           StateAuthorization

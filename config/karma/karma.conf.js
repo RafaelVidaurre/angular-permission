@@ -55,7 +55,7 @@ module.exports = function(config) {
       'PhantomJS'
     ],
 
-    reporters: ['mocha', 'coverage'],
+    reporters: ['mocha'],
 
     coverageReporter: {
       type: 'lcov',
