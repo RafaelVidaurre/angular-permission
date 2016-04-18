@@ -3,8 +3,7 @@
 
   /**
    * Handles authorization based on provided permissions/roles.
-   * @name permissionDirective
-   * @memberOf permission
+   * @name permission.permissionDirective
    *
    * Directive accepts single or combined attributes `permission-only` and `permission-except` that checks on
    * DOM rendering if permissions/roles are met. Attributes can be passed either as String, Array or variable from

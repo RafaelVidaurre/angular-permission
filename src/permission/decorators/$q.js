@@ -3,8 +3,7 @@
 
   /**
    * Extends $q implementation by A+ *any* method
-   * @name $q
-   * @memberOf permission
+   * @name permission.$q
    *
    * @extends {angular.$q}
    *
@@ -16,7 +15,7 @@
 
     /**
      * Implementation of missing $q `any` method that wits for first resolution of provided promise set
-     * @method
+     * @methodOf permission.$q
      *
      * @param promises {Array|promise} Single or set of promises
      *

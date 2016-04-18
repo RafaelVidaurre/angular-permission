@@ -5,7 +5,7 @@
    * Service responsible for managing and emitting events
    * @name permission.ui.TransitionEvents
    *
-   * @extends {permission.TransitionEvents}
+   * @extends permission.TransitionEvents
    *
    * @param $delegate {Object} Parent instance being extended
    * @param $rootScope {Object} Top-level angular scope
@@ -22,7 +22,6 @@
 
     /**
      * Checks if state events are not prevented by default
-     * @method
      * @methodOf permission.ui.TransitionEvents
      *
      * @returns {boolean}
@@ -33,7 +32,6 @@
 
     /**
      * Broadcasts "$stateChangePermissionStart" event from $rootScope
-     * @method
      * @methodOf permission.ui.TransitionEvents
      */
     function broadcastPermissionStartEvent() {
@@ -44,7 +42,6 @@
 
     /**
      * Broadcasts "$stateChangePermissionAccepted" event from $rootScope
-     * @method
      * @methodOf permission.ui.TransitionEvents
      */
     function broadcastPermissionAcceptedEvent() {
@@ -55,7 +52,6 @@
 
     /**
      * Broadcasts "$tateChangePermissionDenied" event from $rootScope
-     * @method
      * @methodOf permission.ui.TransitionEvents
      */
     function broadcastPermissionDeniedEvent() {
@@ -66,7 +62,6 @@
 
     /**
      * Broadcasts "$stateChangeSuccess" event from $rootScope
-     * @method
      * @methodOf permission.ui.TransitionEvents
      */
     function broadcastStateChangeSuccessEvent() {
@@ -77,7 +72,6 @@
 
     /**
      * Checks if event $stateChangePermissionStart hasn't been disabled by default
-     * @method
      * @methodOf permission.ui.TransitionEvents
      * @private
      *
@@ -91,7 +85,6 @@
 
     /**
      * Checks if event $stateChangeStart hasn't been disabled by default
-     * @method
      * @methodOf permission.ui.TransitionEvents
      * @private
      *

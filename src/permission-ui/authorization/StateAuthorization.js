@@ -3,8 +3,7 @@
 
   /**
    * Service responsible for handling inheritance-enabled state-based authorization in ui-router
-   * @name StateAuthorization
-   * @memberOf permission
+   * @name permission.ui.StateAuthorization
    *
    * @param $q {Object} Angular promise implementation
    */
@@ -14,7 +13,8 @@
 
     /**
      * Handles state authorization
-     * @method {permission.StatePermissionMap}
+     * @methodOf permission.ui.StateAuthorization
+     *
      * @param statePermissionMap
      *
      * @return {promise}
@@ -25,7 +25,7 @@
 
     /**
      * Checks authorization for complex state inheritance
-     * @method
+     * @methodOf permission.ui.StateAuthorization
      * @private
      *
      * @param map {permission.StatePermissionMap} State access rights map
@@ -42,7 +42,7 @@
 
     /**
      * Resolves compensated set of "except" privileges
-     * @method
+     * @methodOf permission.ui.StateAuthorization
      * @private
      *
      * @param deferred {Object} Promise defer
@@ -62,7 +62,7 @@
 
     /**
      * Resolves compensated set of "only" privileges
-     * @method
+     * @methodOf permission.ui.StateAuthorization
      * @private
      *
      * @param deferred {Object} Promise defer
@@ -87,7 +87,7 @@
 
     /**
      * Performs iteration over list of privileges looking for matches
-     * @method
+     * @methodOf permission.ui.StateAuthorization
      * @private
      *
      * @param privilegesNames {Array} Array of sets of access rights

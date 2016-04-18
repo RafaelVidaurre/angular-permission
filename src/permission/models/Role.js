@@ -3,8 +3,7 @@
 
   /**
    * Role definition factory
-   * @name RoleFactory
-   * @memberOf permission
+   * @function
    *
    * @param $q {Object} Angular promise implementation
    * @param PermissionStore {permission.PermissionStore} Permission definition storage
@@ -15,8 +14,7 @@
   function RoleFactory($q, PermissionStore, TransitionProperties) {
     /**
      * Role definition constructor
-     * @class Role
-     * @memberOf permission
+     * @class permission.Role
      *
      * @param roleName {String} Name representing role
      * @param permissionNames {Array} List of permission names representing role
@@ -35,7 +33,6 @@
 
     /**
      * Checks if role is still valid
-     * @method
      * @methodOf permission.Role
      *
      * @returns {Promise} $q.promise object
@@ -67,7 +64,7 @@
 
     /**
      * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
-     * @method
+     * @methodOf permission.Role
      * @private
      *
      * @param result {Boolean} Function to be wrapped into promise
@@ -89,8 +86,9 @@
 
     /**
      * Checks if provided permission has accepted parameter types
-     * @method
+     * @methodOf permission.Role
      * @private
+     *
      * @throws {TypeError}
      */
     function validateConstructor(roleName, permissionNames, validationFunction) {

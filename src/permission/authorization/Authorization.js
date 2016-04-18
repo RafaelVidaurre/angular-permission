@@ -3,8 +3,7 @@
 
   /**
    * Service responsible for handling view based authorization
-   * @name Authorization
-   * @memberOf permission
+   * @name permission.Authorization
    *
    * @param $q {Object} Angular promise implementation
    */
@@ -14,20 +13,19 @@
 
     /**
      * Handles authorization based on provided permissions map
-     * @method
+     * @methodOf permission.Authorization
      *
      * @param permissionsMap {permission.PermissionMap} Map of permission names
      *
      * @returns {promise} $q.promise object
      */
     function authorize(permissionsMap) {
-
       return authorizePermissionMap(permissionsMap);
     }
 
     /**
      * Checks authorization for simple view based access
-     * @method
+     * @methodOf permission.Authorization
      * @private
      *
      * @param map {permission.PermissionMap} Access rights map
@@ -44,7 +42,7 @@
 
     /**
      * Resolves flat set of "except" privileges
-     * @method
+     * @methodOf permission.Authorization
      * @private
      *
      * @param deferred {Object} Promise defer
@@ -66,7 +64,7 @@
 
     /**
      * Resolves flat set of "only" privileges
-     * @method
+     * @methodOf permission.Authorization
      * @private
      *
      * @param deferred {Object} Promise defer

@@ -3,8 +3,7 @@
 
   /**
    * Interface responsible for managing and emitting events dependent on router implementation
-   * @name TransitionEvents
-   * @memberOf permission
+   * @name permission.TransitionEvents
    */
   function TransitionEvents() {
 

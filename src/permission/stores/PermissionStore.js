@@ -3,8 +3,7 @@
 
   /**
    * Permission definition storage
-   * @name PermissionStore
-   * @memberOf permission
+   * @name permission.PermissionStore
    *
    * @param Permission {permission.PermissionFactory} Permission definition factory
    */
@@ -26,7 +25,7 @@
 
     /**
      * Allows to define permission on application configuration
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @param permissionName {String} Name of defined permission
      * @param validationFunction {Function} Function used to validate if permission is valid
@@ -38,7 +37,7 @@
 
     /**
      * Allows to define set of permissionNames with shared validation function on application configuration
-     * @method
+     * @methodOf permission.PermissionStore
      * @throws {TypeError}
      *
      * @param permissionNames {Array<String>} Set of permission names
@@ -56,7 +55,7 @@
 
     /**
      * Deletes permission
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @param permissionName {String} Name of defined permission
      */
@@ -66,7 +65,7 @@
 
     /**
      * Checks if permission exists
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @param permissionName {String} Name of defined permission
      * @returns {Boolean}
@@ -77,7 +76,7 @@
 
     /**
      * Returns permission by it's name
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @returns {permission.Permission} Permissions definition object
      */
@@ -87,7 +86,7 @@
 
     /**
      * Returns all permissions
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @returns {Object} Permissions collection
      */
@@ -97,7 +96,7 @@
 
     /**
      * Removes all permissions
-     * @method
+     * @methodOf permission.PermissionStore
      */
     function clearStore() {
       permissionStore = {};

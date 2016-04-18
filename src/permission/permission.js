@@ -1,5 +1,10 @@
 (function () {
   'use strict';
 
-  angular.module('permission', []);
+  /**
+   * @namespace permission
+   */
+
+  angular
+    .module('permission', []);
 }());

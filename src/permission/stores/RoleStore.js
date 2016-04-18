@@ -3,8 +3,7 @@
 
   /**
    * Role definition storage
-   * @name RoleStore
-   * @memberOf permission
+   * @name permission.RoleStore
    *
    * @param Role {permission.Role|Function} Role definition constructor
    */
@@ -20,7 +19,7 @@
 
     /**
      * Allows to define role
-     * @method
+     * @method permission.RoleStore
      *
      * @param roleName {String} Name of defined role
      * @param permissions {Array<String>} Set of permission names
@@ -32,7 +31,7 @@
 
     /**
      * Deletes role from store
-     * @method
+     * @method permission.RoleStore
      *
      * @param roleName {String} Name of defined permission
      */
@@ -42,7 +41,7 @@
 
     /**
      * Checks if role is defined in store
-     * @method
+     * @method permission.RoleStore
      *
      * @param roleName {String} Name of role
      * @returns {Boolean}
@@ -53,7 +52,7 @@
 
     /**
      * Returns role definition object by it's name
-     * @method
+     * @method permission.RoleStore
      *
      * @returns {permission.Role} Role definition object
      */
@@ -63,7 +62,7 @@
 
     /**
      * Returns all role definitions
-     * @method
+     * @method permission.RoleStore
      *
      * @returns {Object} Defined roles collection
      */
@@ -73,7 +72,7 @@
 
     /**
      * Removes all role definitions
-     * @method
+     * @method permission.RoleStore
      */
     function clearStore() {
       roleStore = {};

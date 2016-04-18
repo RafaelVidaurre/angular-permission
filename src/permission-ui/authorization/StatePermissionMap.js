@@ -3,12 +3,12 @@
 
   /**
    * State Access rights map factory
-   * @name StatePermissionMapFactory
+   * @function
    *
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
    * @param PermissionMap {permission.PermissionMap}
    *
-   * @return {permission.StatePermissionMap}
+   * @return {StatePermissionMap}
    */
   function StatePermissionMapFactory(TransitionProperties, PermissionMap) {
 
@@ -16,9 +16,8 @@
 
     /**
      * Constructs map object instructing authorization service how to handle authorizing
-     * @constructor StatePermissionMap
-     * @extends PermissionMap
-     * @memberOf permission.ui
+     * @constructor permission.ui.StatePermissionMap
+     * @extends permission.PermissionMap
      */
     function StatePermissionMap() {
       var toStateObject = TransitionProperties.toState.$$state();
@@ -34,7 +33,7 @@
 
     /**
      * Extends permission map by pushing to it state's permissions
-     * @method
+     * @methodOf permission.ui.StatePermissionMap
      *
      * @param permissionMap {permission.PermissionMap} Compensated permission map
      */
@@ -51,7 +50,7 @@
 
     /**
      * Checks if state has set permissions
-     * @method
+     * @methodOf permission.ui.StatePermissionMap
      * @private
      *
      * @returns {boolean}

@@ -3,8 +3,7 @@
 
   /**
    * Access rights map factory
-   * @name PermissionMapFactory
-   * @memberOf permission
+   * @name permission.PermissionMapFactory
    *
    * @param $q {Object} Angular promise implementation
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
@@ -16,8 +15,7 @@
   function PermissionMapFactory($q, TransitionProperties, RoleStore, PermissionStore) {
     /**
      * Constructs map object instructing authorization service how to handle authorizing
-     * @constructor PermissionMap
-     * @memberOf permission
+     * @constructor permission.PermissionMap
      *
      * @param [permissionMap] {Object} Map of permissions provided to authorization service
      * @param [permissionMap.only] {String|Array|Function} List of exclusive access right names allowed for
@@ -38,7 +36,6 @@
 
     /**
      * Redirects to fallback states when permissions fail
-     * @method
      * @methodOf permission.PermissionMap
      *
      * @param [rejectedPermissionName] {String} Permission name
@@ -66,7 +63,7 @@
 
     /**
      * Resolves weather permissions set for "only" or "except" property are valid
-     * @method
+     * @methodOf permission.PermissionMap
      *
      * @param property {String|Array|Function} "only" or "except" map property
      * @returns {Array<Promise>}
@@ -91,8 +88,8 @@
 
     /**
      * Handles function based redirection for rejected permissions
-     * @method
      * @methodOf permission.PermissionMap
+     *
      * @throws {TypeError}
      *
      * @param redirectFunction {Function} Redirection function
@@ -120,7 +117,8 @@
 
     /**
      * Handles object based redirection for rejected permissions
-     * @method
+     * @methodOf permission.PermissionMap
+     *
      * @throws {ReferenceError}
      *
      * @param redirectObject {Object} Redirection function
@@ -156,7 +154,7 @@
 
     /**
      * Handles extraction of permission map "only" and "except" properties and converts them into array objects
-     * @method
+     * @methodOf permission.PermissionMap
      * @private
      *
      * @param property {String|Array|Function} Permission map property "only" or "except"

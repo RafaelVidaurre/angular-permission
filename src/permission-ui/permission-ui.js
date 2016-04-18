@@ -5,6 +5,9 @@
    * @namespace permission.ui
    */
 
+  /**
+   * @param $stateProvider {Object}
+   */
   function config($stateProvider) {
     $stateProvider.decorator('parent', function (state, parentFn) {
       /**
@@ -23,6 +26,15 @@
     });
   }
 
+  /**
+   * @param $rootScope {Object}
+   * @param $location {Object}
+   * @param $state {Object}
+   * @param TransitionProperties {permission.TransitionProperties}
+   * @param TransitionEvents {permission.ui.TransitionEvents}
+   * @param StateAuthorization {permission.ui.StateAuthorization}
+   * @param StatePermissionMap {permission.ui.StatePermissionMap}
+   */
   function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
@@ -113,7 +125,7 @@
        * @private
        *
        * @param rejectedPermission {String} Rejected access right
-       * @param statePermissionMap {permission.StatePermissionMap} State permission map
+       * @param statePermissionMap {permission.ui.StatePermissionMap} State permission map
        */
       function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
         TransitionEvents.broadcastPermissionDeniedEvent();

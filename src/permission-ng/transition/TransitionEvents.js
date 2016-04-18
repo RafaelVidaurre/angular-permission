@@ -3,8 +3,7 @@
 
   /**
    * Service responsible for managing and emitting events
-   * @name TransitionEvents
-   * @memberOf permission.ng
+   * @name permission.ng.TransitionEvents
    *
    * @extends {permission.TransitionEvents}
    *
@@ -22,7 +21,6 @@
 
     /**
      * Checks if state events are not prevented by default
-     * @method
      * @methodOf permission.ng.TransitionEvents
      *
      * @returns {boolean}
@@ -33,7 +31,6 @@
 
     /**
      * Broadcasts "$routeChangePermissionStart" event from $rootScope
-     * @method
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionStartEvent() {
@@ -43,7 +40,6 @@
 
     /**
      * Broadcasts "$routeChangePermissionAccepted" event from $rootScope
-     * @method
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionAcceptedEvent() {
@@ -53,7 +49,6 @@
 
     /**
      * Broadcasts "$routeChangePermissionDenied" event from $rootScope
-     * @method
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionDeniedEvent() {
@@ -63,7 +58,6 @@
 
     /**
      * Checks if event $routeChangePermissionStart hasn't been disabled by default
-     * @method
      * @methodOf permission.ng.TransitionEvents
      * @private
      *

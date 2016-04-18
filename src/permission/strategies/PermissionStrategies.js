@@ -3,8 +3,7 @@
 
   /**
    * Pre-defined available configurable behaviours of directive `permission`
-   * @name PermissionStrategies
-   * @memberOf permission
+   * @name permission.PermissionStrategies
    * @readonly
    *
    * @example

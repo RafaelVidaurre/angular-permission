@@ -3,8 +3,7 @@
 
   /**
    * Helper object used for storing ui-router/ng-route transition parameters
-   * @name TransitionProperties
-   * @memberOf permission
+   * @name permission.TransitionProperties
    *
    * @type {Object.<String,Object>}
    *

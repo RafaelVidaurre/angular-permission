@@ -3,8 +3,7 @@
 
   /**
    * Permission definition factory
-   * @name PermissionFactory
-   * @memberOf permission
+   * @function
    *
    * @param $q {Object} Angular promise implementation
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
@@ -14,8 +13,7 @@
   function PermissionFactory($q, TransitionProperties) {
     /**
      * Permission definition object constructor
-     * @class Permission
-     * @memberOf permission
+     * @class permission.Permission
      *
      * @param permissionName {String} Name repressing permission
      * @param validationFunction {Function} Function used to check if permission is valid
@@ -29,7 +27,6 @@
 
     /**
      * Checks if permission is still valid
-     * @method
      * @methodOf permission.Permission
      *
      * @returns {Promise}
@@ -46,11 +43,12 @@
 
     /**
      * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
-     * @method
+     * @methodOf permission.Permission
      * @private
      *
      * @param result {Boolean} Function to be wrapped into promise
      * @param permissionName {String} Returned value in promise
+     *
      * @return {Promise}
      */
     function wrapInPromise(result, permissionName) {
@@ -67,8 +65,9 @@
 
     /**
      * Checks if provided permission has accepted parameter types
-     * @method
+     * @methodOf permission.Permission
      * @private
+     *
      * @throws {TypeError}
      */
     function validateConstructor(permissionName, validationFunction) {

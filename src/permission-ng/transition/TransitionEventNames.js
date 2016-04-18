@@ -3,8 +3,7 @@
 
   /**
    * Constant storing event names for ng-route
-   * @name TransitionEventNames
-   * @memberOf permission.ng
+   * @name permission.ng.TransitionEventNames
    *
    * @type {Object.<String,Object>}
    *
