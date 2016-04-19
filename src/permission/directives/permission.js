@@ -47,30 +47,21 @@
         only: '=?permissionOnly',
         except: '=?permissionExcept',
         onAuthorized: '&?permissionOnAuthorized',
-        onUnauthorized: '&?permissionOnUnauthorized',
-        // Observing attribute `only` and `except` will be removed with version 2.4.0+
-        deprecatedOnly: '=only',
-        deprecatedExcept: '=except'
+        onUnauthorized: '&?permissionOnUnauthorized'
       },
       controllerAs: 'permission',
       controller: function ($scope, $element) {
         var permission = this;
 
-        if (angular.isDefined(permission.deprecatedOnly) || angular.isDefined(permission.deprecatedExcept)) {
-          $log.warn('Attributes "only" and "except" are deprecated since 2.2.0+ and their support ' +
-            'will be removed from 2.4.0. Use scoped "permission-only" and "permission-except" instead.');
-        }
-
         /**
          * Observing attribute `only` and `except` will be removed with version 2.4.0+
          */
-        $scope.$watchGroup(['permission.only', 'permission.except',
-            'permission.deprecatedOnly', 'permission.deprecatedExcept'],
+        $scope.$watchGroup(['permission.only', 'permission.except'],
           function () {
             try {
               var permissionMap = new PermissionMap({
-                only: permission.only || permission.deprecatedOnly,
-                except: permission.except || permission.deprecatedExcept
+                only: permission.only,
+                except: permission.except
               });
 
               Authorization
