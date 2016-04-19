@@ -7,7 +7,6 @@ describe('permission.ui', function () {
       var PermissionStore;
       var StatePermissionMap;
       var StateAuthorization;
-      var TransitionProperties;
 
       beforeEach(function () {
         module('permission.ui');
@@ -18,7 +17,6 @@ describe('permission.ui', function () {
           StateAuthorization = $injector.get('StateAuthorization');
           StatePermissionMap = $injector.get('StatePermissionMap');
           PermissionStore = $injector.get('PermissionStore');
-          TransitionProperties = $injector.get('TransitionProperties');
         });
       });
 
@@ -33,20 +31,17 @@ describe('permission.ui', function () {
         });
       });
 
-      beforeEach(function () {
-        TransitionProperties.toState = jasmine.createSpyObj('toState', ['$$state']);
-      });
-
       describe('method: authorize', function () {
         it('should return resolved promise when "except" permissions are met', function () {
           // GIVEN
-          TransitionProperties.toState.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$state']);
+          state.$$state.and.callFake(function () {
             return {path: [{data: {permissions: {except: ['denied']}}}]};
           });
 
 
           // WHEN
-          var map = new StatePermissionMap();
+          var map = new StatePermissionMap(state);
           var authorizationResult = StateAuthorization.authorize(map);
 
           // THEN
@@ -56,12 +51,13 @@ describe('permission.ui', function () {
 
         it('should return rejected promise when "except" permissions are not met', function () {
           // GIVEN
-          TransitionProperties.toState.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$state']);
+          state.$$state.and.callFake(function () {
             return {path: [{data: {permissions: {except: ['accepted']}}}]};
           });
 
           // WHEN
-          var map = new StatePermissionMap();
+          var map = new StatePermissionMap(state);
           var authorizationResult = StateAuthorization.authorize(map);
 
           // THEN
@@ -71,12 +67,13 @@ describe('permission.ui', function () {
 
         it('should return resolved promise when "only" permissions are met', function () {
           // GIVEN
-          TransitionProperties.toState.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$state']);
+          state.$$state.and.callFake(function () {
             return {path: [{data: {permissions: {only: ['accepted']}}}]};
           });
 
           // WHEN
-          var map = new StatePermissionMap();
+          var map = new StatePermissionMap(state);
           var authorizationResult = StateAuthorization.authorize(map);
 
           // THEN
@@ -86,12 +83,13 @@ describe('permission.ui', function () {
 
         it('should return rejected promise when "only" permissions are not met', function () {
           // GIVEN
-          TransitionProperties.toState.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$state']);
+          state.$$state.and.callFake(function () {
             return {path: [{data: {permissions: {only: ['denied']}}}]};
           });
 
           // WHEN
-          var map = new StatePermissionMap();
+          var map = new StatePermissionMap(state);
           var authorizationResult = StateAuthorization.authorize(map);
 
           // THEN

@@ -36,51 +36,27 @@ describe('permission', function () {
           // THEN
           expect(function () {
             new Role('valid-name', undefined);
-          }).toThrow(new TypeError('Parameter "permissionNames" must be Array'));
-        });
-
-        it('should throw an exception when neither permission names nor validationFunction are provided', function () {
-          // GIVEN
-          // WHEN
-          // THEN
-          expect(function () {
-            new Role('valid-name', []);
-          }).toThrow(new TypeError('Parameter "validationFunction" must be provided for empty "permissionNames" array'));
+          }).toThrow(new TypeError('Parameter "validationFunction" must be array or function'));
         });
 
         it('should return new role definition instance for correct parameters', function () {
           // GIVEN
           var permissionName = 'ACCOUNTANT';
-          var permissionNames = [];
+          var permissionNames = ['USER'];
 
           // WHEN
-          var role = new Role(permissionName, permissionNames, function () {
-            return true;
-          });
+          var role = new Role(permissionName, permissionNames);
 
           // THEN
           expect(role.roleName).toBe(permissionName);
-          expect(role.permissionNames).toBe(permissionNames);
-        });
-
-
-        it('should add permission definitions to PermissionStore when provided validationFunction', function () {
-          // GIVEN
-          var validationFunction = function () {
-            return true;
-          };
-          // WHEN
-          new Role('ACCOUNTANT', ['USER'], validationFunction);
-          // THEN
-          expect(PermissionStore.hasPermissionDefinition('USER')).toBe(true);
-          expect(PermissionStore.getPermissionDefinition('USER').validationFunction).toBe(validationFunction);
+          expect(role.validationFunction).toBe(permissionNames);
         });
       });
 
       describe('method: validateRole', function () {
         it('should call directly validationFunction when no permissions were provided', function () {
           // GIVEN
-          var role = new Role('ACCOUNTANT', [], function () {
+          var role = new Role('ACCOUNTANT', function () {
             return true;
           });
           spyOn(role, 'validationFunction').and.callThrough();
@@ -94,9 +70,10 @@ describe('permission', function () {
 
         it('should call validationFunction through permission definitions when provided', function () {
           // GIVEN
-          var role = new Role('ACCOUNTANT', ['USER'], function () {
+          PermissionStore.definePermission('USER', function () {
             return true;
           });
+          var role = new Role('ACCOUNTANT', ['USER']);
           var userDefinition = PermissionStore.getPermissionDefinition('USER');
           spyOn(userDefinition, 'validationFunction').and.callThrough();
 
@@ -108,13 +85,13 @@ describe('permission', function () {
         });
 
 
-        it('should wrap validation function result into resolved promise returns true boolean value', function () {
+        it('should wrap validation function result into resolved promise when returns true boolean value', function () {
           var roleName = 'ACCOUNTANT';
           var validationFunction = jasmine.createSpy('validationFunction')
             .and.callFake(function () {
               return true;
             });
-          var permission = new Role(roleName, [], validationFunction);
+          var permission = new Role(roleName, validationFunction);
 
           // WHEN
           var validationResult = permission.validateRole();
@@ -125,13 +102,13 @@ describe('permission', function () {
           expect(validationResult).toBeResolved();
         });
 
-        it('should wrap validation function result into rejected promise returns false boolean value', function () {
+        it('should wrap validation function result into rejected promise when returns false boolean value', function () {
           var permissionName = 'ACCOUNTANT';
           var validationFunction = jasmine.createSpy('validationFunction')
             .and.callFake(function () {
               return false;
             });
-          var permission = new Role(permissionName, [], validationFunction);
+          var permission = new Role(permissionName, validationFunction);
 
           // WHEN
           var validationResult = permission.validateRole();
@@ -142,15 +119,28 @@ describe('permission', function () {
           expect(validationResult).toBeRejected();
         });
 
-        it('should return rejected promise when at leas one of permissions is not defined', function () {
+        it('should return rejected promise when at least one of permissions is not defined', function () {
           // GIVEN
           var role = new Role('ACCOUNTANT', ['FAKE']);
 
           // WHEN
-          var promise = role.validateRole();
+          var validationResult = role.validateRole();
 
           // THEN
-          expect(promise).toBeRejected();
+          expect(validationResult).toBePromise();
+          expect(validationResult).toBeRejected();
+        });
+
+        it('should throw error when could not validate role', function () {
+          // GIVEN
+          var role = new Role('ACCOUNTANT', [{}]);
+
+          // WHEN
+          // THEN
+          var validationResult = role.validateRole();
+
+          expect(validationResult).toBePromise();
+          expect(validationResult).toBeRejected();
         });
       });
     });

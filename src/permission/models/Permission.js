@@ -13,7 +13,7 @@
   function PermissionFactory($q, TransitionProperties) {
     /**
      * Permission definition object constructor
-     * @class permission.Permission
+     * @constructor permission.Permission
      *
      * @param permissionName {String} Name repressing permission
      * @param validationFunction {Function} Function used to check if permission is valid
@@ -69,6 +69,9 @@
      * @private
      *
      * @throws {TypeError}
+     *
+     * @param permissionName {String} Name repressing permission
+     * @param validationFunction {Function} Function used to check if permission is valid
      */
     function validateConstructor(permissionName, validationFunction) {
       if (!angular.isString(permissionName)) {

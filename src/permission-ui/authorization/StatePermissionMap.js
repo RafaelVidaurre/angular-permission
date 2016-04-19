@@ -5,22 +5,21 @@
    * State Access rights map factory
    * @function
    *
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
    * @param PermissionMap {permission.PermissionMap}
    *
    * @return {StatePermissionMap}
    */
-  function StatePermissionMapFactory(TransitionProperties, PermissionMap) {
+  function StatePermissionMapFactory(PermissionMap) {
 
     StatePermissionMap.prototype = new PermissionMap();
 
     /**
-     * Constructs map object instructing authorization service how to handle authorizing
+     * Constructs map instructing authorization service how to handle authorizing
      * @constructor permission.ui.StatePermissionMap
      * @extends permission.PermissionMap
      */
-    function StatePermissionMap() {
-      var toStateObject = TransitionProperties.toState.$$state();
+    function StatePermissionMap(state) {
+      var toStateObject = state.$$state();
       var toStatePath = toStateObject.path.slice().reverse();
 
       angular.forEach(toStatePath, function (state) {

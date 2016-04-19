@@ -66,12 +66,12 @@
      * @methodOf permission.PermissionMap
      *
      * @param property {String|Array|Function} "only" or "except" map property
-     * @returns {Array<Promise>}
+     *
+     * @return {Array<Promise>}
      */
     PermissionMap.prototype.resolvePropertyValidity = function (property) {
 
       return property.map(function (privilegeName) {
-
         if (RoleStore.hasRoleDefinition(privilegeName)) {
           var role = RoleStore.getRoleDefinition(privilegeName);
           return role.validateRole();
@@ -99,7 +99,7 @@
      */
     function resolveFunctionRedirect(redirectFunction, rejectedPermissionName) {
       return $q
-        .when(redirectFunction.call(null, rejectedPermissionName))
+        .when(redirectFunction.call(null, rejectedPermissionName, TransitionProperties))
         .then(function (redirectState) {
           if (angular.isString(redirectState)) {
             return {

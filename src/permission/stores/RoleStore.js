@@ -11,6 +11,7 @@
     var roleStore = {};
 
     this.defineRole = defineRole;
+    this.defineManyRoles = defineManyRoles;
     this.getRoleDefinition = getRoleDefinition;
     this.hasRoleDefinition = hasRoleDefinition;
     this.removeRoleDefinition = removeRoleDefinition;
@@ -18,15 +19,32 @@
     this.clearStore = clearStore;
 
     /**
-     * Allows to define role
-     * @method permission.RoleStore
+     * Allows to add single role definition to the store by providing it's name and validation function
+     * @methodOf permission.RoleStore
      *
      * @param roleName {String} Name of defined role
-     * @param permissions {Array<String>} Set of permission names
-     * @param [validationFunction] {Function} Function used to validate if permissions in role are valid
+     * @param [validationFunction] {Function|Array<String>} Function used to validate if role is valid or set of
+     *   permission names that has to be owned to have a role
      */
-    function defineRole(roleName, permissions, validationFunction) {
-      roleStore[roleName] = new Role(roleName, permissions, validationFunction);
+    function defineRole(roleName, validationFunction) {
+      roleStore[roleName] = new Role(roleName, validationFunction);
+    }
+
+    /**
+     * Allows to define set of roleNames with shared validation function
+     * @methodOf permission.PermissionStore
+     * @throws {TypeError}
+     *
+     * @param roleMap {String, Function|Array<String>} Map of roles with matching validators
+     */
+    function defineManyRoles(roleMap) {
+      if (!angular.isObject(roleMap)) {
+        throw new TypeError('Parameter "roleNames" name must be object');
+      }
+
+      angular.forEach(roleMap, function (validationFunction, roleName) {
+        defineRole(roleName, validationFunction);
+      });
     }
 
     /**

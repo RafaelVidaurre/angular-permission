@@ -48,6 +48,30 @@ describe('permission', function () {
         });
       });
 
+      describe('method: defineManyRoles', function () {
+        it('should throw error if roleNames is not Object', function () {
+          // GIVEN
+          // WHEN
+          // THEN
+          expect(function () {
+            RoleStore.defineManyRoles(null);
+          }).toThrow(new TypeError('Parameter "roleNames" name must be object'));
+        });
+
+        it('should add role definitions to store for correct set of parameters', function () {
+          // GIVEN
+          // WHEN
+          RoleStore.defineManyRoles({
+            'USER': ['canRead'],
+            'ADMIN': ['canRead', 'canWrite']
+          });
+
+          // THEN
+          expect(RoleStore.hasRoleDefinition('USER')).toBe(true);
+          expect(RoleStore.hasRoleDefinition('ADMIN')).toBe(true);
+        });
+      });
+
       describe('method: getRoleDefinition', function () {
         it('should return role definition object', function () {
           // GIVEN

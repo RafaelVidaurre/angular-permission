@@ -49,7 +49,7 @@
           TransitionEvents.broadcastPermissionStartEvent();
 
           event.preventDefault();
-          var statePermissionMap = new StatePermissionMap();
+          var statePermissionMap = new StatePermissionMap(TransitionProperties.toState);
 
           StateAuthorization
             .authorize(statePermissionMap)

@@ -19,8 +19,8 @@ describe('permission.ui', function () {
       describe('method: constructor', function () {
         it('should build map including permissions inherited from parent states', function () {
           // GIVEN
-          TransitionProperties.toState = jasmine.createSpyObj('toState', ['$$state']);
-          TransitionProperties.toState.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$state']);
+          state.$$state.and.callFake(function () {
             return {
               path: [
                 {data: {permissions: {only: ['accepted'], except: ['denied']}}},
@@ -30,7 +30,7 @@ describe('permission.ui', function () {
           });
 
           // WHEN
-          var map = new StatePermissionMap();
+          var map = new StatePermissionMap(state);
 
           // THEN
           expect(map.only).toEqual([['acceptedChild'], ['accepted']]);
