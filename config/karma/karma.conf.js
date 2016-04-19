@@ -28,8 +28,11 @@ module.exports = function(config) {
       'node_modules/jasmine-promise-matchers/dist/jasmine-promise-matchers.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
+      'bower_components/angular-route/angular-route.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
-      'src/permission.js',
+      'src/permission/permission.js',
+      'src/permission-ng/permission-ng.js',
+      'src/permission-ui/permission-ui.js',
       'src/**/*.js',
       'test/**/*.test.js'
     ],
