@@ -20,7 +20,13 @@
   },
   "keywords": [
 	"angular",
+	"ui-router",
+	"ng-route",
+	"access-control",
 	"permissions",
+	"access",
+	"acl",
+	"rbac",
 	"roles",
 	"route"
   ],
