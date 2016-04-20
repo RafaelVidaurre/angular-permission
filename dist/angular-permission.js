@@ -1,7 +1,7 @@
 /**
  * angular-permission
- * Route permission and access control as simple as it can get
- * @version v2.3.6 - 2016-04-11
+ * Fully featured role and permission based access control for angular applications
+ * @version v3.0.0-beta - 2016-04-20
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -14,137 +14,8 @@
    * @namespace permission
    */
 
-  config.$inject = ['$stateProvider'];
-  run.$inject = ['$rootScope', '$location', '$state', 'TransitionProperties', 'TransitionEvents', 'StateAuthorization', 'StatePermissionMap'];
-  function config($stateProvider) {
-    /**
-     * This decorator is required to access full state object instead of it's configuration
-     * when trying to obtain full toState state object not it's configuration
-     * Can be removed when implemented https://github.com/angular-ui/ui-router/issues/13.
-     */
-    $stateProvider.decorator('parent', function (state, parentFn) {
-      state.self.$$state = function () {
-        return state;
-      };
-
-      state.self.areSetStatePermissions = function () {
-        return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
-      };
-
-      return parentFn(state);
-    });
-  }
-
-  function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
-    /**
-     * State transition interceptor
-     */
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
-
-      if (!isAuthorizationFinished()) {
-        event.preventDefault();
-
-        setStateAuthorizationStatus(true);
-        setTransitionProperties();
-
-        if (!TransitionEvents.areStateEventsDefaultPrevented()) {
-          TransitionEvents.broadcastStateChangePermissionStart();
-
-          var statePermissionMap = new StatePermissionMap();
-
-          StateAuthorization
-            .authorize(statePermissionMap)
-            .then(function () {
-              handleAuthorizedState();
-            })
-            .catch(function (rejectedPermission) {
-              handleUnauthorizedState(rejectedPermission, statePermissionMap);
-            })
-            .finally(function () {
-              setStateAuthorizationStatus(false);
-            });
-        }
-      }
-
-      /**
-       * Updates values of `TransitionProperties` holder object
-       * @method
-       * @private
-       */
-      function setTransitionProperties() {
-        TransitionProperties.toState = toState;
-        TransitionProperties.toParams = toParams;
-        TransitionProperties.fromState = fromState;
-        TransitionProperties.fromParams = fromParams;
-        TransitionProperties.options = options;
-      }
-
-      /**
-       * Sets internal state `$$finishedAuthorization` variable to prevent looping
-       * @method
-       * @private
-       *
-       *
-       * @param status {boolean} When true authorization has been already preceded
-       */
-      function setStateAuthorizationStatus(status) {
-        angular.extend(toState, {'$$isAuthorizationFinished': status});
-      }
-
-      /**
-       * Checks if state has been already checked for authorization
-       * @method
-       * @private
-       *
-       * @returns {boolean}
-       */
-      function isAuthorizationFinished() {
-        return toState.$$isAuthorizationFinished;
-      }
-
-      /**
-       * Handles redirection for authorized access
-       * @method
-       * @private
-       */
-      function handleAuthorizedState() {
-
-        TransitionEvents.broadcastStateChangePermissionAccepted();
-        $location.replace();
-
-        // Overwrite notify option to broadcast it later
-        TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
-
-        $state
-          .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)
-          .then(function () {
-            TransitionEvents.broadcastStateChangeSuccess();
-          });
-      }
-
-      /**
-       * Handles redirection for unauthorized access
-       * @method
-       * @private
-       *
-       * @param rejectedPermission {String} Rejected access right
-       * @param statePermissionMap {permission.StatePermissionMap} State permission map
-       */
-      function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
-        TransitionEvents.broadcastStateChangePermissionDenied();
-
-        statePermissionMap
-          .resolveRedirectState(rejectedPermission)
-          .then(function (redirect) {
-            $state.go(redirect.state, redirect.params, redirect.options);
-          });
-      }
-    });
-  }
-
-  angular.module('permission', ['ui.router'])
-    .config(config)
-    .run(run);
+  angular
+    .module('permission', []);
 }());
 
 
@@ -153,11 +24,11 @@
 
   /**
    * Extends $q implementation by A+ *any* method
-   * @name $q
-   * @extends {angular.$q}
-   * @memberOf permission
+   * @name permission.$q
    *
-   * @param $delegate {Object} Angular promise implementation
+   * @extends {angular.$q}
+   *
+   * @param $delegate {Object} Parent instance being extended
    */
   $q.$inject = ['$delegate'];
   function $q($delegate) {
@@ -166,7 +37,7 @@
 
     /**
      * Implementation of missing $q `any` method that wits for first resolution of provided promise set
-     * @method
+     * @methodOf permission.$q
      *
      * @param promises {Array|promise} Single or set of promises
      *
@@ -217,8 +88,7 @@
 
   /**
    * Pre-defined available configurable behaviours of directive `permission`
-   * @name PermissionStrategies
-   * @memberOf permission
+   * @name permission.PermissionStrategies
    * @readonly
    *
    * @example
@@ -259,26 +129,23 @@
   'use strict';
 
   /**
-   * Helper object used for storing ui-router transition parameters
-   * @name TransitionProperties
-   * @memberOf permission
+   * Helper object used for storing ui-router/ng-route transition parameters
+   * @name permission.TransitionProperties
    *
    * @type {Object.<String,Object>}
    *
-   * UI-router transition properties:
-   * @property toState {Object} Target state object
-   * @property toParams {Object} Target state params
-   * @property fromState {Object} Source state object
-   * @property fromParams {Object} Source state params
-   * @property options {Object} Transition options
+   * Transition properties for ui-router:
+   * @property toState {Object} Target state object [ui-router]
+   * @property toParams {Object} Target state params [ui-router]
+   * @property fromState {Object} Source state object [ui-router]
+   * @property fromParams {Object} Source state params [ui-router]
+   * @property options {Object} Transition options [ui-router]
+   *
+   * Transition properties for ng-route:
+   * @property current {Object} Current state properties [ng-route]
+   * @property next {Object} Next state properties [ng-route]
    */
-  var TransitionProperties = {
-    toState: undefined,
-    toParams: undefined,
-    fromState: undefined,
-    fromParams: undefined,
-    options: undefined
-  };
+  var TransitionProperties = {};
 
   angular
     .module('permission')
@@ -290,98 +157,22 @@
   'use strict';
 
   /**
-   * Service responsible for managing and emitting events
-   * @name TransitionEvents
-   * @memberOf permission
-   *
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
-   * @param $rootScope {Object} Top-level angular scope
+   * Interface responsible for managing and emitting events dependent on router implementation
+   * @name permission.TransitionEvents
    */
-  TransitionEvents.$inject = ['$rootScope', 'TransitionProperties'];
-  function TransitionEvents($rootScope, TransitionProperties) {
+  function TransitionEvents() {
 
-    this.areStateEventsDefaultPrevented = areStateEventsDefaultPrevented;
-    this.broadcastStateChangePermissionStart = broadcastStateChangePermissionStart;
-    this.broadcastStateChangePermissionAccepted = broadcastStateChangePermissionAccepted;
-    this.broadcastStateChangePermissionDenied = broadcastStateChangePermissionDenied;
-    this.broadcastStateChangeSuccess = broadcastStateChangeSuccess;
+    this.broadcastPermissionStartEvent = function () {
+      throw new Error('Method broadcastPermissionStartEvent in TransitionEvents interface must be implemented');
+    };
 
-    /**
-     * Checks if state events are not prevented by default
-     * @method
-     *
-     * @returns {boolean}
-     */
-    function areStateEventsDefaultPrevented() {
-      return isStateChangePermissionStartDefaultPrevented() || isStateChangeStartDefaultPrevented();
-    }
+    this.broadcastPermissionAcceptedEvent = function () {
+      throw new Error('Method broadcastPermissionAcceptedEvent in TransitionEvents interface must be implemented');
+    };
 
-    /**
-     * Broadcasts "$stateChangePermissionStart" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangePermissionStart() {
-      $rootScope.$broadcast('$stateChangePermissionStart',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.options);
-    }
-
-    /**
-     * Broadcasts "$stateChangePermissionAccepted" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangePermissionAccepted() {
-      $rootScope.$broadcast('$stateChangePermissionAccepted',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.options);
-    }
-
-    /**
-     * Broadcasts "$stateChangeSuccess" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangeSuccess() {
-      $rootScope.$broadcast('$stateChangeSuccess',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.fromState, TransitionProperties.fromParams);
-    }
-
-    /**
-     * Broadcasts "$tateChangePermissionDenied" event from $rootScope
-     * @method
-     */
-    function broadcastStateChangePermissionDenied() {
-      $rootScope.$broadcast('$stateChangePermissionDenied',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.options);
-    }
-
-    /**
-     * Checks if event $stateChangeStart hasn't been disabled by default
-     * @method
-     * @private
-     *
-     * @returns {boolean}
-     */
-    function isStateChangeStartDefaultPrevented() {
-      return $rootScope.$broadcast('$stateChangeStart',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.fromState, TransitionProperties.fromParams,
-        TransitionProperties.options).defaultPrevented;
-    }
-
-    /**
-     * Checks if event $stateChangePermissionStart hasn't been disabled by default
-     * @method
-     * @private
-     *
-     * @returns {boolean}
-     */
-    function isStateChangePermissionStartDefaultPrevented() {
-      return $rootScope.$broadcast('$stateChangePermissionStart',
-        TransitionProperties.toState, TransitionProperties.toParams,
-        TransitionProperties.options).defaultPrevented;
-    }
+    this.broadcastPermissionDeniedEvent = function () {
+      throw new Error('Method broadcastPermissionDeniedEvent in TransitionEvents interface must be implemented');
+    };
   }
 
   angular
@@ -394,261 +185,8 @@
   'use strict';
 
   /**
-   * Access rights map factory
-   * @name PermissionMapFactory
-   *
-   * @param $q {Object} Angular promise implementation
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
-   * @param RoleStore {permission.RoleStore} Role definition storage
-   * @param PermissionStore {permission.PermissionStore} Permission definition storage
-   *
-   * @return {permission.PermissionMap}
-   */
-  PermissionMapFactory.$inject = ['$q', 'TransitionProperties', 'RoleStore', 'PermissionStore'];
-  function PermissionMapFactory($q, TransitionProperties, RoleStore, PermissionStore) {
-    /**
-     * Constructs map object instructing authorization service how to handle authorizing
-     * @constructor PermissionMap
-     * @memberOf permission
-     *
-     * @param [permissionMap] {Object} Map of permissions provided to authorization service
-     * @param [permissionMap.only] {Array} List of exclusive access right names allowed for authorization
-     * @param [permissionMap.except] {Array} List of exclusive access right names denied for authorization
-     * @param [permissionMap.redirectTo] {String|Function|Object|promise} Handling redirection when rejected
-     *   authorization
-     */
-    function PermissionMap(permissionMap) {
-      // Suppress not defined object errors
-      permissionMap = permissionMap || {};
-
-      this.only = normalizeMapProperty(permissionMap.only);
-      this.except = normalizeMapProperty(permissionMap.except);
-      this.redirectTo = permissionMap.redirectTo;
-    }
-
-    /**
-     * Redirects to fallback states when permissions fail
-     * @method
-     * @methodOf permission.PermissionMap
-     *
-     * @param rejectedPermissionName {String} Permission name
-     *
-     * @return {Promise}
-     */
-    PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName) {
-      if (angular.isFunction(this.redirectTo)) {
-        return resolveFunctionRedirect(this.redirectTo, rejectedPermissionName);
-      }
-
-      if (angular.isObject(this.redirectTo)) {
-        return resolveObjectRedirect(this.redirectTo, rejectedPermissionName);
-      }
-
-      if (angular.isString(this.redirectTo)) {
-        return $q.resolve({
-          state: this.redirectTo
-        });
-      }
-
-      // If redirectTo state is not defined stay where you are
-      return $q.reject(null);
-    };
-
-    /**
-     * Resolves weather permissions set for "only" or "except" property are valid
-     * @method
-     *
-     * @param property {permissionMap.only|permissionMap.except} "only" or "except" map property
-     * @returns {Array<Promise>}
-     */
-    PermissionMap.prototype.resolvePropertyValidity = function (property) {
-
-      return property.map(function (privilegeName) {
-
-        if (RoleStore.hasRoleDefinition(privilegeName)) {
-          var role = RoleStore.getRoleDefinition(privilegeName);
-          return role.validateRole();
-        }
-
-        if (PermissionStore.hasPermissionDefinition(privilegeName)) {
-          var permission = PermissionStore.getPermissionDefinition(privilegeName);
-          return permission.validatePermission();
-        }
-
-        return $q.reject(privilegeName);
-      });
-    };
-
-    /**
-     * Handles function based redirection for rejected permissions
-     * @method
-     * @methodOf permission.PermissionMap
-     * @throws {TypeError}
-     *
-     * @param redirectFunction {Function} Redirection function
-     * @param permission {String} Rejected permission
-     *
-     * @return {Promise}
-     */
-    function resolveFunctionRedirect(redirectFunction, permission) {
-      return $q
-        .when(redirectFunction.call(null, permission))
-        .then(function (redirectState) {
-          if (angular.isString(redirectState)) {
-            return {
-              state: redirectState
-            };
-          }
-
-          if (angular.isObject(redirectState)) {
-            return redirectState;
-          }
-
-          throw new TypeError('When used "redirectTo" as function, returned value must be string or object');
-        });
-    }
-
-    /**
-     * Handles object based redirection for rejected permissions
-     * @method
-     * @throws {ReferenceError}
-     *
-     * @param redirectObject {Object} Redirection function
-     * @param permission {String} Rejected permission
-     *
-     * @return {Promise}
-     */
-    function resolveObjectRedirect(redirectObject, permission) {
-      if (!angular.isDefined(redirectObject['default'])) {
-        throw new ReferenceError('When used "redirectTo" as object, property "default" must be defined');
-      }
-
-      var redirectState = redirectObject[permission];
-
-      if (!angular.isDefined(redirectState)) {
-        redirectState = redirectObject['default'];
-      }
-
-      if (angular.isFunction(redirectState)) {
-        return resolveFunctionRedirect(redirectState, permission);
-      }
-
-      if (angular.isObject(redirectState)) {
-        return $q.resolve(redirectState);
-      }
-
-      if (angular.isString(redirectState)) {
-        return $q.resolve({
-          state: redirectState
-        });
-      }
-    }
-
-    /**
-     * Handles extraction of permission map "only" and "except" properties and converts them into array objects
-     * @method
-     * @private
-     *
-     * @param property {String|Array|Function|Promise} Permission map property "only" or "except"
-     *
-     * @returns {Array<String>} Array of permission "only" or "except" names
-     */
-    function normalizeMapProperty(property) {
-      if (angular.isString(property)) {
-        return [property];
-      }
-
-      if (angular.isArray(property)) {
-        return property;
-      }
-
-      if (angular.isFunction(property)) {
-        return property.call(null, TransitionProperties);
-      }
-
-      return [];
-    }
-
-    return PermissionMap;
-  }
-
-  angular
-    .module('permission')
-    .factory('PermissionMap', PermissionMapFactory);
-}());
-
-(function () {
-  'use strict';
-
-  /**
-   * State Access rights map factory
-   * @name StatePermissionMapFactory
-   *
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
-   * @param PermissionMap {permission.PermissionMap}
-   *
-   * @return {permission.StatePermissionMap}
-   */
-  StatePermissionMapFactory.$inject = ['TransitionProperties', 'PermissionMap'];
-  function StatePermissionMapFactory(TransitionProperties, PermissionMap) {
-
-    StatePermissionMap.prototype = new PermissionMap();
-    StatePermissionMap.constructor = StatePermissionMap;
-    StatePermissionMap.prototype.parent = PermissionMap.prototype;
-
-
-    /**
-     * Constructs map object instructing authorization service how to handle authorizing
-     * @constructor StatePermissionMap
-     * @extends PermissionMap
-     * @memberOf permission
-     */
-    function StatePermissionMap() {
-      this.parent.constructor.call(this);
-
-      var toStateObject = TransitionProperties.toState.$$state();
-      var toStatePath = toStateObject.path.slice().reverse();
-
-      angular.forEach(toStatePath, function (state) {
-
-        if (state.areSetStatePermissions()) {
-          var permissionMap = new PermissionMap(state.data.permissions);
-          this.extendPermissionMap(permissionMap);
-        }
-      }, this);
-    }
-
-    /**
-     * Extends permission map by pushing to it state's permissions
-     * @method
-     * @methodOf permission.StatePermissionMap
-     *
-     * @param permissionMap {permission.PermissionMap} Compensated permission map
-     */
-    StatePermissionMap.prototype.extendPermissionMap = function (permissionMap) {
-      if (permissionMap.only.length) {
-        this.only = this.only.concat([permissionMap.only]);
-      }
-      if (permissionMap.except.length) {
-        this.except = this.except.concat([permissionMap.except]);
-      }
-      this.redirectTo = permissionMap.redirectTo;
-    };
-
-    return StatePermissionMap;
-  }
-
-  angular
-    .module('permission')
-    .factory('StatePermissionMap', StatePermissionMapFactory);
-}());
-
-(function () {
-  'use strict';
-
-  /**
    * Permission definition factory
-   * @name PermissionFactory
+   * @function
    *
    * @param $q {Object} Angular promise implementation
    * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
@@ -659,8 +197,7 @@
   function PermissionFactory($q, TransitionProperties) {
     /**
      * Permission definition object constructor
-     * @class Permission
-     * @memberOf permission
+     * @constructor permission.Permission
      *
      * @param permissionName {String} Name repressing permission
      * @param validationFunction {Function} Function used to check if permission is valid
@@ -674,7 +211,6 @@
 
     /**
      * Checks if permission is still valid
-     * @method
      * @methodOf permission.Permission
      *
      * @returns {Promise}
@@ -691,11 +227,12 @@
 
     /**
      * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
-     * @method
+     * @methodOf permission.Permission
      * @private
      *
      * @param result {Boolean} Function to be wrapped into promise
      * @param permissionName {String} Returned value in promise
+     *
      * @return {Promise}
      */
     function wrapInPromise(result, permissionName) {
@@ -712,9 +249,13 @@
 
     /**
      * Checks if provided permission has accepted parameter types
-     * @method
+     * @methodOf permission.Permission
      * @private
+     *
      * @throws {TypeError}
+     *
+     * @param permissionName {String} Name repressing permission
+     * @param validationFunction {Function} Function used to check if permission is valid
      */
     function validateConstructor(permissionName, validationFunction) {
       if (!angular.isString(permissionName)) {
@@ -739,7 +280,7 @@
 
   /**
    * Role definition factory
-   * @name RoleFactory
+   * @function
    *
    * @param $q {Object} Angular promise implementation
    * @param PermissionStore {permission.PermissionStore} Permission definition storage
@@ -751,64 +292,53 @@
   function RoleFactory($q, PermissionStore, TransitionProperties) {
     /**
      * Role definition constructor
-     * @class Role
-     * @memberOf permission
+     * @class permission.Role
      *
      * @param roleName {String} Name representing role
-     * @param permissionNames {Array} List of permission names representing role
-     * @param [validationFunction] {Function} Optional function used to validate if permissions are still valid
+     * @param validationFunction {Function|Array<String>} Optional function used to validate if permissions are still
+     *   valid or list of permission names representing role
      */
-    function Role(roleName, permissionNames, validationFunction) {
-      validateConstructor(roleName, permissionNames, validationFunction);
-      this.roleName = roleName;
-      this.permissionNames = permissionNames || [];
-      this.validationFunction = validationFunction;
+    function Role(roleName, validationFunction) {
+      validateConstructor(roleName, validationFunction);
 
-      if (validationFunction) {
-        PermissionStore.defineManyPermissions(permissionNames, validationFunction);
-      }
+      this.roleName = roleName;
+      this.validationFunction = validationFunction;
     }
 
     /**
      * Checks if role is still valid
-     * @method
      * @methodOf permission.Role
      *
      * @returns {Promise} $q.promise object
      */
     Role.prototype.validateRole = function () {
-      // When permission set is provided check each of them
-      if (this.permissionNames.length) {
-        var promises = this.permissionNames.map(function (permissionName) {
+      if (angular.isFunction(this.validationFunction)) {
+        var validationResult = this.validationFunction.call(null, this.roleName, TransitionProperties);
+        if (!angular.isFunction(validationResult.then)) {
+          validationResult = wrapInPromise(validationResult, this.roleName);
+        }
+
+        return validationResult;
+      }
+
+      if (angular.isArray(this.validationFunction)) {
+        var promises = this.validationFunction.map(function (permissionName) {
           if (PermissionStore.hasPermissionDefinition(permissionName)) {
             var permission = PermissionStore.getPermissionDefinition(permissionName);
-            var validationResult = permission.validatePermission();
 
-            if (!angular.isFunction(validationResult.then)) {
-              validationResult = wrapInPromise(validationResult);
-            }
-
-            return validationResult;
+            return permission.validatePermission();
           }
 
-          return $q.reject();
+          return $q.reject(permissionName);
         });
 
         return $q.all(promises);
       }
-
-      // If not call validation function manually
-      var validationResult = this.validationFunction.call(null, this.roleName, TransitionProperties);
-      if (!angular.isFunction(validationResult.then)) {
-        validationResult = wrapInPromise(validationResult, this.roleName);
-      }
-
-      return $q.resolve(validationResult);
     };
 
     /**
      * Converts a value into a promise, if the value is truthy it resolves it, otherwise it rejects it
-     * @method
+     * @methodOf permission.Role
      * @private
      *
      * @param result {Boolean} Function to be wrapped into promise
@@ -830,21 +360,22 @@
 
     /**
      * Checks if provided permission has accepted parameter types
-     * @method
+     * @methodOf permission.Role
      * @private
+     *
      * @throws {TypeError}
+     *
+     * @param roleName {String} Name representing role
+     * @param validationFunction {Function|Array<String>} Optional function used to validate if permissions are still
+     *   valid or list of permission names representing role
      */
-    function validateConstructor(roleName, permissionNames, validationFunction) {
+    function validateConstructor(roleName, validationFunction) {
       if (!angular.isString(roleName)) {
         throw new TypeError('Parameter "roleName" name must be String');
       }
 
-      if (!angular.isArray(permissionNames)) {
-        throw new TypeError('Parameter "permissionNames" must be Array');
-      }
-
-      if (!permissionNames.length && !angular.isFunction(validationFunction)) {
-        throw new TypeError('Parameter "validationFunction" must be provided for empty "permissionNames" array');
+      if (!angular.isArray(validationFunction) && !angular.isFunction(validationFunction)) {
+        throw new TypeError('Parameter "validationFunction" must be array or function');
       }
     }
 
@@ -862,8 +393,7 @@
 
   /**
    * Permission definition storage
-   * @name PermissionStore
-   * @memberOf permission
+   * @name permission.PermissionStore
    *
    * @param Permission {permission.PermissionFactory} Permission definition factory
    */
@@ -886,7 +416,7 @@
 
     /**
      * Allows to define permission on application configuration
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @param permissionName {String} Name of defined permission
      * @param validationFunction {Function} Function used to validate if permission is valid
@@ -898,7 +428,7 @@
 
     /**
      * Allows to define set of permissionNames with shared validation function on application configuration
-     * @method
+     * @methodOf permission.PermissionStore
      * @throws {TypeError}
      *
      * @param permissionNames {Array<String>} Set of permission names
@@ -916,7 +446,7 @@
 
     /**
      * Deletes permission
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @param permissionName {String} Name of defined permission
      */
@@ -926,7 +456,7 @@
 
     /**
      * Checks if permission exists
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @param permissionName {String} Name of defined permission
      * @returns {Boolean}
@@ -937,7 +467,7 @@
 
     /**
      * Returns permission by it's name
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @returns {permission.Permission} Permissions definition object
      */
@@ -947,7 +477,7 @@
 
     /**
      * Returns all permissions
-     * @method
+     * @methodOf permission.PermissionStore
      *
      * @returns {Object} Permissions collection
      */
@@ -957,7 +487,7 @@
 
     /**
      * Removes all permissions
-     * @method
+     * @methodOf permission.PermissionStore
      */
     function clearStore() {
       permissionStore = {};
@@ -974,8 +504,7 @@
 
   /**
    * Role definition storage
-   * @name RoleStore
-   * @memberOf permission
+   * @name permission.RoleStore
    *
    * @param Role {permission.Role|Function} Role definition constructor
    */
@@ -984,6 +513,7 @@
     var roleStore = {};
 
     this.defineRole = defineRole;
+    this.defineManyRoles = defineManyRoles;
     this.getRoleDefinition = getRoleDefinition;
     this.hasRoleDefinition = hasRoleDefinition;
     this.removeRoleDefinition = removeRoleDefinition;
@@ -991,20 +521,37 @@
     this.clearStore = clearStore;
 
     /**
-     * Allows to define role
-     * @method
+     * Allows to add single role definition to the store by providing it's name and validation function
+     * @methodOf permission.RoleStore
      *
      * @param roleName {String} Name of defined role
-     * @param permissions {Array<String>} Set of permission names
-     * @param [validationFunction] {Function} Function used to validate if permissions in role are valid
+     * @param [validationFunction] {Function|Array<String>} Function used to validate if role is valid or set of
+     *   permission names that has to be owned to have a role
      */
-    function defineRole(roleName, permissions, validationFunction) {
-      roleStore[roleName] = new Role(roleName, permissions, validationFunction);
+    function defineRole(roleName, validationFunction) {
+      roleStore[roleName] = new Role(roleName, validationFunction);
+    }
+
+    /**
+     * Allows to define set of roleNames with shared validation function
+     * @methodOf permission.PermissionStore
+     * @throws {TypeError}
+     *
+     * @param roleMap {String, Function|Array<String>} Map of roles with matching validators
+     */
+    function defineManyRoles(roleMap) {
+      if (!angular.isObject(roleMap)) {
+        throw new TypeError('Parameter "roleNames" name must be object');
+      }
+
+      angular.forEach(roleMap, function (validationFunction, roleName) {
+        defineRole(roleName, validationFunction);
+      });
     }
 
     /**
      * Deletes role from store
-     * @method
+     * @method permission.RoleStore
      *
      * @param roleName {String} Name of defined permission
      */
@@ -1014,7 +561,7 @@
 
     /**
      * Checks if role is defined in store
-     * @method
+     * @method permission.RoleStore
      *
      * @param roleName {String} Name of role
      * @returns {Boolean}
@@ -1025,7 +572,7 @@
 
     /**
      * Returns role definition object by it's name
-     * @method
+     * @method permission.RoleStore
      *
      * @returns {permission.Role} Role definition object
      */
@@ -1035,7 +582,7 @@
 
     /**
      * Returns all role definitions
-     * @method
+     * @method permission.RoleStore
      *
      * @returns {Object} Defined roles collection
      */
@@ -1045,7 +592,7 @@
 
     /**
      * Removes all role definitions
-     * @method
+     * @method permission.RoleStore
      */
     function clearStore() {
       roleStore = {};
@@ -1062,8 +609,7 @@
 
   /**
    * Handles authorization based on provided permissions/roles.
-   * @name permissionDirective
-   * @memberOf permission
+   * @name permission.permissionDirective
    *
    * Directive accepts single or combined attributes `permission-only` and `permission-except` that checks on
    * DOM rendering if permissions/roles are met. Attributes can be passed either as String, Array or variable from
@@ -1108,30 +654,21 @@
         only: '=?permissionOnly',
         except: '=?permissionExcept',
         onAuthorized: '&?permissionOnAuthorized',
-        onUnauthorized: '&?permissionOnUnauthorized',
-        // Observing attribute `only` and `except` will be removed with version 2.4.0+
-        deprecatedOnly: '=only',
-        deprecatedExcept: '=except'
+        onUnauthorized: '&?permissionOnUnauthorized'
       },
       controllerAs: 'permission',
       controller: ['$scope', '$element', function ($scope, $element) {
         var permission = this;
 
-        if (angular.isDefined(permission.deprecatedOnly) || angular.isDefined(permission.deprecatedExcept)) {
-          $log.warn('Attributes "only" and "except" are deprecated since 2.2.0+ and their support ' +
-            'will be removed from 2.4.0. Use scoped "permission-only" and "permission-except" instead.');
-        }
-
         /**
          * Observing attribute `only` and `except` will be removed with version 2.4.0+
          */
-        $scope.$watchGroup(['permission.only', 'permission.except',
-            'permission.deprecatedOnly', 'permission.deprecatedExcept'],
+        $scope.$watchGroup(['permission.only', 'permission.except'],
           function () {
             try {
               var permissionMap = new PermissionMap({
-                only: permission.only || permission.deprecatedOnly,
-                except: permission.except || permission.deprecatedExcept
+                only: permission.only,
+                except: permission.except
               });
 
               Authorization
@@ -1187,8 +724,7 @@
 
   /**
    * Service responsible for handling view based authorization
-   * @name Authorization
-   * @memberOf permission
+   * @name permission.Authorization
    *
    * @param $q {Object} Angular promise implementation
    */
@@ -1199,20 +735,19 @@
 
     /**
      * Handles authorization based on provided permissions map
-     * @method
+     * @methodOf permission.Authorization
      *
      * @param permissionsMap {permission.PermissionMap} Map of permission names
      *
      * @returns {promise} $q.promise object
      */
     function authorize(permissionsMap) {
-
       return authorizePermissionMap(permissionsMap);
     }
 
     /**
      * Checks authorization for simple view based access
-     * @method
+     * @methodOf permission.Authorization
      * @private
      *
      * @param map {permission.PermissionMap} Access rights map
@@ -1229,7 +764,7 @@
 
     /**
      * Resolves flat set of "except" privileges
-     * @method
+     * @methodOf permission.Authorization
      * @private
      *
      * @param deferred {Object} Promise defer
@@ -1251,7 +786,7 @@
 
     /**
      * Resolves flat set of "only" privileges
-     * @method
+     * @methodOf permission.Authorization
      * @private
      *
      * @param deferred {Object} Promise defer
@@ -1285,114 +820,186 @@
   'use strict';
 
   /**
-   * Service responsible for handling state based authorization
-   * @name StateAuthorization
-   * @memberOf permission
+   * Access rights map factory
+   * @name permission.PermissionMapFactory
    *
    * @param $q {Object} Angular promise implementation
+   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
+   * @param RoleStore {permission.RoleStore} Role definition storage
+   * @param PermissionStore {permission.PermissionStore} Permission definition storage
+   *
+   * @return {permission.PermissionMap}
    */
-  StateAuthorization.$inject = ['$q'];
-  function StateAuthorization($q) {
-
-    this.authorize = authorize;
-
+  PermissionMapFactory.$inject = ['$q', 'TransitionProperties', 'RoleStore', 'PermissionStore'];
+  function PermissionMapFactory($q, TransitionProperties, RoleStore, PermissionStore) {
     /**
-     * Handles state authorization
-     * @method {permission.StatePermissionMap}
-     * @param statePermissionMap
+     * Constructs map object instructing authorization service how to handle authorizing
+     * @constructor permission.PermissionMap
      *
-     * @return {promise}
+     * @param [permissionMap] {Object} Map of permissions provided to authorization service
+     * @param [permissionMap.only] {String|Array|Function} List of exclusive access right names allowed for
+     *   authorization
+     * @param [permissionMap.except] {String|Array|Function} List of exclusive access right names denied for
+     *   authorization
+     * @param [permissionMap.redirectTo] {String|Function|Object|promise} Handling redirection when rejected
+     *   authorization
      */
-    function authorize(statePermissionMap) {
-      return authorizeStatePermissionMap(statePermissionMap);
+    function PermissionMap(permissionMap) {
+      // Suppress not defined object errors
+      permissionMap = permissionMap || {};
+
+      this.only = normalizeMapProperty(permissionMap.only);
+      this.except = normalizeMapProperty(permissionMap.except);
+      this.redirectTo = permissionMap.redirectTo;
     }
 
     /**
-     * Checks authorization for complex state inheritance
-     * @method
-     * @private
+     * Redirects to fallback states when permissions fail
+     * @methodOf permission.PermissionMap
      *
-     * @param map {permission.StatePermissionMap} State access rights map
+     * @param [rejectedPermissionName] {String} Permission name
      *
-     * @returns {promise} $q.promise object
+     * @return {Promise}
      */
-    function authorizeStatePermissionMap(map) {
-      var deferred = $q.defer();
-
-      resolveExceptStatePermissionMap(deferred, map);
-
-      return deferred.promise;
-    }
-
-    /**
-     * Resolves compensated set of "except" privileges
-     * @method
-     * @private
-     *
-     * @param deferred {Object} Promise defer
-     * @param map {permission.StatePermissionMap} State access rights map
-     */
-    function resolveExceptStatePermissionMap(deferred, map) {
-      var exceptPromises = resolveStatePermissionMap(map.except, map);
-
-      $q.all(exceptPromises)
-        .then(function (rejectedPermissions) {
-          deferred.reject(rejectedPermissions);
-        })
-        .catch(function () {
-          resolveOnlyStatePermissionMap(deferred, map);
-        });
-    }
-
-    /**
-     * Resolves compensated set of "only" privileges
-     * @method
-     * @private
-     *
-     * @param deferred {Object} Promise defer
-     * @param map {permission.StatePermissionMap} State access rights map
-     */
-    function resolveOnlyStatePermissionMap(deferred, map) {
-      if (!map.only.length) {
-        deferred.resolve();
-        return;
+    PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName) {
+      if (angular.isFunction(this.redirectTo)) {
+        return resolveFunctionRedirect(this.redirectTo, rejectedPermissionName);
       }
 
-      var onlyPromises = resolveStatePermissionMap(map.only, map);
-
-      $q.all(onlyPromises)
-        .then(function (resolvedPermissions) {
-          deferred.resolve(resolvedPermissions);
-        })
-        .catch(function (rejectedPermission) {
-          deferred.reject(rejectedPermission);
-        });
-    }
-
-    /**
-     * Performs iteration over list of privileges looking for matches
-     * @method
-     * @private
-     *
-     * @param privilegesNames {Array} Array of sets of access rights
-     * @param map {permission.StatePermissionMap} State access rights map
-     *
-     * @returns {Array<Promise>} Promise collection
-     */
-    function resolveStatePermissionMap(privilegesNames, map) {
-      if (!privilegesNames.length) {
-        return [$q.reject()];
+      if (angular.isObject(this.redirectTo)) {
+        return resolveObjectRedirect(this.redirectTo, rejectedPermissionName);
       }
 
-      return privilegesNames.map(function (statePrivileges) {
-        var resolvedStatePrivileges = map.resolvePropertyValidity(statePrivileges);
-        return $q.any(resolvedStatePrivileges);
+      if (angular.isString(this.redirectTo)) {
+        return $q.resolve({
+          state: this.redirectTo
+        });
+      }
+
+      // If redirectTo state is not defined stay where you are
+      return $q.reject();
+    };
+
+    /**
+     * Resolves weather permissions set for "only" or "except" property are valid
+     * @methodOf permission.PermissionMap
+     *
+     * @param property {String|Array|Function} "only" or "except" map property
+     *
+     * @return {Array<Promise>}
+     */
+    PermissionMap.prototype.resolvePropertyValidity = function (property) {
+
+      return property.map(function (privilegeName) {
+        if (RoleStore.hasRoleDefinition(privilegeName)) {
+          var role = RoleStore.getRoleDefinition(privilegeName);
+          return role.validateRole();
+        }
+
+        if (PermissionStore.hasPermissionDefinition(privilegeName)) {
+          var permission = PermissionStore.getPermissionDefinition(privilegeName);
+          return permission.validatePermission();
+        }
+
+        return $q.reject(privilegeName);
       });
+    };
+
+    /**
+     * Handles function based redirection for rejected permissions
+     * @methodOf permission.PermissionMap
+     *
+     * @throws {TypeError}
+     *
+     * @param redirectFunction {Function} Redirection function
+     * @param rejectedPermissionName {String} Rejected permission
+     *
+     * @return {Promise}
+     */
+    function resolveFunctionRedirect(redirectFunction, rejectedPermissionName) {
+      return $q
+        .when(redirectFunction.call(null, rejectedPermissionName, TransitionProperties))
+        .then(function (redirectState) {
+          if (angular.isString(redirectState)) {
+            return {
+              state: redirectState
+            };
+          }
+
+          if (angular.isObject(redirectState)) {
+            return redirectState;
+          }
+
+          return $q.reject();
+        });
     }
+
+    /**
+     * Handles object based redirection for rejected permissions
+     * @methodOf permission.PermissionMap
+     *
+     * @throws {ReferenceError}
+     *
+     * @param redirectObject {Object} Redirection function
+     * @param permission {String} Rejected permission
+     *
+     * @return {Promise}
+     */
+    function resolveObjectRedirect(redirectObject, permission) {
+      if (!angular.isDefined(redirectObject['default'])) {
+        throw new ReferenceError('When used "redirectTo" as object, property "default" must be defined');
+      }
+
+      var redirectState = redirectObject[permission];
+
+      if (!angular.isDefined(redirectState)) {
+        redirectState = redirectObject['default'];
+      }
+
+      if (angular.isFunction(redirectState)) {
+        return resolveFunctionRedirect(redirectState, permission);
+      }
+
+      if (angular.isObject(redirectState)) {
+        return $q.resolve(redirectState);
+      }
+
+      if (angular.isString(redirectState)) {
+        return $q.resolve({
+          state: redirectState
+        });
+      }
+    }
+
+    /**
+     * Handles extraction of permission map "only" and "except" properties and converts them into array objects
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param property {String|Array|Function} Permission map property "only" or "except"
+     *
+     * @returns {Array<String>} Array of permission "only" or "except" names
+     */
+    function normalizeMapProperty(property) {
+      if (angular.isString(property)) {
+        return [property];
+      }
+
+      if (angular.isArray(property)) {
+        return property;
+      }
+
+      if (angular.isFunction(property)) {
+        return property.call(null, TransitionProperties);
+      }
+
+      return [];
+    }
+
+    return PermissionMap;
   }
 
   angular
     .module('permission')
-    .service('StateAuthorization', StateAuthorization);
-
-})();
+    .factory('PermissionMap', PermissionMapFactory);
+}());

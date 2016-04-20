@@ -9,9 +9,28 @@ module.exports = function () {
       },
       sourceMap: true
     },
-    default: {
+    permission: {
+      options: {
+        banner: '<%= meta["banner"] %>'
+      },
       files: {
-        'dist/<%= pkg.name %>.min.js': ['dist/<%= pkg.name %>.js']
+        '<%= paths.dist %>/<%= pkg.name %>.min.js': ['<%= paths.dist %>/<%= pkg.name %>.js']
+      }
+    },
+    'permission-ui': {
+      options: {
+        banner: '<%= meta["banner-ui"] %>'
+      },
+      files: {
+        '<%= paths.dist %>/<%= pkg.name %>-ui.min.js': ['<%= paths.dist %>/<%= pkg.name %>-ui.js']
+      }
+    },
+    'permission-ng': {
+      options: {
+        banner: '<%= meta["banner-ng"] %>'
+      },
+      files: {
+        '<%= paths.dist %>/<%= pkg.name %>-ng.min.js': ['<%= paths.dist %>/<%= pkg.name %>-ng.js']
       }
     }
   };

@@ -5,7 +5,7 @@ module.exports = function () {
     options: {
       debug: false,
       dryRun: false,
-      coverageDir: 'coverage',
+      coverageDir: '<%= paths.coverage %>',
       force: true,
       recursive: true
     }
