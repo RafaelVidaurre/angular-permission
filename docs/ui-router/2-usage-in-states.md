@@ -6,6 +6,7 @@ Before we start make sure you are familiar with:
 :two: [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)   
 :three: [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)   
 
+Introduction
 ----------------------------
 
 Now that you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
