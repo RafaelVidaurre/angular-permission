@@ -4,10 +4,10 @@ Usage in states
 Before start
 ----------------------------
 
-Make sure you are familiar with:   
-:one: [Installation guide for ui-router](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)   
-:two: [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)   
-:three: [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)   
+:notebook_with_decorative_cover: Make sure you are familiar with:   
+- [Installation guide for ui-router](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)   
+- [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)   
+- [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)   
 
 Overview
 ----------------------------
@@ -16,7 +16,7 @@ Overview
 2. [Property only and except](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#property-only-and-except)
   1. [Single permission/role](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#single-permissionrole)
   2. [Multiple permissions/roles](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#multiple-permissionsroles) 
-  3. [Dynamic access]()
+  3. [Dynamic access](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#dynamic-access)
 3. [Property redirectTo]()
   1. [Redirection based on String]()
   2. [Redirection based on Function]()  
