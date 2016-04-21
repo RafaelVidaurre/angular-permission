@@ -12,15 +12,15 @@ Make sure you are familiar with:
 Overview
 ----------------------------
 
-1. [Introduction]()
-2. [Property only and except]()
-  1. [Single permission/role]()
-  2. [Multiple permissions/roles]() 
+1. [Introduction](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#introduction)
+2. [Property only and except](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#property-only-and-except)
+  1. [Single permission/role](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#single-permissionrole)
+  2. [Multiple permissions/roles](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#multiple-permissionsroles) 
   3. [Dynamic access]()
 3. [Property redirectTo]()
   1. [Redirection based on String]()
-  1. [Redirection based on Function]()  
-  1. [Redirection based on Object]()  
+  2. [Redirection based on Function]()  
+  3. [Redirection based on Object]()  
 4. [State access inheritance]()
 
 
@@ -31,11 +31,11 @@ Now that you are ready to start working with controlling access to the states of
 
 Permissions object accepts following properties:
 
-| Property        | Accepted value                     |
-| :-------------- | :--------------------------------- |
-| `only`          | `[String|Array|Function|Promise]`  |
-| `except`        | `[String|Array|Function|Promise]`  |
-| `redirectTo`    | `[String|Function|Object]`         |
+| Property        | Accepted value             |
+| :-------------- | :------------------------- |
+| `only`          | `[String|Array|Function]`  |
+| `except`        | `[String|Array|Function]`  |
+| `redirectTo`    | `[String|Function|Object]` |
 
 Property only and except
 ----------------------------
@@ -58,7 +58,6 @@ Property `except`:
 In simplest cases you allow users having single role permission to access the state. To achieve that you can pass as `String` desired role/permission to only/except property:
 
 ```javascript
-// We define a route via ui-router's $stateProvider
 $stateProvider
   .state('dashboard', {
     url: '...',
@@ -80,22 +79,55 @@ In given case when user is trying to access `dashboard` state `StateAuthorizatio
 Often several permissions/roles are sufficient to allow/deny user to access the state. Then array value comes in handy:  
 
 ```javascript
-// We define a route via ui-router's $stateProvider
 $stateProvider
-  .state('invoice/:id', {
+  .state('userManagement', {
     url: '...',
     data: {
       permissions: {
-        only: ['canRead','canEdit']
+        only: ['ADMIN','MODERATOR']
       }
     }
   });
 ```
 
-When `StateAuthorization` service will be called it would expect user to have either `canRead` or `canEdit` permission to pass him to `invoice/:id` state.
+When `StateAuthorization` service will be called it would expect user to have either `ADMIN` or `MODERATOR` roles to pass him to `userManagement` state.
 
 > :bulb: **Note**   
-> Between values in array operator **OR** is used to create alternative. If you need *AND* operator between permissions  define additional `Role` containing set of those.  
+> Between values in array operator **OR** is used to create alternative. If you need *AND* operator between permissions  define additional `Role` containing set of those. 
+ 
+#### Dynamic access
+
+You can find states that would require to verify access dynamically - often depending on parameters.     
+
+Let's imagine situation where user want to modify the invoice. We need to check every time if he is allowed to do that on state level. We are gonna use `TransitionProperties` object to check weather he is able to do that.
+
+```
+PermissionStore
+  .definePermission('canEdit', function(permissionName, transitionProperties){
+    // We are making here a call to the server checking if modification is allowed by user
+    return $http.get('invoices/' + transitionProperties.toParams.id + '/canModify/' + $rootScope.user.id);
+  })
+```
+
+```javascript
+$stateProvider
+  .state('invoices/:id/:isEditable', {
+    url: '...',
+    data: {
+      permissions: {
+        only: function(transitionProperties){
+          if(transitionProperties.toParams.isEditable){
+            return ['canEdit']
+          }else{
+            return ['canRead']
+          }
+        }
+      }
+    }
+  });
+```
+So whenever we try access state with param `isEditable` set to true additional check for permission `canEdit` will be made. Otherwise only `canRead` will be required.
+
 
 Property redirectTo
 ----------------------------
