@@ -1,15 +1,15 @@
 After walking through [installation guide](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md) you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
 
 Permissions object accepts following properties that accepts:
-* `only` - [String|Array\<String\>|Function|Promise]
-* `except` - [String|Array\<String\>|Function|Promise]
-* `redirectTo` - [String|Function|Object] - redirection configuration when user is not authorized to access the state
+* `only` - [`String`|`Array<String>`|`Function`|`Promise`]
+* `except` - [`String`|`Array<String>`|`Function`|`Promise`]
+* `redirectTo` - [`String`|`Function`|`Object`]
 
 Property only and except
 ----------------------------
 
 Property `only`:
-  - contains single or set of permissions and/or roles that are allowed to access the state
+  - when used as `String` or `Arrat`contains single or set of permissions and/or roles that are allowed to access the state
   - returns single or set of permissions and/or roles that are allowed to access the state
 
 Property `except`: 
@@ -62,6 +62,11 @@ $stateProvider
     }
   });
 ```
+
+Property redirectTo
+----------------------------
+
+redirection configuration when user is not authorized to access the state
 
 You can also set `redirectTo` property that will handle unmatched permission redirection:
 
