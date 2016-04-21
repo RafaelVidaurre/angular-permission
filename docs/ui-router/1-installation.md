@@ -44,7 +44,6 @@ $urlRouterProvider.otherwise( function($injector) {
 });
 ```
 
-Next to read
-----------------------------
+### Next to read
 
 :point_right: [Usage in states](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md)
