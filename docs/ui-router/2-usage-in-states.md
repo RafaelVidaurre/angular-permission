@@ -12,11 +12,11 @@ Now that you are ready to start working with controlling access to the states of
 
 Permissions object accepts following properties:
 
-| Property        | Accepted value                           |
-| --------------- |------------------------------------------|
-| `only`          | [String \| Array \| Function \| Promise] |
-| `except`        | [String \| Array \| Function \| Promise] |
-| `redirectTo`    | [String \| Function \| Object]           |
+| Property        | Accepted value                                 |
+| --------------- |------------------------------------------------|
+| `only`          | `String` \| `Array` \| `Function` \| `Promise` |
+| `except`        | `String` \| `Array` \| `Function` \| `Promise` |
+| `redirectTo`    | `String` \| `Function` \| `Object`             |
 
 Property only and except
 ----------------------------
