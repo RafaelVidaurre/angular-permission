@@ -21,14 +21,13 @@ Overview
   1. [Single rule redirection](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#single-redirection-rule)
   2. [Multiple rule redirection](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#multiple-redirection-rules)  
   3. [Dynamic redirection rules](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#dynamic-redirection-rules)  
-4. [State access inheritance]()
-5. [Transition Properties]()
+4. [State access inheritance](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#state-access-inheritance)
 
 
 Introduction
 ----------------------------
 
-Now that you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
+Now you are ready to start working with controlling access to the states of your application. In order to restrict any state angular-permission rely on ui-router's `data` property, reserving key `permissions` allowing to define authorization configuration.
 
 Permissions object accepts following properties:
 
@@ -234,5 +233,7 @@ $stateProvider
 State access inheritance
 ----------------------------
 
-Transition Properties
 ----------------------------
+
+> **Next to read**:   
+> :point_right: [Emitted events](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/3-emitted-events.md)
