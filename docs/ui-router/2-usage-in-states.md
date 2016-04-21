@@ -1,4 +1,4 @@
-Usage in states
+Usage in ui-router states
 ============================
 
 Before start
@@ -18,10 +18,11 @@ Overview
   2. [Multiple permissions/roles](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#multiple-permissionsroles) 
   3. [Dynamic access](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#dynamic-access)
 3. [Property redirectTo]()
-  1. [Redirection based on String]()
-  2. [Redirection based on Function]()  
-  3. [Redirection based on Object]()  
+  1. [Single rule redirection]()
+  2. [Multiple rule redirection]()  
+  3. [Dynamic redirection]()  
 4. [State access inheritance]()
+5. [Transition Properties]()
 
 
 Introduction
@@ -41,14 +42,16 @@ Property only and except
 ----------------------------
 
 Property `only`:
-  - when used as `String` contains single permission or role that are allowed to access the state
-  - when used as `Array` contains set of permissions and/or roles that are allowed to access the state
-  - when used as `Function` or `Promise` returns single/set of permissions and/or roles that are allowed to access the state
+  - is used to explicitly define permission or role that are allowed to access the state   
+  - when used as `String` contains single permission or role
+  - when used as `Array` contains set of permissions and/or roles
+  - when used as `Function` or `Promise` returns single/set of permissions and/or roles
 
 Property `except`: 
-  - when used as `String` contains single permission or role that are denied to access the state
-  - when used as `Array` contains set of permissions and/or roles that are denied to access the state
-  - when used as `Function` or `Promise` returns single or set of permissions and/or roles that are denied to access the state
+  - is used to explicitly define permission or role that are denied to access the state
+  - when used as `String` contains single permission or role
+  - when used as `Array` contains set of permissions and/or roles
+  - when used as `Function` or `Promise` returns single or set of permissions and/or roles
   
 > :fire: **Important**   
 > If you combine both `only` and `except` properties you have make sure that they are not excluding each other, because denied roles/permissions would not allow access the state for users event if allowed ones would pass them.   
@@ -101,14 +104,6 @@ You can find states that would require to verify access dynamically - often depe
 
 Let's imagine situation where user want to modify the invoice. We need to check every time if he is allowed to do that on state level. We are gonna use `TransitionProperties` object to check weather he is able to do that.
 
-```
-PermissionStore
-  .definePermission('canEdit', function(permissionName, transitionProperties){
-    // We are making here a call to the server checking if modification is allowed by user
-    return $http.get('invoices/' + transitionProperties.toParams.id + '/canModify/' + $rootScope.user.id);
-  })
-```
-
 ```javascript
 $stateProvider
   .state('invoices/:id/:isEditable', {
@@ -118,7 +113,7 @@ $stateProvider
         only: function(transitionProperties){
           if(transitionProperties.toParams.isEditable){
             return ['canEdit']
-          }else{
+          } else {
             return ['canRead']
           }
         }
@@ -135,7 +130,11 @@ So whenever we try access state with param `isEditable` set to true additional c
 Property redirectTo
 ----------------------------
 
-redirection configuration when user is not authorized to access the state
+Property redirectTo:
+  - instructs `StateAuthorization` service how to handle unauthorized access
+  - when used as `String` defines single redirection rule
+  - when used as `Function` defines single/multiple redirection rule(s)
+  - when used as `Objects` defines multiple redirection rules
 
 You can also set `redirectTo` property that will handle unmatched permission redirection:
 
