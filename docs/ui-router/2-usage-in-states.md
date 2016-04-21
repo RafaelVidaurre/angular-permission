@@ -1,22 +1,24 @@
 After walking through [installation guide](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md) you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
 
 Permissions object accepts following properties that accepts:
-* `only` - [`String`|`Array`|`Function`|`Promise`]
-* `except` - [`String`|`Array`|`Function`|`Promise`]
-* `redirectTo` - [`String`|`Function`|`Object`]
+* `only` [String|Array|Function|Promise]
+* `except` [String|Array|Function|Promise]
+* `redirectTo` [String|Function|Object]
 
 Property only and except
 ----------------------------
 
 Property `only`:
-  - when used as `String` or `Array` contains single or set of permissions and/or roles that are allowed to access the state
-  - when used as `Function` or `Promise` returns single or set of permissions and/or roles that are allowed to access the state
+  - when used as `String` contains single permission or role that are allowed to access the state
+  - when used as `Array` contains set of permissions and/or roles that are allowed to access the state
+  - when used as `Function` or `Promise` returns single/set of permissions and/or roles that are allowed to access the state
 
 Property `except`: 
-  - when used as `String` or `Array` contains single or set of permissions and/or roles that are denied to access the state
+  - when used as `String` contains single permission or role that are denied to access the state
+  - when used as `Array` contains set of permissions and/or roles that are denied to access the state
   - when used as `Function` or `Promise` returns single or set of permissions and/or roles that are denied to access the state
 
-For single permission/role you simply pass it's name as String to only/except property:
+For single permission/role you simply pass it's name to only/except property:
 
 ```javascript
 // We define a route via ui-router's $stateProvider
@@ -30,10 +32,13 @@ $stateProvider
     }
   });
 ```
-Then when user is trying to access the state validation function provided in PermissionStore/RoleStore is called. 
-When returns true or resolved promise, meaning that user is authorized to access the state transition proceeds to `admin` state, otherwise it is stopped.    
 
-For multiple permissions/roles available you can pass an Array:
+In given case when user is trying to access the state `StateAuthorization` service is called checking if `isAuthorized` permission is valid looking through PermissionStore and RoleStore for it's definition: 
+  - if permission definition is not found it rejects transition
+  - if permission definition is found but `validationFunction` it rejects transition
+  - if permission definition is found and `validationFunction` returns true or resolved promise, meaning that user is authorized to access the state transition proceeds to the state
+
+For multiple permissions/roles available you can pass set of names:
 
 ```javascript
 // We define a route via ui-router's $stateProvider
