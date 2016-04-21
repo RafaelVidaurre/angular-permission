@@ -14,9 +14,9 @@ Permissions object accepts following properties:
 
 | Property        | Accepted value                                 |
 | --------------- | ---------------------------------------------- |
-| `only`          | [ String \| Array \| Function \| Promise ]     |
-| `except`        | [ String \| Array \| Function \| Promise ]     |
-| `redirectTo`    | [ String \| Function \| Object ]               |
+| `only`          | `[ String | Array | Function | Promise]`       |
+| `except`        | `[ String | Array | Function | Promise]`       |
+| `redirectTo`    | `[ String | Function| Object ]`                |
 
 Property only and except
 ----------------------------
