@@ -1,7 +1,7 @@
 Usage in states
 ============================
 
-Before we start make sure you are familiar with:
+Before we start make sure you are familiar with:   
 :one: [Installation guide for ui-router](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)   
 :two: [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)   
 :three: [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)   
@@ -32,8 +32,6 @@ Property `except`:
 > :warning: **Important!**   
 > If you combine both `only` and `except` properties you have make sure that they are not excluding each other, because denied roles/permissions would not allow access the state for users event if allowed ones would pass them.   
 
-----------------------------
-
 #### Single permission/role 
 
 In simplest cases you allow users having single role permission to access the state. To achieve that you can pass as `String` desired role/permission to only/except property:
@@ -55,8 +53,6 @@ In given case when user is trying to access `dashboard` state `StateAuthorizatio
   - if permission definition is not found it stops transition
   - if permission definition is found but `validationFunction` returns false or rejected promise it stops transition
   - if permission definition is found and `validationFunction` returns true or resolved promise, meaning that user is authorized to access the state transition proceeds to the state
-
-----------------------------
 
 #### Multiple permissions/roles 
 
