@@ -21,7 +21,12 @@ Including dependencies in module
 In order to angular-permission cooperate with your router you should include two modules `permission` and `permission.ui` to your module:
 
 ```javascript
-angular.module('yourModule', [..., 'ui.router', ('ct.ui.router.extras.core',) 'permission', 'permission.ui',  ...]);
+angular.module('yourModule', [
+  ...
+  'ui.router', ('ct.ui.router.extras.core',) 
+  'permission', 'permission.ui', 
+  ...
+]);
 ```
 
 > :fire: **Important**   
