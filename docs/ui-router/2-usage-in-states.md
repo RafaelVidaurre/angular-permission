@@ -1,10 +1,28 @@
 Usage in states
 ============================
 
-Before we start make sure you are familiar with:   
+Before start
+----------------------------
+
+Make sure you are familiar with:   
 :one: [Installation guide for ui-router](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)   
 :two: [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)   
 :three: [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)   
+
+Overview
+----------------------------
+
+1. [Introduction]()
+2. [Property only and except]()
+  1. [Single permission/role]()
+  2. [Multiple permissions/roles]() 
+  3. [Dynamic access]()
+3. [Property redirectTo]()
+  1. [Redirection based on String]()
+  1. [Redirection based on Function]()  
+  1. [Redirection based on Object]()  
+4. [State access inheritance]()
+
 
 Introduction
 ----------------------------
@@ -13,11 +31,11 @@ Now that you are ready to start working with controlling access to the states of
 
 Permissions object accepts following properties:
 
-| Property        | Accepted value                      |
-| :-------------- | :---------------------------------- |
-| `only`          | `[ String|Array|Function|Promise]`  |
-| `except`        | `[ String|Array|Function|Promise]`  |
-| `redirectTo`    | `[ String|Function|Object ]`        |
+| Property        | Accepted value                     |
+| :-------------- | :--------------------------------- |
+| `only`          | `[String|Array|Function|Promise]`  |
+| `except`        | `[String|Array|Function|Promise]`  |
+| `redirectTo`    | `[String|Function|Object]`         |
 
 Property only and except
 ----------------------------
