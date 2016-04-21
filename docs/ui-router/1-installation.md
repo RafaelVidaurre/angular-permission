@@ -1,3 +1,20 @@
+Installation
+============================
+
+Before start
+----------------------------
+
+Make sure you are familiar with:
+- [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)   
+- [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)   
+
+Overview
+----------------------------
+
+1. [Including dependencies in module](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)
+2. [Known issues](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md#known-issues)
+
+
 Including dependencies in module
 ----------------------------
 
@@ -26,3 +43,7 @@ $urlRouterProvider.otherwise( function($injector) {
   $state.go('/somestate');
 });
 ```
+
+----------------------------
+
+Next to read :point_right: [Usage in states](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md)
