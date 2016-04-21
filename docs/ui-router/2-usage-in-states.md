@@ -2,18 +2,20 @@ Usage in states
 ============================
 
 Before we start make sure you are familiar with:
-- [installation guide for ui-router](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md) 
-- [managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)
-- [manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)
+- [Installation guide for ui-router](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md) 
+- [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)
+- [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)
 
 ----------------------------
 
-Now you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
+Now that you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
 
 Permissions object accepts following properties that accepts:
-* `only` [String|Array|Function|Promise]
-* `except` [String|Array|Function|Promise]
-* `redirectTo` [String|Function|Object]
+| Property        | Accepted value                  |
+| --------------- |---------------------------------|
+| `only`          | [String|Array|Function|Promise] |
+| `except`        | [String|Array|Function|Promise] |
+| `redirectTo`    | [String|Function|Object]        |
 
 Property only and except
 ----------------------------
@@ -28,7 +30,7 @@ Property `except`:
   - when used as `Array` contains set of permissions and/or roles that are denied to access the state
   - when used as `Function` or `Promise` returns single or set of permissions and/or roles that are denied to access the state
   
-**Important!** If you combine both `only` and `except` properties you should ensure that they are not excluding each other, because denied roles/permissions would not allow access the state for users event if allowed ones would pass them.   
+> **Important!** If you combine both `only` and `except` properties you should ensure that they are not excluding each other, because denied roles/permissions would not allow access the state for users event if allowed ones would pass them.   
 
 For single permission/role you can simply pass it's name to only/except property:
 
