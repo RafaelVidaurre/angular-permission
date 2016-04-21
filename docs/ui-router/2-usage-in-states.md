@@ -17,10 +17,10 @@ Overview
   1. [Single permission/role](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#single-permissionrole)
   2. [Multiple permissions/roles](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#multiple-permissionsroles) 
   3. [Dynamic access](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#dynamic-access)
-3. [Property redirectTo]()
-  1. [Single rule redirection]()
-  2. [Multiple rule redirection]()  
-  3. [Dynamic redirection]()  
+3. [Property redirectTo](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#property-redirectto)
+  1. [Single rule redirection](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#single-redirection-rule)
+  2. [Multiple rule redirection](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#multiple-redirection-rules)  
+  3. [Dynamic redirection rules](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md#dynamic-redirection-rules)  
 4. [State access inheritance]()
 5. [Transition Properties]()
 
@@ -156,7 +156,7 @@ $stateProvider
 > :bulb: **Note**   
 > When the state to which user will be redirected is not defined note that he will be intercepted be general `$urlRouterProvider.otherwise()` rule.
 
-### Multiple redirection rule
+### Multiple redirection rules
 
 In some situation you want to redirect user based on missing permission/role 
 
@@ -192,6 +192,9 @@ $stateProvider
 
 > :fire: **Important**   
 > Remember to define _default_ property that will handle fallback redirect for not defined permissions. Otherwise errors will thrown from either Permission or UI-Router library.
+
+
+### Dynamic redirection rules
 
 Property `redirectTo` can also accept function:
 
