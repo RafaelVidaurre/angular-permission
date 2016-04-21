@@ -24,8 +24,9 @@ In order to angular-permission cooperate with your router you should include two
 angular.module('yourModule', [..., 'ui.router', ('ct.ui.router.extras.core',) 'permission', 'permission.ui',  ...]);
 ```
 
-**Important!** Angular permission is using ui-router state decoration to be able to inherit permissions/roles from parent states. 
-So make sure that `permission` and `permission.ui` modules are included just after ui-router as in example above to ensure execution order form angular dependency injection mechanism.
+> :fire: **Important**   
+> Angular permission is using ui-router state decoration to be able to inherit permissions/roles from parent states. So make sure that `permission` and `permission.ui` modules are included just after ui-router as in example above to ensure execution order form angular dependency injection mechanism.
+
 
 Known issues
 ----------------------------
