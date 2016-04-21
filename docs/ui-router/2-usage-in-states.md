@@ -54,7 +54,7 @@ Property `except`:
   - when used as `Function` or `Promise` returns single or set of permissions and/or roles
   
 > :fire: **Important**   
-> If you combine both `only` and `except` properties you have make sure that they are not excluding each other, because denied roles/permissions would not allow access the state for users event if allowed ones would pass them.   
+> If you combine both `only` and `except` properties you have to make sure they are not excluding each other, because denied roles/permissions would not allow access the state for users even if allowed ones would pass them.   
 
 #### Single permission/role 
 
@@ -133,10 +133,12 @@ Property redirectTo
 Property redirectTo:
   - instructs `StateAuthorization` service how to handle unauthorized access
   - when used as `String` defines single redirection rule
-  - when used as `Function` defines single/multiple redirection rule(s)
   - when used as `Objects` defines multiple redirection rules
+  - when used as `Function` defines dynamic redirection rule(s)
 
-You can also set `redirectTo` property that will handle unmatched permission redirection:
+### Single redirection rule
+
+In case you want to redirect to some specific state when user is not authorized pass to `redirectTo` name of that state.
 
 ```javascript
 $stateProvider
@@ -150,6 +152,46 @@ $stateProvider
     }
   });
 ```
+
+> :bulb: **Note**   
+> When the state to which user will be redirected is not defined note that he will be intercepted be general `$urlRouterProvider.otherwise()` rule.
+
+### Multiple redirection rule
+
+In some situation you want to redirect user based on missing permission/role 
+
+```javascript
+$stateProvider
+  .state('agenda', {
+    data: {
+      permissions: {
+        only: ['canReadAgenda','canEditAgenda'],
+        redirectTo: {
+          canReadAgenda: function(){
+            return 'dashboard';
+          },
+          canEditAgenda: {
+            state: 'dashboard',
+            params: {
+              // custom redirection parameters
+              paramOne: 'one'
+              paramTwo: 'two'
+            },
+            options: {
+              // custom ui-router transition params
+              location: false
+              reload: true
+            }
+          },
+          default: 'login'
+        }
+      }
+    }
+  })
+```
+
+> :fire: **Important**   
+> Remember to define _default_ property that will handle fallback redirect for not defined permissions. Otherwise errors will thrown from either Permission or UI-Router library.
 
 Property `redirectTo` can also accept function:
 
@@ -186,36 +228,3 @@ $stateProvider
 **Important!** Remember to always return _route's state name or object_. Otherwise errors will thrown from either Permission or UI-Router library.
 
 or object with map of permissions/roles:
-
-```javascript
-$stateProvider
-  .state('agenda', {
-    data: {
-      permissions: {
-        only: ['manager'],
-        redirectTo: {
-          account: 'profile',
-          user: function(){
-            return 'dashboard';
-          },
-          admin: {
-            state: 'dashboard',
-            params: {
-              // custom redirection parameters
-              paramOne: 'one'
-              paramTwo: 'two'
-            },
-            options: {
-              // custom ui-router transition params
-              location: false
-              reload: true
-            }
-          },
-          default: 'auth'
-        }
-      }
-    }
-  })
-```
-
-**Important!** Remember define _default_ property that will handle fallback redirect for not defined permissions. Otherwise errors will thrown from either Permission or UI-Router library. 
