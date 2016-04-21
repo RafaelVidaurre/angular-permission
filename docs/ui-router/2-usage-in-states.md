@@ -34,6 +34,8 @@ Property `except`:
 > :warning: **Important!**   
 > If you combine both `only` and `except` properties you have make sure that they are not excluding each other, because denied roles/permissions would not allow access the state for users event if allowed ones would pass them.   
 
+----------------------------
+
 #### Single permission/role 
 
 Simply pass it's name to only/except property:
@@ -55,7 +57,7 @@ In given case when user is trying to access `adminDashboard` state `StateAuthori
   - if permission definition is not found it stops transition
   - if permission definition is found but `validationFunction` returns false or rejected promise it stops transition
   - if permission definition is found and `validationFunction` returns true or resolved promise, meaning that user is authorized to access the state transition proceeds to the state
-  
+
 ----------------------------
 
 #### Multiple permissions/roles 
