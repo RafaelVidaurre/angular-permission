@@ -1,20 +1,20 @@
 After walking through [installation guide](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md) you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
 
 Permissions object accepts following properties that accepts:
-* `only` - [`String`|`Array<String>`|`Function`|`Promise`]
-* `except` - [`String`|`Array<String>`|`Function`|`Promise`]
+* `only` - [`String`|`Array`|`Function`|`Promise`]
+* `except` - [`String`|`Array`|`Function`|`Promise`]
 * `redirectTo` - [`String`|`Function`|`Object`]
 
 Property only and except
 ----------------------------
 
 Property `only`:
-  - when used as `String` or `Arrat`contains single or set of permissions and/or roles that are allowed to access the state
-  - returns single or set of permissions and/or roles that are allowed to access the state
+  - when used as `String` or `Array` contains single or set of permissions and/or roles that are allowed to access the state
+  - when used as `Function` or `Promise` returns single or set of permissions and/or roles that are allowed to access the state
 
 Property `except`: 
-  - contains single or set of permissions and/or roles that are denied to access the state
-  - returns single or set of permissions and/or roles that are denied to access the state
+  - when used as `String` or `Array` contains single or set of permissions and/or roles that are denied to access the state
+  - when used as `Function` or `Promise` returns single or set of permissions and/or roles that are denied to access the state
 
 For single permission/role you simply pass it's name as String to only/except property:
 
