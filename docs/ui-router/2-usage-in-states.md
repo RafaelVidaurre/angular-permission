@@ -31,7 +31,7 @@ Property `except`:
   - when used as `Array` contains set of permissions and/or roles that are denied to access the state
   - when used as `Function` or `Promise` returns single or set of permissions and/or roles that are denied to access the state
   
-> :warning: **Important!**   
+> **Important!** :warning:   
 > If you combine both `only` and `except` properties you have make sure that they are not excluding each other, because denied roles/permissions would not allow access the state for users event if allowed ones would pass them.   
 
 For single permission/role you can simply pass it's name to only/except property:
