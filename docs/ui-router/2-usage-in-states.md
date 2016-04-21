@@ -158,7 +158,7 @@ $stateProvider
 
 ### Multiple redirection rules
 
-In some situation you want to redirect user based on missing permission/role 
+In some situation you want to redirect user based on missing permission/role.
 
 ```javascript
 $stateProvider
@@ -228,6 +228,11 @@ $stateProvider
   })
 ```
 
-**Important!** Remember to always return _route's state name or object_. Otherwise errors will thrown from either Permission or UI-Router library.
+> :fire: **Important**   
+> Remember to always return _route's state name or object_. Otherwise errors will thrown from either Permission or UI-Router library.
 
-or object with map of permissions/roles:
+State access inheritance
+----------------------------
+
+Transition Properties
+----------------------------
