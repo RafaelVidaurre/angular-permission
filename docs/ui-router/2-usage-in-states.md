@@ -11,6 +11,7 @@ Before we start make sure you are familiar with:
 Now that you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
 
 Permissions object accepts following properties that accepts:
+
 | Property        | Accepted value                  |
 | --------------- |---------------------------------|
 | `only`          | [String|Array|Function|Promise] |
