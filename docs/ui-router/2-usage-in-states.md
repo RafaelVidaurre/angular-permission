@@ -34,8 +34,8 @@ $stateProvider
 ```
 
 In given case when user is trying to access the state `StateAuthorization` service is called checking if `isAuthorized` permission is valid looking through PermissionStore and RoleStore for it's definition: 
-  - if permission definition is not found it rejects transition
-  - if permission definition is found but `validationFunction` it rejects transition
+  - if permission definition is not found it stops transition
+  - if permission definition is found but `validationFunction` returns false or rejected promise it stops transition
   - if permission definition is found and `validationFunction` returns true or resolved promise, meaning that user is authorized to access the state transition proceeds to the state
 
 For multiple permissions/roles available you can pass set of names:
