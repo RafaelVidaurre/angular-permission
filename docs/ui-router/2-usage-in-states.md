@@ -126,8 +126,11 @@ $stateProvider
     }
   });
 ```
+
 So whenever we try access state with param `isEditable` set to true additional check for permission `canEdit` will be made. Otherwise only `canRead` will be required.
 
+> :bulb: **Note**   
+> Notice that function require to always return array of roles/permissions in order to work properly. 
 
 Property redirectTo
 ----------------------------
