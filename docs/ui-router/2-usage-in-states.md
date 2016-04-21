@@ -6,8 +6,6 @@ Before we start make sure you are familiar with:
 - [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)
 - [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)
 
-----------------------------
-
 Now that you are ready to start working with controlling access to the states of your application. In order to restrict any states angular-permission rely on ui-router's `data` property, reserving key `permissions` for routes which requires authorization.
 
 Permissions object accepts following properties:
@@ -38,12 +36,12 @@ Property `except`:
 
 #### Single permission/role 
 
-Simply pass it's name to only/except property:
+In simplest cases you allow users having single role permission to access the state. To achieve that you can pass as `String` desired role/permission to only/except property:
 
 ```javascript
 // We define a route via ui-router's $stateProvider
 $stateProvider
-  .state('adminDashboard', {
+  .state('dashboard', {
     url: '...',
     data: {
       permissions: {
@@ -53,7 +51,7 @@ $stateProvider
   });
 ```
 
-In given case when user is trying to access `adminDashboard` state `StateAuthorization` service is called checking if `isAuthorized` permission is valid looking through PermissionStore and RoleStore for it's definition: 
+In given case when user is trying to access `dashboard` state `StateAuthorization` service is called checking if `isAuthorized` permission is valid looking through PermissionStore and RoleStore for it's definition: 
   - if permission definition is not found it stops transition
   - if permission definition is found but `validationFunction` returns false or rejected promise it stops transition
   - if permission definition is found and `validationFunction` returns true or resolved promise, meaning that user is authorized to access the state transition proceeds to the state
@@ -62,35 +60,25 @@ In given case when user is trying to access `adminDashboard` state `StateAuthori
 
 #### Multiple permissions/roles 
 
-Pass array of names:
+Often several permissions/roles are sufficient to allow/deny user to access the state. Then array value comes in handy:  
 
 ```javascript
 // We define a route via ui-router's $stateProvider
 $stateProvider
-  .state('admin', {
+  .state('invoice/:id', {
     url: '...',
     data: {
       permissions: {
-        only: ['isAuthorized','ADMIN']
+        only: ['canRead','canEdit']
       }
     }
   });
 ```
 
-You can either set an `only` or an `except` array.
+When `StateAuthorization` service will be called it would expect user to have either `canRead` or `canEdit` permission to pass him to `invoice/:id` state.
 
-```javascript
-// Let's prevent anonymous users from looking at a dashboard
-$stateProvider
-  .state('dashboard', {
-    url: '...',
-    data: {
-      permissions: {
-        except: ['anonymous']
-      }
-    }
-  });
-```
+> :bulb: **Note**   
+> Between values in array operator **OR** is used to create alternative. If you need *AND* operator between permissions  define additional `Role` containing set of those.  
 
 Property redirectTo
 ----------------------------
