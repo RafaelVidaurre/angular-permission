@@ -157,7 +157,16 @@ $stateProvider
 
 ### Multiple redirection rules
 
-In some situation you want to redirect user based on missing permission/role.
+In some situation you want to redirect user based on denied permission/role to create redirection strategies. In order to do that you have to create redirection `Object` that contain set of keys representing rejected permissions or roles and values implementing redirection rules.
+ 
+Redirection rules in redirection object accepts following values:
+
+| Value type    | Return                     | Usage                                        | 
+| :------------ | :------------------------- | : ------------------------------------------ |
+| `Function`    | `[String|Object]`          | Dynamic properties-based redirection         | 
+| `Object`      | `[Object]`                 | Redirection with custom parameters or option | 
+| `String`      | `[String]                  | Simple state transitions                     |
+
 
 ```javascript
 $stateProvider
@@ -234,7 +243,6 @@ State access inheritance
 ----------------------------
 
 ----------------------------
-<div style="pull-right">
-> **Next to read**:   
-> :point_right: [Emitted events](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/3-emitted-events.md)
-</div>
+
+ **Next to read**: :point_right: [Emitted events](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/3-emitted-events.md) |
+| --- |
