@@ -62,7 +62,7 @@ In simplest cases you allow users having single role permission to access the st
 ```javascript
 $stateProvider
   .state('dashboard', {
-    url: '...',
+    [...]
     data: {
       permissions: {
         only: 'isAuthorized'
@@ -83,7 +83,7 @@ Often several permissions/roles are sufficient to allow/deny user to access the 
 ```javascript
 $stateProvider
   .state('userManagement', {
-    url: '...',
+    [...]
     data: {
       permissions: {
         only: ['ADMIN','MODERATOR']
@@ -106,14 +106,14 @@ Let's imagine situation where user want to modify the invoice. We need to check 
 ```javascript
 $stateProvider
   .state('invoices/:id/:isEditable', {
-    url: '...',
+    [...]
     data: {
       permissions: {
         only: function(transitionProperties){
           if(transitionProperties.toParams.isEditable){
-            return ['canEdit']
+            return ['canEdit'];
           } else {
-            return ['canRead']
+            return ['canRead'];
           }
         }
       }
@@ -142,7 +142,7 @@ In case you want to redirect to some specific state when user is not authorized 
 ```javascript
 $stateProvider
   .state('dashboard', {
-    url: '...',
+    [...]
     data: {
       permissions: {
         except: ['anonymous'],
@@ -176,6 +176,7 @@ The simplest example of multiple redirection rules are redirection based on pair
 ```javascript
 $stateProvider
   .state('agenda', {
+    [...]
     data: {
       permissions: {
         only: ['canReadAgenda','canEditAgenda'],
@@ -194,6 +195,7 @@ If you need more control over redirection parameters `Object` as a value can be 
 ```javascript
 $stateProvider
   .state('agenda', {
+    [...]
     data: {
       permissions: {
         only: ['canEditAgenda'],
@@ -223,14 +225,15 @@ To present usage `redirectTo` as `Object` with values as `Function` in a state d
 ```javascript
 $stateProvider
   .state('agenda', {
+    [...]
     data: {
       permissions: {
         only: ['canReadAgenda','canEditAgenda'],
         redirectTo: {
-          canReadAgenda: function(transitionParams){
+          canReadAgenda: function(transitionProperties){
             return 'dashboard';
           },
-          canEditAgenda: function(transitionParams){
+          canEditAgenda: function(transitionProperties){
             return {
               state: 'dashboard',
               params: {
@@ -247,31 +250,25 @@ $stateProvider
 
 ### Dynamic redirection rules
 
-Property `redirectTo` can also accept function:
+Similarly to examples showing defining dynamic access to state redirection can also be defined based on any [TransitionProperties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md) allowing to heavily customize behaviour of the state redirection.
 
 ```javascript
 $stateProvider
-  .state('agenda', {
+  .state('agenda/:isEditable', {
+    [...]
     data: {
       permissions: {
-        only: ['manager'],
-        redirectTo: function(){
-          return 'auth';
-        },
-        // or alternatively return customizable redirection object
-        redirectTo: function(){
-          return {
-            state: 'dashboard',
-            params: {
-              // custom redirection parameters
-              paramOne: 'one'
-              paramTwo: 'two'
-            },
-            options: {
-             // custom ui-router transition params
-             location: false
-             reload: true
-            }
+        only: ['canReadAgenda','canEditAgenda'],
+        redirectTo: function(transitionProperties){
+          if(transitionProperties.toParams.isEditable){
+            return 'login';
+          } else {
+            return {
+              state: 'dashboard',
+              params: {
+                paramOne: 'one'
+              }
+            };
           }
         }
       }
@@ -280,7 +277,7 @@ $stateProvider
 ```
 
 > :fire: **Important**   
-> Remember to always return _route's state name or object_. Otherwise errors will thrown from either Permission or UI-Router library.
+> Remember to always return from function state name or object. Otherwise errors will thrown from either Permission or UI-Router library.
 
 State access inheritance
 ----------------------------

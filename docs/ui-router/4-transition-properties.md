@@ -1,4 +1,4 @@
-TransitionProperties ui-router
+TransitionProperties object ui-router
 ============================
 
 Before start
@@ -12,37 +12,4 @@ Make sure you are familiar with:
 
 Overview
 ----------------------------
-
-1. [$stateChangePermissionStart]()
-2. [$stateChangePermissionAccepted]()
-3. [$stateChangePermissionDenied]()
-
-
-$stateChangePermissionStart
-----------------------------
-
-Event broadcasted before start of authorizing.
-
-```javascript
-$rootScope.$on('$stateChangePermissionStart',
-function(event, toState, toParams, options) { ... });
-```
-
-$stateChangePermissionAccepted
-----------------------------
-
-Event broadcasted when one of the permissions has been accepted and the state changes successfully.
-
-```javascript
-$rootScope.$on('$stateChangePermissionAccepted', function(event, toState, toParams, options) { ... });
-```
-
-$stateChangePermissionDenied 
-----------------------------
-
-Event broadcasted when the access to the target state is not granted.
-
-```javascript
-$rootScope.$on('$stateChangePermissionDenied', function(event, toState, toParams, options) { ... });
-```
 
