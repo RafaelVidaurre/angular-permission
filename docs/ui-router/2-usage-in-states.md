@@ -95,7 +95,7 @@ $stateProvider
 When `StateAuthorization` service will be called it would expect user to have either `ADMIN` or `MODERATOR` roles to pass him to `userManagement` state.
 
 > :bulb: **Note**   
-> Between values in array operator **OR** is used to create alternative. If you need *AND* operator between permissions  define additional `Role` containing set of those. 
+> Between values in array operator **OR** is used to create alternative. If you need **AND** operator between permissions  define additional `Role` containing set of those. 
  
 #### Dynamic access
 
@@ -161,14 +161,18 @@ In some situation you want to redirect user based on denied permission/role to c
  
 Redirection rules are represented by following values:
 
-| Value type    | Return                     | Usage                                        | 
-| :------------ | :------------------------- | :------------------------------------------- |
-| `Function`    | `[String|Object]`          | Dynamic properties-based redirection         | 
-| `Object`      | `[Object]`                 | Redirection with custom parameters or option | 
-| `String`      | `[String]`                 | Simple state transitions                     |
+| Value type    | Return                     | Usage                                         | 
+| :------------ | :------------------------- | :-------------------------------------------- |
+| `Function`    | `[String|Object]`          | Dynamic properties-based redirection          | 
+| `Object`      | `[Object]`                 | Redirection with custom parameters or options | 
+| `String`      | `[String]`                 | Simple state transitions                      |
 
 
-Usage as `Function`:
+
+To present usage as `Function` in a state definition "agenda" presented below redirection rules are interpreted as:
+- when user does not have "canReadAgenda" invoked function returns string representing the state name to which unauthorized user will be redirected
+- when user does not have "canEditAgenda" invoked function returns object with custom options and params that will be passed along to transited "dashboard" state
+- as safety fallback when transition could not be completed default state "login" will be used 
 
 ```javascript
 $stateProvider
@@ -177,13 +181,9 @@ $stateProvider
       permissions: {
         only: ['canReadAgenda','canEditAgenda'],
         redirectTo: {
-          // When user does not have "canReadAgenda" invoked function returns string 
-          // representing the state name to be redirected
           canReadAgenda: function(transitionParams){
             return 'dashboard';
           },
-          // When user does not have "canEditAgenda" invoked function returns object 
-          // with custom options and params that will be passed along to transited "dashboard" state
           canEditAgenda: function(transitionParams){
             return {
               state: 'dashboard',

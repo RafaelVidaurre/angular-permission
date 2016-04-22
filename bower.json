@@ -11,6 +11,7 @@
     "angular",
     "ui-router",
     "ng-route",
+    "angular-route",
     "access-control",
     "permissions",
     "access",
