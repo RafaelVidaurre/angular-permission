@@ -157,16 +157,18 @@ $stateProvider
 
 ### Multiple redirection rules
 
-In some situation you want to redirect user based on denied permission/role to create redirection strategies. In order to do that you have to create redirection `Object` that contain set of keys representing rejected permissions or roles and values implementing redirection rules.
+In some situation you want to redirect user based on denied permission/role to create redirection strategies. In order to do that you have to create redirection `Object` that contain keys representing rejected permissions or roles and values implementing redirection rules.
  
-Redirection rules in redirection object accepts following values:
+Redirection rules are represented by following values:
 
 | Value type    | Return                     | Usage                                        | 
 | :------------ | :------------------------- | :------------------------------------------- |
 | `Function`    | `[String|Object]`          | Dynamic properties-based redirection         | 
 | `Object`      | `[Object]`                 | Redirection with custom parameters or option | 
-| `String`      | `[String]                  | Simple state transitions                     |
+| `String`      | `[String]`                 | Simple state transitions                     |
 
+
+Usage as `Function`:
 
 ```javascript
 $stateProvider
@@ -175,18 +177,49 @@ $stateProvider
       permissions: {
         only: ['canReadAgenda','canEditAgenda'],
         redirectTo: {
-          canReadAgenda: function(){
+          // When user does not have "canReadAgenda" invoked function returns string 
+          // representing the state name to be redirected
+          canReadAgenda: function(transitionParams){
             return 'dashboard';
           },
+          // When user does not have "canEditAgenda" invoked function returns object 
+          // with custom options and params that will be passed along to transited "dashboard" state
+          canEditAgenda: function(transitionParams){
+            return {
+              state: 'dashboard',
+              params: {
+                paramOne: 'one'
+                paramTwo: 'two'
+              },
+              options: {
+                location: false
+                reload: true
+              }
+            };
+          },
+          default: 'login'
+        }
+      }
+    }
+  })
+```
+
+Usage as `Object`:
+
+```javascript
+$stateProvider
+  .state('agenda', {
+    data: {
+      permissions: {
+        only: ['canEditAgenda'],
+        redirectTo: 
           canEditAgenda: {
             state: 'dashboard',
             params: {
-              // custom redirection parameters
               paramOne: 'one'
               paramTwo: 'two'
             },
             options: {
-              // custom ui-router transition params
               location: false
               reload: true
             }
