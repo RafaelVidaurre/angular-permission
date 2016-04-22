@@ -163,16 +163,15 @@ Redirection rules are represented by following values:
 
 | Value type    | Return                     | Usage                                         | 
 | :------------ | :------------------------- | :-------------------------------------------- |
-| `Function`    | `[String|Object]`          | Dynamic properties-based redirection          | 
-| `Object`      | `[Object]`                 | Redirection with custom parameters or options | 
 | `String`      | `[String]`                 | Simple state transitions                      |
+| `Object`      | `[Object]`                 | Redirection with custom parameters or options | 
+| `Function`    | `[String|Object]`          | Dynamic properties-based redirection          | 
 
 
+> :fire: **Important**   
+> Remember to define _default_ property that will handle fallback redirect for not defined permissions. Otherwise errors will thrown from either Permission or UI-Router library.
 
-To present usage as `Function` in a state definition "agenda" presented below redirection rules are interpreted as:
-- when user does not have "canReadAgenda" invoked function returns string representing the state name to which unauthorized user will be redirected
-- when user does not have "canEditAgenda" invoked function returns object with custom options and params that will be passed along to transited "dashboard" state
-- as safety fallback when transition could not be completed default state "login" will be used 
+The simplest example of multiple redirection rules are redirection based on pairs role/permission and state. When user is not granted to access the state will be redirected to `agendaList` if missing `canReadAgenda` permission or to `dashboard` when missing `canEditAgenda`. Property `default` is reserved for cases when you want handle specific cases leaving default redirection. 
 
 ```javascript
 $stateProvider
@@ -180,31 +179,17 @@ $stateProvider
     data: {
       permissions: {
         only: ['canReadAgenda','canEditAgenda'],
-        redirectTo: {
-          canReadAgenda: function(transitionParams){
-            return 'dashboard';
-          },
-          canEditAgenda: function(transitionParams){
-            return {
-              state: 'dashboard',
-              params: {
-                paramOne: 'one'
-                paramTwo: 'two'
-              },
-              options: {
-                location: false
-                reload: true
-              }
-            };
-          },
-          default: 'login'
+         redirectTo: {
+           canReadAgenda: 'agendaList',
+           canEditAgenda: 'dashboard',
+           default: 'login'
         }
       }
     }
   })
 ```
 
-Usage as `Object`:
+If you need more control over redirection parameters `Object` as a value can be used to customise target state `params` and transition `options`.
 
 ```javascript
 $stateProvider
@@ -230,10 +215,35 @@ $stateProvider
     }
   })
 ```
+  
+To present usage `redirectTo` as `Object` with values as `Function` in a state definition `agenda` presented below redirection rules are interpreted as:
+- when user does not have `canReadAgenda` invoked function returns string representing the state name to which unauthorized user will be redirected
+- when user does not have `canEditAgenda` invoked function returns object with custom options and params that will be passed along to transited `dashboard` state
 
-> :fire: **Important**   
-> Remember to define _default_ property that will handle fallback redirect for not defined permissions. Otherwise errors will thrown from either Permission or UI-Router library.
-
+```javascript
+$stateProvider
+  .state('agenda', {
+    data: {
+      permissions: {
+        only: ['canReadAgenda','canEditAgenda'],
+        redirectTo: {
+          canReadAgenda: function(transitionParams){
+            return 'dashboard';
+          },
+          canEditAgenda: function(transitionParams){
+            return {
+              state: 'dashboard',
+              params: {
+                paramOne: 'one'
+              }
+            };
+          },
+          default: 'login'
+        }
+      }
+    }
+  })
+```
 
 ### Dynamic redirection rules
 

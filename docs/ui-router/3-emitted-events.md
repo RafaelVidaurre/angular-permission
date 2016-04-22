@@ -10,10 +10,17 @@ Make sure you are familiar with:
 - [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)   
 - [Manging routes](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)   
 
+Overview
+----------------------------
+
+1. [$stateChangePermissionStart]()
+2. [$stateChangePermissionAccepted]()
+3. [$stateChangePermissionDenied]()
+
 $stateChangePermissionStart
 ----------------------------
 
-Broadcasted before start of authorizing.
+Event broadcasted before start of authorizing.
 
 ```javascript
 $rootScope.$on('$stateChangePermissionStart',
@@ -23,7 +30,7 @@ function(event, toState, toParams, options) { ... });
 $stateChangePermissionAccepted
 ----------------------------
 
-Broadcasted when one of the permissions has been accepted and the state changes successfully.
+Event broadcasted when one of the permissions has been accepted and the state changes successfully.
 
 ```javascript
 $rootScope.$on('$stateChangePermissionAccepted', function(event, toState, toParams, options) { ... });
@@ -32,7 +39,7 @@ $rootScope.$on('$stateChangePermissionAccepted', function(event, toState, toPara
 $stateChangePermissionDenied 
 ----------------------------
 
-Broadcasted when the access to the target state is not granted.
+Event broadcasted when the access to the target state is not granted.
 
 ```javascript
 $rootScope.$on('$stateChangePermissionDenied', function(event, toState, toParams, options) { ... });
