@@ -162,7 +162,7 @@ In some situation you want to redirect user based on denied permission/role to c
 Redirection rules in redirection object accepts following values:
 
 | Value type    | Return                     | Usage                                        | 
-| :------------ | :------------------------- | : ------------------------------------------ |
+| :------------ | :------------------------- | :------------------------------------------- |
 | `Function`    | `[String|Object]`          | Dynamic properties-based redirection         | 
 | `Object`      | `[Object]`                 | Redirection with custom parameters or option | 
 | `String`      | `[String]                  | Simple state transitions                     |
