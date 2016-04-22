@@ -1,4 +1,4 @@
-Usage in ui-router states
+Emitted events in ui-router
 ============================
 
 Before start
@@ -13,9 +13,9 @@ Make sure you are familiar with:
 Overview
 ----------------------------
 
-1. [$stateChangePermissionStart]()
-2. [$stateChangePermissionAccepted]()
-3. [$stateChangePermissionDenied]()
+1. [Event $stateChangePermissionStart](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md#statechangepermissionstart)
+2. [Event $stateChangePermissionAccepted](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md#statechangepermissionaccepted)
+3. [Event $stateChangePermissionDenied](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md#statechangepermissiondenied-)
 
 $stateChangePermissionStart
 ----------------------------

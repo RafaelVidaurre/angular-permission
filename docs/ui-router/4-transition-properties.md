@@ -46,7 +46,3 @@ Event broadcasted when the access to the target state is not granted.
 $rootScope.$on('$stateChangePermissionDenied', function(event, toState, toParams, options) { ... });
 ```
 
-----------------------------
-
-| **Next to read**: :point_right: [Transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md) |
-| --- |
