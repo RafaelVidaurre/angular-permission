@@ -36,23 +36,21 @@ npm
 npm install angular-permission --save
 ```
 
-Managing roles and permissions
+Documentation and examples
 ============================
 1. [Manging permissions]()
 2. [Manging roles]()
 3. [Controlling access in views]()
-
-Usage in routes or states
-============================
-- ui-router 
+4. ui-router 
   1. [Installation]()
   2. [Usage in states]()
   3. [Emitted events]()
-
-- ng-route
+  4. [Transition Properties]()
+5. ng-route
   1. [Installation]()
-  2. [Usage in states]()
+  2. [Usage in routes]()
   3. [Emitted events]()
+  4. [Transition Properties]()
 
 Authors
 ============================
