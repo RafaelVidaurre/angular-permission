@@ -9,17 +9,15 @@ Permission
 ![Travis](https://img.shields.io/travis/Narzerus/angular-permission.svg?style=flat-square)
 ![Coveralls](https://img.shields.io/coveralls/Narzerus/angular-permission.svg?style=flat-square)
 
-Dependencies
-----------------------------
-- [angular 1.4.8+](https://github.com/angular/angular) as MV* framework
-- [ui-router](https://github.com/angular-ui/ui-router) or [ng-router](https://docs.angularjs.org/api/ngRoute) as your router module
-
-Permission is the gatekeeper for your application
-----------------------------
 Permission helps you gain control of your routes, by using simple concepts for you to decide who can access them.
 We've seen plenty of big fat tutorials on access control implementation, and they can be quite overwhelming or inconsistent. 
 So we bring you a elastic, powerful and yet straightforward solution, that allow you provide fine-grained 
 role and permission based access control for your application users.
+
+Dependencies
+----------------------------
+- [angular 1.4.8+](https://github.com/angular/angular) as MV* framework
+- [ui-router](https://github.com/angular-ui/ui-router) or [ng-router](https://docs.angularjs.org/api/ngRoute) as your router module
 
 Installation
 ----------------------------
