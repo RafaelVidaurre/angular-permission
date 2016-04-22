@@ -24,13 +24,13 @@ role and permission based access control for your application users.
 Installation
 ----------------------------
 
-### bower
+### <img src="https://versioneye.files.wordpress.com/2014/01/bower-logo.png" width="48" height="48"> bower
 
 ```
 bower install angular-permission --save
 ```
 
-### npm
+### <img src="http://jbeckwith.com/images/2012/09/node_128.png" width="48" height="48"> npm
 
 ```
 npm install angular-permission --save
