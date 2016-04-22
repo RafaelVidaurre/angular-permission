@@ -54,5 +54,5 @@ Documentation and examples
 
 Authors
 ----------------------------
-- Rafael Vidaurre (@narzerus) - I'm a full-stack developer currenly working as CTO and Co-Founder at [Finciero](http://www.finciero.com)
-- Blazej Krysiak (@masterspambot) - I am a fast-minded, creative web developer seeking the knowledge in innovative web technologies and cloud-based solutions.
+- [Rafael Vidaurre](https://twitter.com/narzerus) - I'm a full-stack developer currenly working as CTO and Co-Founder at [Finciero](http://www.finciero.com)
+- [Blazej Krysiak] (https://twitter.com/masterspambot) - I am a fast-minded, creative web developer seeking knowledge in innovative web technologies and cloud-based solutions.
