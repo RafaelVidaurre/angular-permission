@@ -40,10 +40,10 @@ Documentation and examples
 2. [Manging roles]()
 3. [Controlling access in views]()
 4. ui-router 
-  1. [Installation]()
-  2. [Usage in states]()
-  3. [Emitted events]()
-  4. [Transition Properties]()
+  1. [Installation](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)
+  2. [Usage in states](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md)
+  3. [Emitted events](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/3-emitted-events.md)
+  4. [Transition Properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md)
 5. ng-route
   1. [Installation]()
   2. [Usage in routes]()
