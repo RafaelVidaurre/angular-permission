@@ -40,5 +40,5 @@ $rootScope.$on('$stateChangePermissionDenied', function(event, toState, toParams
 
 ----------------------------
 
-> **Next to read**:   
-> :point_right: [Transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md)
+| **Next to read**: :point_right: [Transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md) |
+| --- |
