@@ -234,6 +234,7 @@ State access inheritance
 ----------------------------
 
 ----------------------------
-
+<div style="pull-right">
 > **Next to read**:   
 > :point_right: [Emitted events](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/3-emitted-events.md)
+</div>
