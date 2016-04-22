@@ -14,7 +14,7 @@ Dependencies
 - [angular 1.4.8+](https://github.com/angular/angular) as MV* framework
 - [ui-router](https://github.com/angular-ui/ui-router) or [ng-router](https://docs.angularjs.org/api/ngRoute) as your router module
 
-Permission is the gatekeeper for your routes
+Permission is the gatekeeper for your application
 ----------------------------
 Permission helps you gain control of your routes, by using simple concepts for you to decide who can access them.
 We've seen plenty of big fat tutorials on access control implementation, and they can be quite overwhelming or inconsistent. 
@@ -22,22 +22,22 @@ So we bring you a elastic, powerful and yet straightforward solution, that allow
 role and permission based access control for your application users.
 
 Installation
-============================
-
-bower
 ----------------------------
+
+### bower
+
 ```
 bower install angular-permission --save
 ```
 
-npm
-----------------------------
+### npm
+
 ```
 npm install angular-permission --save
 ```
 
 Documentation and examples
-============================
+----------------------------
 1. [Manging permissions]()
 2. [Manging roles]()
 3. [Controlling access in views]()
@@ -53,6 +53,6 @@ Documentation and examples
   4. [Transition Properties]()
 
 Authors
-============================
+----------------------------
 - Rafael Vidaurre (@narzerus) - I'm a full-stack developer currenly working as CTO and Co-Founder at [Finciero](http://www.finciero.com)
 - Blazej Krysiak (@masterspambot) - I am a fast-minded, creative web developer seeking the knowledge in innovative web technologies and cloud-based solutions.
