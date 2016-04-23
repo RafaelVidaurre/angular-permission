@@ -23,6 +23,7 @@ Roles are basically named set of abilities that user can have
 
 Defining roles
 ----------------------------
+
 Similarly to permissions Permission exposes `RoleStore` that allows to define custom roles used by users in your application. 
 They can relate to already existing permissions, so 'Accountant' can be set of 'User' and 'InvoiceEditor' or alternatively custom server/browser validated privilege.    
 
@@ -65,3 +66,8 @@ To get all user roles use method `getStore`:
 ```javascript
 var roles = RoleStore.getStore();
 ```
+
+----------------------------
+
+| **Next to read**: :point_right: [Manging roles](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md) |
+| --- |

@@ -1,3 +1,10 @@
+Controlling access in views
+============================
+
+Make sure you are familiar with:
+- [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)
+- [Manging roles](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)   
+
 Permission module exposes directive `permission` that can show/hide elements of your application based on set of permissions.
 
 Directives accepts either single permission that has to be met in order to display it's content:
@@ -36,3 +43,9 @@ And in app module:
     })
  })
 ```
+
+----------------------------
+
+| **Next to read**: :point_right: [Installation guide for ui-router](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md) |
+| **Next to read**: :point_right: [Installation guide for ng-route](https://github.com/Narzerus/angular-permission/blob/development/docs/ng-route/1-installation.md) |
+| --- |
