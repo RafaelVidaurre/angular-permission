@@ -1,4 +1,27 @@
-Setting 
+Manging roles
+============================
+
+Overview
+----------------------------
+
+1. [Introduction]()
+2. [Defining roles]()
+  1. [Individual roles]()
+  2. [Multiple roles]()
+3. [Removing roles]()
+4. [Getting all role definitions]()
+
+Before start
+----------------------------
+
+Make sure you are familiar with:
+- [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)   
+
+Introduction
+----------------------------
+Roles are basically named set of abilities that user can have   
+
+Defining roles
 ----------------------------
 Similarly to permissions Permission exposes `RoleStore` that allows to define custom roles used by users in your application. 
 They can relate to already existing permissions, so 'Accountant' can be set of 'User' and 'InvoiceEditor' or alternatively custom server/browser validated privilege.    
@@ -21,9 +44,9 @@ angular
   });
 ```
 
-Removing
+Removing roles
 ----------------------------
-To remove _all_ roles after user logged out or switched profile use:  
+To remove **all** roles use `clearStore` method:  
 
 ```javascript
 RoleStore.clearStore();
@@ -32,7 +55,7 @@ RoleStore.clearStore();
 Alternatively you can use `removeRoleDefinition` to delete defined role manually:
 
 ```javascript
-RoleStore.removeRoleDefinition('user');
+RoleStore.removeRoleDefinition('USER');
 ```
 
 Retrieving all roles definitions

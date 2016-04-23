@@ -14,7 +14,6 @@ Overview
 1. [Including dependencies in module](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)
 2. [Known issues](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md#known-issues)
 
-
 Including dependencies in module
 ----------------------------
 
