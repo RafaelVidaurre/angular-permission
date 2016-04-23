@@ -4,17 +4,23 @@ Manging permissions
 Overview
 ----------------------------
 
+1. Introduction
+2. Defining permissions
+3. Removing permissions
+
 Introduction
 ----------------------------
-So, how do you tell Permission what does 'anonymous', 'admin' or 'foo' mean and how to know if the current user belongs
-to those definitions?
 
-Well, Permission allows you to set different 'permissions' definitions along with the logic that determines if the current
-session belongs to them. To do that library exposes special container `PermissionStore` that allows you to manipulate them freely.
+Let's start with little explanation **what** permission is. Permission is the most atomic **ability** that user can have in you application. So you can think about permission as a smallest action that user can do inside your site. 
 
+But do `user` or `anonymous` can be a permission? Technically yes, but from business point of view you should treat them as Roles that are more complex objects that can store more complex logic. 
+
+> :bulb: **Note**   
+> It's a good convention to start permission with a verb and combine them with resource or object, so permissions like `readDocuments` or `listSongs` are meaningful and easy to understand for other programmes. Notice that they are named lowerCamelCase for easy differentiation form roles.
+ 
 Setting 
 ----------------------------
-So, how do you tell Permission what does 'anonymous', 'admin' or 'foo' mean and how to know if the current user belongs
+So, how do you tell Permission what does 'readDocuments' or 'listSongs' or mean and how to know if the current user belongs
 to those definitions?
 
 Well, Permission allows you to set different 'permissions' definitions along with the logic that determines if the current
