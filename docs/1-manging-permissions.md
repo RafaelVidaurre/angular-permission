@@ -37,7 +37,9 @@ session belongs to them. To do that library exposes special container `Permissio
 To define permissions individually `PermissionStore` exposes method `definePermission` that generic usage is shown below: 
 
 ```javascript
-  [...]
+[...]
+
+PermissionStore
   .definePermission('permissionName', function (permissionName, transitionProperties) {
         [...]
       });
