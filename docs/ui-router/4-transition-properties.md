@@ -19,8 +19,8 @@ TransitionProperties object is angular `Value` structure that if used with ui-ro
 | :------------ | :----------------------------- |
 | `toState`     | Target state definition object |
 | `toParams`    | Target state parameters object |
-| `formState`   | Target state definition object |
-| `fromParams`  | Target state parameters object | 
+| `formState`   | Source state definition object |
+| `fromParams`  | Source state parameters object | 
 | `options`     | Transition options             | 
 
 
