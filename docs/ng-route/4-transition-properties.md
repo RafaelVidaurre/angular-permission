@@ -1,4 +1,4 @@
-TransitionProperties object in ui-router
+TransitionProperties object in angular-route
 ============================
 
 Before start
