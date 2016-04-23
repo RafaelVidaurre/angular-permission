@@ -120,7 +120,7 @@ PermissionStore.defineManyPermissions(permissions, function (permissionName) {
 Removing permissions
 ----------------------------
 
-You can easily **all** permissions form the `PermissionStore` after user logged out or switched profile by calling:  
+You can easily **all** permissions form the `PermissionStore` (e.g. after user logged out or switched profile) by calling:  
 
 ```javascript
 PermissionStore.clearStore();

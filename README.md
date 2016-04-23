@@ -18,7 +18,7 @@ role and permission based access control for your application users.
 <img src="https://cdn.shopify.com/s/files/1/1004/3128/files/List.png?16980895906285348897" width="48" height="48">&nbsp;Dependencies
 ----------------------------
 - [angular 1.4.8+](https://github.com/angular/angular) as MV* framework
-- [ui-router](https://github.com/angular-ui/ui-router) or [ng-router](https://docs.angularjs.org/api/ngRoute) as your router module
+- [ui-router](https://github.com/angular-ui/ui-router) or [ng-route](https://docs.angularjs.org/api/ngRoute) as your router module
 
 <img src="http://www.hostingreviewslist.com/wp-content/uploads/2013/04/code-icon-script.png" width="48" height="48">&nbsp;Installation
 ----------------------------
@@ -37,19 +37,19 @@ npm install angular-permission --save
 
 <img src="https://res.cloudinary.com/hashnode/image/upload/v1451902371/static_imgs/story-stats-icon.png" width="48" height="48">&nbsp;Documentation and examples
 ----------------------------
-1. [manging permissions]()
-2. [manging roles]()
-3. [controlling access in views]()
-4. ui-router 
-  1. [installation](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)
-  2. [usage in states](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md)
-  3. [emitted events](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/3-emitted-events.md)
-  4. [transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md)
-5. ng-route
-  1. [installation]()
-  2. [usage in routes]()
-  3. [emitted events]()
-  4. [transition properties]()
+1. [Manging permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)
+2. [Manging roles](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)
+3. [Controlling access in views](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md)
+4. Usage with ui-router 
+  1. [Installation](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)
+  2. [Usage in states](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/2-usage-in-states.md)
+  3. [Emitted events](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/3-emitted-events.md)
+  4. [Transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md)
+5. Usage with ng-route
+  1. [Installation]()
+  2. [Usage in routes]()
+  3. [Emitted events]()
+  4. [Transition properties]()
 
 <img src="https://s-media-cache-ak0.pinimg.com/236x/57/43/47/574347ddf6be999e0027de121104f2ff.jpg" width="48" height="48">&nbsp;Authors
 ----------------------------
