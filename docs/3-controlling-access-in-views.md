@@ -47,5 +47,7 @@ And in app module:
 ----------------------------
 
 | **Next to read**: :point_right: [Installation guide for ui-router](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md) |
+| --- |
+
 | **Next to read**: :point_right: [Installation guide for ng-route](https://github.com/Narzerus/angular-permission/blob/development/docs/ng-route/1-installation.md) |
 | --- |
