@@ -321,7 +321,9 @@ $stateProvider
   })
 ```
 
-When user will try to edit one of agendas `StateAuthorization` service will check for required permissions building expression that concatenates parent permissions with `AND` operator. So service try resolve the following statement: [`canReadAgenda` *OR* `MODERATOR`] *AND* [`canEditAgenda`] and if it's true will pass the user to the `agendas.edit` state.       
+When user will try to edit one of agendas `StateAuthorization` service will check for required permissions building expression that concatenates parent permissions with `AND` operator. So service try resolve the following statement:   
+[`canReadAgenda` **OR** `MODERATOR`] **AND** [`canEditAgenda`]   
+and if it's true will pass the user to the `agendas.edit` state.       
 
 ----------------------------
 
