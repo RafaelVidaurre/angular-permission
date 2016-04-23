@@ -34,8 +34,8 @@ Similarly to permissions we are gonna use here `RoleStore` that exposes `defineR
 [...]
 
 RoleStore
-  .defineRole('roleName', ['permissionNameA', 'permissionNameB', 'permissionNameC', ...])
-  .defineRole('roleName', function (roleName, transitionProperties) {
+  .defineRole('ROLE_NAME', ['permissionNameA', 'permissionNameB', 'permissionNameC', ...])
+  .defineRole('ROLE_NAME', function (roleName, transitionProperties) {
         [...]
       });
   });
