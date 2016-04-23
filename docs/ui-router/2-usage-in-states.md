@@ -101,7 +101,7 @@ When `StateAuthorization` service will be called it would expect user to have ei
 
 You can find states that would require to verify access dynamically - often depending on parameters.     
 
-Let's imagine situation where user want to modify the invoice. We need to check every time if he is allowed to do that on state level. We are gonna use `TransitionProperties` object to check weather he is able to do that.
+Let's imagine situation where user want to modify the invoice. We need to check every time if he is allowed to do that on state level. We are gonna use [TransitionProperties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md) object to check weather he is able to do that.
 
 ```javascript
 $stateProvider
@@ -252,6 +252,9 @@ $stateProvider
 
 Similarly to examples showing defining dynamic access to state redirection can also be defined based on any [TransitionProperties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md) allowing to heavily customize behaviour of the state redirection.
 
+> :bulb: **Note**   
+> Remember to always return from function state name or object. Otherwise errors will thrown from either Permission or ui-router library.
+
 ```javascript
 $stateProvider
   .state('agenda/:isEditable', {
@@ -276,11 +279,49 @@ $stateProvider
   })
 ```
 
-> :fire: **Important**   
-> Remember to always return from function state name or object. Otherwise errors will thrown from either Permission or UI-Router library.
+You may notice that when using functions inside state definition objects your module get quite big and nasty. But the sky is the limit! Use angular `Constant` pattern to extract calling to those methods and clean up your code. 
+
+```javascript
+$stateProvider
+  .state('agenda/:isEditable', {
+    [...]
+    data: {
+      permissions: {
+        only: ['canReadAgenda','canEditAgenda'],
+        redirectTo: AuthorizationMethods.redirectionAgenda
+      }
+    }
+  })
+```
 
 State access inheritance
 ----------------------------
+
+Thanks to tree structure of ui-router states inside router all states permissions are inherited down the state tree. So there is no need to repeat yourself including the same permissions/roles in child states. They will be included in state authorization processes. Let's see how it works:
+
+```javascript
+$stateProvider
+  .state('agendas', {
+    url: '/agendas',
+    [...]
+    data: {
+      permissions: {
+        only: ['canReadAgenda', 'MODERATOR']
+      }
+    }
+  })
+  .state('agendas.edit', {
+    url: '/agendas/edit/:id',
+    [...]
+    data: {
+      permissions: {
+        only: ['canEditAgenda']
+      }
+    }
+  })
+```
+
+When user will try to edit one of agendas `StateAuthorization` service will check for required permissions building expression that concatenates parent permissions with `AND` operator. So service try resolve the following statement: [`canReadAgenda` *OR* `MODERATOR`] *AND* [`canEditAgenda`] and if it's true will pass the user to the `agendas.edit` state.       
 
 ----------------------------
 
