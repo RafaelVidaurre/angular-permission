@@ -62,13 +62,14 @@ Validation function accepts two parameters that can be used to implement more co
         [...]
       });
   });
-
 ```
 
 | Parameter              | Description                                                               | 
 | :--------------------- | :------------------------------------------------------------------------ |
 | `permissionName`       | String representing name of checked permission                            |
 | `transitionProperties` | TransitionProperties object storing properties of transited states/routes |
+
+
 
 ```javascript
 // Let's imagine we have a User service which has information about the current user in the session
