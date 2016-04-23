@@ -4,12 +4,12 @@ Manging permissions
 Overview
 ----------------------------
 
-1. Introduction
-2. Defining permissions
-  1. Individual permissions
-  2. Multiple permissions
-3. Removing permissions
-4. Getting all permission definitions
+1. [Introduction](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md#introduction)
+2. [Defining permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md#defining-permissions)
+  1. [Individual permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md#individual-permissions)
+  2. [Multiple permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md#multiple-permissions)
+3. [Removing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md#removing-permissions)
+4. [Getting all permission definitions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md#getting-all-permission-definitions)
 
 Introduction
 ----------------------------
@@ -143,5 +143,5 @@ var permissions = PermissionStore.getStore();
 
 ----------------------------
 
-| **Next to read**: :point_right: [Transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md) |
+| **Next to read**: :point_right: [Manging roles](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md) |
 | --- |
