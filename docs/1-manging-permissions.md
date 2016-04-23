@@ -7,24 +7,68 @@ Overview
 1. Introduction
 2. Defining permissions
 3. Removing permissions
+4. Retrieving all permission definitions
 
 Introduction
 ----------------------------
 
-Let's start with little explanation **what** permission is. Permission is the most atomic **ability** that user can have in you application. So you can think about permission as a smallest action that user can do inside your site. 
+Let's start with little explanation **what** permission is. Permission is the most atomic **ability** that user can have 
+in you application. So you can think about permission as a smallest action that user can do inside your site. 
 
-But do `user` or `anonymous` can be a permission? Technically yes, but from business point of view you should treat them as Roles that are more complex objects that can store more complex logic. 
+But do `user` or `anonymous` can be a permission? Technically yes, but from business point of view you should treat them 
+as Roles that are more complex objects that can store more complex logic. 
 
 > :bulb: **Note**   
-> It's a good convention to start permission with a verb and combine them with resource or object, so permissions like `readDocuments` or `listSongs` are meaningful and easy to understand for other programmes. Notice that they are named lowerCamelCase for easy differentiation form roles.
+> It's a good convention to start permission with a verb and combine them with resource or object, so permissions like `readDocuments` or `listSongs` 
+are meaningful and easy to understand for other programmes. Notice that they are named lowerCamelCase for easy differentiation form roles.
  
-Setting 
+Defining permissions
 ----------------------------
 So, how do you tell Permission what does 'readDocuments' or 'listSongs' or mean and how to know if the current user belongs
 to those definitions?
 
-Well, Permission allows you to set different 'permissions' definitions along with the logic that determines if the current
+Well, Permission allows you to set different 'permissions' definitions along with the logic that determines if the current 
 session belongs to them. To do that library exposes special container `PermissionStore` that allows you to manipulate them freely.
+
+### Permissions defined in a browser
+
+Let's consider the most simple example for defining permission locally. We want user to have `seeDashboard` permission that 
+not corresponds to any server-related permissions. We can simply define it inside our `app` module in run section. 
+
+> :bulb: **Note**   
+> You can not define permissions on `config` stage of modules.
+  
+```javascript
+angular
+  .module('app', ['permission'])
+  .run(function (PermissionStore) {
+    PermissionStore
+      .definePermission('seeDashboard', function () {
+        return true;
+      });
+  });
+```
+
+Validation function have to return either `true` - Boolean - or `$q.resolve()` - resolved Promise - object in order to treat
+ permission as valid, whereas `false` - Boolean - or `$q.reject()` - rejected Promise - is treated as non-valid permission. 
+ In the example above permission `seeDashboard` is always valid as it always returns true. So as long it's not removed 
+ from the `PermissionStore` will always allow user to pass authorization.   
+
+Validation function accepts two parameters that can be used to implement more complex validation logic.
+
+```javascript
+  [...]
+  .definePermission('permissionName', function (permissionName, transitionProperties) {
+        [...]
+      });
+  });
+
+```
+
+| Parameter              | Description                                                               | 
+| :--------------------- | :------------------------------------------------------------------------ |
+| `permissionName`       | String representing name of checked permission                            |
+| `transitionProperties` | TransitionProperties object storing properties of transited states/routes |
 
 ```javascript
 // Let's imagine we have a User service which has information about the current user in the session
@@ -107,7 +151,7 @@ PermissionStore.defineManyPermissions(arrayOfPermissionNames, function (statePar
 });
 ```
 
-Removing
+Removing permissions
 ----------------------------
 You can easily remove _all_ permissions after user logged out or switched profile:  
 
