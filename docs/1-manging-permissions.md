@@ -59,7 +59,6 @@ It also have to return one of values to properly represent results:
 | Valid                  | [`true`|`$q.resolve()`]    |
 | Invalid                | [``false`|`$q.reject()`]   |
 
-
 > :bulb: **Note**   
 > You can not define permissions on `config` stage of modules.
 
@@ -96,30 +95,32 @@ PermissionStore
 
 ### Multiple permissions
 
-As example above is quite rare now let's see how we can implement iterating over list of permissions. To achieve that we 
-are gonna create many permissions which share the same validator. This is useful when you have some central service 
-which handles the validation.
-
-To define many permissions which share one validator callback, use `defineManyPermissions(permissionNames<Array<String>>, validationFunction<validator function>)`
+To define multiple permissions that share same validation method method `definePermission` can be used. The only 
+difference form `definePermission` is that it accepts `Array` of permission names instead of single one. 
 
 ```javascript
-PermissionStore.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
-  return User.hasPermissionDefinition(permissionName);
-});
+  [...]
+  .definePermission('permissionNamesArray', function (permissionName, transitionProperties) {
+        [...]
+      });
+  });
 ```
 
-or use internal `Permission` service to check if user has one of permissions:
+Often meet example of usage is set of permissions (e.g. received from server after user login) that you will iterate over to 
+check if permission is valid. An example implementation of that showing with little lodash magic is shown below:
 
 ```javascript
-PermissionStore.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
-  return Permission.hasPermissionDefinition(permissionName);
+var permissions = ['listMeeting', 'seeMeeting', 'editMeeting', 'deleteMeeting']
+
+PermissionStore.defineManyPermissions(permissions, function (permissionName) {
+  return _.contains(permissions, permissionName);
 });
 ```
 
 Removing permissions
 ----------------------------
 
-You can easily remove **all** permissions after user logged out or switched profile:  
+You can easily **all** permissions form the `PermissionStore` after user logged out or switched profile by calling:  
 
 ```javascript
 PermissionStore.clearStore();
@@ -133,8 +134,14 @@ PermissionStore.removePermissionDefinition('user');
 
 Getting all permission definitions
 ----------------------------
+
 To get all user permissions use method `getStore`:
 
 ```javascript
 var permissions = PermissionStore.getStore();
 ```
+
+----------------------------
+
+| **Next to read**: :point_right: [Transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md) |
+| --- |
