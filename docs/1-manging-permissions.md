@@ -1,3 +1,16 @@
+Manging permissions
+============================
+
+Overview
+----------------------------
+
+Introduction
+----------------------------
+So, how do you tell Permission what does 'anonymous', 'admin' or 'foo' mean and how to know if the current user belongs
+to those definitions?
+
+Well, Permission allows you to set different 'permissions' definitions along with the logic that determines if the current
+session belongs to them. To do that library exposes special container `PermissionStore` that allows you to manipulate them freely.
 
 Setting 
 ----------------------------

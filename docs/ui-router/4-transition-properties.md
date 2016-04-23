@@ -1,4 +1,4 @@
-TransitionProperties object ui-router
+TransitionProperties object in ui-router
 ============================
 
 Before start
