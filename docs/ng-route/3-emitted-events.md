@@ -48,5 +48,5 @@ $rootScope.$on('$routeChangePermissionDenied', function(event, nextRoute) { ... 
 
 ----------------------------
 
-| **Next to read**: :point_right: [Transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/4-transition-properties.md) |
+| **Next to read**: :point_right: [Transition properties](https://github.com/Narzerus/angular-permission/blob/development/docs/ng-route/4-transition-properties.md) |
 | --- |
