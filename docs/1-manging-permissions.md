@@ -6,8 +6,10 @@ Overview
 
 1. Introduction
 2. Defining permissions
+  1. Individual permissions
+  2. Multiple permissions
 3. Removing permissions
-4. Retrieving all permission definitions
+4. Getting all permission definitions
 
 Introduction
 ----------------------------
@@ -30,13 +32,39 @@ to those definitions?
 Well, Permission allows you to set different 'permissions' definitions along with the logic that determines if the current 
 session belongs to them. To do that library exposes special container `PermissionStore` that allows you to manipulate them freely.
 
-### Permissions defined in a browser
+### Individual permissions
 
-Let's consider the most simple example for defining permission locally. We want user to have `seeDashboard` permission that 
-not corresponds to any server-related permissions. We can simply define it inside our `app` module in run section. 
+To define permissions individually `PermissionStore` exposes method `definePermission` that generic usage is shown below: 
+
+```javascript
+  [...]
+  .definePermission('permissionName', function (permissionName, transitionProperties) {
+        [...]
+      });
+  });
+```
+
+Validation function accepts two parameters that can be used to implement more complex validation logic.
+
+| Parameter              | Description                                                               | 
+| :--------------------- | :------------------------------------------------------------------------ |
+| `permissionName`       | String representing name of checked permission                            |
+| `transitionProperties` | TransitionProperties object storing properties of transited states/routes |
+
+
+It also have to return one of values to properly represent results:
+ 
+| Validation result      | Returned value             | 
+| :--------------------- | :------------------------- |
+| Valid                  | [`true`|`$q.resolve()`]    |
+| Invalid                | [``false`|`$q.reject()`]   |
+
 
 > :bulb: **Note**   
 > You can not define permissions on `config` stage of modules.
+
+Knowing that let's consider deadly simple example for defining permission. We want user to create `seeDashboard` permission that 
+not corresponds to any server-related permissions. We can do that inside our top level `app` module in `run` section. 
   
 ```javascript
 angular
@@ -49,94 +77,30 @@ angular
   });
 ```
 
-Validation function have to return either `true` - Boolean - or `$q.resolve()` - resolved Promise - object in order to treat
- permission as valid, whereas `false` - Boolean - or `$q.reject()` - rejected Promise - is treated as non-valid permission. 
- In the example above permission `seeDashboard` is always valid as it always returns true. So as long it's not removed 
- from the `PermissionStore` will always allow user to pass authorization.   
+In the example above permission `seeDashboard` is always valid as it always returns true. So as long it's not removed from 
+the `PermissionStore` will always allow user to pass authorization.   
 
-Validation function accepts two parameters that can be used to implement more complex validation logic.
+Sometimes you will need to call some a back-end api or do some other asynchronous task to check if permission is still 
+valid. For that you can use promises and simply return them from validation function:
 
 ```javascript
-  [...]
-  .definePermission('permissionName', function (permissionName, transitionProperties) {
-        [...]
-      });
+PermissionStore
+  // Define user permission calling back-end
+  .definePermission('hasValidSession', function () {
+    // Let's assume that User service calls backend API via $http and return promise:
+    // -- $q.resolve() means that session is active 
+    // -- $q.reject() means that session expired
+    return User.checkSession();
   });
 ```
 
-| Parameter              | Description                                                               | 
-| :--------------------- | :------------------------------------------------------------------------ |
-| `permissionName`       | String representing name of checked permission                            |
-| `transitionProperties` | TransitionProperties object storing properties of transited states/routes |
+### Multiple permissions
 
+As example above is quite rare now let's see how we can implement iterating over list of permissions. To achieve that we 
+are gonna create many permissions which share the same validator. This is useful when you have some central service 
+which handles the validation.
 
-
-```javascript
-// Let's imagine we have a User service which has information about the current user in the session
-// and is undefined if no session is active
-//
-// We will define the following permissions:
-// anonymous: When there is not user currently logged in
-// normal: A user with isAdmin = false
-// admin: A user with isAdmin = true
-
-angular
-  .module('fooModule', ['permission', 'user'])
-  .run(function (PermissionStore, User) {
-    // Define anonymous permission
-    PermissionStore
-      .definePermission('anonymous', function (stateParams) {
-        // If the returned value is *truthy* then the user has the permission, otherwise they don't
-        if (!User) {
-          return true; // Is anonymous
-        }
-        return false;
-      });
-  });
-```
-
-Sometimes you will need to call some a back-end api or some other asynchronous task to define the permission.
-For that you can use promises:
-
-```javascript
-angular.module('barModule', ['permission', 'user'])
-  .run(function (PermissionStore, User, $q) {
-    PermissionStore
-      // Define user permission calling back-end
-      .definePermission('user', function (stateParams) {
-        // This time we will return a promise
-        // If the promise *resolves* then the user has the permission, if it *rejects* (you guessed it)
-
-        // Let's assume this returns a promise that resolves or rejects if session is active
-        return User.checkSession();
-      })
-      
-    PermissionStore
-      // A different example for admin
-      .definePermission('admin', function (stateParams) {
-        var deferred = $q.defer();
-
-        User.getAccessLevel()
-          .then(function (data) {
-            if (data.accessLevel === 'admin') {
-              deferred.resolve();
-            } else {
-              deferred.reject();
-            }
-          }
-          .catch(function () {
-            // Error with request
-            deferred.reject();
-          });
-
-        return deferred.promise;
-      });
-  });
-```
-
-You can also set many permissions which share the same validator. This is useful when you have some central service which handles the validation.
-
-To define many permissions which share one validator callback, use `defineManyPermissions(<array>, <validator function>)`
+To define many permissions which share one validator callback, use `defineManyPermissions(permissionNames<Array<String>>, validationFunction<validator function>)`
 
 ```javascript
 PermissionStore.defineManyPermissions(arrayOfPermissionNames, function (stateParams, permissionName) {
@@ -154,7 +118,8 @@ PermissionStore.defineManyPermissions(arrayOfPermissionNames, function (statePar
 
 Removing permissions
 ----------------------------
-You can easily remove _all_ permissions after user logged out or switched profile:  
+
+You can easily remove **all** permissions after user logged out or switched profile:  
 
 ```javascript
 PermissionStore.clearStore();
@@ -166,7 +131,7 @@ Alternatively you can use `removePermissionDefinition` to delete defined permiss
 PermissionStore.removePermissionDefinition('user');
 ```
 
-Retrieving all permission definitions
+Getting all permission definitions
 ----------------------------
 To get all user permissions use method `getStore`:
 
