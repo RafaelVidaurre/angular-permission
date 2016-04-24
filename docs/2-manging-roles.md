@@ -4,12 +4,12 @@ Manging roles
 Overview
 ----------------------------
 
-1. [Introduction]()
-2. [Defining roles]()
+1. [Introduction](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md#before-start)
+2. [Defining roles](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md#defining-roles)
   1. [Individual roles]()
   2. [Multiple roles]()
-3. [Removing roles]()
-4. [Getting all role definitions]()
+3. [Removing roles](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md#removing-roles)
+4. [Getting all role definitions](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md#getting-all-roles-definitions)
 
 Before start
 ----------------------------
@@ -27,6 +27,8 @@ So `USER` and `ANONYMOUS` are roles not permissions. We can represent our `USER`
 
 Defining roles
 ----------------------------
+
+### Individual roles
 
 Similarly to permissions we are gonna use here `RoleStore` that exposes `defineRole` allowing to define custom roles used by users in your application. 
 
@@ -78,6 +80,8 @@ RoleStore
     return Session.checkSession();
   });
 ```
+
+### Multiple roles
 
 Removing roles
 ----------------------------
