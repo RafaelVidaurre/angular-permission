@@ -44,38 +44,44 @@ RoleStore
 The main deference is that Role definition accepts either array of permissions names that identify role or validation function used similarly like in permissions.
 
 > :bulb: **Note**   
-> When defining role with permissions array make sure that your permissions will be defined, because on first 
-state or route authentication `Authorisation` service will check for their validity and if they won't be present it 
-might reject authorization as an effect of not having role.
+> When defining role with permissions array make sure that your permissions will be defined, because on first state or route authentication `Authorisation` service will check for their validity and if they won't be present it might reject authorization as an effect of not having role.
 
 Validation function accepts two parameters that can be used to implement more complex validation logic.
 
 | Parameter              | Description                                                               | 
 | :--------------------- | :------------------------------------------------------------------------ |
-| `permissionName`       | String representing name of checked permission                            |
+| `roleName`             | String representing name of checked role                                  |
 | `transitionProperties` | TransitionProperties object storing properties of transited states/routes |
 
 
+It also have to return one of values to properly represent results:
+ 
+| Validation result      | Returned value             | 
+| :--------------------- | :------------------------- |
+| Valid                  | [`true`|`$q.resolve()`]    |
+| Invalid                | [``false`|`$q.reject()`]   |
+
+> :bulb: **Note**   
+> You can not define roles on `config` stage of modules.
+
+Usage of `defineRole` is very similar to `definePermission`:
+
 ```javascript
-angular
-  .module('fooModule', ['permission', 'user'])
-  .run(function (RoleStore, User) {
-    RoleStore
-      // Permission array validated role
-      // Library will internally validate if 'user' and 'editor' permissions are valid when checking if role is valid   
-      .defineRole('admin', ['user', 'editor']);  
-      
-    RoleStore    
-      // Server side validated role
-      .defineRole('accountant', [], function (stateParams) {
-        // Let's assume that we are making a request to server here and return response as promise        
-        return User.hasRole('accountant');
-      });
+RoleStore
+  // Permission array validated role
+  // Library will internally validate if 'listEvents' and 'editEvents' permissions are valid when checking if role is valid   
+  .defineRole('ADMIN', ['listEvents', 'editEvents']);  
+  
+RoleStore    
+  // Or use custom service to validate role
+  .defineRole('USER', function () {        
+    return Session.checkSession();
   });
 ```
 
 Removing roles
 ----------------------------
+
 To remove **all** roles use `clearStore` method:  
 
 ```javascript
@@ -88,9 +94,10 @@ Alternatively you can use `removeRoleDefinition` to delete defined role manually
 RoleStore.removeRoleDefinition('USER');
 ```
 
-Retrieving all roles definitions
+Getting all roles definitions
 ----------------------------
-To get all user roles use method `getStore`:
+
+To get all roles form `RoleStore` use method `getStore`:
 
 ```javascript
 var roles = RoleStore.getStore();

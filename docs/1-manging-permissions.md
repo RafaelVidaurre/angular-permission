@@ -91,7 +91,7 @@ PermissionStore
     // Let's assume that User service calls backend API via $http and return promise:
     // -- $q.resolve() means that session is active 
     // -- $q.reject() means that session expired
-    return User.checkSession();
+    return Session.checkSession();
   });
 ```
 
