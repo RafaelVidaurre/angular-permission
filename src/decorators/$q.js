@@ -10,6 +10,7 @@
    * @param $delegate {Object} Angular promise implementation
    */
   function $q($delegate) {
+    'ngInject';
 
     $delegate.any = any;
 
