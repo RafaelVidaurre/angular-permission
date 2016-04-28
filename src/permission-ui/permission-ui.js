@@ -28,14 +28,13 @@
 
   /**
    * @param $rootScope {Object}
-   * @param $location {Object}
    * @param $state {Object}
    * @param TransitionProperties {permission.TransitionProperties}
    * @param TransitionEvents {permission.ui.TransitionEvents}
    * @param StateAuthorization {permission.ui.StateAuthorization}
    * @param StatePermissionMap {permission.ui.StatePermissionMap}
    */
-  function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
+  function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
      */
@@ -109,14 +108,10 @@
         TransitionEvents.broadcastPermissionAcceptedEvent();
 
         // Overwrite notify option to broadcast it later
-        TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
+        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: 'replace'});
 
         $state
-          .go(
-            TransitionProperties.toState.name,
-            TransitionProperties.toParams,
-            angular.extend({}, TransitionProperties.options, {location: 'replace'})
-          )
+          .go(TransitionProperties.toState.name, TransitionProperties.toParams, transitionOptions)
           .then(function () {
             TransitionEvents.broadcastStateChangeSuccessEvent();
           });

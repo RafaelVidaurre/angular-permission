@@ -27,9 +27,7 @@ describe('permission.ng', function () {
           TransitionEvents.broadcastPermissionStartEvent();
 
           // THEN
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionStart',
-            jasmine.any(Object), jasmine.any(Object)
-          );
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionStart', jasmine.any(Object));
         });
       });
 
@@ -42,9 +40,7 @@ describe('permission.ng', function () {
           TransitionEvents.broadcastPermissionAcceptedEvent();
 
           // THEN
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionAccepted',
-            jasmine.any(Object), jasmine.any(Object)
-          );
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionAccepted', jasmine.any(Object));
         });
       });
 
@@ -57,9 +53,7 @@ describe('permission.ng', function () {
           TransitionEvents.broadcastPermissionDeniedEvent();
 
           // THEN
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionDenied',
-            jasmine.any(Object), jasmine.any(Object)
-          );
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionDenied', jasmine.any(Object));
         });
       });
 
@@ -75,9 +69,7 @@ describe('permission.ng', function () {
           var result = TransitionEvents.areEventsDefaultPrevented();
 
           // THEN
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionStart',
-            jasmine.any(Object), jasmine.any(Object)
-          );
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionStart', jasmine.any(Object));
           expect(result).toEqual(jasmine.any(Boolean));
         });
       });

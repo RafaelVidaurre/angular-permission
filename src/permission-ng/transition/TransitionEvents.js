@@ -34,8 +34,7 @@
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionStartEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionStart,
-        TransitionProperties.next, TransitionProperties.current);
+      $rootScope.$broadcast(TransitionEventNames.permissionStart, TransitionProperties.next);
     }
 
     /**
@@ -43,8 +42,7 @@
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionAcceptedEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionAccepted,
-        TransitionProperties.next, TransitionProperties.current);
+      $rootScope.$broadcast(TransitionEventNames.permissionAccepted, TransitionProperties.next);
     }
 
     /**
@@ -52,8 +50,7 @@
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionDeniedEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionDenied,
-        TransitionProperties.next, TransitionProperties.current);
+      $rootScope.$broadcast(TransitionEventNames.permissionDenied, TransitionProperties.next);
     }
 
     /**
@@ -64,8 +61,7 @@
      * @returns {boolean}
      */
     function isRouteChangePermissionStartDefaultPrevented() {
-      return $rootScope.$broadcast(TransitionEventNames.permissionStart,
-        TransitionProperties.next, TransitionProperties.current).defaultPrevented;
+      return $rootScope.$broadcast(TransitionEventNames.permissionStart, TransitionProperties.next).defaultPrevented;
     }
 
     return $delegate;

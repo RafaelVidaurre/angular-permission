@@ -10,6 +10,7 @@
    * @param $delegate {Object} Parent instance being extended
    */
   function $q($delegate) {
+    'ngInject';
 
     $delegate.any = any;
 
