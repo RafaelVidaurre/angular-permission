@@ -99,7 +99,6 @@
       function handleAuthorizedState() {
 
         TransitionEvents.broadcastStateChangePermissionAccepted();
-        $location.replace();
 
         // Overwrite notify option to broadcast it later
         TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
