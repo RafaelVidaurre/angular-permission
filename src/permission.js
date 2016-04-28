@@ -105,7 +105,11 @@
         TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
 
         $state
-          .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)
+          .go(
+              TransitionProperties.toState.name,
+              TransitionProperties.toParams,
+              angular.extend({}, TransitionProperties.options, {location: 'replace'})
+          )
           .then(function () {
             TransitionEvents.broadcastStateChangeSuccess();
           });

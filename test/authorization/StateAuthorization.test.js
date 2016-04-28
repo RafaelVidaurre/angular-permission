@@ -133,7 +133,7 @@ describe('service: StateAuthorization', function () {
 
       // THEN
       expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
-        location: true,
+        location: 'replace',
         inherit: true,
         relative: true,
         notify: false,
