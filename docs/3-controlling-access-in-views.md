@@ -11,10 +11,10 @@ Make sure you are familiar with:
 Overview
 ----------------------------
 
-1. [Permission directive]()
-  1. [Basic usage]()
-  1. [Custom behaviour]()
-2. [Async calls for permissions in initial state]()
+1. [Permission directive](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md#permission-directive)
+  1. [Basic usage](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md#basic-usage)
+  1. [Custom behaviour](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md#custom-behaviour)
+2. [Async calls for permissions in initial state](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md#async-calls-for-permissions-in-initial-states)
 
 Permission directive
 ----------------------------
