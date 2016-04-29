@@ -46,7 +46,7 @@ RoleStore
 The main deference is that Role definition accepts either array of permissions names that identify role or validation function used similarly like in permissions.
 
 > :bulb: **Note**   
-> When defining role with permissions array make sure that your permissions will be defined, because on first state or route authentication `Authorisation` service will check for their validity and if they won't be present it might reject authorization as an effect of not having role.
+> When defining role with permissions array make sure that your permissions will be defined via `PermissionStore` method `definePermission`, because on first state or route `Authorisation` service will check for their validity and if they won't be present it might reject authorization as an effect of not having role.
 
 Validation function accepts two parameters that can be used to implement more complex validation logic.
 
@@ -61,7 +61,7 @@ It also have to return one of values to properly represent results:
 | Validation result      | Returned value             | 
 | :--------------------- | :------------------------- |
 | Valid                  | [`true`|`$q.resolve()`]    |
-| Invalid                | [``false`|`$q.reject()`]   |
+| Invalid                | [`false`|`$q.reject()`]    |
 
 > :bulb: **Note**   
 > You can not define roles on `config` stage of modules.
