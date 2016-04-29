@@ -128,5 +128,5 @@ var roles = RoleStore.getStore();
 
 ----------------------------
 
-| **Next to read**: :point_right: [Manging roles](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md) |
+| **Next to read**: :point_right: [Controlling access in views](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md) |
 | --- |

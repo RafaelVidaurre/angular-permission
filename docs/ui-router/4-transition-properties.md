@@ -23,6 +23,5 @@ TransitionProperties object is angular `Value` structure that if used with ui-ro
 | `fromParams`  | Source state parameters object | 
 | `options`     | Transition options             | 
 
-
 > :bulb: **Note**   
 > As all the values passed to TransitionProperties are references to it's original values modification of those is not recommended, because may lead to unpredictable behaviour of ui-router. 
