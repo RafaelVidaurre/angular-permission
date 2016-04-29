@@ -23,8 +23,7 @@ $stateChangePermissionStart
 Event broadcasted before start of authorizing.
 
 ```javascript
-$rootScope.$on('$stateChangePermissionStart',
-function(event, toState, toParams, options) { ... });
+$rootScope.$on('$stateChangePermissionStart', function(event, toState, toParams, options) { ... });
 ```
 
 $stateChangePermissionAccepted
