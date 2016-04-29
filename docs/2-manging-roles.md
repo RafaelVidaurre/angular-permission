@@ -62,8 +62,8 @@ It also have to return one of values to properly represent results:
  
 | Validation result      | Returned value             | 
 | :--------------------- | :------------------------- |
-| Valid                  | [`true`|`$q.resolve()`]    |
-| Invalid                | [`false`|`$q.reject()`]    |
+| Valid                  | [`true` | `$q.resolve()`]  |
+| Invalid                | [`false` | `$q.reject()`]  |
 
 > :bulb: **Note**   
 > You can not define roles on `config` stage of modules.

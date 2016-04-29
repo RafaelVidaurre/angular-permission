@@ -23,12 +23,12 @@ Permission module exposes directive `permission` that can show/hide elements of 
 
 Permission directive accepts several attributes:
 
-| Attribute                    | Value              | Description                                                     | 
-| :--------------------------- | :----------------- | :-------------------------------------------------------------- |
-| `permission-only`            | [`String`|`Array`] | Single or multiple roles/permissions allowed to access content  |
-| `permission-except`          | [`String`|`Array`] | Single or multiple roles/permissions denied to access content   |
-| `permission-on-authorized`   | [`Function`]       | Custom function invoked when authorized                         |
-| `permission-on-unauthorized` | [`Function`]       | Custom function invoked when authorized                         |
+| Attribute                    | Value                | Description                                                     | 
+| :--------------------------- | :-----------------   | :-------------------------------------------------------------- |
+| `permission-only`            | [`String` | `Array`] | Single or multiple roles/permissions allowed to access content  |
+| `permission-except`          | [`String` | `Array`] | Single or multiple roles/permissions denied to access content   |
+| `permission-on-authorized`   | [`Function`]         | Custom function invoked when authorized                         |
+| `permission-on-unauthorized` | [`Function`]         | Custom function invoked when authorized                         |
 
 ### Basic usage
 
