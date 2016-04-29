@@ -1,9 +1,10 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v3.0.0-beta - 2016-04-20
+ * @version v3.0.0 - 2016-04-30
  * @link https://github.com/Narzerus/angular-permission
- * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
+ * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
+ *   <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
@@ -135,8 +136,7 @@
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionStartEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionStart,
-        TransitionProperties.next, TransitionProperties.current);
+      $rootScope.$broadcast(TransitionEventNames.permissionStart, TransitionProperties.next);
     }
 
     /**
@@ -144,8 +144,7 @@
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionAcceptedEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionAccepted,
-        TransitionProperties.next, TransitionProperties.current);
+      $rootScope.$broadcast(TransitionEventNames.permissionAccepted, TransitionProperties.next);
     }
 
     /**
@@ -153,8 +152,7 @@
      * @methodOf permission.ng.TransitionEvents
      */
     function broadcastPermissionDeniedEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionDenied,
-        TransitionProperties.next, TransitionProperties.current);
+      $rootScope.$broadcast(TransitionEventNames.permissionDenied, TransitionProperties.next);
     }
 
     /**
@@ -165,8 +163,7 @@
      * @returns {boolean}
      */
     function isRouteChangePermissionStartDefaultPrevented() {
-      return $rootScope.$broadcast(TransitionEventNames.permissionStart,
-        TransitionProperties.next, TransitionProperties.current).defaultPrevented;
+      return $rootScope.$broadcast(TransitionEventNames.permissionStart, TransitionProperties.next).defaultPrevented;
     }
 
     return $delegate;

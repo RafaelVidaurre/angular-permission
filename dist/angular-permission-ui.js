@@ -1,9 +1,10 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v3.0.0-beta - 2016-04-20
+ * @version v3.0.0 - 2016-04-30
  * @link https://github.com/Narzerus/angular-permission
- * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
+ * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
+ *   <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
@@ -37,14 +38,13 @@
 
   /**
    * @param $rootScope {Object}
-   * @param $location {Object}
    * @param $state {Object}
    * @param TransitionProperties {permission.TransitionProperties}
    * @param TransitionEvents {permission.ui.TransitionEvents}
    * @param StateAuthorization {permission.ui.StateAuthorization}
    * @param StatePermissionMap {permission.ui.StatePermissionMap}
    */
-  function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
+  function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
      */
@@ -116,13 +116,12 @@
        */
       function handleAuthorizedState() {
         TransitionEvents.broadcastPermissionAcceptedEvent();
-        $location.replace();
 
         // Overwrite notify option to broadcast it later
-        TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
+        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: 'replace'});
 
         $state
-          .go(TransitionProperties.toState.name, TransitionProperties.toParams, TransitionProperties.options)
+          .go(TransitionProperties.toState.name, TransitionProperties.toParams, transitionOptions)
           .then(function () {
             TransitionEvents.broadcastStateChangeSuccessEvent();
           });
