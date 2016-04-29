@@ -56,7 +56,7 @@ npm install angular-permission --save
 
 <img src="https://cdn4.iconfinder.com/data/icons/ballicons-2-new-generation-of-flat-icons/100/rocket-128.png" width="48" height="48">&nbsp;Migration guides
 ----------------------------
-- [2.3.x to 3.0.x]() 
+- [2.3.x to 3.0.x](https://github.com/Narzerus/angular-permission/blob/development/docs/migration/2.3.x-3.0.x.md) 
 
 <img src="https://s-media-cache-ak0.pinimg.com/236x/57/43/47/574347ddf6be999e0027de121104f2ff.jpg" width="48" height="48">&nbsp;Authors
 ----------------------------
