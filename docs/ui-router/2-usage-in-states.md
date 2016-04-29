@@ -31,11 +31,11 @@ Now you are ready to start working with controlling access to the states of your
 
 Permissions object accepts following properties:
 
-| Property        | Accepted value             |
-| :-------------- | :------------------------- |
-| `only`          | `[String|Array|Function]`  |
-| `except`        | `[String|Array|Function]`  |
-| `redirectTo`    | `[String|Function|Object]` |
+| Property        | Accepted value                   |
+| :-------------- | :------------------------------- |
+| `only`          | [`String`\|`Array`\|`Function`]  |
+| `except`        | [`String`\|`Array`\|`Function`]  |
+| `redirectTo`    | [`String`\|`Function`\|`Object`] |
 
 Property only and except
 ----------------------------
@@ -163,9 +163,9 @@ Redirection rules are represented by following values:
 
 | Value type    | Return                     | Usage                                         | 
 | :------------ | :------------------------- | :-------------------------------------------- |
-| `String`      | `[String]`                 | Simple state transitions                      |
-| `Object`      | `[Object]`                 | Redirection with custom parameters or options | 
-| `Function`    | `[String|Object]`          | Dynamic properties-based redirection          | 
+| `String`      | [`String`]                 | Simple state transitions                      |
+| `Object`      | [`Object`]                 | Redirection with custom parameters or options | 
+| `Function`    | [`String`\|`Object`]       | Dynamic properties-based redirection          | 
 
 
 > :fire: **Important**   
