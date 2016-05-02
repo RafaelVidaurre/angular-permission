@@ -61,5 +61,5 @@ npm install angular-permission --save
 <img src="https://s-media-cache-ak0.pinimg.com/236x/57/43/47/574347ddf6be999e0027de121104f2ff.jpg" width="48" height="48">&nbsp;Authors
 ----------------------------
 
-- [Rafael Vidaurre](https://twitter.com/narzerus) - I'm a full-stack developer currenly working as CTO and Co-Founder at [Finciero](http://www.finciero.com)
-- [Blazej Krysiak] (https://twitter.com/masterspambot) - I am a fast-minded, creative web developer seeking knowledge in innovative web technologies and cloud-based solutions.
+- [Rafael Vidaurre](https://twitter.com/narzerus) - I'm a full-stack developer and musician who loves creating things of value
+- [Blazej Krysiak](https://twitter.com/masterspambot) - I am a fast-minded, creative web developer seeking knowledge in innovative web technologies and cloud-based solutions.
