@@ -39,8 +39,8 @@ npm install angular-permission --save
 <img src="https://res.cloudinary.com/hashnode/image/upload/v1451902371/static_imgs/story-stats-icon.png" width="48" height="48">&nbsp;Documentation and examples
 ----------------------------
 
-1. [Manging permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)
-2. [Manging roles](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)
+1. [Managing permissions](https://github.com/Narzerus/angular-permission/blob/development/docs/1-manging-permissions.md)
+2. [Managing roles](https://github.com/Narzerus/angular-permission/blob/development/docs/2-manging-roles.md)
 3. [Controlling access in views](https://github.com/Narzerus/angular-permission/blob/development/docs/3-controlling-access-in-views.md)
 4. Usage with ui-router 
   1. [Installation](https://github.com/Narzerus/angular-permission/blob/development/docs/ui-router/1-installation.md)
