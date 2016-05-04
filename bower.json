@@ -6,7 +6,11 @@
     "Blazej Krysiak <blazej.krysiak@gmail.com>"
   ],
   "description": "Fully featured role and permission based access control for your angular applications",
-  "main": "dist/angular-permission.js",
+  "main": [
+	"dist/angular-permission.js",
+	"dist/angular-permission-ui.js",
+	"dist/angular-permission-ng.js"
+  ],
   "keywords": [
     "angular",
     "ui-router",

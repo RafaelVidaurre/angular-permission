@@ -13,7 +13,11 @@
 	  "email": "blazej.krysiak@gmail.com"
 	}
   ],
-  "main": "dist/angular-permission.js",
+  "main": [
+	"dist/angular-permission.js",
+	"dist/angular-permission-ui.js",
+	"dist/angular-permission-ng.js"
+  ],
   "repository": {
 	"type": "git",
 	"url": "https://github.com/Narzerus/angular-permission.git"
