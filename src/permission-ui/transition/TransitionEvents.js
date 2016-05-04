@@ -13,6 +13,7 @@
    * @param TransitionEventNames {permission.ui.TransitionEventNames} Constant storing event names
    */
   function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
+    'ngInject';
 
     $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
     $delegate.broadcastStateChangeSuccessEvent = broadcastStateChangeSuccessEvent;

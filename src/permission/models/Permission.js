@@ -11,6 +11,8 @@
    * @return {permission.Permission}
    */
   function PermissionFactory($q, TransitionProperties) {
+    'ngInject';
+
     /**
      * Permission definition object constructor
      * @constructor permission.Permission

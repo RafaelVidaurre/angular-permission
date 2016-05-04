@@ -41,6 +41,8 @@
    * @returns {Object} Directive instance
    */
   function permissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
+    'ngInject';
+
     return {
       restrict: 'A',
       bindToController: {

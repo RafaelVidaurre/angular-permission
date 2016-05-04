@@ -8,6 +8,8 @@
    * @param Role {permission.Role|Function} Role definition constructor
    */
   function RoleStore(Role) {
+    'ngInject';
+
     var roleStore = {};
 
     this.defineRole = defineRole;

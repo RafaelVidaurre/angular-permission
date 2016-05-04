@@ -6,6 +6,8 @@
    */
 
   function run($rootScope, $location, TransitionProperties, TransitionEvents, Authorization, PermissionMap) {
+    'ngInject';
+
     /**
      * State transition interceptor
      */

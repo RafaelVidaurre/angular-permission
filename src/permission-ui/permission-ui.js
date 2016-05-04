@@ -9,6 +9,8 @@
    * @param $stateProvider {Object}
    */
   function config($stateProvider) {
+    'ngInject';
+
     $stateProvider.decorator('parent', function (state, parentFn) {
       /**
        * Property containing full state object definition
@@ -35,6 +37,8 @@
    * @param StatePermissionMap {permission.ui.StatePermissionMap}
    */
   function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
+    'ngInject';
+
     /**
      * State transition interceptor
      */

@@ -6,6 +6,7 @@
    * @name permission.TransitionEvents
    */
   function TransitionEvents() {
+    'ngInject';
 
     this.broadcastPermissionStartEvent = function () {
       throw new Error('Method broadcastPermissionStartEvent in TransitionEvents interface must be implemented');

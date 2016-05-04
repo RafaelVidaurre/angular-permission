@@ -10,6 +10,7 @@
    * @return {StatePermissionMap}
    */
   function StatePermissionMapFactory(PermissionMap) {
+    'ngInject';
 
     StatePermissionMap.prototype = new PermissionMap();
 

@@ -8,6 +8,8 @@
    * @param Permission {permission.PermissionFactory} Permission definition factory
    */
   function PermissionStore(Permission) {
+    'ngInject';
+
     /**
      * @property permissionStore
      *

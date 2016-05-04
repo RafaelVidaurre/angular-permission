@@ -13,6 +13,8 @@
    * @return {permission.PermissionMap}
    */
   function PermissionMapFactory($q, TransitionProperties, RoleStore, PermissionStore) {
+    'ngInject';
+
     /**
      * Constructs map object instructing authorization service how to handle authorizing
      * @constructor permission.PermissionMap

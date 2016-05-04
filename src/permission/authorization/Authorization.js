@@ -8,6 +8,7 @@
    * @param $q {Object} Angular promise implementation
    */
   function Authorization($q) {
+    'ngInject';
 
     this.authorize = authorize;
 

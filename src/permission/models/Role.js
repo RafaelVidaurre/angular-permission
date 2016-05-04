@@ -12,6 +12,8 @@
    * @return {permission.Role}
    */
   function RoleFactory($q, PermissionStore, TransitionProperties) {
+    'ngInject';
+
     /**
      * Role definition constructor
      * @class permission.Role
