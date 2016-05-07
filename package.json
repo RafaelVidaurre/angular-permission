@@ -1,6 +1,6 @@
 {
   "name": "angular-permission",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Fully featured role and permission based access control for your angular applications",
   "author": {
 	"name": "Rafael Vidaurre",
@@ -25,7 +25,6 @@
   "keywords": [
 	"angular",
 	"ui-router",
-	"ng-route",
 	"ng-route",
 	"angular-route",
 	"access-control",

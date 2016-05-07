@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v3.0.0 - 2016-04-30
+ * @version v3.0.1 - 2016-05-07
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
  *   <blazej.krysiak@gmail.com>
@@ -163,6 +163,7 @@
    * @name permission.TransitionEvents
    */
   function TransitionEvents() {
+    'ngInject';
 
     this.broadcastPermissionStartEvent = function () {
       throw new Error('Method broadcastPermissionStartEvent in TransitionEvents interface must be implemented');
@@ -197,6 +198,8 @@
    */
   PermissionFactory.$inject = ['$q', 'TransitionProperties'];
   function PermissionFactory($q, TransitionProperties) {
+    'ngInject';
+
     /**
      * Permission definition object constructor
      * @constructor permission.Permission
@@ -292,6 +295,8 @@
    */
   RoleFactory.$inject = ['$q', 'PermissionStore', 'TransitionProperties'];
   function RoleFactory($q, PermissionStore, TransitionProperties) {
+    'ngInject';
+
     /**
      * Role definition constructor
      * @class permission.Role
@@ -401,6 +406,8 @@
    */
   PermissionStore.$inject = ['Permission'];
   function PermissionStore(Permission) {
+    'ngInject';
+
     /**
      * @property permissionStore
      *
@@ -512,6 +519,8 @@
    */
   RoleStore.$inject = ['Role'];
   function RoleStore(Role) {
+    'ngInject';
+
     var roleStore = {};
 
     this.defineRole = defineRole;
@@ -650,6 +659,8 @@
    */
   permissionDirective.$inject = ['$log', 'Authorization', 'PermissionMap', 'PermissionStrategies'];
   function permissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
+    'ngInject';
+
     return {
       restrict: 'A',
       bindToController: {
@@ -732,6 +743,7 @@
    */
   Authorization.$inject = ['$q'];
   function Authorization($q) {
+    'ngInject';
 
     this.authorize = authorize;
 
@@ -834,6 +846,8 @@
    */
   PermissionMapFactory.$inject = ['$q', 'TransitionProperties', 'RoleStore', 'PermissionStore'];
   function PermissionMapFactory($q, TransitionProperties, RoleStore, PermissionStore) {
+    'ngInject';
+
     /**
      * Constructs map object instructing authorization service how to handle authorizing
      * @constructor permission.PermissionMap
