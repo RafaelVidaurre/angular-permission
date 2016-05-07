@@ -8,7 +8,11 @@ module.exports = function () {
     default: {
       files: [{
         expand: true,
-        src: ['<%= paths.dist %>/angular-permission.js']
+        src: [
+          '<%= paths.dist %>/angular-permission.js',
+          '<%= paths.dist %>/angular-permission-ui.js',
+          '<%= paths.dist %>/angular-permission-ng.js'
+        ]
       }]
     }
   };
