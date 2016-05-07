@@ -1,10 +1,10 @@
-(function () {
+(function (module) {
   'use strict';
 
   /**
    * @namespace permission
    */
 
-  angular
-    .module('permission', []);
-}());
+  module.exports = angular
+    .module('permission', []).name;
+}(module));

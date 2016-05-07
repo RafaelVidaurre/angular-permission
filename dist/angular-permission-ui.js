@@ -1,14 +1,13 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v3.0.0 - 2016-04-30
+ * @version v3.0.0 - 2016-05-07
  * @link https://github.com/Narzerus/angular-permission
- * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
- *   <blazej.krysiak@gmail.com>
+ * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
-(function () {
+(function (module) {
   'use strict';
 
   /**
@@ -147,11 +146,11 @@
     });
   }
 
-  angular
+  module.exports = angular
     .module('permission.ui', ['permission', 'ui.router'])
     .config(config)
-    .run(run);
-}());
+    .run(run).name;
+}(module));
 
 
 (function () {
