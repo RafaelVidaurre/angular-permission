@@ -1,9 +1,10 @@
 /**
  * angular-permission
  * Route permission and access control as simple as it can get
- * @version v2.3.7 - 2016-04-28
+ * @version v2.3.8 - 2016-05-07
  * @link https://github.com/Narzerus/angular-permission
- * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
+ * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
+ *   <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
@@ -15,7 +16,7 @@
    */
 
   config.$inject = ['$stateProvider'];
-  run.$inject = ['$rootScope', '$location', '$state', 'TransitionProperties', 'TransitionEvents', 'StateAuthorization', 'StatePermissionMap'];
+  run.$inject = ['$rootScope', '$state', 'TransitionProperties', 'TransitionEvents', 'StateAuthorization', 'StatePermissionMap'];
   function config($stateProvider) {
     /**
      * This decorator is required to access full state object instead of it's configuration
@@ -35,7 +36,7 @@
     });
   }
 
-  function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
+  function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
      */
@@ -112,14 +113,10 @@
         TransitionEvents.broadcastStateChangePermissionAccepted();
 
         // Overwrite notify option to broadcast it later
-        TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
+        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: true});
 
         $state
-          .go(
-              TransitionProperties.toState.name,
-              TransitionProperties.toParams,
-              angular.extend({}, TransitionProperties.options, {location: 'replace'})
-          )
+          .go(TransitionProperties.toState.name, TransitionProperties.toParams, transitionOptions)
           .then(function () {
             TransitionEvents.broadcastStateChangeSuccess();
           });
@@ -164,6 +161,7 @@
    */
   $q.$inject = ['$delegate'];
   function $q($delegate) {
+    'ngInject';
 
     $delegate.any = any;
 
