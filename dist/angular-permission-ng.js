@@ -14,6 +14,7 @@
    * @namespace permission.ng
    */
 
+  run.$inject = ['$rootScope', '$location', 'TransitionProperties', 'TransitionEvents', 'Authorization', 'PermissionMap'];
   function run($rootScope, $location, TransitionProperties, TransitionEvents, Authorization, PermissionMap) {
     /**
      * State transition interceptor
@@ -113,6 +114,7 @@
    * @param TransitionProperties {permission.TransitionProperties} Helper storing transition parameters
    * @param TransitionEventNames {permission.ng.TransitionEventNames} Constant storing event names
    */
+  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
   function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
 
     $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;

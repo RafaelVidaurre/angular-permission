@@ -17,6 +17,8 @@
   /**
    * @param $stateProvider {Object}
    */
+  config.$inject = ['$stateProvider'];
+  run.$inject = ['$rootScope', '$state', 'TransitionProperties', 'TransitionEvents', 'StateAuthorization', 'StatePermissionMap'];
   function config($stateProvider) {
     $stateProvider.decorator('parent', function (state, parentFn) {
       /**
@@ -167,6 +169,7 @@
    * @param TransitionProperties {permission.TransitionProperties} Helper storing transition parameters
    * @param TransitionEventNames {permission.ui.TransitionEventNames} Constant storing event names
    */
+  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
   function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
 
     $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
@@ -295,6 +298,7 @@
    *
    * @param $q {Object} Angular promise implementation
    */
+  StateAuthorization.$inject = ['$q'];
   function StateAuthorization($q) {
 
     this.authorize = authorize;
@@ -413,6 +417,7 @@
    *
    * @return {StatePermissionMap}
    */
+  StatePermissionMapFactory.$inject = ['PermissionMap'];
   function StatePermissionMapFactory(PermissionMap) {
 
     StatePermissionMap.prototype = new PermissionMap();
