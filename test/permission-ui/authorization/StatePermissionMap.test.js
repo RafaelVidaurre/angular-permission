@@ -33,8 +33,8 @@ describe('permission.ui', function () {
           var map = new StatePermissionMap(state);
 
           // THEN
-          expect(map.only).toEqual([['acceptedChild'], ['accepted']]);
-          expect(map.except).toEqual([['deniedChild'], ['denied']]);
+          expect(map.only).toEqual([['accepted'], ['acceptedChild']]);
+          expect(map.except).toEqual([['denied'], ['deniedChild']]);
           expect(map.redirectTo).not.toBeDefined();
         });
       });

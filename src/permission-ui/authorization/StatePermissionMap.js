@@ -21,7 +21,7 @@
      */
     function StatePermissionMap(state) {
       var toStateObject = state.$$state();
-      var toStatePath = toStateObject.path.slice().reverse();
+      var toStatePath = toStateObject.path;
 
       angular.forEach(toStatePath, function (state) {
         if (areSetStatePermissions(state)) {
