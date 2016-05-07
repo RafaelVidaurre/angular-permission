@@ -1,20 +1,20 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v3.0.0 - 2016-04-30
+ * @version v3.0.0 - 2016-05-07
  * @link https://github.com/Narzerus/angular-permission
- * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
- *   <blazej.krysiak@gmail.com>
+ * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
-(function () {
+(function (module) {
   'use strict';
 
   /**
    * @namespace permission.ng
    */
 
+  run.$inject = ['$rootScope', '$location', 'TransitionProperties', 'TransitionEvents', 'Authorization', 'PermissionMap'];
   function run($rootScope, $location, TransitionProperties, TransitionEvents, Authorization, PermissionMap) {
     /**
      * State transition interceptor
@@ -93,11 +93,11 @@
     });
   }
 
-  angular
+  module.exports = angular
     .module('permission.ng', ['permission', 'ngRoute'])
-    .run(run);
+    .run(run).name;
 
-}());
+}(module));
 
 
 (function () {
@@ -114,6 +114,7 @@
    * @param TransitionProperties {permission.TransitionProperties} Helper storing transition parameters
    * @param TransitionEventNames {permission.ng.TransitionEventNames} Constant storing event names
    */
+  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
   function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
 
     $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
