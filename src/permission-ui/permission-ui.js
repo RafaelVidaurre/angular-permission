@@ -112,7 +112,7 @@
         TransitionEvents.broadcastPermissionAcceptedEvent();
 
         // Overwrite notify option to broadcast it later
-        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: 'replace'});
+        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: true});
 
         $state
           .go(TransitionProperties.toState.name, TransitionProperties.toParams, transitionOptions)

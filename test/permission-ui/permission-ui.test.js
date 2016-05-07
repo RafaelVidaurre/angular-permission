@@ -194,7 +194,7 @@ describe('permission.ui', function () {
 
           // THEN
           expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
-            location: 'replace', inherit: true, relative: true, notify: false, reload: false, $retry: false
+            location: true, inherit: true, relative: true, notify: false, reload: false, $retry: false
           });
         });
       });
