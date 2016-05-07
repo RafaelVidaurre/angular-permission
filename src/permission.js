@@ -24,7 +24,7 @@
     });
   }
 
-  function run($rootScope, $location, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
+  function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
     /**
      * State transition interceptor
      */
@@ -101,14 +101,10 @@
         TransitionEvents.broadcastStateChangePermissionAccepted();
 
         // Overwrite notify option to broadcast it later
-        TransitionProperties.options = angular.extend({}, TransitionProperties.options, {notify: false});
+        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: true});
 
         $state
-          .go(
-              TransitionProperties.toState.name,
-              TransitionProperties.toParams,
-              angular.extend({}, TransitionProperties.options, {location: 'replace'})
-          )
+          .go(TransitionProperties.toState.name, TransitionProperties.toParams, transitionOptions)
           .then(function () {
             TransitionEvents.broadcastStateChangeSuccess();
           });
