@@ -1,4 +1,4 @@
-(function () {
+(function (module) {
   'use strict';
 
   /**
@@ -85,8 +85,8 @@
     });
   }
 
-  angular
+  module.exports = angular
     .module('permission.ng', ['permission', 'ngRoute'])
-    .run(run);
+    .run(run).name;
 
-}());
+}(module));
