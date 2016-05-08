@@ -13,11 +13,7 @@
 	  "email": "blazej.krysiak@gmail.com"
 	}
   ],
-  "main": [
-	"dist/angular-permission.js",
-	"dist/angular-permission-ui.js",
-	"dist/angular-permission-ng.js"
-  ],
+  "main": "dist/angular-permission.js",
   "repository": {
 	"type": "git",
 	"url": "https://github.com/Narzerus/angular-permission.git"
@@ -44,8 +40,8 @@
 	"angular": "^1.4.8"
   },
   "peerDependencies": {
-    "angular": "^1.4.8",
-    "angular-ui-router": "^0.2.11"
+	"angular": "^1.4.8",
+	"angular-ui-router": "^0.2.11"
   },
   "devDependencies": {
 	"grunt": "^0.4.5",

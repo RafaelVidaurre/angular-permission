@@ -2,8 +2,8 @@
   "name": "angular-permission",
   "version": "3.0.1",
   "authors": [
-    "Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com)",
-    "Blazej Krysiak <blazej.krysiak@gmail.com>"
+	"Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com)",
+	"Blazej Krysiak <blazej.krysiak@gmail.com>"
   ],
   "description": "Fully featured role and permission based access control for your angular applications",
   "main": [
@@ -12,40 +12,40 @@
 	"dist/angular-permission-ng.js"
   ],
   "keywords": [
-    "angular",
-    "ui-router",
-    "ng-route",
-    "angular-route",
-    "access-control",
-    "permissions",
-    "access",
-    "acl",
-    "rbac",
-    "roles",
-    "route"
+	"angular",
+	"ui-router",
+	"ng-route",
+	"angular-route",
+	"access-control",
+	"permissions",
+	"access",
+	"acl",
+	"rbac",
+	"roles",
+	"route"
   ],
   "license": "MIT",
   "homepage": "https://github.com/Narzerus/angular-permission",
   "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "config",
+	"**/.*",
+	"node_modules",
+	"bower_components",
+	"config",
 	"docs",
-    "coverage",
-    "test",
-    "src",
-    "Gruntfile.js",
-    ".jshintrc",
-    ".gitignore",
-    ".travis.yml"
+	"coverage",
+	"test",
+	"src",
+	"Gruntfile.js",
+	".jshintrc",
+	".gitignore",
+	".travis.yml"
   ],
   "devDependencies": {
-    "angular-mocks": "*",
-    "angular-route": "<=1.5.3",
-    "angular-ui-router": "^0.2.0"
+	"angular-mocks": "*",
+	"angular-route": "<=1.5.3",
+	"angular-ui-router": "^0.2.0"
   },
   "dependencies": {
-    "angular": ">=1.4.8"
+	"angular": ">=1.4.8"
   }
 }
