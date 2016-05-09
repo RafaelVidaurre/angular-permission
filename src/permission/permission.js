@@ -6,6 +6,6 @@
    */
 
 
-  exports = module.exports = angular
+  module.exports = angular
     .module('permission', []).name;
 }(module || {}));
