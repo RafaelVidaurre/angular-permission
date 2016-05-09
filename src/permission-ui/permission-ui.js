@@ -141,8 +141,8 @@
     });
   }
 
-  module.exports = angular
+  exports = module.exports = angular
     .module('permission.ui', ['permission', 'ui.router'])
     .config(config)
     .run(run).name;
-}(module));
+}(module || {}));
