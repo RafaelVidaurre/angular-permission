@@ -1,7 +1,11 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
+<<<<<<< 1e234e13f495e138bb369ee9d987610d11ba213b
  * @version v3.0.1 - 2016-05-07
+=======
+ * @version v3.0.0 - 2016-04-30
+>>>>>>> reversed the changes to v3.0.0
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
  *   <blazej.krysiak@gmail.com>
@@ -15,7 +19,6 @@
    * @namespace permission.ng
    */
 
-  run.$inject = ['$rootScope', '$location', 'TransitionProperties', 'TransitionEvents', 'Authorization', 'PermissionMap'];
   function run($rootScope, $location, TransitionProperties, TransitionEvents, Authorization, PermissionMap) {
     'ngInject';
 
@@ -117,7 +120,6 @@
    * @param TransitionProperties {permission.TransitionProperties} Helper storing transition parameters
    * @param TransitionEventNames {permission.ng.TransitionEventNames} Constant storing event names
    */
-  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
   function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
     'ngInject';
 
