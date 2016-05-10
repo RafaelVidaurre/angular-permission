@@ -15,27 +15,6 @@ We've seen plenty of big fat tutorials on access control implementation, and the
 So we bring you a elastic, powerful and yet straightforward solution, that allow you provide fine-grained 
 role and permission based access control for your application users.
 
-<img src="https://drslash.com/wp-content/uploads/2014/12/Archive-Utility.png" width="48" height="48">&nbsp;Dependencies
-----------------------------
-
-- [angular 1.4.8+](https://github.com/angular/angular) as MV* framework
-- [ui-router](https://github.com/angular-ui/ui-router) or [ng-route](https://docs.angularjs.org/api/ngRoute) as your router module
-
-<img src="http://www.hostingreviewslist.com/wp-content/uploads/2013/04/code-icon-script.png" width="48" height="48">&nbsp;Installation
-----------------------------
-
-#### <img src="https://versioneye.files.wordpress.com/2014/01/bower-logo.png" width="32" height="32">&nbsp;bower
-
-```
-bower install angular-permission --save
-```
-
-#### <img src="http://jbeckwith.com/images/2012/09/node_128.png" width="32" height="32">&nbsp;npm
-
-```
-npm install angular-permission --save
-```
-
 <img src="https://res.cloudinary.com/hashnode/image/upload/v1451902371/static_imgs/story-stats-icon.png" width="48" height="48">&nbsp;Documentation and examples
 ----------------------------
 
