@@ -1,11 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
-<<<<<<< 1e234e13f495e138bb369ee9d987610d11ba213b
- * @version v3.0.1 - 2016-05-07
-=======
  * @version v3.0.0 - 2016-04-30
->>>>>>> reversed the changes to v3.0.0
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
  *   <blazej.krysiak@gmail.com>
@@ -23,8 +19,6 @@
    * @param $stateProvider {Object}
    */
   function config($stateProvider) {
-    'ngInject';
-
     $stateProvider.decorator('parent', function (state, parentFn) {
       /**
        * Property containing full state object definition
@@ -51,8 +45,6 @@
    * @param StatePermissionMap {permission.ui.StatePermissionMap}
    */
   function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
-    'ngInject';
-
     /**
      * State transition interceptor
      */
@@ -126,7 +118,7 @@
         TransitionEvents.broadcastPermissionAcceptedEvent();
 
         // Overwrite notify option to broadcast it later
-        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: true});
+        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: 'replace'});
 
         $state
           .go(TransitionProperties.toState.name, TransitionProperties.toParams, transitionOptions)
@@ -177,7 +169,6 @@
    * @param TransitionEventNames {permission.ui.TransitionEventNames} Constant storing event names
    */
   function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
-    'ngInject';
 
     $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
     $delegate.broadcastStateChangeSuccessEvent = broadcastStateChangeSuccessEvent;
@@ -306,7 +297,6 @@
    * @param $q {Object} Angular promise implementation
    */
   function StateAuthorization($q) {
-    'ngInject';
 
     this.authorize = authorize;
 
@@ -425,7 +415,6 @@
    * @return {StatePermissionMap}
    */
   function StatePermissionMapFactory(PermissionMap) {
-    'ngInject';
 
     StatePermissionMap.prototype = new PermissionMap();
 
@@ -436,7 +425,7 @@
      */
     function StatePermissionMap(state) {
       var toStateObject = state.$$state();
-      var toStatePath = toStateObject.path;
+      var toStatePath = toStateObject.path.slice().reverse();
 
       angular.forEach(toStatePath, function (state) {
         if (areSetStatePermissions(state)) {
