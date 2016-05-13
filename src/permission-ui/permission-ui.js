@@ -1,4 +1,4 @@
-(function () {
+(function (module) {
   'use strict';
 
   /**
@@ -141,8 +141,8 @@
     });
   }
 
-  angular
+  module.exports = angular
     .module('permission.ui', ['permission', 'ui.router'])
     .config(config)
-    .run(run);
-}());
+    .run(run).name;
+}(module || {}));
