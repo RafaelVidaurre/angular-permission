@@ -1,6 +1,6 @@
 {
   "name": "angular-permission",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "description": "Fully featured role and permission based access control for your angular applications",
   "author": {
 	"name": "Rafael Vidaurre",
@@ -13,7 +13,7 @@
 	  "email": "blazej.krysiak@gmail.com"
 	}
   ],
-  "main": "index.js",
+  "main": "dist/angular-permission.js",
   "repository": {
 	"type": "git",
 	"url": "https://github.com/Narzerus/angular-permission.git"

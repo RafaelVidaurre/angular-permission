@@ -1,14 +1,14 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v3.0.1 - 2016-05-07
+ * @version v3.1.0 - 2016-05-15
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
  *   <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
-(function () {
+(function (module) {
   'use strict';
 
   /**
@@ -96,11 +96,13 @@
     });
   }
 
-  angular
+  var ngPermission = angular
     .module('permission.ng', ['permission', 'ngRoute'])
-    .run(run);
+    .run(run).name;
 
-}());
+  module.exports = ngPermission.name;
+
+}(module || {}));
 
 
 (function () {
