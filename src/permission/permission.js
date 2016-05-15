@@ -5,7 +5,8 @@
    * @namespace permission
    */
 
+  var permission = angular.module('permission', []);
 
-  module.exports = angular
-    .module('permission', []).name;
+  module.exports = permission.name;
+
 }(module || {}));

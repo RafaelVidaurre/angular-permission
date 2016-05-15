@@ -85,8 +85,10 @@
     });
   }
 
-  module.exports = angular
+  var ngPermission = angular
     .module('permission.ng', ['permission', 'ngRoute'])
     .run(run).name;
+
+  module.exports = ngPermission.name;
 
 }(module || {}));
