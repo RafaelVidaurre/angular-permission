@@ -1,3 +1,5 @@
+var _module = module || {};
+
 (function (module) {
   'use strict';
 
@@ -148,4 +150,4 @@
 
   module.exports = uiPermission.name;
 
-}(module || {}));
+}(_module));

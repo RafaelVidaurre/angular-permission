@@ -1,3 +1,5 @@
+var _module = module || {};
+
 (function (module) {
   'use strict';
 
@@ -91,4 +93,4 @@
 
   module.exports = ngPermission.name;
 
-}(module || {}));
+}(_module));

@@ -1,6 +1,6 @@
 {
   "name": "angular-permission",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Fully featured role and permission based access control for your angular applications",
   "author": {
 	"name": "Rafael Vidaurre",
@@ -36,8 +36,8 @@
 	"url": "https://github.com/Narzerus/angular-permission/issues"
   },
   "homepage": "https://github.com/Narzerus/angular-permission",
-  "dependecies": {
-	"angular": "^1.4.8"
+  "dependencies": {
+	"angular": ">=1.4.8"
   },
   "peerDependencies": {
 	"angular": "^1.4.8",
