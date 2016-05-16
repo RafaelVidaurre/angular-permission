@@ -43,7 +43,7 @@
   "devDependencies": {
 	"angular-mocks": "*",
 	"angular-route": "*",
-	"angular-ui-router": "<1.0.0"
+	"angular-ui-router": "^0.2.11 || ^0.3.0"
   },
   "dependencies": {
 	"angular": ">=1.4.8"
