@@ -61,9 +61,6 @@ describe('permission.ng', function () {
         it('should check if none of events prevents authorization', function () {
           // GIVEN
           spyOn($rootScope, '$broadcast').and.callThrough();
-          TransitionProperties.toState = {
-            $$isAuthorizationFinished: true
-          };
 
           // WHEN
           var result = TransitionEvents.areEventsDefaultPrevented();
