@@ -1,3 +1,5 @@
+var _module = module || {};
+
 (function (module) {
   'use strict';
 
@@ -9,4 +11,4 @@
 
   module.exports = permission.name;
 
-}(module || {}));
+}(_module));
