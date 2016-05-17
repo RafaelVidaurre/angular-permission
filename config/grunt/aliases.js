@@ -9,6 +9,7 @@ module.exports = function () {
       'clean',
       'concat',
       'ngAnnotate',
+      'beautifier',
       'uglify'
     ],
     test: [

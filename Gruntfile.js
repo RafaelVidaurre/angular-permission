@@ -1,4 +1,4 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   'use strict';
 
   var path = require('path');
@@ -41,4 +41,6 @@ module.exports = function(grunt) {
       }
     }
   });
+
+  grunt.task.renameTask('jsbeautifier', 'beautifier');
 };

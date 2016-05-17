@@ -1,95 +1,92 @@
-(function () {
-  'use strict';
+'use strict';
+
+/**
+ * Service responsible for handling view based authorization
+ * @name permission.Authorization
+ *
+ * @param $q {Object} Angular promise implementation
+ */
+function Authorization($q) {
+  'ngInject';
+
+  this.authorize = authorize;
 
   /**
-   * Service responsible for handling view based authorization
-   * @name permission.Authorization
+   * Handles authorization based on provided permissions map
+   * @methodOf permission.Authorization
    *
-   * @param $q {Object} Angular promise implementation
+   * @param permissionsMap {permission.PermissionMap} Map of permission names
+   *
+   * @returns {promise} $q.promise object
    */
-  function Authorization($q) {
-    'ngInject';
-
-    this.authorize = authorize;
-
-    /**
-     * Handles authorization based on provided permissions map
-     * @methodOf permission.Authorization
-     *
-     * @param permissionsMap {permission.PermissionMap} Map of permission names
-     *
-     * @returns {promise} $q.promise object
-     */
-    function authorize(permissionsMap) {
-      return authorizePermissionMap(permissionsMap);
-    }
-
-    /**
-     * Checks authorization for simple view based access
-     * @methodOf permission.Authorization
-     * @private
-     *
-     * @param map {permission.PermissionMap} Access rights map
-     *
-     * @returns {promise} $q.promise object
-     */
-    function authorizePermissionMap(map) {
-      var deferred = $q.defer();
-
-      resolveExceptPrivilegeMap(deferred, map);
-
-      return deferred.promise;
-    }
-
-    /**
-     * Resolves flat set of "except" privileges
-     * @methodOf permission.Authorization
-     * @private
-     *
-     * @param deferred {Object} Promise defer
-     * @param map {permission.PermissionMap} Access rights map
-     *
-     * @returns {Promise} $q.promise object
-     */
-    function resolveExceptPrivilegeMap(deferred, map) {
-      var exceptPromises = map.resolvePropertyValidity(map.except);
-
-      $q.any(exceptPromises)
-        .then(function (rejectedPermissions) {
-          deferred.reject(rejectedPermissions);
-        })
-        .catch(function () {
-          resolveOnlyPermissionMap(deferred, map);
-        });
-    }
-
-    /**
-     * Resolves flat set of "only" privileges
-     * @methodOf permission.Authorization
-     * @private
-     *
-     * @param deferred {Object} Promise defer
-     * @param map {permission.PermissionMap} Access rights map
-     */
-    function resolveOnlyPermissionMap(deferred, map) {
-      if (!map.only.length) {
-        deferred.resolve();
-        return;
-      }
-
-      var onlyPromises = map.resolvePropertyValidity(map.only);
-      $q.any(onlyPromises)
-        .then(function (resolvedPermissions) {
-          deferred.resolve(resolvedPermissions);
-        })
-        .catch(function (rejectedPermission) {
-          deferred.reject(rejectedPermission);
-        });
-    }
+  function authorize(permissionsMap) {
+    return authorizePermissionMap(permissionsMap);
   }
 
-  angular
-    .module('permission')
-    .service('Authorization', Authorization);
+  /**
+   * Checks authorization for simple view based access
+   * @methodOf permission.Authorization
+   * @private
+   *
+   * @param map {permission.PermissionMap} Access rights map
+   *
+   * @returns {promise} $q.promise object
+   */
+  function authorizePermissionMap(map) {
+    var deferred = $q.defer();
 
-})();
+    resolveExceptPrivilegeMap(deferred, map);
+
+    return deferred.promise;
+  }
+
+  /**
+   * Resolves flat set of "except" privileges
+   * @methodOf permission.Authorization
+   * @private
+   *
+   * @param deferred {Object} Promise defer
+   * @param map {permission.PermissionMap} Access rights map
+   *
+   * @returns {Promise} $q.promise object
+   */
+  function resolveExceptPrivilegeMap(deferred, map) {
+    var exceptPromises = map.resolvePropertyValidity(map.except);
+
+    $q.any(exceptPromises)
+      .then(function (rejectedPermissions) {
+        deferred.reject(rejectedPermissions);
+      })
+      .catch(function () {
+        resolveOnlyPermissionMap(deferred, map);
+      });
+  }
+
+  /**
+   * Resolves flat set of "only" privileges
+   * @methodOf permission.Authorization
+   * @private
+   *
+   * @param deferred {Object} Promise defer
+   * @param map {permission.PermissionMap} Access rights map
+   */
+  function resolveOnlyPermissionMap(deferred, map) {
+    if (!map.only.length) {
+      deferred.resolve();
+      return;
+    }
+
+    var onlyPromises = map.resolvePropertyValidity(map.only);
+    $q.any(onlyPromises)
+      .then(function (resolvedPermissions) {
+        deferred.resolve(resolvedPermissions);
+      })
+      .catch(function (rejectedPermission) {
+        deferred.reject(rejectedPermission);
+      });
+  }
+}
+
+angular
+  .module('permission')
+  .service('Authorization', Authorization);

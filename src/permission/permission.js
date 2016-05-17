@@ -1,15 +1,11 @@
-(function () {
-  'use strict';
+'use strict';
 
-  /**
-   * @namespace permission
-   */
+/**
+ * @namespace permission
+ */
 
-  var permission = angular.module('permission', []);
+var permission = angular.module('permission', []);
 
-  if (typeof module !== 'undefined' && module.exports) {
-    module.exports = permission.name;
-  }
-
-  return permission;
-}());
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = permission.name;
+}

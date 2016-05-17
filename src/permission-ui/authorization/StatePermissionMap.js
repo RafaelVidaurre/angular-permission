@@ -1,68 +1,66 @@
-(function () {
-  'use strict';
+'use strict';
+
+/**
+ * State Access rights map factory
+ * @function
+ *
+ * @param PermissionMap {permission.PermissionMap}
+ *
+ * @return {StatePermissionMap}
+ */
+function StatePermissionMapFactory(PermissionMap) {
+  'ngInject';
+
+  StatePermissionMap.prototype = new PermissionMap();
 
   /**
-   * State Access rights map factory
-   * @function
-   *
-   * @param PermissionMap {permission.PermissionMap}
-   *
-   * @return {StatePermissionMap}
+   * Constructs map instructing authorization service how to handle authorizing
+   * @constructor permission.ui.StatePermissionMap
+   * @extends permission.PermissionMap
    */
-  function StatePermissionMapFactory(PermissionMap) {
-    'ngInject';
+  function StatePermissionMap(state) {
+    var toStateObject = state.$$state();
+    var toStatePath = toStateObject.path;
 
-    StatePermissionMap.prototype = new PermissionMap();
-
-    /**
-     * Constructs map instructing authorization service how to handle authorizing
-     * @constructor permission.ui.StatePermissionMap
-     * @extends permission.PermissionMap
-     */
-    function StatePermissionMap(state) {
-      var toStateObject = state.$$state();
-      var toStatePath = toStateObject.path;
-
-      angular.forEach(toStatePath, function (state) {
-        if (areSetStatePermissions(state)) {
-          var permissionMap = new PermissionMap(state.data.permissions);
-          this.extendPermissionMap(permissionMap);
-        }
-      }, this);
-    }
-
-    /**
-     * Extends permission map by pushing to it state's permissions
-     * @methodOf permission.ui.StatePermissionMap
-     *
-     * @param permissionMap {permission.PermissionMap} Compensated permission map
-     */
-    StatePermissionMap.prototype.extendPermissionMap = function (permissionMap) {
-      if (permissionMap.only.length) {
-        this.only = this.only.concat([permissionMap.only]);
+    angular.forEach(toStatePath, function (state) {
+      if (areSetStatePermissions(state)) {
+        var permissionMap = new PermissionMap(state.data.permissions);
+        this.extendPermissionMap(permissionMap);
       }
-      if (permissionMap.except.length) {
-        this.except = this.except.concat([permissionMap.except]);
-      }
-      this.redirectTo = permissionMap.redirectTo;
-    };
-
-
-    /**
-     * Checks if state has set permissions
-     * @methodOf permission.ui.StatePermissionMap
-     * @private
-     *
-     * @returns {boolean}
-     */
-    function areSetStatePermissions (state) {
-      return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
-    }
-
-    return StatePermissionMap;
+    }, this);
   }
 
-  angular
-    .module('permission.ui')
-    .factory('StatePermissionMap', StatePermissionMapFactory);
-}());
+  /**
+   * Extends permission map by pushing to it state's permissions
+   * @methodOf permission.ui.StatePermissionMap
+   *
+   * @param permissionMap {permission.PermissionMap} Compensated permission map
+   */
+  StatePermissionMap.prototype.extendPermissionMap = function (permissionMap) {
+    if (permissionMap.only.length) {
+      this.only = this.only.concat([permissionMap.only]);
+    }
+    if (permissionMap.except.length) {
+      this.except = this.except.concat([permissionMap.except]);
+    }
+    this.redirectTo = permissionMap.redirectTo;
+  };
+
+
+  /**
+   * Checks if state has set permissions
+   * @methodOf permission.ui.StatePermissionMap
+   * @private
+   *
+   * @returns {boolean}
+   */
+  function areSetStatePermissions(state) {
+    return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
+  }
+
+  return StatePermissionMap;
+}
+
+angular
+  .module('permission.ui')
+  .factory('StatePermissionMap', StatePermissionMapFactory);

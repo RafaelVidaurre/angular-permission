@@ -3,7 +3,6 @@ module.exports = function () {
 
   return {
     options: {
-      banner: '<%= meta.banner %>',
       mangle: {
         except: ['angular']
       },

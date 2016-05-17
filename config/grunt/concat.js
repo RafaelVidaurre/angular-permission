@@ -3,11 +3,20 @@ module.exports = function () {
 
   return {
     options: {
-      separator: '\n\n'
+      separator: '\n' +
+      '\n',
+      process: function (src) {
+        return src
+          .replace(/(^|\n)[ \t]*'use strict';?\s*/g, '$1');
+      },
+      footer: '\n}());'
     },
     permission: {
       options: {
-        banner: '<%= meta["banner"] %>'
+        banner: '<%= meta["banner"] %>' +
+        '(function () {\n' +
+        '\'use strict\';' +
+        '\n\n'
       },
       files: {
         '<%= paths.dist %>/<%= pkg.name %>.js': [
@@ -28,7 +37,10 @@ module.exports = function () {
     },
     'permission-ui': {
       options: {
-        banner: '<%= meta["banner-ui"] %>'
+        banner: '<%= meta["banner-ui"] %>' +
+        '(function () {\n' +
+        '\'use strict\';' +
+        '\n\n'
       },
       files: {
         '<%= paths.dist %>/<%= pkg.name %>-ui.js': [
@@ -42,7 +54,10 @@ module.exports = function () {
     },
     'permission-ng': {
       options: {
-        banner: '<%= meta["banner-ng"] %>'
+        banner: '<%= meta["banner-ng"] %>' +
+        '(function () {\n' +
+        '\'use strict\';' +
+        '\n\n'
       },
       files: {
         '<%= paths.dist %>/<%= pkg.name %>-ng.js': [
