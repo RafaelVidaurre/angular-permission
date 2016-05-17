@@ -1,10 +1,9 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v3.1.1 - 2016-05-07
+ * @version v3.1.2 - 2016-05-07
  * @link https://github.com/Narzerus/angular-permission
- * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak
- *   <blazej.krysiak@gmail.com>
+ * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 var _module = module || {};
