@@ -98,7 +98,7 @@
 
   var ngPermission = angular
     .module('permission.ng', ['permission', 'ngRoute'])
-    .run(run).name;
+    .run(run);
 
   if (angular.isDefined(module)) {
     module.exports = ngPermission.name;
