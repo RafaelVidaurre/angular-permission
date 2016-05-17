@@ -1,5 +1,3 @@
-var _module = module || {};
-
 (function (module) {
   'use strict';
 
@@ -148,6 +146,9 @@ var _module = module || {};
     .config(config)
     .run(run);
 
-  module.exports = uiPermission.name;
 
-}(_module));
+  if (angular.isDefined(module)) {
+    module.exports = uiPermission.name;
+  }
+
+}());

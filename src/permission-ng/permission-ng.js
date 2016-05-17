@@ -1,5 +1,3 @@
-var _module = module || {};
-
 (function (module) {
   'use strict';
 
@@ -91,6 +89,8 @@ var _module = module || {};
     .module('permission.ng', ['permission', 'ngRoute'])
     .run(run).name;
 
-  module.exports = ngPermission.name;
+  if (angular.isDefined(module)) {
+    module.exports = ngPermission.name;
+  }
 
-}(_module));
+}());

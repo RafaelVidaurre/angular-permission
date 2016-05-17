@@ -1,5 +1,3 @@
-var _module = module || {};
-
 (function (module) {
   'use strict';
 
@@ -9,6 +7,8 @@ var _module = module || {};
 
   var permission = angular.module('permission', []);
 
-  module.exports = permission.name;
+  if (angular.isDefined(module)) {
+    module.exports = permission.name;
+  }
 
-}(_module));
+}());
