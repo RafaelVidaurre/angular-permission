@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v3.1.2 - 2016-05-17
+ * @version v3.1.3 - 2016-05-17
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -16,7 +16,7 @@
 
   var permission = angular.module('permission', []);
 
-  if (angular.isDefined(module)) {
+  if (typeof module !== 'undefined' && module.exports) {
     module.exports = permission.name;
   }
 

@@ -89,7 +89,7 @@
     .module('permission.ng', ['permission', 'ngRoute'])
     .run(run);
 
-  if (angular.isDefined(module)) {
+  if (typeof module !== 'undefined' && module.exports) {
     module.exports = ngPermission.name;
   }
 

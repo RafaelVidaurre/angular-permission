@@ -7,7 +7,7 @@
 
   var permission = angular.module('permission', []);
 
-  if (angular.isDefined(module)) {
+  if (typeof module !== 'undefined' && module.exports) {
     module.exports = permission.name;
   }
 
