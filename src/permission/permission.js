@@ -11,4 +11,5 @@
     module.exports = permission.name;
   }
 
+  return permission;
 }());

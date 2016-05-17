@@ -163,6 +163,7 @@
     module.exports = uiPermission.name;
   }
 
+  return uiPermission;
 }());
 
 

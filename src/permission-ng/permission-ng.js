@@ -93,4 +93,5 @@
     module.exports = ngPermission.name;
   }
 
+  return ngPermission;
 }());
