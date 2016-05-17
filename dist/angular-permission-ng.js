@@ -7,7 +7,7 @@
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
-(function (module) {
+(function () {
   'use strict';
 
   /**

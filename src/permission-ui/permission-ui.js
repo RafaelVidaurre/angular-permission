@@ -1,4 +1,4 @@
-(function (module) {
+(function () {
   'use strict';
 
   /**
