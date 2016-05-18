@@ -88,6 +88,6 @@ var ngPermission = angular
   .module('permission.ng', ['permission', 'ngRoute'])
   .run(run);
 
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
   module.exports = ngPermission.name;
 }

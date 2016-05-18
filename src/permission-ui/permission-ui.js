@@ -145,7 +145,6 @@ var uiPermission = angular
   .config(config)
   .run(run);
 
-
-if (typeof module !== 'undefined' && module.exports) {
+if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
   module.exports = uiPermission.name;
 }

@@ -9,12 +9,12 @@ module.exports = function () {
         return src
           .replace(/(^|\n)[ \t]*'use strict';?\s*/g, '$1');
       },
-      footer: '\n}());'
+      footer: '\n}(window, window.angular));'
     },
     permission: {
       options: {
         banner: '<%= meta["banner"] %>' +
-        '(function () {\n' +
+        '(function (window, angular, undefined) {\n' +
         '\'use strict\';' +
         '\n\n'
       },
@@ -38,7 +38,7 @@ module.exports = function () {
     'permission-ui': {
       options: {
         banner: '<%= meta["banner-ui"] %>' +
-        '(function () {\n' +
+        '(function (window, angular, undefined) {\n' +
         '\'use strict\';' +
         '\n\n'
       },
@@ -55,7 +55,7 @@ module.exports = function () {
     'permission-ng': {
       options: {
         banner: '<%= meta["banner-ng"] %>' +
-        '(function () {\n' +
+        '(function (window, angular, undefined) {\n' +
         '\'use strict\';' +
         '\n\n'
       },
