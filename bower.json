@@ -28,17 +28,13 @@
   "homepage": "https://github.com/Narzerus/angular-permission",
   "ignore": [
 	"**/.*",
-	"node_modules",
-	"bower_components",
 	"config",
-	"coverage",
 	"test",
 	"src",
 	"Gruntfile.js",
-	"CONTRIBUTING.md",
-	".jshintrc",
-	".gitignore",
-	".travis.yml"
+	"index.js",
+	"package.json",
+	"CONTRIBUTING.md"
   ],
   "devDependencies": {
 	"angular-mocks": "*",

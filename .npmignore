@@ -1,0 +1,6 @@
+**/.*,
+config,
+test,
+src,
+Gruntfile.js
+CONTRIBUTING.md
