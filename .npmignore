@@ -1,6 +1,6 @@
-**/.*,
-config,
-test,
-src,
+**/.*
+config/
+test/
+src/
 Gruntfile.js
 CONTRIBUTING.md
