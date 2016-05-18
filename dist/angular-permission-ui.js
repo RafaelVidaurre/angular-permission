@@ -1,13 +1,13 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v3.1.3 - 2016-05-17
+ * @version v3.1.4 - 2016-05-18
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
-(function () {
+(function (window, angular, undefined) {
   'use strict';
 
   /**
@@ -19,6 +19,10 @@
    */
   config.$inject = ['$stateProvider'];
   run.$inject = ['$rootScope', '$state', 'TransitionProperties', 'TransitionEvents', 'StateAuthorization', 'StatePermissionMap'];
+  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
+  StateAuthorization.$inject = ['$q'];
+  StatePermissionMapFactory.$inject = ['PermissionMap'];
+
   function config($stateProvider) {
     'ngInject';
 
@@ -100,7 +104,9 @@
        * @param status {boolean} When true authorization has been already preceded
        */
       function setStateAuthorizationStatus(status) {
-        angular.extend(toState, {'$$isAuthorizationFinished': status});
+        angular.extend(toState, {
+          '$$isAuthorizationFinished': status
+        });
       }
 
       /**
@@ -123,7 +129,10 @@
         TransitionEvents.broadcastPermissionAcceptedEvent();
 
         // Overwrite notify option to broadcast it later
-        var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: true});
+        var transitionOptions = angular.extend({}, TransitionProperties.options, {
+          notify: false,
+          location: true
+        });
 
         $state
           .go(TransitionProperties.toState.name, TransitionProperties.toParams, transitionOptions)
@@ -157,17 +166,10 @@
     .config(config)
     .run(run);
 
-
-  if (typeof module !== 'undefined' && module.exports) {
+  if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
     module.exports = uiPermission.name;
   }
 
-  return uiPermission;
-}());
-
-
-(function () {
-  'use strict';
 
   /**
    * Service responsible for managing and emitting events
@@ -180,7 +182,6 @@
    * @param TransitionProperties {permission.TransitionProperties} Helper storing transition parameters
    * @param TransitionEventNames {permission.ui.TransitionEventNames} Constant storing event names
    */
-  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
   function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
     'ngInject';
 
@@ -274,11 +275,6 @@
     .module('permission.ui')
     .decorator('TransitionEvents', TransitionEvents);
 
-}());
-
-(function () {
-  'use strict';
-
   /**
    * Constant storing event names for ng-route
    * @name permission.ui.TransitionEventNames
@@ -299,10 +295,6 @@
     .module('permission.ui')
     .value('TransitionEventNames', TransitionEventNames);
 
-}());
-
-(function () {
-  'use strict';
 
   /**
    * Service responsible for handling inheritance-enabled state-based authorization in ui-router
@@ -310,7 +302,6 @@
    *
    * @param $q {Object} Angular promise implementation
    */
-  StateAuthorization.$inject = ['$q'];
   function StateAuthorization($q) {
     'ngInject';
 
@@ -416,12 +407,6 @@
     .module('permission')
     .service('StateAuthorization', StateAuthorization);
 
-})();
-
-
-(function () {
-  'use strict';
-
   /**
    * State Access rights map factory
    * @function
@@ -430,7 +415,6 @@
    *
    * @return {StatePermissionMap}
    */
-  StatePermissionMapFactory.$inject = ['PermissionMap'];
   function StatePermissionMapFactory(PermissionMap) {
     'ngInject';
 
@@ -477,7 +461,7 @@
      *
      * @returns {boolean}
      */
-    function areSetStatePermissions (state) {
+    function areSetStatePermissions(state) {
       return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
     }
 
@@ -487,4 +471,5 @@
   angular
     .module('permission.ui')
     .factory('StatePermissionMap', StatePermissionMapFactory);
-}());
+
+}(window, window.angular));

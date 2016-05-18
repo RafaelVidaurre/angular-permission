@@ -1,31 +1,32 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v3.1.3 - 2016-05-17
+ * @version v3.1.4 - 2016-05-18
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
-(function () {
+(function (window, angular, undefined) {
   'use strict';
 
   /**
    * @namespace permission
    */
 
+  $q.$inject = ['$delegate'];
+  PermissionFactory.$inject = ['$q', 'TransitionProperties'];
+  RoleFactory.$inject = ['$q', 'PermissionStore', 'TransitionProperties'];
+  PermissionStore.$inject = ['Permission'];
+  RoleStore.$inject = ['Role'];
+  PermissionDirective.$inject = ['$log', 'Authorization', 'PermissionMap', 'PermissionStrategies'];
+  Authorization.$inject = ['$q'];
+  PermissionMapFactory.$inject = ['$q', 'TransitionProperties', 'RoleStore', 'PermissionStore'];
   var permission = angular.module('permission', []);
 
-  if (typeof module !== 'undefined' && module.exports) {
+  if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
     module.exports = permission.name;
   }
-
-  return permission;
-}());
-
-
-(function () {
-  'use strict';
 
   /**
    * Extends $q implementation by A+ *any* method
@@ -35,7 +36,6 @@
    *
    * @param $delegate {Object} Parent instance being extended
    */
-  $q.$inject = ['$delegate'];
   function $q($delegate) {
     'ngInject';
 
@@ -86,11 +86,6 @@
     .module('permission')
     .decorator('$q', $q);
 
-})();
-
-
-(function () {
-  'use strict';
 
   /**
    * Pre-defined available configurable behaviours of directive `permission`
@@ -128,11 +123,6 @@
     .module('permission')
     .constant('PermissionStrategies', PermissionStrategies);
 
-}());
-
-
-(function () {
-  'use strict';
 
   /**
    * Helper object used for storing ui-router/ng-route transition parameters
@@ -156,11 +146,6 @@
   angular
     .module('permission')
     .value('TransitionProperties', TransitionProperties);
-
-}());
-
-(function () {
-  'use strict';
 
   /**
    * Interface responsible for managing and emitting events dependent on router implementation
@@ -186,10 +171,6 @@
     .module('permission')
     .service('TransitionEvents', TransitionEvents);
 
-}());
-
-(function () {
-  'use strict';
 
   /**
    * Permission definition factory
@@ -200,7 +181,6 @@
    *
    * @return {permission.Permission}
    */
-  PermissionFactory.$inject = ['$q', 'TransitionProperties'];
   function PermissionFactory($q, TransitionProperties) {
     'ngInject';
 
@@ -282,11 +262,6 @@
     .module('permission')
     .factory('Permission', PermissionFactory);
 
-}());
-
-(function () {
-  'use strict';
-
   /**
    * Role definition factory
    * @function
@@ -297,7 +272,6 @@
    *
    * @return {permission.Role}
    */
-  RoleFactory.$inject = ['$q', 'PermissionStore', 'TransitionProperties'];
   function RoleFactory($q, PermissionStore, TransitionProperties) {
     'ngInject';
 
@@ -397,18 +371,12 @@
     .module('permission')
     .factory('Role', RoleFactory);
 
-}());
-
-(function () {
-  'use strict';
-
   /**
    * Permission definition storage
    * @name permission.PermissionStore
    *
    * @param Permission {permission.PermissionFactory} Permission definition factory
    */
-  PermissionStore.$inject = ['Permission'];
   function PermissionStore(Permission) {
     'ngInject';
 
@@ -510,10 +478,6 @@
   angular
     .module('permission')
     .service('PermissionStore', PermissionStore);
-}());
-
-(function () {
-  'use strict';
 
   /**
    * Role definition storage
@@ -521,7 +485,6 @@
    *
    * @param Role {permission.Role|Function} Role definition constructor
    */
-  RoleStore.$inject = ['Role'];
   function RoleStore(Role) {
     'ngInject';
 
@@ -617,10 +580,6 @@
   angular
     .module('permission')
     .service('RoleStore', RoleStore);
-}());
-
-(function () {
-  'use strict';
 
   /**
    * Handles authorization based on provided permissions/roles.
@@ -661,8 +620,7 @@
    *
    * @returns {Object} Directive instance
    */
-  permissionDirective.$inject = ['$log', 'Authorization', 'PermissionMap', 'PermissionStrategies'];
-  function permissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
+  function PermissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
     'ngInject';
 
     return {
@@ -731,13 +689,8 @@
 
   angular
     .module('permission')
-    .directive('permission', permissionDirective);
+    .directive('permission', PermissionDirective);
 
-}());
-
-
-(function () {
-  'use strict';
 
   /**
    * Service responsible for handling view based authorization
@@ -745,7 +698,6 @@
    *
    * @param $q {Object} Angular promise implementation
    */
-  Authorization.$inject = ['$q'];
   function Authorization($q) {
     'ngInject';
 
@@ -831,11 +783,6 @@
     .module('permission')
     .service('Authorization', Authorization);
 
-})();
-
-
-(function () {
-  'use strict';
 
   /**
    * Access rights map factory
@@ -848,7 +795,6 @@
    *
    * @return {permission.PermissionMap}
    */
-  PermissionMapFactory.$inject = ['$q', 'TransitionProperties', 'RoleStore', 'PermissionStore'];
   function PermissionMapFactory($q, TransitionProperties, RoleStore, PermissionStore) {
     'ngInject';
 
@@ -1022,4 +968,4 @@
   angular
     .module('permission')
     .factory('PermissionMap', PermissionMapFactory);
-}());
+}(window, window.angular));

@@ -1,13 +1,13 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v3.1.3 - 2016-05-17
+ * @version v3.1.4 - 2016-05-18
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
  */
 
-(function () {
+(function (window, angular, undefined) {
   'use strict';
 
   /**
@@ -15,6 +15,8 @@
    */
 
   run.$inject = ['$rootScope', '$location', 'TransitionProperties', 'TransitionEvents', 'Authorization', 'PermissionMap'];
+  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
+
   function run($rootScope, $location, TransitionProperties, TransitionEvents, Authorization, PermissionMap) {
     'ngInject';
 
@@ -99,16 +101,9 @@
     .module('permission.ng', ['permission', 'ngRoute'])
     .run(run);
 
-  if (typeof module !== 'undefined' && module.exports) {
+  if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
     module.exports = ngPermission.name;
   }
-
-  return ngPermission;
-}());
-
-
-(function () {
-  'use strict';
 
   /**
    * Service responsible for managing and emitting events
@@ -121,7 +116,6 @@
    * @param TransitionProperties {permission.TransitionProperties} Helper storing transition parameters
    * @param TransitionEventNames {permission.ng.TransitionEventNames} Constant storing event names
    */
-  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
   function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
     'ngInject';
 
@@ -182,11 +176,6 @@
     .module('permission.ng')
     .decorator('TransitionEvents', TransitionEvents);
 
-}());
-
-(function () {
-  'use strict';
-
   /**
    * Constant storing event names for ng-route
    * @name permission.ng.TransitionEventNames
@@ -207,4 +196,4 @@
     .module('permission.ng')
     .value('TransitionEventNames', TransitionEventNames);
 
-}());
+}(window, window.angular));
