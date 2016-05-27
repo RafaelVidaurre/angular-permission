@@ -34,4 +34,4 @@ var PermissionStrategies = {
 
 angular
   .module('permission')
-  .constant('PermissionStrategies', PermissionStrategies);
+  .value('PermissionStrategies', PermissionStrategies);
