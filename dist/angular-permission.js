@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v3.1.4 - 2016-05-18
+ * @version v3.1.5 - 2016-05-28
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -121,7 +121,7 @@
 
   angular
     .module('permission')
-    .constant('PermissionStrategies', PermissionStrategies);
+    .value('PermissionStrategies', PermissionStrategies);
 
 
   /**
