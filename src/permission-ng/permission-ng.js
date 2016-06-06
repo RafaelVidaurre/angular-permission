@@ -23,13 +23,14 @@ function run($rootScope, $location, TransitionProperties, TransitionEvents, Auth
         redirectTo: next.$$route.data.permissions.redirectTo
       });
 
+      event.preventDefault();
+
       Authorization
         .authorize(permissionMap)
         .then(function () {
           handleAuthorizedState();
         })
         .catch(function (rejectedPermission) {
-          event.preventDefault();
           handleUnauthorizedState(rejectedPermission, permissionMap);
         });
     }
