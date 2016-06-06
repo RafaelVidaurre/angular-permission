@@ -119,7 +119,6 @@ describe('permission.ng', function () {
           $rootScope.$digest();
 
           // THEN
-          expect($location.path()).toBe('/accepted');
           expect(Authorization.authorize).toHaveBeenCalled();
           expect(TransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
         });
