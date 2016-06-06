@@ -1,7 +1,7 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v3.1.5 - 2016-05-28
+ * @version v3.1.6 - 2016-06-06
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -36,13 +36,14 @@
           redirectTo: next.$$route.data.permissions.redirectTo
         });
 
+        event.preventDefault();
+
         Authorization
           .authorize(permissionMap)
           .then(function () {
             handleAuthorizedState();
           })
           .catch(function (rejectedPermission) {
-            event.preventDefault();
             handleUnauthorizedState(rejectedPermission, permissionMap);
           });
       }
