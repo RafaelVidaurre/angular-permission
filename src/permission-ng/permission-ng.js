@@ -17,22 +17,8 @@ function run($rootScope, $location, TransitionProperties, TransitionEvents, Auth
 
       TransitionEvents.broadcastPermissionStartEvent();
 
-      var permissionMap = new PermissionMap({
-        only: next.$$route.data.permissions.only,
-        except: next.$$route.data.permissions.except,
-        redirectTo: next.$$route.data.permissions.redirectTo
-      });
-
-      event.preventDefault();
-
-      Authorization
-        .authorize(permissionMap)
-        .then(function () {
-          handleAuthorizedState();
-        })
-        .catch(function (rejectedPermission) {
-          handleUnauthorizedState(rejectedPermission, permissionMap);
-        });
+      next.$$route.resolve = next.$$route.resolve || {};
+      next.$$route.resolve.$$permission = permissionResolver;
     }
 
     /**
@@ -54,6 +40,26 @@ function run($rootScope, $location, TransitionProperties, TransitionEvents, Auth
     function setTransitionProperties() {
       TransitionProperties.next = next;
       TransitionProperties.current = current;
+    }
+
+    function permissionResolver (){
+      var permissionMap = new PermissionMap({
+        only: next.$$route.data.permissions.only,
+        except: next.$$route.data.permissions.except,
+        redirectTo: next.$$route.data.permissions.redirectTo
+      });
+
+      var authorizationResult = Authorization.authorize(permissionMap);
+
+      authorizationResult
+        .then(function () {
+          handleAuthorizedState();
+        })
+        .catch(function (rejectedPermission) {
+          handleUnauthorizedState(rejectedPermission, permissionMap);
+        });
+
+      return authorizationResult;
     }
 
     /**
