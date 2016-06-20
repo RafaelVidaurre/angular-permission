@@ -1,7 +1,7 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v3.1.6 - 2016-06-06
+ * @version v3.1.7 - 2016-06-21
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -30,22 +30,8 @@
 
         TransitionEvents.broadcastPermissionStartEvent();
 
-        var permissionMap = new PermissionMap({
-          only: next.$$route.data.permissions.only,
-          except: next.$$route.data.permissions.except,
-          redirectTo: next.$$route.data.permissions.redirectTo
-        });
-
-        event.preventDefault();
-
-        Authorization
-          .authorize(permissionMap)
-          .then(function () {
-            handleAuthorizedState();
-          })
-          .catch(function (rejectedPermission) {
-            handleUnauthorizedState(rejectedPermission, permissionMap);
-          });
+        next.$$route.resolve = next.$$route.resolve || {};
+        next.$$route.resolve.$$permission = permissionResolver;
       }
 
       /**
@@ -67,6 +53,26 @@
       function setTransitionProperties() {
         TransitionProperties.next = next;
         TransitionProperties.current = current;
+      }
+
+      function permissionResolver() {
+        var permissionMap = new PermissionMap({
+          only: next.$$route.data.permissions.only,
+          except: next.$$route.data.permissions.except,
+          redirectTo: next.$$route.data.permissions.redirectTo
+        });
+
+        var authorizationResult = Authorization.authorize(permissionMap);
+
+        authorizationResult
+          .then(function () {
+            handleAuthorizedState();
+          })
+          .catch(function (rejectedPermission) {
+            handleUnauthorizedState(rejectedPermission, permissionMap);
+          });
+
+        return authorizationResult;
       }
 
       /**
