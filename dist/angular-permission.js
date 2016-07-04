@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v3.1.7 - 2016-06-21
+ * @version v3.2.0 - 2016-07-05
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -19,7 +19,7 @@
   RoleFactory.$inject = ['$q', 'PermissionStore', 'TransitionProperties'];
   PermissionStore.$inject = ['Permission'];
   RoleStore.$inject = ['Role'];
-  PermissionDirective.$inject = ['$log', 'Authorization', 'PermissionMap', 'PermissionStrategies'];
+  PermissionDirective.$inject = ['$log', '$injector', 'Authorization', 'PermissionMap', 'PermissionStrategies'];
   Authorization.$inject = ['$q'];
   PermissionMapFactory.$inject = ['$q', 'TransitionProperties', 'RoleStore', 'PermissionStore'];
   var permission = angular.module('permission', []);
@@ -597,6 +597,7 @@
    *      permission-only="['USER','ADMIN']"
    *      permission-except="'MANAGER'">
    * </div>
+   * <div permission permission-sref="app.login"></div>
    *
    * By default directive will show/hide elements if provided permissions matches.
    * You can override this behaviour by passing `permission-on-authorized` and `permission-on-unauthorized`
@@ -614,18 +615,31 @@
    * </div>
    *
    * @param $log {Object} Logging service
+   * @param $injector {Object} Injector instance object
    * @param Authorization {permission.Authorization} Authorization service
    * @param PermissionMap {permission.PermissionMap} Map of state access rights
    * @param PermissionStrategies {permission.PermissionStrategies} Set of pre-defined directive behaviours
    *
-   * @returns {Object} Directive instance
+   * @returns {{
+   *   restrict: string,
+   *   bindToController: {
+   *     sref: string
+   *     only: string,
+   *     except: string,
+   *     onAuthorized: function,
+   *     onUnauthorized: function
+   *   },
+   *   controllerAs: string,
+   *   controller: controller
+   * }} Directive instance
    */
-  function PermissionDirective($log, Authorization, PermissionMap, PermissionStrategies) {
+  function PermissionDirective($log, $injector, Authorization, PermissionMap, PermissionStrategies) {
     'ngInject';
 
     return {
       restrict: 'A',
       bindToController: {
+        sref: '=?permissionSref',
         only: '=?permissionOnly',
         except: '=?permissionExcept',
         onAuthorized: '&?permissionOnAuthorized',
@@ -635,16 +649,22 @@
       controller: ['$scope', '$element', function ($scope, $element) {
         var permission = this;
 
-        /**
-         * Observing attribute `only` and `except` will be removed with version 2.4.0+
-         */
-        $scope.$watchGroup(['permission.only', 'permission.except'],
+        $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
           function () {
             try {
-              var permissionMap = new PermissionMap({
-                only: permission.only,
-                except: permission.except
-              });
+              var permissionMap;
+
+              if (isSrefStateDefined()) {
+                var $state = $injector.get('$state');
+                var srefState = $state.get(permission.sref);
+
+                permissionMap = new PermissionMap(srefState.data.permissions);
+              } else {
+                permissionMap = new PermissionMap({
+                  only: permission.only,
+                  except: permission.except
+                });
+              }
 
               Authorization
                 .authorize(permissionMap)
@@ -659,6 +679,16 @@
               $log.error(e.message);
             }
           });
+
+        /**
+         * Returns true when permissions should be checked based on state name
+         * @private
+         *
+         * @returns {boolean}
+         */
+        function isSrefStateDefined() {
+          return $injector.has('$state') && permission.sref;
+        }
 
         /**
          * Calls `onAuthorized` function if provided or show element
