@@ -17,10 +17,10 @@ script:
 - grunt build
 deploy:
   provider: npm
-  email:
-    secure: XKH1lS9lPGUZc1Gb6FDA68+0Kb868nfumVyhqb5TZilPRT9aYA9fAsoU75WEI9sw1ZUTM5K3YQHk1MX4JS9SdtMyd5rBSWJZyN5kfkpUOILaC15Gd8O3k6TO70lCA8Ymf/CgCY04SG613nNkT5Jr9yp6Ad+q+8ijdzTcT5+vznc=
+  email: blazej.krysiak@gmail.com
   api_key:
-    secure: E+eCHk5a8jzsVU8sSbSzVKW02SrqQdStAIrE93wi42ezk5oQAtiu5Jis0Ux3YPToqHuxwtX21MFPR4XL43bH9jdYUEv1dgaKxR6+MOCqE4imDCPv4c04LdJqhsV51U2Z44Eyo4dfLhyTWlemupH9mK1wTXQna1KH9hhrORj6gpo=
+    secure: XF7TJRCaz5+otwBHl07ppHsWBYpwJ6sEw4PxzAvkljBcqsZv826nOECQjNaFT0CtfnwwpQ+rZhpl1sdB9BhndmbGgkjyXNGAa1rLzDnWGruh7FR80mpZ43LmEDNzgQcJqS70hj2uWcosRnveVhkllsVK3uf6gKTsl4TnBGWYPaU=
   on:
     tags: true
     repo: Narzerus/angular-permission
+    branch: master
