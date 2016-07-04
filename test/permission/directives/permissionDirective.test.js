@@ -5,10 +5,12 @@ describe('permission', function () {
     describe('directive: Permission', function () {
 
       var $log;
+      var $state;
       var $compile;
       var $rootScope;
+      var $stateProvider;
       var Authorization;
-      var PermissionStore;
+      var RoleStore;
       var PermissionMap;
 
 
@@ -16,32 +18,79 @@ describe('permission', function () {
         // Instantiate module
         module('permission');
 
+        module('ui.router', function ($injector) {
+          $stateProvider = $injector.get('$stateProvider');
+        });
+
         installPromiseMatchers(); // jshint ignore:line
 
         // Inject services into module
         inject(function ($injector) {
           $log = $injector.get('$log');
+          $state = $injector.get('$state');
           $compile = $injector.get('$compile');
           $rootScope = $injector.get('$rootScope').$new();
           Authorization = $injector.get('Authorization');
-          PermissionStore = $injector.get('PermissionStore');
+          RoleStore = $injector.get('RoleStore');
           PermissionMap = $injector.get('PermissionMap');
         });
       });
 
       // Initialize permissions
       beforeEach(function () {
-        PermissionStore.definePermission('USER', function () {
+        RoleStore.defineRole('USER', function () {
           return true;
         });
 
-        PermissionStore.definePermission('AUTHORIZED', function () {
+        RoleStore.defineRole('AUTHORIZED', function () {
           return true;
         });
 
-        PermissionStore.definePermission('ADMIN', function () {
+        RoleStore.defineRole('ADMIN', function () {
           return false;
         });
+      });
+
+      it('should show element if authorized when permissions are passed as state reference', function () {
+        // GIVEN
+        $stateProvider
+          .state('accepted', {
+            data: {
+              permissions: {
+                only: ['USER']
+              }
+            }
+          });
+
+        var element = angular.element('<div permission permission-sref="\'accepted\'"></div>');
+
+        // WHEN
+        $compile(element)($rootScope);
+        $rootScope.$digest();
+
+        // THEN
+        expect(element.hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('should hide element if unauthorized when permissions are passed as state reference', function () {
+        // GIVEN
+        $stateProvider
+          .state('rejected', {
+            data: {
+              permissions: {
+                only: ['ADMIN']
+              }
+            }
+          });
+
+        var element = angular.element('<div permission permission-sref="\'rejected\'"></div>');
+
+        // WHEN
+        $compile(element)($rootScope);
+        $rootScope.$digest();
+
+        // THEN
+        expect(element.hasClass('ng-hide')).toBeTruthy();
       });
 
       it('should show element if authorized when permissions are passed as string array', function () {
