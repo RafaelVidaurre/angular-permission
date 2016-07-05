@@ -9,7 +9,7 @@ node_js:
 before_install:
 - npm install -g grunt-cli
 install:
-- npm install
+- npm update
 before_script:
 - npm install -g bower
 - bower install --force
