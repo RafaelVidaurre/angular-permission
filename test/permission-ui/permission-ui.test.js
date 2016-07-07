@@ -90,7 +90,7 @@ describe('permission.ui', function () {
           expect(TransitionProperties.options).toBeDefined();
         });
 
-        it('should set $$isAuthorizationFinished flag when authorization is not finished', function () {
+        it('should not set $$isAuthorizationFinished flag when authorization is not finished', function () {
           // GIVEN
           $rootScope.$on('$stateChangePermissionStart', function (event) {
             event.preventDefault();
@@ -101,7 +101,7 @@ describe('permission.ui', function () {
           $rootScope.$digest();
 
           // THEN
-          expect(TransitionProperties.toState.$$isAuthorizationFinished).toBeTruthy();
+          expect(TransitionProperties.toState.$$isAuthorizationFinished).toBeFalsy();
         });
 
         it('should not start authorizing when $stateChangePermissionStart was prevented', function () {

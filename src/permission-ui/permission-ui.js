@@ -64,6 +64,8 @@ function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAu
           .finally(function () {
             setStateAuthorizationStatus(false);
           });
+      } else {
+        setStateAuthorizationStatus(false);
       }
     }
 
