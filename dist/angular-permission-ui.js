@@ -1,7 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v3.2.0 - 2016-07-05
+ * @version v3.2.1 - 2016-07-07
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -80,6 +80,8 @@
             .finally(function () {
               setStateAuthorizationStatus(false);
             });
+        } else {
+          setStateAuthorizationStatus(false);
         }
       }
 
