@@ -2,8 +2,8 @@ language: node_js
 sudo: required
 cache:
   directories:
-  - node_modules
-  - bower_components
+    - node_modules
+    - bower_components
 node_js:
   - 5.4.0
 before_install:
@@ -11,7 +11,7 @@ before_install:
 install:
   - npm install
 before_script:
-  - npm install -g phantomjs-prebuilt
+  - sudo npm install -g phantomjs-prebuilt
   - npm install -g bower
   - bower install --force
 script:
