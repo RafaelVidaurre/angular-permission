@@ -9,8 +9,9 @@ node_js:
 before_install:
   - npm install -g grunt-cli
 install:
-  - npm update
+  - npm install
 before_script:
+  - npm install -g phantomjs-prebuilt
   - npm install -g bower
   - bower install --force
 script:
