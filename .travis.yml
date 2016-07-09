@@ -11,7 +11,6 @@ before_install:
 install:
   - npm install
 before_script:
-  - sudo npm install -g phantomjs-prebuilt
   - npm install -g bower
   - bower install --force
 script:
