@@ -4,6 +4,7 @@ If you have questions about how to use angular-permission, please direct these t
 You'll find a lot of help there.
 
 When creating an issue please include:
+
 1. Version of angular-permission library
 2. Clean description of the problem
 
