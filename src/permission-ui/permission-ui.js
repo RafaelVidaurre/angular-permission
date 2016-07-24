@@ -30,12 +30,12 @@ function config($stateProvider) {
 /**
  * @param $rootScope {Object}
  * @param $state {Object}
- * @param TransitionProperties {permission.TransitionProperties}
- * @param TransitionEvents {permission.ui.TransitionEvents}
- * @param StateAuthorization {permission.ui.StateAuthorization}
- * @param StatePermissionMap {permission.ui.StatePermissionMap}
+ * @param permTransitionProperties {permission.permTransitionProperties}
+ * @param permTransitionEvents {permission.ui.permTransitionEvents}
+ * @param permStateAuthorization {permission.ui.permStateAuthorization}
+ * @param permStatePermissionMap {permission.ui.permStatePermissionMap}
  */
-function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAuthorization, StatePermissionMap) {
+function run($rootScope, $state, permTransitionProperties, permTransitionEvents, permStateAuthorization, permStatePermissionMap) {
   'ngInject';
 
   /**
@@ -47,13 +47,13 @@ function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAu
       setStateAuthorizationStatus(true);
       setTransitionProperties();
 
-      if (!TransitionEvents.areEventsDefaultPrevented()) {
-        TransitionEvents.broadcastPermissionStartEvent();
+      if (!permTransitionEvents.areEventsDefaultPrevented()) {
+        permTransitionEvents.broadcastPermissionStartEvent();
 
         event.preventDefault();
-        var statePermissionMap = new StatePermissionMap(TransitionProperties.toState);
+        var statePermissionMap = new permStatePermissionMap(permTransitionProperties.toState);
 
-        StateAuthorization
+        permStateAuthorization
           .authorize(statePermissionMap)
           .then(function () {
             handleAuthorizedState();
@@ -70,16 +70,16 @@ function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAu
     }
 
     /**
-     * Updates values of `TransitionProperties` holder object
+     * Updates values of `permTransitionProperties` holder object
      * @method
      * @private
      */
     function setTransitionProperties() {
-      TransitionProperties.toState = toState;
-      TransitionProperties.toParams = toParams;
-      TransitionProperties.fromState = fromState;
-      TransitionProperties.fromParams = fromParams;
-      TransitionProperties.options = options;
+      permTransitionProperties.toState = toState;
+      permTransitionProperties.toParams = toParams;
+      permTransitionProperties.fromState = fromState;
+      permTransitionProperties.fromParams = fromParams;
+      permTransitionProperties.options = options;
     }
 
     /**
@@ -110,15 +110,15 @@ function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAu
      * @private
      */
     function handleAuthorizedState() {
-      TransitionEvents.broadcastPermissionAcceptedEvent();
+      permTransitionEvents.broadcastPermissionAcceptedEvent();
 
       // Overwrite notify option to broadcast it later
-      var transitionOptions = angular.extend({}, TransitionProperties.options, {notify: false, location: true});
+      var transitionOptions = angular.extend({}, permTransitionProperties.options, {notify: false, location: true});
 
       $state
-        .go(TransitionProperties.toState.name, TransitionProperties.toParams, transitionOptions)
+        .go(permTransitionProperties.toState.name, permTransitionProperties.toParams, transitionOptions)
         .then(function () {
-          TransitionEvents.broadcastStateChangeSuccessEvent();
+          permTransitionEvents.broadcastStateChangeSuccessEvent();
         });
     }
 
@@ -128,10 +128,10 @@ function run($rootScope, $state, TransitionProperties, TransitionEvents, StateAu
      * @private
      *
      * @param rejectedPermission {String} Rejected access right
-     * @param statePermissionMap {permission.ui.StatePermissionMap} State permission map
+     * @param statePermissionMap {PermissionMap} State permission map
      */
     function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
-      TransitionEvents.broadcastPermissionDeniedEvent();
+      permTransitionEvents.broadcastPermissionDeniedEvent();
 
       statePermissionMap
         .resolveRedirectState(rejectedPermission)

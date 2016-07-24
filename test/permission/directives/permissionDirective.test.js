@@ -9,9 +9,9 @@ describe('permission', function () {
       var $compile;
       var $rootScope;
       var $stateProvider;
-      var Authorization;
-      var RoleStore;
-      var PermissionMap;
+      var permAuthorization;
+      var permRoleStore;
+      var permPermissionMap;
 
 
       beforeEach(function () {
@@ -30,23 +30,23 @@ describe('permission', function () {
           $state = $injector.get('$state');
           $compile = $injector.get('$compile');
           $rootScope = $injector.get('$rootScope').$new();
-          Authorization = $injector.get('Authorization');
-          RoleStore = $injector.get('RoleStore');
-          PermissionMap = $injector.get('PermissionMap');
+          permAuthorization = $injector.get('permAuthorization');
+          permRoleStore = $injector.get('permRoleStore');
+          permPermissionMap = $injector.get('permPermissionMap');
         });
       });
 
       // Initialize permissions
       beforeEach(function () {
-        RoleStore.defineRole('USER', function () {
+        permRoleStore.defineRole('USER', function () {
           return true;
         });
 
-        RoleStore.defineRole('AUTHORIZED', function () {
+        permRoleStore.defineRole('AUTHORIZED', function () {
           return true;
         });
 
-        RoleStore.defineRole('ADMIN', function () {
+        permRoleStore.defineRole('ADMIN', function () {
           return false;
         });
       });
@@ -210,14 +210,14 @@ describe('permission', function () {
       it('should call authorize method', function () {
         // GIVEN
         var element = angular.element('<div permission permission-except="[\'USER\']"></div>');
-        spyOn(Authorization, 'authorize');
+        spyOn(permAuthorization, 'authorize');
 
         // WHEN
         $compile(element)($rootScope);
         $rootScope.$digest();
 
         // THEN
-        expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+        expect(permAuthorization.authorize).toHaveBeenCalledWith(new permPermissionMap({
           only: undefined,
           except: ['USER'],
           redirectTo: undefined
@@ -232,28 +232,28 @@ describe('permission', function () {
           '<div permission permission-only="\'AUTHORIZED\'"></div>'
         );
 
-        spyOn(Authorization, 'authorize').and.callThrough();
+        spyOn(permAuthorization, 'authorize').and.callThrough();
 
         // WHEN
         $compile(element)($rootScope);
         $rootScope.$digest();
 
         // THEN
-        expect(Authorization.authorize).toHaveBeenCalledTimes(3);
+        expect(permAuthorization.authorize).toHaveBeenCalledTimes(3);
 
-        expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+        expect(permAuthorization.authorize).toHaveBeenCalledWith(new permPermissionMap({
           only: ['USER'],
           except: undefined,
           redirectTo: undefined
         }));
 
-        expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+        expect(permAuthorization.authorize).toHaveBeenCalledWith(new permPermissionMap({
           only: ['ADMIN'],
           except: undefined,
           redirectTo: undefined
         }));
 
-        expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+        expect(permAuthorization.authorize).toHaveBeenCalledWith(new permPermissionMap({
           only: ['AUTHORIZED'],
           except: undefined,
           redirectTo: undefined

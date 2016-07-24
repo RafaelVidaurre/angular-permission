@@ -2,14 +2,14 @@
 
 /**
  * Pre-defined available configurable behaviours of directive `permission`
- * @name permission.PermissionStrategies
+ * @name permission.permPermissionStrategies
  * @readonly
  *
  * @example
  * <div permission
  *      permission-except="'MANAGER'"
- *      permission-on-authorized="PermissionStrategies.renderContent"
- *      permission-on-unauthorized="PermissionStrategies.removeContent">
+ *      permission-on-authorized="permPermissionStrategies.renderContent"
+ *      permission-on-unauthorized="permPermissionStrategies.removeContent">
  * </div>
  *
  * @property enableElement {Function}
@@ -17,7 +17,7 @@
  * @property showElement {Function}
  * @property hideElement {Function}
  */
-var PermissionStrategies = {
+var permPermissionStrategies = {
   enableElement: function ($element) {
     $element.removeAttr('disabled');
   },
@@ -34,4 +34,5 @@ var PermissionStrategies = {
 
 angular
   .module('permission')
-  .value('PermissionStrategies', PermissionStrategies);
+  .value('permPermissionStrategies', permPermissionStrategies)
+  .value('PermissionStrategies', permPermissionStrategies);

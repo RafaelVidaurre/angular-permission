@@ -2,11 +2,11 @@
 
 /**
  * Role definition storage
- * @name permission.RoleStore
+ * @name permission.permRoleStore
  *
- * @param Role {permission.Role|Function} Role definition constructor
+ * @param permRole {permission.permRole} Role definition constructor
  */
-function RoleStore(Role) {
+function permRoleStore(permRole) {
   'ngInject';
 
   var roleStore = {};
@@ -21,19 +21,19 @@ function RoleStore(Role) {
 
   /**
    * Allows to add single role definition to the store by providing it's name and validation function
-   * @methodOf permission.RoleStore
+   * @methodOf permission.permRoleStore
    *
    * @param roleName {String} Name of defined role
    * @param [validationFunction] {Function|Array<String>} Function used to validate if role is valid or set of
    *   permission names that has to be owned to have a role
    */
   function defineRole(roleName, validationFunction) {
-    roleStore[roleName] = new Role(roleName, validationFunction);
+    roleStore[roleName] = new permRole(roleName, validationFunction);
   }
 
   /**
    * Allows to define set of roleNames with shared validation function
-   * @methodOf permission.PermissionStore
+   * @methodOf permission.permPermissionStore
    * @throws {TypeError}
    *
    * @param roleMap {String, Function|Array<String>} Map of roles with matching validators
@@ -50,7 +50,7 @@ function RoleStore(Role) {
 
   /**
    * Deletes role from store
-   * @method permission.RoleStore
+   * @method permission.permRoleStore
    *
    * @param roleName {String} Name of defined permission
    */
@@ -60,7 +60,7 @@ function RoleStore(Role) {
 
   /**
    * Checks if role is defined in store
-   * @method permission.RoleStore
+   * @method permission.permRoleStore
    *
    * @param roleName {String} Name of role
    * @returns {Boolean}
@@ -71,9 +71,9 @@ function RoleStore(Role) {
 
   /**
    * Returns role definition object by it's name
-   * @method permission.RoleStore
+   * @method permission.permRoleStore
    *
-   * @returns {permission.Role} Role definition object
+   * @returns {permission.permRole} permRole definition object
    */
   function getRoleDefinition(roleName) {
     return roleStore[roleName];
@@ -81,7 +81,7 @@ function RoleStore(Role) {
 
   /**
    * Returns all role definitions
-   * @method permission.RoleStore
+   * @method permission.permRoleStore
    *
    * @returns {Object} Defined roles collection
    */
@@ -91,7 +91,7 @@ function RoleStore(Role) {
 
   /**
    * Removes all role definitions
-   * @method permission.RoleStore
+   * @method permission.permRoleStore
    */
   function clearStore() {
     roleStore = {};
@@ -100,4 +100,5 @@ function RoleStore(Role) {
 
 angular
   .module('permission')
-  .service('RoleStore', RoleStore);
+  .service('permRoleStore', permRoleStore)
+  .service('RoleStore', permRoleStore);

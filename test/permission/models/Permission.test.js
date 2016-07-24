@@ -2,10 +2,10 @@ describe('permission', function () {
   'use strict';
 
   describe('models', function () {
-    describe('factory: Permission', function () {
+    describe('factory: permPermission', function () {
 
       var $q;
-      var Permission;
+      var permPermission;
 
       beforeEach(function () {
         module('permission');
@@ -14,17 +14,17 @@ describe('permission', function () {
 
         inject(function ($injector) {
           $q = $injector.get('$q');
-          Permission = $injector.get('Permission');
+          permPermission = $injector.get('permPermission');
         });
       });
 
-      describe('constructor: Permission', function () {
+      describe('constructor: permPermission', function () {
         it('should throw an exception on invalid permissionName', function () {
           // GIVEN
           // WHEN
           // THEN
           expect(function () {
-            new Permission(null, function () {
+            new permPermission(null, function () {
               return true;
             });
           }).toThrow(new TypeError('Parameter "permissionName" name must be String'));
@@ -35,7 +35,7 @@ describe('permission', function () {
           // WHEN
           // THEN
           expect(function () {
-            new Permission('valid-name', undefined);
+            new permPermission('valid-name', undefined);
           }).toThrow(new TypeError('Parameter "validationFunction" must be Function'));
         });
 
@@ -47,7 +47,7 @@ describe('permission', function () {
           };
 
           // WHEN
-          var permission = new Permission(permissionName, validationFunction);
+          var permission = new permPermission(permissionName, validationFunction);
 
           // THEN
           expect(permission.permissionName).toBe(permissionName);
@@ -62,7 +62,7 @@ describe('permission', function () {
             .and.callFake(function () {
               return $q.resolve();
             });
-          var permission = new Permission(permissionName, validationFunction);
+          var permission = new permPermission(permissionName, validationFunction);
 
           // WHEN
           var validationResult = permission.validatePermission();
@@ -79,7 +79,7 @@ describe('permission', function () {
             .and.callFake(function () {
               return true;
             });
-          var permission = new Permission(permissionName, validationFunction);
+          var permission = new permPermission(permissionName, validationFunction);
 
           // WHEN
           var validationResult = permission.validatePermission();
@@ -96,7 +96,7 @@ describe('permission', function () {
             .and.callFake(function () {
               return false;
             });
-          var permission = new Permission(permissionName, validationFunction);
+          var permission = new permPermission(permissionName, validationFunction);
 
           // WHEN
           var validationResult = permission.validatePermission();

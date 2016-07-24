@@ -2,18 +2,18 @@
 
 /**
  * Service responsible for handling inheritance-enabled state-based authorization in ui-router
- * @name permission.ui.StateAuthorization
+ * @name permission.ui.permStateAuthorization
  *
  * @param $q {Object} Angular promise implementation
  */
-function StateAuthorization($q) {
+function permStateAuthorization($q) {
   'ngInject';
 
   this.authorize = authorize;
 
   /**
    * Handles state authorization
-   * @methodOf permission.ui.StateAuthorization
+   * @methodOf permission.ui.permStateAuthorization
    *
    * @param statePermissionMap
    *
@@ -25,10 +25,10 @@ function StateAuthorization($q) {
 
   /**
    * Checks authorization for complex state inheritance
-   * @methodOf permission.ui.StateAuthorization
+   * @methodOf permission.ui.permStateAuthorization
    * @private
    *
-   * @param map {permission.StatePermissionMap} State access rights map
+   * @param map {permission.ui.StatePermissionMap} State access rights map
    *
    * @returns {promise} $q.promise object
    */
@@ -42,11 +42,11 @@ function StateAuthorization($q) {
 
   /**
    * Resolves compensated set of "except" privileges
-   * @methodOf permission.ui.StateAuthorization
+   * @methodOf permission.ui.permStateAuthorization
    * @private
    *
    * @param deferred {Object} Promise defer
-   * @param map {permission.StatePermissionMap} State access rights map
+   * @param map {permission.ui.StatePermissionMap} State access rights map
    */
   function resolveExceptStatePermissionMap(deferred, map) {
     var exceptPromises = resolveStatePermissionMap(map.except, map);
@@ -62,11 +62,11 @@ function StateAuthorization($q) {
 
   /**
    * Resolves compensated set of "only" privileges
-   * @methodOf permission.ui.StateAuthorization
+   * @methodOf permission.ui.permStateAuthorization
    * @private
    *
    * @param deferred {Object} Promise defer
-   * @param map {permission.StatePermissionMap} State access rights map
+   * @param map {permission.ui.StatePermissionMap} State access rights map
    */
   function resolveOnlyStatePermissionMap(deferred, map) {
     if (!map.only.length) {
@@ -87,11 +87,11 @@ function StateAuthorization($q) {
 
   /**
    * Performs iteration over list of privileges looking for matches
-   * @methodOf permission.ui.StateAuthorization
+   * @methodOf permission.ui.permStateAuthorization
    * @private
    *
    * @param privilegesNames {Array} Array of sets of access rights
-   * @param map {permission.StatePermissionMap} State access rights map
+   * @param map {permission.ui.StatePermissionMap} State access rights map
    *
    * @returns {Array<Promise>} Promise collection
    */
@@ -109,4 +109,4 @@ function StateAuthorization($q) {
 
 angular
   .module('permission')
-  .service('StateAuthorization', StateAuthorization);
+  .service('permStateAuthorization', permStateAuthorization);

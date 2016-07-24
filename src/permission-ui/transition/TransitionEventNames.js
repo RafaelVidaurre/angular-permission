@@ -2,7 +2,7 @@
 
 /**
  * Constant storing event names for ng-route
- * @name permission.ui.TransitionEventNames
+ * @name permission.ui.permTransitionEventNames
  *
  * @type {Object.<String,Object>}
  *
@@ -10,7 +10,7 @@
  * @property permissionAccepted {String} Event name called when authorized
  * @property permissionDenies {String} Event name called when unauthorized
  */
-var TransitionEventNames = {
+var permTransitionEventNames = {
   permissionStart: '$stateChangePermissionStart',
   permissionAccepted: '$stateChangePermissionAccepted',
   permissionDenies: '$stateChangePermissionDenied'
@@ -18,4 +18,4 @@ var TransitionEventNames = {
 
 angular
   .module('permission.ui')
-  .value('TransitionEventNames', TransitionEventNames);
+  .value('permTransitionEventNames', permTransitionEventNames);

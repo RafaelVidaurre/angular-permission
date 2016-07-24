@@ -5,16 +5,16 @@ describe('permission.ng', function () {
     describe('decorator: PermissionEvents', function () {
 
       var $rootScope;
-      var TransitionEvents;
-      var TransitionProperties;
+      var permTransitionEvents;
+      var permTransitionProperties;
 
       beforeEach(function () {
         module('permission.ng');
 
         inject(function ($injector) {
           $rootScope = $injector.get('$rootScope');
-          TransitionEvents = $injector.get('TransitionEvents');
-          TransitionProperties = $injector.get('TransitionProperties');
+          permTransitionEvents = $injector.get('permTransitionEvents');
+          permTransitionProperties = $injector.get('permTransitionProperties');
         });
       });
 
@@ -24,7 +24,7 @@ describe('permission.ng', function () {
           spyOn($rootScope, '$broadcast');
 
           // WHEN
-          TransitionEvents.broadcastPermissionStartEvent();
+          permTransitionEvents.broadcastPermissionStartEvent();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionStart', jasmine.any(Object));
@@ -37,7 +37,7 @@ describe('permission.ng', function () {
           spyOn($rootScope, '$broadcast');
 
           // WHEN
-          TransitionEvents.broadcastPermissionAcceptedEvent();
+          permTransitionEvents.broadcastPermissionAcceptedEvent();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionAccepted', jasmine.any(Object));
@@ -50,7 +50,7 @@ describe('permission.ng', function () {
           spyOn($rootScope, '$broadcast');
 
           // WHEN
-          TransitionEvents.broadcastPermissionDeniedEvent();
+          permTransitionEvents.broadcastPermissionDeniedEvent();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionDenied', jasmine.any(Object));
@@ -63,7 +63,7 @@ describe('permission.ng', function () {
           spyOn($rootScope, '$broadcast').and.callThrough();
 
           // WHEN
-          var result = TransitionEvents.areEventsDefaultPrevented();
+          var result = permTransitionEvents.areEventsDefaultPrevented();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$routeChangePermissionStart', jasmine.any(Object));
