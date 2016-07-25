@@ -72,17 +72,21 @@ function PermissionDirective($log, $injector, permAuthorization, permPermissionM
         function () {
           try {
             var permissionMap;
+            var authorization;
 
             if (isSrefStateDefined()) {
+              authorization = $injector.get('permStateAuthorization');
+              var permStatePermissionMap = $injector.get('permStatePermissionMap');
               var $state = $injector.get('$state');
               var srefState = $state.get(permission.sref);
 
-              permissionMap = new permPermissionMap(srefState.data.permissions);
+              permissionMap = new permStatePermissionMap(srefState);
             } else {
+              authorization = permAuthorization;
               permissionMap = new permPermissionMap({only: permission.only, except: permission.except});
             }
 
-            permAuthorization
+            authorization
               .authorize(permissionMap)
               .then(function () {
                 onAuthorizedAccess();
