@@ -51,48 +51,6 @@ describe('permission', function () {
         });
       });
 
-      it('should show element if authorized when permissions are passed as state reference', function () {
-        // GIVEN
-        $stateProvider
-          .state('accepted', {
-            data: {
-              permissions: {
-                only: ['USER']
-              }
-            }
-          });
-
-        var element = angular.element('<div permission permission-sref="\'accepted\'"></div>');
-
-        // WHEN
-        $compile(element)($rootScope);
-        $rootScope.$digest();
-
-        // THEN
-        expect(element.hasClass('ng-hide')).toBeFalsy();
-      });
-
-      it('should hide element if unauthorized when permissions are passed as state reference', function () {
-        // GIVEN
-        $stateProvider
-          .state('rejected', {
-            data: {
-              permissions: {
-                only: ['ADMIN']
-              }
-            }
-          });
-
-        var element = angular.element('<div permission permission-sref="\'rejected\'"></div>');
-
-        // WHEN
-        $compile(element)($rootScope);
-        $rootScope.$digest();
-
-        // THEN
-        expect(element.hasClass('ng-hide')).toBeTruthy();
-      });
-
       it('should show element if authorized when permissions are passed as string array', function () {
         // GIVEN
         var element = angular.element('<div permission permission-only="[\'USER\']"></div>');
