@@ -128,7 +128,7 @@ function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents,
      * @private
      *
      * @param rejectedPermission {String} Rejected access right
-     * @param statePermissionMap {PermissionMap} State permission map
+     * @param statePermissionMap {permission.ui.PermPermissionMap} State permission map
      */
     function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
       PermTransitionEvents.broadcastPermissionDeniedEvent();
