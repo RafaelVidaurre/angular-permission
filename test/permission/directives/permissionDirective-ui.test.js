@@ -7,7 +7,7 @@ describe('permission.ui', function () {
       var $compile;
       var $rootScope;
       var $stateProvider;
-      var permRoleStore;
+      var PermRoleStore;
 
       beforeEach(function () {
         // Instantiate module
@@ -24,21 +24,21 @@ describe('permission.ui', function () {
         inject(function ($injector) {
           $compile = $injector.get('$compile');
           $rootScope = $injector.get('$rootScope').$new();
-          permRoleStore = $injector.get('permRoleStore');
+          PermRoleStore = $injector.get('PermRoleStore');
         });
       });
 
       // Initialize permissions
       beforeEach(function () {
-        permRoleStore.defineRole('USER', function () {
+        PermRoleStore.defineRole('USER', function () {
           return true;
         });
 
-        permRoleStore.defineRole('AUTHORIZED', function () {
+        PermRoleStore.defineRole('AUTHORIZED', function () {
           return true;
         });
 
-        permRoleStore.defineRole('ADMIN', function () {
+        PermRoleStore.defineRole('ADMIN', function () {
           return false;
         });
       });

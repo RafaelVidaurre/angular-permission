@@ -35,9 +35,8 @@
  *
  * @param $log {Object} Logging service
  * @param $injector {Object} Injector instance object
- * @param permAuthorization {permission.permAuthorization} permAuthorization service
- * @param permPermissionMap {permission.permPermissionMap} Map of state access rights
- * @param permPermissionStrategies {permission.permPermissionStrategies} Set of pre-defined directive behaviours
+ * @param PermPermissionMap {permission.permPermissionMap|Function} Map of state access rights
+ * @param PermPermissionStrategies {permission.permPermissionStrategies} Set of pre-defined directive behaviours
  *
  * @returns {{
  *   restrict: string,
@@ -52,7 +51,7 @@
  *   controller: controller
  * }} Directive instance
  */
-function PermissionDirective($log, $injector, PermAuthorization, PermPermissionMap, PermPermissionStrategies) {
+function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionStrategies) {
   'ngInject';
 
   return {
@@ -75,18 +74,18 @@ function PermissionDirective($log, $injector, PermAuthorization, PermPermissionM
             var authorization;
 
             if (isSrefStateDefined()) {
-              authorization = $injector.get('permStateAuthorization');
-              var permStatePermissionMap = $injector.get('permStatePermissionMap');
+              authorization = $injector.get('PermStateAuthorization');
+              var PermStatePermissionMap = $injector.get('PermStatePermissionMap');
               var $state = $injector.get('$state');
               var srefState = $state.get(permission.sref);
 
               permissionMap = new PermStatePermissionMap(srefState);
             } else {
-              authorization = permAuthorization;
-              permissionMap = new permPermissionMap({only: permission.only, except: permission.except});
+              authorization = $injector.get('PermAuthorization');
+              permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
             }
 
-            PermAuthorization
+            authorization
               .authorize(permissionMap)
               .then(function () {
                 onAuthorizedAccess();
