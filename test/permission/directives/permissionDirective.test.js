@@ -165,17 +165,17 @@ describe('permission', function () {
         expect(element.attr('disabled')).toEqual('disabled');
       });
 
-      it('should call authorize method', function () {
+      it('should call authorizeByPermissionMap method', function () {
         // GIVEN
         var element = angular.element('<div permission permission-except="[\'USER\']"></div>');
-        spyOn(PermAuthorization, 'authorize');
+        spyOn(PermAuthorization, 'authorizeByPermissionMap');
 
         // WHEN
         $compile(element)($rootScope);
         $rootScope.$digest();
 
         // THEN
-        expect(PermAuthorization.authorize).toHaveBeenCalledWith(new PermPermissionMap({
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: undefined,
           except: ['USER'],
           redirectTo: undefined
@@ -190,28 +190,28 @@ describe('permission', function () {
           '<div permission permission-only="\'AUTHORIZED\'"></div>'
         );
 
-        spyOn(PermAuthorization, 'authorize').and.callThrough();
+        spyOn(PermAuthorization, 'authorizeByPermissionMap').and.callThrough();
 
         // WHEN
         $compile(element)($rootScope);
         $rootScope.$digest();
 
         // THEN
-        expect(PermAuthorization.authorize).toHaveBeenCalledTimes(3);
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledTimes(3);
 
-        expect(PermAuthorization.authorize).toHaveBeenCalledWith(new PermPermissionMap({
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: ['USER'],
           except: undefined,
           redirectTo: undefined
         }));
 
-        expect(PermAuthorization.authorize).toHaveBeenCalledWith(new PermPermissionMap({
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: ['ADMIN'],
           except: undefined,
           redirectTo: undefined
         }));
 
-        expect(PermAuthorization.authorize).toHaveBeenCalledWith(new PermPermissionMap({
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: ['AUTHORIZED'],
           except: undefined,
           redirectTo: undefined

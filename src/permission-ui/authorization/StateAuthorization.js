@@ -5,22 +5,46 @@
  * @name permission.ui.PermStateAuthorization
  *
  * @param $q {Object} Angular promise implementation
+ * @param $state {Object} State object
+ * @param PermStatePermissionMap {permission.ui.PermStatePermissionMap|Function} Angular promise implementation
  */
-function PermStateAuthorization($q) {
+function PermStateAuthorization($q, $state, PermStatePermissionMap) {
   'ngInject';
 
-  this.authorize = authorize;
+  /**
+   * @deprecated
+   *
+   * This method will be deprecated in favour of authorizeByPermissionMap in 4.0
+   */
+  this.authorize = authorizeByPermissionMap;
+
+  this.authorizeByPermissionMap = authorizeByPermissionMap;
+  this.authorizeByStateName = authorizeByStateName;
 
   /**
-   * Handles state authorization
+   * Handles authorization based on provided state permission map
    * @methodOf permission.ui.PermStateAuthorization
    *
    * @param statePermissionMap
    *
    * @return {promise}
    */
-  function authorize(statePermissionMap) {
+  function authorizeByPermissionMap(statePermissionMap) {
     return authorizeStatePermissionMap(statePermissionMap);
+  }
+
+  /**
+   * Authorizes uses by provided state name
+   * @methodOf permission.ui.PermStateAuthorization
+   *
+   * @param stateName {String}
+   * @returns {promise}
+   */
+  function authorizeByStateName(stateName) {
+    var srefState = $state.get(stateName);
+    var permissionMap = new PermStatePermissionMap(srefState);
+
+    return authorizeByPermissionMap(permissionMap);
   }
 
   /**

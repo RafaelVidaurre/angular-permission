@@ -54,7 +54,7 @@ function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents,
         var statePermissionMap = new PermStatePermissionMap(PermTransitionProperties.toState);
 
         PermStateAuthorization
-          .authorize(statePermissionMap)
+          .authorizeByPermissionMap(statePermissionMap)
           .then(function () {
             handleAuthorizedState();
           })

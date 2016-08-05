@@ -57,7 +57,7 @@ function run($rootScope, $location, PermTransitionProperties, PermTransitionEven
         redirectTo: next.$$route.data.permissions.redirectTo
       });
 
-      var authorizationResult = PermAuthorization.authorize(PermissionMap);
+      var authorizationResult = PermAuthorization.authorizeByPermissionMap(PermissionMap);
 
       authorizationResult
         .then(function () {

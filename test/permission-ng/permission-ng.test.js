@@ -97,7 +97,7 @@ describe('permission.ng', function () {
         it('should handle unauthorized state access', function () {
           // GIVEN
           spyOn(PermTransitionEvents, 'broadcastPermissionDeniedEvent');
-          spyOn(PermAuthorization, 'authorize').and.callThrough();
+          spyOn(PermAuthorization, 'authorizeByPermissionMap').and.callThrough();
 
           // WHEN
           $location.path('/denied');
@@ -105,21 +105,21 @@ describe('permission.ng', function () {
 
           // THEN
           expect($location.path()).toBe('/redirected');
-          expect(PermAuthorization.authorize).toHaveBeenCalled();
+          expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalled();
           expect(PermTransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
         });
 
         it('should handle authorized state access', function () {
           // GIVEN
           spyOn(PermTransitionEvents, 'broadcastPermissionAcceptedEvent');
-          spyOn(PermAuthorization, 'authorize').and.callThrough();
+          spyOn(PermAuthorization, 'authorizeByPermissionMap').and.callThrough();
 
           // WHEN
           $location.path('/accepted');
           $rootScope.$digest();
 
           // THEN
-          expect(PermAuthorization.authorize).toHaveBeenCalled();
+          expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalled();
           expect(PermTransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
         });
       });

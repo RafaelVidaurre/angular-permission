@@ -70,29 +70,30 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
       $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
         function () {
           try {
-            var permissionMap;
-            var authorization;
-
             if (isSrefStateDefined()) {
-              authorization = $injector.get('PermStateAuthorization');
-              var PermStatePermissionMap = $injector.get('PermStatePermissionMap');
-              var $state = $injector.get('$state');
-              var srefState = $state.get(permission.sref);
+              var PermStateAuthorization = $injector.get('PermStateAuthorization');
 
-              permissionMap = new PermStatePermissionMap(srefState);
+              PermStateAuthorization
+                .authorizeByStateName(permission.sref)
+                .then(function () {
+                  onAuthorizedAccess();
+                })
+                .catch(function () {
+                  onUnauthorizedAccess();
+                });
             } else {
-              authorization = $injector.get('PermAuthorization');
-              permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
-            }
+              var PermAuthorization = $injector.get('PermAuthorization');
+              var permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
 
-            authorization
-              .authorize(permissionMap)
-              .then(function () {
-                onAuthorizedAccess();
-              })
-              .catch(function () {
-                onUnauthorizedAccess();
-              });
+              PermAuthorization
+                .authorizeByPermissionMap(permissionMap)
+                .then(function () {
+                  onAuthorizedAccess();
+                })
+                .catch(function () {
+                  onUnauthorizedAccess();
+                });
+            }
           } catch (e) {
             onUnauthorizedAccess();
             $log.error(e.message);

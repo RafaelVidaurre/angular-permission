@@ -21,7 +21,7 @@ describe('permission', function () {
         });
       });
 
-      describe('method: authorize', function () {
+      describe('method: authorizeByPermissionMap', function () {
         beforeEach(function () {
           PermPermissionStore.definePermission('USER', function () {
             return true;
@@ -40,7 +40,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({only: ['USER']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeResolved();
@@ -51,7 +51,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({only: ['ACCOUNTANT']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeResolved();
@@ -62,7 +62,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({only: ['ADMIN']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeRejected();
@@ -73,7 +73,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({only: ['ADMIN_ACCOUNTANT']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeRejected();
@@ -84,7 +84,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({except: ['ADMIN']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeResolved();
@@ -95,7 +95,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({except: ['ADMIN_ACCOUNTANT']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeResolved();
@@ -106,7 +106,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({except: ['USER']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeRejected();
@@ -117,7 +117,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({except: ['ACCOUNTANT']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeRejected();
@@ -128,7 +128,7 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({only: ['SUPER_ADMIN']});
 
           // WHEN
-          var promise = PermAuthorization.authorize(permissionMap);
+          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
           expect(promise).toBeRejected();

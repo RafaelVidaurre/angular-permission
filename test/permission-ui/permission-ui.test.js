@@ -145,7 +145,7 @@ describe('permission.ui', function () {
         it('should handle unauthorized state access', function () {
           // GIVEN
           spyOn(PermTransitionEvents, 'broadcastPermissionDeniedEvent');
-          spyOn(PermStateAuthorization, 'authorize').and.callThrough();
+          spyOn(PermStateAuthorization, 'authorizeByPermissionMap').and.callThrough();
 
           // WHEN
           $state.go('denied');
@@ -153,14 +153,14 @@ describe('permission.ui', function () {
 
           // THEN
           expect($state.current.name).toBe('redirected');
-          expect(PermStateAuthorization.authorize).toHaveBeenCalled();
+          expect(PermStateAuthorization.authorizeByPermissionMap).toHaveBeenCalled();
           expect(PermTransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
         });
 
         it('should handle authorized state access', function () {
           // GIVEN
           spyOn(PermTransitionEvents, 'broadcastPermissionAcceptedEvent');
-          spyOn(PermStateAuthorization, 'authorize').and.callThrough();
+          spyOn(PermStateAuthorization, 'authorizeByPermissionMap').and.callThrough();
 
           // WHEN
           $state.go('accepted');
@@ -168,7 +168,7 @@ describe('permission.ui', function () {
 
           // THEN
           expect($state.current.name).toBe('accepted');
-          expect(PermStateAuthorization.authorize).toHaveBeenCalled();
+          expect(PermStateAuthorization.authorizeByPermissionMap).toHaveBeenCalled();
           expect(PermTransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
         });
 

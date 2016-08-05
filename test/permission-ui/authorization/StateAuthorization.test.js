@@ -31,7 +31,7 @@ describe('permission.ui', function () {
         });
       });
 
-      describe('method: authorize', function () {
+      describe('method: authorizeByPermissionMap', function () {
         it('should return resolved promise when "except" permissions are met', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$state']);
@@ -42,7 +42,7 @@ describe('permission.ui', function () {
 
           // WHEN
           var map = new PermStatePermissionMap(state);
-          var authorizationResult = PermStateAuthorization.authorize(map);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -58,7 +58,7 @@ describe('permission.ui', function () {
 
           // WHEN
           var map = new PermStatePermissionMap(state);
-          var authorizationResult = PermStateAuthorization.authorize(map);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -74,7 +74,7 @@ describe('permission.ui', function () {
 
           // WHEN
           var map = new PermStatePermissionMap(state);
-          var authorizationResult = PermStateAuthorization.authorize(map);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -90,7 +90,7 @@ describe('permission.ui', function () {
 
           // WHEN
           var map = new PermStatePermissionMap(state);
-          var authorizationResult = PermStateAuthorization.authorize(map);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
