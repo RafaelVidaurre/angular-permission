@@ -35,9 +35,9 @@
  *
  * @param $log {Object} Logging service
  * @param $injector {Object} Injector instance object
- * @param PermAuthorization {permission.PermAuthorization} PermAuthorization service
- * @param PermPermissionMap {permission.PermPermissionMap} Map of state access rights
- * @param PermPermissionStrategies {permission.PermPermissionStrategies} Set of pre-defined directive behaviours
+ * @param permAuthorization {permission.permAuthorization} permAuthorization service
+ * @param permPermissionMap {permission.permPermissionMap} Map of state access rights
+ * @param permPermissionStrategies {permission.permPermissionStrategies} Set of pre-defined directive behaviours
  *
  * @returns {{
  *   restrict: string,
@@ -72,14 +72,18 @@ function PermissionDirective($log, $injector, PermAuthorization, PermPermissionM
         function () {
           try {
             var permissionMap;
+            var authorization;
 
             if (isSrefStateDefined()) {
+              authorization = $injector.get('permStateAuthorization');
+              var permStatePermissionMap = $injector.get('permStatePermissionMap');
               var $state = $injector.get('$state');
               var srefState = $state.get(permission.sref);
 
-              permissionMap = new PermPermissionMap(srefState.data.permissions);
+              permissionMap = new PermStatePermissionMap(srefState);
             } else {
-              permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
+              authorization = permAuthorization;
+              permissionMap = new permPermissionMap({only: permission.only, except: permission.except});
             }
 
             PermAuthorization
