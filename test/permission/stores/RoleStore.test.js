@@ -2,11 +2,11 @@ describe('permission', function () {
   'use strict';
 
   describe('stores', function () {
-    describe('service: permRoleStore', function () {
+    describe('service: PermRoleStore', function () {
 
-      var permRoleStore;
-      var permPermissionStore;
-      var permRole;
+      var PermRoleStore;
+      var PermPermissionStore;
+      var PermRole;
 
       beforeEach(function () {
         module('permission');
@@ -14,20 +14,20 @@ describe('permission', function () {
 
       beforeEach(function () {
         inject(function ($injector) {
-          permRole = $injector.get('permRole');
-          permRoleStore = $injector.get('permRoleStore');
-          permPermissionStore = $injector.get('permPermissionStore');
+          PermRole = $injector.get('PermRole');
+          PermRoleStore = $injector.get('PermRoleStore');
+          PermPermissionStore = $injector.get('PermPermissionStore');
         });
       });
 
       beforeEach(function () {
-        permPermissionStore.definePermission('USER', function () {
+        PermPermissionStore.definePermission('USER', function () {
           return true;
         });
 
-        permRoleStore.defineRole('ACCOUNTANT', ['USER']);
+        PermRoleStore.defineRole('ACCOUNTANT', ['USER']);
 
-        permRoleStore.defineRole('MANGER', [], function () {
+        PermRoleStore.defineRole('MANGER', [], function () {
           return true;
         });
       });
@@ -37,14 +37,14 @@ describe('permission', function () {
           // GIVEN
           // WHEN
           // THEN
-          expect(permRoleStore.hasRoleDefinition('ACCOUNTANT')).toBe(true);
+          expect(PermRoleStore.hasRoleDefinition('ACCOUNTANT')).toBe(true);
         });
 
         it('should add role definition to store when passed validation function', function () {
           // GIVEN
           // WHEN
           // THEN
-          expect(permRoleStore.hasRoleDefinition('MANGER')).toBe(true);
+          expect(PermRoleStore.hasRoleDefinition('MANGER')).toBe(true);
         });
       });
 
@@ -54,21 +54,21 @@ describe('permission', function () {
           // WHEN
           // THEN
           expect(function () {
-            permRoleStore.defineManyRoles(null);
+            PermRoleStore.defineManyRoles(null);
           }).toThrow(new TypeError('Parameter "roleNames" name must be object'));
         });
 
         it('should add role definitions to store for correct set of parameters', function () {
           // GIVEN
           // WHEN
-          permRoleStore.defineManyRoles({
+          PermRoleStore.defineManyRoles({
             'USER': ['canRead'],
             'ADMIN': ['canRead', 'canWrite']
           });
 
           // THEN
-          expect(permRoleStore.hasRoleDefinition('USER')).toBe(true);
-          expect(permRoleStore.hasRoleDefinition('ADMIN')).toBe(true);
+          expect(PermRoleStore.hasRoleDefinition('USER')).toBe(true);
+          expect(PermRoleStore.hasRoleDefinition('ADMIN')).toBe(true);
         });
       });
 
@@ -76,10 +76,10 @@ describe('permission', function () {
         it('should return role definition object', function () {
           // GIVEN
           // WHEN
-          var permission = permRoleStore.getRoleDefinition('ACCOUNTANT');
+          var permission = PermRoleStore.getRoleDefinition('ACCOUNTANT');
 
           // THEN
-          expect(permission instanceof permRole).toBeTruthy();
+          expect(permission instanceof PermRole).toBeTruthy();
         });
       });
 
@@ -88,14 +88,14 @@ describe('permission', function () {
           // GIVEN
           // WHEN
           // THEN
-          expect(permRoleStore.hasRoleDefinition('ACCOUNTANT')).toBeTruthy();
+          expect(PermRoleStore.hasRoleDefinition('ACCOUNTANT')).toBeTruthy();
         });
 
         it('should check if role is defined when passed validation function', function () {
           // GIVEN
           // WHEN
           // THEN
-          expect(permRoleStore.hasRoleDefinition('MANGER')).toBeTruthy();
+          expect(PermRoleStore.hasRoleDefinition('MANGER')).toBeTruthy();
         });
       });
 
@@ -103,7 +103,7 @@ describe('permission', function () {
         it('should return all defined roles', function () {
           // GIVEN
           // WHEN
-          var store = permRoleStore.getStore();
+          var store = PermRoleStore.getStore();
           // THEN
           expect(Object.keys(store).length).toEqual(2);
         });
@@ -113,10 +113,10 @@ describe('permission', function () {
         it('should remove all role definitions', function () {
           // GIVEN
           // WHEN
-          permRoleStore.clearStore();
+          PermRoleStore.clearStore();
 
           // THEN
-          expect(Object.keys(permRoleStore.getStore()).length).toBe(0);
+          expect(Object.keys(PermRoleStore.getStore()).length).toBe(0);
         });
       });
 
@@ -124,10 +124,10 @@ describe('permission', function () {
         it('should remove role definition from store', function () {
           // GIVEN
           // WHEN
-          permRoleStore.removeRoleDefinition('ACCOUNTANT');
+          PermRoleStore.removeRoleDefinition('ACCOUNTANT');
 
           // THEN
-          expect(permRoleStore.hasRoleDefinition('ACCOUNTANT')).toBeFalsy();
+          expect(PermRoleStore.hasRoleDefinition('ACCOUNTANT')).toBeFalsy();
         });
       });
     });

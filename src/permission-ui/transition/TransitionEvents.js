@@ -2,16 +2,16 @@
 
 /**
  * Service responsible for managing and emitting events
- * @name permission.ui.permTransitionEvents
+ * @name permission.ui.PermTransitionEvents
  *
- * @extends permission.permTransitionEvents
+ * @extends permission.PermTransitionEvents
  *
  * @param $delegate {Object} Parent instance being extended
  * @param $rootScope {Object} Top-level angular scope
- * @param permTransitionProperties {permission.permTransitionProperties} Helper storing transition parameters
- * @param permTransitionEventNames {permission.ui.permTransitionEventNames} Constant storing event names
+ * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing transition parameters
+ * @param PermTransitionEventNames {permission.ui.PermTransitionEventNames} Constant storing event names
  */
-function permTransitionEvents($delegate, $rootScope, permTransitionProperties, permTransitionEventNames) {
+function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, PermTransitionEventNames) {
   'ngInject';
 
   $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
@@ -22,7 +22,7 @@ function permTransitionEvents($delegate, $rootScope, permTransitionProperties, p
 
   /**
    * Checks if state events are not prevented by default
-   * @methodOf permission.ui.permTransitionEvents
+   * @methodOf permission.ui.PermTransitionEvents
    *
    * @returns {boolean}
    */
@@ -32,69 +32,69 @@ function permTransitionEvents($delegate, $rootScope, permTransitionProperties, p
 
   /**
    * Broadcasts "$stateChangePermissionStart" event from $rootScope
-   * @methodOf permission.ui.permTransitionEvents
+   * @methodOf permission.ui.PermTransitionEvents
    */
   function broadcastPermissionStartEvent() {
-    $rootScope.$broadcast(permTransitionEventNames.permissionStart,
-      permTransitionProperties.toState, permTransitionProperties.toParams,
-      permTransitionProperties.options);
+    $rootScope.$broadcast(PermTransitionEventNames.permissionStart,
+      PermTransitionProperties.toState, PermTransitionProperties.toParams,
+      PermTransitionProperties.options);
   }
 
   /**
    * Broadcasts "$stateChangePermissionAccepted" event from $rootScope
-   * @methodOf permission.ui.permTransitionEvents
+   * @methodOf permission.ui.PermTransitionEvents
    */
   function broadcastPermissionAcceptedEvent() {
-    $rootScope.$broadcast(permTransitionEventNames.permissionAccepted,
-      permTransitionProperties.toState, permTransitionProperties.toParams,
-      permTransitionProperties.options);
+    $rootScope.$broadcast(PermTransitionEventNames.permissionAccepted,
+      PermTransitionProperties.toState, PermTransitionProperties.toParams,
+      PermTransitionProperties.options);
   }
 
   /**
    * Broadcasts "$tateChangePermissionDenied" event from $rootScope
-   * @methodOf permission.ui.permTransitionEvents
+   * @methodOf permission.ui.PermTransitionEvents
    */
   function broadcastPermissionDeniedEvent() {
-    $rootScope.$broadcast(permTransitionEventNames.permissionDenies,
-      permTransitionProperties.toState, permTransitionProperties.toParams,
-      permTransitionProperties.options);
+    $rootScope.$broadcast(PermTransitionEventNames.permissionDenies,
+      PermTransitionProperties.toState, PermTransitionProperties.toParams,
+      PermTransitionProperties.options);
   }
 
   /**
    * Broadcasts "$stateChangeSuccess" event from $rootScope
-   * @methodOf permission.ui.permTransitionEvents
+   * @methodOf permission.ui.PermTransitionEvents
    */
   function broadcastStateChangeSuccessEvent() {
     $rootScope.$broadcast('$stateChangeSuccess',
-      permTransitionProperties.toState, permTransitionProperties.toParams,
-      permTransitionProperties.fromState, permTransitionProperties.fromParams);
+      PermTransitionProperties.toState, PermTransitionProperties.toParams,
+      PermTransitionProperties.fromState, PermTransitionProperties.fromParams);
   }
 
   /**
    * Checks if event $stateChangePermissionStart hasn't been disabled by default
-   * @methodOf permission.ui.permTransitionEvents
+   * @methodOf permission.ui.PermTransitionEvents
    * @private
    *
    * @returns {boolean}
    */
   function isStateChangePermissionStartDefaultPrevented() {
-    return $rootScope.$broadcast(permTransitionEventNames.permissionStart,
-      permTransitionProperties.toState, permTransitionProperties.toParams,
-      permTransitionProperties.options).defaultPrevented;
+    return $rootScope.$broadcast(PermTransitionEventNames.permissionStart,
+      PermTransitionProperties.toState, PermTransitionProperties.toParams,
+      PermTransitionProperties.options).defaultPrevented;
   }
 
   /**
    * Checks if event $stateChangeStart hasn't been disabled by default
-   * @methodOf permission.ui.permTransitionEvents
+   * @methodOf permission.ui.PermTransitionEvents
    * @private
    *
    * @returns {boolean}
    */
   function isStateChangeStartDefaultPrevented() {
     return $rootScope.$broadcast('$stateChangeStart',
-      permTransitionProperties.toState, permTransitionProperties.toParams,
-      permTransitionProperties.fromState, permTransitionProperties.fromParams,
-      permTransitionProperties.options).defaultPrevented;
+      PermTransitionProperties.toState, PermTransitionProperties.toParams,
+      PermTransitionProperties.fromState, PermTransitionProperties.fromParams,
+      PermTransitionProperties.options).defaultPrevented;
   }
 
   return $delegate;
@@ -102,4 +102,4 @@ function permTransitionEvents($delegate, $rootScope, permTransitionProperties, p
 
 angular
   .module('permission.ui')
-  .decorator('permTransitionEvents', permTransitionEvents);
+  .decorator('PermTransitionEvents', PermTransitionEvents);

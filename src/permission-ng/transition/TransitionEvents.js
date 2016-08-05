@@ -2,16 +2,16 @@
 
 /**
  * Service responsible for managing and emitting events
- * @name permission.ng.permTransitionEvents
+ * @name permission.ng.PermTransitionEvents
  *
- * @extends {permission.permTransitionEvents}
+ * @extends {permission.PermTransitionEvents}
  *
  * @param $delegate {Object} Parent instance being extended
  * @param $rootScope {Object} Top-level angular scope
- * @param permTransitionProperties {permission.permTransitionProperties} Helper storing transition parameters
- * @param permTransitionEventNames {permission.ng.permTransitionEventNames} Constant storing event names
+ * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing transition parameters
+ * @param PermTransitionEventNames {permission.ng.PermTransitionEventNames} Constant storing event names
  */
-function permTransitionEvents($delegate, $rootScope, permTransitionProperties, permTransitionEventNames) {
+function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, PermTransitionEventNames) {
   'ngInject';
 
   $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
@@ -21,7 +21,7 @@ function permTransitionEvents($delegate, $rootScope, permTransitionProperties, p
 
   /**
    * Checks if state events are not prevented by default
-   * @methodOf permission.ng.permTransitionEvents
+   * @methodOf permission.ng.PermTransitionEvents
    *
    * @returns {boolean}
    */
@@ -31,37 +31,37 @@ function permTransitionEvents($delegate, $rootScope, permTransitionProperties, p
 
   /**
    * Broadcasts "$routeChangePermissionStart" event from $rootScope
-   * @methodOf permission.ng.permTransitionEvents
+   * @methodOf permission.ng.PermTransitionEvents
    */
   function broadcastPermissionStartEvent() {
-    $rootScope.$broadcast(permTransitionEventNames.permissionStart, permTransitionProperties.next);
+    $rootScope.$broadcast(PermTransitionEventNames.permissionStart, PermTransitionProperties.next);
   }
 
   /**
    * Broadcasts "$routeChangePermissionAccepted" event from $rootScope
-   * @methodOf permission.ng.permTransitionEvents
+   * @methodOf permission.ng.PermTransitionEvents
    */
   function broadcastPermissionAcceptedEvent() {
-    $rootScope.$broadcast(permTransitionEventNames.permissionAccepted, permTransitionProperties.next);
+    $rootScope.$broadcast(PermTransitionEventNames.permissionAccepted, PermTransitionProperties.next);
   }
 
   /**
    * Broadcasts "$routeChangePermissionDenied" event from $rootScope
-   * @methodOf permission.ng.permTransitionEvents
+   * @methodOf permission.ng.PermTransitionEvents
    */
   function broadcastPermissionDeniedEvent() {
-    $rootScope.$broadcast(permTransitionEventNames.permissionDenied, permTransitionProperties.next);
+    $rootScope.$broadcast(PermTransitionEventNames.permissionDenied, PermTransitionProperties.next);
   }
 
   /**
    * Checks if event $routeChangePermissionStart hasn't been disabled by default
-   * @methodOf permission.ng.permTransitionEvents
+   * @methodOf permission.ng.PermTransitionEvents
    * @private
    *
    * @returns {boolean}
    */
   function isRouteChangePermissionStartDefaultPrevented() {
-    return $rootScope.$broadcast(permTransitionEventNames.permissionStart, permTransitionProperties.next).defaultPrevented;
+    return $rootScope.$broadcast(PermTransitionEventNames.permissionStart, PermTransitionProperties.next).defaultPrevented;
   }
 
   return $delegate;
@@ -69,4 +69,4 @@ function permTransitionEvents($delegate, $rootScope, permTransitionProperties, p
 
 angular
   .module('permission.ng')
-  .decorator('permTransitionEvents', permTransitionEvents);
+  .decorator('PermTransitionEvents', PermTransitionEvents);

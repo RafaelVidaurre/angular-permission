@@ -1,19 +1,19 @@
 'use strict';
 
 /**
- * permPermission definition factory
+ * PermPermission definition factory
  * @function
  *
  * @param $q {Object} Angular promise implementation
- * @param permTransitionProperties {permission.permTransitionProperties} Helper storing ui-router transition parameters
+ * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
  *
  * @return {Permission}
  */
-function permPermission($q, permTransitionProperties) {
+function PermPermission($q, PermTransitionProperties) {
   'ngInject';
 
   /**
-   * permPermission definition object constructor
+   * PermPermission definition object constructor
    * @constructor Permission
    *
    * @param permissionName {String} Name repressing permission
@@ -33,7 +33,7 @@ function permPermission($q, permTransitionProperties) {
    * @returns {Promise}
    */
   Permission.prototype.validatePermission = function () {
-    var validationResult = this.validationFunction.call(null, this.permissionName, permTransitionProperties);
+    var validationResult = this.validationFunction.call(null, this.permissionName, PermTransitionProperties);
 
     if (!angular.isFunction(validationResult.then)) {
       validationResult = wrapInPromise(validationResult, this.permissionName);
@@ -88,4 +88,4 @@ function permPermission($q, permTransitionProperties) {
 
 angular
   .module('permission')
-  .factory('permPermission', permPermission);
+  .factory('PermPermission', PermPermission);

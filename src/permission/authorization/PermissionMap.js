@@ -2,16 +2,16 @@
 
 /**
  * Access rights map factory
- * @name permission.permPermissionMap
+ * @name permission.PermPermissionMap
  *
  * @param $q {Object} Angular promise implementation
- * @param permTransitionProperties {permission.permTransitionProperties} Helper storing ui-router transition parameters
- * @param permRoleStore {permission.permRoleStore} Role definition storage
- * @param permPermissionStore {permission.permPermissionStore} Permission definition storage
+ * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
+ * @param PermRoleStore {permission.PermRoleStore} Role definition storage
+ * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
  *
  * @return {permission.PermissionMap}
  */
-function permPermissionMap($q, permTransitionProperties, permRoleStore, permPermissionStore) {
+function PermPermissionMap($q, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
   'ngInject';
 
   /**
@@ -73,13 +73,13 @@ function permPermissionMap($q, permTransitionProperties, permRoleStore, permPerm
   PermissionMap.prototype.resolvePropertyValidity = function (property) {
 
     return property.map(function (privilegeName) {
-      if (permRoleStore.hasRoleDefinition(privilegeName)) {
-        var role = permRoleStore.getRoleDefinition(privilegeName);
+      if (PermRoleStore.hasRoleDefinition(privilegeName)) {
+        var role = PermRoleStore.getRoleDefinition(privilegeName);
         return role.validateRole();
       }
 
-      if (permPermissionStore.hasPermissionDefinition(privilegeName)) {
-        var permission = permPermissionStore.getPermissionDefinition(privilegeName);
+      if (PermPermissionStore.hasPermissionDefinition(privilegeName)) {
+        var permission = PermPermissionStore.getPermissionDefinition(privilegeName);
         return permission.validatePermission();
       }
 
@@ -100,7 +100,7 @@ function permPermissionMap($q, permTransitionProperties, permRoleStore, permPerm
    */
   function resolveFunctionRedirect(redirectFunction, rejectedPermissionName) {
     return $q
-      .when(redirectFunction.call(null, rejectedPermissionName, permTransitionProperties))
+      .when(redirectFunction.call(null, rejectedPermissionName, PermTransitionProperties))
       .then(function (redirectState) {
         if (angular.isString(redirectState)) {
           return {
@@ -158,7 +158,7 @@ function permPermissionMap($q, permTransitionProperties, permRoleStore, permPerm
    * @methodOf permission.PermissionMap
    * @private
    *
-   * @param property {String|Array|Function} permPermission map property "only" or "except"
+   * @param property {String|Array|Function} PermPermission map property "only" or "except"
    *
    * @returns {Array<String>} Array of permission "only" or "except" names
    */
@@ -172,7 +172,7 @@ function permPermissionMap($q, permTransitionProperties, permRoleStore, permPerm
     }
 
     if (angular.isFunction(property)) {
-      return property.call(null, permTransitionProperties);
+      return property.call(null, PermTransitionProperties);
     }
 
     return [];
@@ -183,4 +183,4 @@ function permPermissionMap($q, permTransitionProperties, permRoleStore, permPerm
 
 angular
   .module('permission')
-  .factory('permPermissionMap', permPermissionMap);
+  .factory('PermPermissionMap', PermPermissionMap);

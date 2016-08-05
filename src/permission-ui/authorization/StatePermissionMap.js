@@ -4,19 +4,19 @@
  * State Access rights map factory
  * @function
  *
- * @param permPermissionMap {permission.permPermissionMap|Function}
+ * @param PermPermissionMap {permission.PermPermissionMap|Function}
  *
  * @return {permission.ui.StatePermissionMap}
  */
-function permStatePermissionMap(permPermissionMap) {
+function PermStatePermissionMap(PermPermissionMap) {
   'ngInject';
 
-  StatePermissionMap.prototype = new permPermissionMap();
+  StatePermissionMap.prototype = new PermPermissionMap();
 
   /**
    * Constructs map instructing authorization service how to handle authorizing
    * @constructor permission.ui.StatePermissionMap
-   * @extends permission.permPermissionMap
+   * @extends permission.PermPermissionMap
    */
   function StatePermissionMap(state) {
     var toStateObject = state.$$state();
@@ -24,7 +24,7 @@ function permStatePermissionMap(permPermissionMap) {
 
     angular.forEach(toStatePath, function (state) {
       if (areSetStatePermissions(state)) {
-        var permissionMap = new permPermissionMap(state.data.permissions);
+        var permissionMap = new PermPermissionMap(state.data.permissions);
         this.extendPermissionMap(permissionMap);
       }
     }, this);
@@ -34,7 +34,7 @@ function permStatePermissionMap(permPermissionMap) {
    * Extends permission map by pushing to it state's permissions
    * @methodOf permission.ui.StatePermissionMap
    *
-   * @param permissionMap {permission.permPermissionMap} Compensated permission map
+   * @param permissionMap {permission.PermPermissionMap} Compensated permission map
    */
   StatePermissionMap.prototype.extendPermissionMap = function (permissionMap) {
     if (permissionMap.only.length) {
@@ -63,4 +63,4 @@ function permStatePermissionMap(permPermissionMap) {
 
 angular
   .module('permission.ui')
-  .factory('permStatePermissionMap', permStatePermissionMap);
+  .factory('PermStatePermissionMap', PermStatePermissionMap);

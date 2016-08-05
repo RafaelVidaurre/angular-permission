@@ -5,10 +5,10 @@ describe('permission.ng', function () {
     var $rootScope;
     var $location;
     var $routeProvider;
-    var permPermissionStore;
-    var permTransitionEvents;
-    var permTransitionProperties;
-    var permAuthorization;
+    var PermPermissionStore;
+    var PermTransitionEvents;
+    var PermTransitionProperties;
+    var PermAuthorization;
 
     beforeEach(function () {
       module('ngRoute', function ($injector) {
@@ -20,20 +20,20 @@ describe('permission.ng', function () {
       inject(function ($injector) {
         $location = $injector.get('$location');
         $rootScope = $injector.get('$rootScope');
-        permPermissionStore = $injector.get('permPermissionStore');
-        permTransitionEvents = $injector.get('permTransitionEvents');
-        permTransitionProperties = $injector.get('permTransitionProperties');
-        permAuthorization = $injector.get('permAuthorization');
+        PermPermissionStore = $injector.get('PermPermissionStore');
+        PermTransitionEvents = $injector.get('PermTransitionEvents');
+        PermTransitionProperties = $injector.get('PermTransitionProperties');
+        PermAuthorization = $injector.get('PermAuthorization');
       });
     });
 
     // Initialize permissions
     beforeEach(function () {
-      permPermissionStore.definePermission('accepted', function () {
+      PermPermissionStore.definePermission('accepted', function () {
         return true;
       });
 
-      permPermissionStore.definePermission('denied', function () {
+      PermPermissionStore.definePermission('denied', function () {
         return false;
       });
     });
@@ -72,8 +72,8 @@ describe('permission.ng', function () {
           $rootScope.$digest();
 
           // THEN
-          expect(permTransitionProperties.next).toBeDefined();
-          expect(permTransitionProperties.current).toBeDefined();
+          expect(PermTransitionProperties.next).toBeDefined();
+          expect(PermTransitionProperties.current).toBeDefined();
         });
 
         it('should not start authorizing when $routeChangePermissionStart was prevented', function () {
@@ -82,7 +82,7 @@ describe('permission.ng', function () {
             event.preventDefault();
           });
 
-          spyOn(permTransitionEvents, 'broadcastPermissionStartEvent');
+          spyOn(PermTransitionEvents, 'broadcastPermissionStartEvent');
 
           // WHEN
           $location.path('/accepted');
@@ -91,13 +91,13 @@ describe('permission.ng', function () {
           // THEN
           expect($location.path()).toBe('/accepted');
 
-          expect(permTransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
+          expect(PermTransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
         });
 
         it('should handle unauthorized state access', function () {
           // GIVEN
-          spyOn(permTransitionEvents, 'broadcastPermissionDeniedEvent');
-          spyOn(permAuthorization, 'authorize').and.callThrough();
+          spyOn(PermTransitionEvents, 'broadcastPermissionDeniedEvent');
+          spyOn(PermAuthorization, 'authorize').and.callThrough();
 
           // WHEN
           $location.path('/denied');
@@ -105,22 +105,22 @@ describe('permission.ng', function () {
 
           // THEN
           expect($location.path()).toBe('/redirected');
-          expect(permAuthorization.authorize).toHaveBeenCalled();
-          expect(permTransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
+          expect(PermAuthorization.authorize).toHaveBeenCalled();
+          expect(PermTransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
         });
 
         it('should handle authorized state access', function () {
           // GIVEN
-          spyOn(permTransitionEvents, 'broadcastPermissionAcceptedEvent');
-          spyOn(permAuthorization, 'authorize').and.callThrough();
+          spyOn(PermTransitionEvents, 'broadcastPermissionAcceptedEvent');
+          spyOn(PermAuthorization, 'authorize').and.callThrough();
 
           // WHEN
           $location.path('/accepted');
           $rootScope.$digest();
 
           // THEN
-          expect(permAuthorization.authorize).toHaveBeenCalled();
-          expect(permTransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
+          expect(PermAuthorization.authorize).toHaveBeenCalled();
+          expect(PermTransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
         });
       });
     });

@@ -2,18 +2,18 @@
 
 /**
  * Service responsible for handling inheritance-enabled state-based authorization in ui-router
- * @name permission.ui.permStateAuthorization
+ * @name permission.ui.PermStateAuthorization
  *
  * @param $q {Object} Angular promise implementation
  */
-function permStateAuthorization($q) {
+function PermStateAuthorization($q) {
   'ngInject';
 
   this.authorize = authorize;
 
   /**
    * Handles state authorization
-   * @methodOf permission.ui.permStateAuthorization
+   * @methodOf permission.ui.PermStateAuthorization
    *
    * @param statePermissionMap
    *
@@ -25,7 +25,7 @@ function permStateAuthorization($q) {
 
   /**
    * Checks authorization for complex state inheritance
-   * @methodOf permission.ui.permStateAuthorization
+   * @methodOf permission.ui.PermStateAuthorization
    * @private
    *
    * @param map {permission.ui.StatePermissionMap} State access rights map
@@ -42,7 +42,7 @@ function permStateAuthorization($q) {
 
   /**
    * Resolves compensated set of "except" privileges
-   * @methodOf permission.ui.permStateAuthorization
+   * @methodOf permission.ui.PermStateAuthorization
    * @private
    *
    * @param deferred {Object} Promise defer
@@ -62,7 +62,7 @@ function permStateAuthorization($q) {
 
   /**
    * Resolves compensated set of "only" privileges
-   * @methodOf permission.ui.permStateAuthorization
+   * @methodOf permission.ui.PermStateAuthorization
    * @private
    *
    * @param deferred {Object} Promise defer
@@ -87,7 +87,7 @@ function permStateAuthorization($q) {
 
   /**
    * Performs iteration over list of privileges looking for matches
-   * @methodOf permission.ui.permStateAuthorization
+   * @methodOf permission.ui.PermStateAuthorization
    * @private
    *
    * @param privilegesNames {Array} Array of sets of access rights
@@ -109,4 +109,4 @@ function permStateAuthorization($q) {
 
 angular
   .module('permission')
-  .service('permStateAuthorization', permStateAuthorization);
+  .service('PermStateAuthorization', PermStateAuthorization);

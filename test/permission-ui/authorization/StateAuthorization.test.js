@@ -2,11 +2,11 @@ describe('permission.ui', function () {
   'use strict';
   describe('authorization', function () {
 
-    describe('service: permStateAuthorization', function () {
+    describe('service: PermStateAuthorization', function () {
 
-      var permPermissionStore;
-      var permStatePermissionMap;
-      var permStateAuthorization;
+      var PermPermissionStore;
+      var PermStatePermissionMap;
+      var PermStateAuthorization;
 
       beforeEach(function () {
         module('permission.ui');
@@ -14,19 +14,19 @@ describe('permission.ui', function () {
         installPromiseMatchers(); // jshint ignore:line
 
         inject(function ($injector) {
-          permStateAuthorization = $injector.get('permStateAuthorization');
-          permStatePermissionMap = $injector.get('permStatePermissionMap');
-          permPermissionStore = $injector.get('permPermissionStore');
+          PermStateAuthorization = $injector.get('PermStateAuthorization');
+          PermStatePermissionMap = $injector.get('PermStatePermissionMap');
+          PermPermissionStore = $injector.get('PermPermissionStore');
         });
       });
 
       // Initialize permissions
       beforeEach(function () {
-        permPermissionStore.definePermission('accepted', function () {
+        PermPermissionStore.definePermission('accepted', function () {
           return true;
         });
 
-        permPermissionStore.definePermission('denied', function () {
+        PermPermissionStore.definePermission('denied', function () {
           return false;
         });
       });
@@ -41,8 +41,8 @@ describe('permission.ui', function () {
 
 
           // WHEN
-          var map = new permStatePermissionMap(state);
-          var authorizationResult = permStateAuthorization.authorize(map);
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorize(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -57,8 +57,8 @@ describe('permission.ui', function () {
           });
 
           // WHEN
-          var map = new permStatePermissionMap(state);
-          var authorizationResult = permStateAuthorization.authorize(map);
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorize(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -73,8 +73,8 @@ describe('permission.ui', function () {
           });
 
           // WHEN
-          var map = new permStatePermissionMap(state);
-          var authorizationResult = permStateAuthorization.authorize(map);
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorize(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -89,8 +89,8 @@ describe('permission.ui', function () {
           });
 
           // WHEN
-          var map = new permStatePermissionMap(state);
-          var authorizationResult = permStateAuthorization.authorize(map);
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorize(map);
 
           // THEN
           expect(authorizationResult).toBePromise();

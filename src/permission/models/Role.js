@@ -5,12 +5,12 @@
  * @function
  *
  * @param $q {Object} Angular promise implementation
- * @param permPermissionStore {permission.permPermissionStore} Permission definition storage
- * @param permTransitionProperties {permission.permTransitionProperties} Helper storing ui-router transition parameters
+ * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
+ * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
  *
  * @return {Role}
  */
-function permRole($q, permPermissionStore, permTransitionProperties) {
+function PermRole($q, PermPermissionStore, PermTransitionProperties) {
   'ngInject';
 
   /**
@@ -36,7 +36,7 @@ function permRole($q, permPermissionStore, permTransitionProperties) {
    */
   Role.prototype.validateRole = function () {
     if (angular.isFunction(this.validationFunction)) {
-      var validationResult = this.validationFunction.call(null, this.roleName, permTransitionProperties);
+      var validationResult = this.validationFunction.call(null, this.roleName, PermTransitionProperties);
       if (!angular.isFunction(validationResult.then)) {
         validationResult = wrapInPromise(validationResult, this.roleName);
       }
@@ -46,8 +46,8 @@ function permRole($q, permPermissionStore, permTransitionProperties) {
 
     if (angular.isArray(this.validationFunction)) {
       var promises = this.validationFunction.map(function (permissionName) {
-        if (permPermissionStore.hasPermissionDefinition(permissionName)) {
-          var permission = permPermissionStore.getPermissionDefinition(permissionName);
+        if (PermPermissionStore.hasPermissionDefinition(permissionName)) {
+          var permission = PermPermissionStore.getPermissionDefinition(permissionName);
 
           return permission.validatePermission();
         }
@@ -107,4 +107,4 @@ function permRole($q, permPermissionStore, permTransitionProperties) {
 
 angular
   .module('permission')
-  .factory('permRole', permRole);
+  .factory('PermRole', PermRole);

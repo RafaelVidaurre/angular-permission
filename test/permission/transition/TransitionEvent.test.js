@@ -2,9 +2,9 @@ describe('permission', function () {
   'use strict';
 
   describe('transition', function () {
-    describe('service: permTransitionEvents', function () {
+    describe('service: PermTransitionEvents', function () {
 
-      var permTransitionEvents;
+      var PermTransitionEvents;
 
       beforeEach(function () {
         // Instantiate module
@@ -12,26 +12,26 @@ describe('permission', function () {
 
         // Inject services into module
         inject(function ($injector) {
-          permTransitionEvents = $injector.get('permTransitionEvents');
+          PermTransitionEvents = $injector.get('PermTransitionEvents');
         });
       });
 
       it('should throw error when method "broadcastPermissionStartEvent" is not decorated', function () {
         expect(function () {
-          permTransitionEvents.broadcastPermissionStartEvent();
-        }).toThrow(new Error('Method broadcastPermissionStartEvent in permTransitionEvents interface must be implemented'));
+          PermTransitionEvents.broadcastPermissionStartEvent();
+        }).toThrow(new Error('Method broadcastPermissionStartEvent in PermTransitionEvents interface must be implemented'));
       });
 
       it('should throw error when method "broadcastPermissionAcceptedEvent" is not decorated', function () {
         expect(function () {
-          permTransitionEvents.broadcastPermissionAcceptedEvent();
-        }).toThrow(new Error('Method broadcastPermissionAcceptedEvent in permTransitionEvents interface must be implemented'));
+          PermTransitionEvents.broadcastPermissionAcceptedEvent();
+        }).toThrow(new Error('Method broadcastPermissionAcceptedEvent in PermTransitionEvents interface must be implemented'));
       });
 
       it('should throw error when method "broadcastPermissionDeniedEvent" is not decorated', function () {
         expect(function () {
-          permTransitionEvents.broadcastPermissionDeniedEvent();
-        }).toThrow(new Error('Method broadcastPermissionDeniedEvent in permTransitionEvents interface must be implemented'));
+          PermTransitionEvents.broadcastPermissionDeniedEvent();
+        }).toThrow(new Error('Method broadcastPermissionDeniedEvent in PermTransitionEvents interface must be implemented'));
       });
     });
   });

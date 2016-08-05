@@ -2,10 +2,10 @@ describe('permission', function () {
   'use strict';
 
   describe('models', function () {
-    describe('factory: permRole', function () {
+    describe('factory: PermRole', function () {
 
-      var permRole;
-      var permPermissionStore;
+      var PermRole;
+      var PermPermissionStore;
 
       beforeEach(function () {
         module('permission');
@@ -13,18 +13,18 @@ describe('permission', function () {
         installPromiseMatchers(); // jshint ignore:line
 
         inject(function ($injector) {
-          permRole = $injector.get('permRole');
-          permPermissionStore = $injector.get('permPermissionStore');
+          PermRole = $injector.get('PermRole');
+          PermPermissionStore = $injector.get('PermPermissionStore');
         });
       });
 
-      describe('constructor: permRole', function () {
+      describe('constructor: PermRole', function () {
         it('should throw an exception on invalid roleName', function () {
           // GIVEN
           // WHEN
           // THEN
           expect(function () {
-            new permRole(null, function () {
+            new PermRole(null, function () {
               return true;
             });
           }).toThrow(new TypeError('Parameter "roleName" name must be String'));
@@ -35,7 +35,7 @@ describe('permission', function () {
           // WHEN
           // THEN
           expect(function () {
-            new permRole('valid-name', undefined);
+            new PermRole('valid-name', undefined);
           }).toThrow(new TypeError('Parameter "validationFunction" must be array or function'));
         });
 
@@ -45,7 +45,7 @@ describe('permission', function () {
           var permissionNames = ['USER'];
 
           // WHEN
-          var role = new permRole(permissionName, permissionNames);
+          var role = new PermRole(permissionName, permissionNames);
 
           // THEN
           expect(role.roleName).toBe(permissionName);
@@ -56,7 +56,7 @@ describe('permission', function () {
       describe('method: validateRole', function () {
         it('should call directly validationFunction when no permissions were provided', function () {
           // GIVEN
-          var role = new permRole('ACCOUNTANT', function () {
+          var role = new PermRole('ACCOUNTANT', function () {
             return true;
           });
           spyOn(role, 'validationFunction').and.callThrough();
@@ -70,11 +70,11 @@ describe('permission', function () {
 
         it('should call validationFunction through permission definitions when provided', function () {
           // GIVEN
-          permPermissionStore.definePermission('USER', function () {
+          PermPermissionStore.definePermission('USER', function () {
             return true;
           });
-          var role = new permRole('ACCOUNTANT', ['USER']);
-          var userDefinition = permPermissionStore.getPermissionDefinition('USER');
+          var role = new PermRole('ACCOUNTANT', ['USER']);
+          var userDefinition = PermPermissionStore.getPermissionDefinition('USER');
           spyOn(userDefinition, 'validationFunction').and.callThrough();
 
           // WHEN
@@ -91,7 +91,7 @@ describe('permission', function () {
             .and.callFake(function () {
               return true;
             });
-          var permission = new permRole(roleName, validationFunction);
+          var permission = new PermRole(roleName, validationFunction);
 
           // WHEN
           var validationResult = permission.validateRole();
@@ -108,7 +108,7 @@ describe('permission', function () {
             .and.callFake(function () {
               return false;
             });
-          var permission = new permRole(permissionName, validationFunction);
+          var permission = new PermRole(permissionName, validationFunction);
 
           // WHEN
           var validationResult = permission.validateRole();
@@ -121,7 +121,7 @@ describe('permission', function () {
 
         it('should return rejected promise when at least one of permissions is not defined', function () {
           // GIVEN
-          var role = new permRole('ACCOUNTANT', ['FAKE']);
+          var role = new PermRole('ACCOUNTANT', ['FAKE']);
 
           // WHEN
           var validationResult = role.validateRole();
@@ -133,7 +133,7 @@ describe('permission', function () {
 
         it('should throw error when could not validate role', function () {
           // GIVEN
-          var role = new permRole('ACCOUNTANT', [{}]);
+          var role = new PermRole('ACCOUNTANT', [{}]);
 
           // WHEN
           // THEN

@@ -5,16 +5,16 @@ describe('permission.ui', function () {
     describe('decorator: PermissionEvents', function () {
 
       var $rootScope;
-      var permTransitionEvents;
-      var permTransitionProperties;
+      var PermTransitionEvents;
+      var PermTransitionProperties;
 
       beforeEach(function () {
         module('permission.ui');
 
         inject(function ($injector) {
           $rootScope = $injector.get('$rootScope');
-          permTransitionEvents = $injector.get('permTransitionEvents');
-          permTransitionProperties = $injector.get('permTransitionProperties');
+          PermTransitionEvents = $injector.get('PermTransitionEvents');
+          PermTransitionProperties = $injector.get('PermTransitionProperties');
         });
       });
 
@@ -24,7 +24,7 @@ describe('permission.ui', function () {
           spyOn($rootScope, '$broadcast');
 
           // WHEN
-          permTransitionEvents.broadcastPermissionStartEvent();
+          PermTransitionEvents.broadcastPermissionStartEvent();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionStart',
@@ -39,7 +39,7 @@ describe('permission.ui', function () {
           spyOn($rootScope, '$broadcast');
 
           // WHEN
-          permTransitionEvents.broadcastPermissionAcceptedEvent();
+          PermTransitionEvents.broadcastPermissionAcceptedEvent();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionAccepted',
@@ -54,7 +54,7 @@ describe('permission.ui', function () {
           spyOn($rootScope, '$broadcast');
 
           // WHEN
-          permTransitionEvents.broadcastPermissionDeniedEvent();
+          PermTransitionEvents.broadcastPermissionDeniedEvent();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionDenied',
@@ -69,7 +69,7 @@ describe('permission.ui', function () {
           spyOn($rootScope, '$broadcast');
 
           // WHEN
-          permTransitionEvents.broadcastStateChangeSuccessEvent();
+          PermTransitionEvents.broadcastStateChangeSuccessEvent();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangeSuccess',
@@ -82,12 +82,12 @@ describe('permission.ui', function () {
         it('should check if none of events prevents authorization', function () {
           // GIVEN
           spyOn($rootScope, '$broadcast').and.callThrough();
-          permTransitionProperties.toState = {
+          PermTransitionProperties.toState = {
             $$isAuthorizationFinished: true
           };
 
           // WHEN
-          var result = permTransitionEvents.areEventsDefaultPrevented();
+          var result = PermTransitionEvents.areEventsDefaultPrevented();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionStart',

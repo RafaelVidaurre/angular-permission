@@ -7,12 +7,12 @@
 /**
  * @param $rootScope {Object}
  * @param $location {Object}
- * @param permTransitionProperties {permission.permTransitionProperties}
- * @param permTransitionEvents {permission.permAuthorization}
- * @param permAuthorization {permission.permAuthorization}
- * @param permPermissionMap {permission.permPermissionMap}
+ * @param PermTransitionProperties {permission.PermTransitionProperties}
+ * @param PermTransitionEvents {permission.PermAuthorization}
+ * @param PermAuthorization {permission.PermAuthorization}
+ * @param PermPermissionMap {permission.PermPermissionMap}
  */
-function run($rootScope, $location, permTransitionProperties, permTransitionEvents, permAuthorization, permPermissionMap) {
+function run($rootScope, $location, PermTransitionProperties, PermTransitionEvents, PermAuthorization, PermPermissionMap) {
   'ngInject';
 
   /**
@@ -20,10 +20,10 @@ function run($rootScope, $location, permTransitionProperties, permTransitionEven
    */
   $rootScope.$on('$routeChangeStart', function (event, next, current) {
 
-    if (areSetRoutePermissions() && !permTransitionEvents.areEventsDefaultPrevented()) {
+    if (areSetRoutePermissions() && !PermTransitionEvents.areEventsDefaultPrevented()) {
       setTransitionProperties();
 
-      permTransitionEvents.broadcastPermissionStartEvent();
+      PermTransitionEvents.broadcastPermissionStartEvent();
 
       next.$$route.resolve = next.$$route.resolve || {};
       next.$$route.resolve.$$permission = permissionResolver;
@@ -41,23 +41,23 @@ function run($rootScope, $location, permTransitionProperties, permTransitionEven
     }
 
     /**
-     * Updates values of `permTransitionProperties` holder object
+     * Updates values of `PermTransitionProperties` holder object
      * @method
      * @private
      */
     function setTransitionProperties() {
-      permTransitionProperties.next = next;
-      permTransitionProperties.current = current;
+      PermTransitionProperties.next = next;
+      PermTransitionProperties.current = current;
     }
 
     function permissionResolver() {
-      var PermissionMap = new permPermissionMap({
+      var PermissionMap = new PermPermissionMap({
         only: next.$$route.data.permissions.only,
         except: next.$$route.data.permissions.except,
         redirectTo: next.$$route.data.permissions.redirectTo
       });
 
-      var authorizationResult = permAuthorization.authorize(PermissionMap);
+      var authorizationResult = PermAuthorization.authorize(PermissionMap);
 
       authorizationResult
         .then(function () {
@@ -76,7 +76,7 @@ function run($rootScope, $location, permTransitionProperties, permTransitionEven
      * @private
      */
     function handleAuthorizedState() {
-      permTransitionEvents.broadcastPermissionAcceptedEvent();
+      PermTransitionEvents.broadcastPermissionAcceptedEvent();
     }
 
     /**
@@ -85,10 +85,10 @@ function run($rootScope, $location, permTransitionProperties, permTransitionEven
      * @private
      *
      * @param rejectedPermission {String} Rejected access right
-     * @param permissionMap {permission.permPermissionMap} State permission map
+     * @param permissionMap {permission.PermPermissionMap} State permission map
      */
     function handleUnauthorizedState(rejectedPermission, permissionMap) {
-      permTransitionEvents.broadcastPermissionDeniedEvent();
+      PermTransitionEvents.broadcastPermissionDeniedEvent();
 
       permissionMap
         .resolveRedirectState(rejectedPermission)

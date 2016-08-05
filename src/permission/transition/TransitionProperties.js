@@ -2,7 +2,7 @@
 
 /**
  * Helper object used for storing ui-router/ng-route transition parameters
- * @name permission.permTransitionProperties
+ * @name permission.PermTransitionProperties
  *
  * @type {Object.<String,Object>}
  *
@@ -17,8 +17,8 @@
  * @property current {Object} Current state properties [ng-route]
  * @property next {Object} Next state properties [ng-route]
  */
-var permTransitionProperties = {};
+var PermTransitionProperties = {};
 
 angular
   .module('permission')
-  .value('permTransitionProperties', permTransitionProperties);
+  .value('PermTransitionProperties', PermTransitionProperties);
