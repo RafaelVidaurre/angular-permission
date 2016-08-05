@@ -1,7 +1,7 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v3.2.1 - 2016-07-07
+ * @version v3.3.0 - 2016-08-05
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -14,10 +14,18 @@
    * @namespace permission.ng
    */
 
-  run.$inject = ['$rootScope', '$location', 'TransitionProperties', 'TransitionEvents', 'Authorization', 'PermissionMap'];
-  TransitionEvents.$inject = ['$delegate', '$rootScope', 'TransitionProperties', 'TransitionEventNames'];
+  /**
+   * @param $rootScope {Object}
+   * @param $location {Object}
+   * @param PermTransitionProperties {permission.PermTransitionProperties}
+   * @param PermTransitionEvents {permission.PermAuthorization}
+   * @param PermAuthorization {permission.PermAuthorization}
+   * @param PermPermissionMap {permission.PermPermissionMap}
+   */
+  run.$inject = ['$rootScope', '$location', 'PermTransitionProperties', 'PermTransitionEvents', 'PermAuthorization', 'PermPermissionMap'];
+  PermTransitionEvents.$inject = ['$delegate', '$rootScope', 'PermTransitionProperties', 'PermTransitionEventNames'];
 
-  function run($rootScope, $location, TransitionProperties, TransitionEvents, Authorization, PermissionMap) {
+  function run($rootScope, $location, PermTransitionProperties, PermTransitionEvents, PermAuthorization, PermPermissionMap) {
     'ngInject';
 
     /**
@@ -25,10 +33,10 @@
      */
     $rootScope.$on('$routeChangeStart', function (event, next, current) {
 
-      if (areSetRoutePermissions() && !TransitionEvents.areEventsDefaultPrevented()) {
+      if (areSetRoutePermissions() && !PermTransitionEvents.areEventsDefaultPrevented()) {
         setTransitionProperties();
 
-        TransitionEvents.broadcastPermissionStartEvent();
+        PermTransitionEvents.broadcastPermissionStartEvent();
 
         next.$$route.resolve = next.$$route.resolve || {};
         next.$$route.resolve.$$permission = permissionResolver;
@@ -46,30 +54,30 @@
       }
 
       /**
-       * Updates values of `TransitionProperties` holder object
+       * Updates values of `PermTransitionProperties` holder object
        * @method
        * @private
        */
       function setTransitionProperties() {
-        TransitionProperties.next = next;
-        TransitionProperties.current = current;
+        PermTransitionProperties.next = next;
+        PermTransitionProperties.current = current;
       }
 
       function permissionResolver() {
-        var permissionMap = new PermissionMap({
+        var PermissionMap = new PermPermissionMap({
           only: next.$$route.data.permissions.only,
           except: next.$$route.data.permissions.except,
           redirectTo: next.$$route.data.permissions.redirectTo
         });
 
-        var authorizationResult = Authorization.authorize(permissionMap);
+        var authorizationResult = PermAuthorization.authorizeByPermissionMap(PermissionMap);
 
         authorizationResult
           .then(function () {
             handleAuthorizedState();
           })
           .catch(function (rejectedPermission) {
-            handleUnauthorizedState(rejectedPermission, permissionMap);
+            handleUnauthorizedState(rejectedPermission, PermissionMap);
           });
 
         return authorizationResult;
@@ -81,7 +89,7 @@
        * @private
        */
       function handleAuthorizedState() {
-        TransitionEvents.broadcastPermissionAcceptedEvent();
+        PermTransitionEvents.broadcastPermissionAcceptedEvent();
       }
 
       /**
@@ -90,10 +98,10 @@
        * @private
        *
        * @param rejectedPermission {String} Rejected access right
-       * @param permissionMap {permission.PermissionMap} State permission map
+       * @param permissionMap {permission.PermPermissionMap} State permission map
        */
       function handleUnauthorizedState(rejectedPermission, permissionMap) {
-        TransitionEvents.broadcastPermissionDeniedEvent();
+        PermTransitionEvents.broadcastPermissionDeniedEvent();
 
         permissionMap
           .resolveRedirectState(rejectedPermission)
@@ -114,16 +122,16 @@
 
   /**
    * Service responsible for managing and emitting events
-   * @name permission.ng.TransitionEvents
+   * @name permission.ng.PermTransitionEvents
    *
-   * @extends {permission.TransitionEvents}
+   * @extends {permission.PermTransitionEvents}
    *
    * @param $delegate {Object} Parent instance being extended
    * @param $rootScope {Object} Top-level angular scope
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing transition parameters
-   * @param TransitionEventNames {permission.ng.TransitionEventNames} Constant storing event names
+   * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing transition parameters
+   * @param PermTransitionEventNames {permission.ng.PermTransitionEventNames} Constant storing event names
    */
-  function TransitionEvents($delegate, $rootScope, TransitionProperties, TransitionEventNames) {
+  function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, PermTransitionEventNames) {
     'ngInject';
 
     $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
@@ -133,7 +141,7 @@
 
     /**
      * Checks if state events are not prevented by default
-     * @methodOf permission.ng.TransitionEvents
+     * @methodOf permission.ng.PermTransitionEvents
      *
      * @returns {boolean}
      */
@@ -143,37 +151,37 @@
 
     /**
      * Broadcasts "$routeChangePermissionStart" event from $rootScope
-     * @methodOf permission.ng.TransitionEvents
+     * @methodOf permission.ng.PermTransitionEvents
      */
     function broadcastPermissionStartEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionStart, TransitionProperties.next);
+      $rootScope.$broadcast(PermTransitionEventNames.permissionStart, PermTransitionProperties.next);
     }
 
     /**
      * Broadcasts "$routeChangePermissionAccepted" event from $rootScope
-     * @methodOf permission.ng.TransitionEvents
+     * @methodOf permission.ng.PermTransitionEvents
      */
     function broadcastPermissionAcceptedEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionAccepted, TransitionProperties.next);
+      $rootScope.$broadcast(PermTransitionEventNames.permissionAccepted, PermTransitionProperties.next);
     }
 
     /**
      * Broadcasts "$routeChangePermissionDenied" event from $rootScope
-     * @methodOf permission.ng.TransitionEvents
+     * @methodOf permission.ng.PermTransitionEvents
      */
     function broadcastPermissionDeniedEvent() {
-      $rootScope.$broadcast(TransitionEventNames.permissionDenied, TransitionProperties.next);
+      $rootScope.$broadcast(PermTransitionEventNames.permissionDenied, PermTransitionProperties.next);
     }
 
     /**
      * Checks if event $routeChangePermissionStart hasn't been disabled by default
-     * @methodOf permission.ng.TransitionEvents
+     * @methodOf permission.ng.PermTransitionEvents
      * @private
      *
      * @returns {boolean}
      */
     function isRouteChangePermissionStartDefaultPrevented() {
-      return $rootScope.$broadcast(TransitionEventNames.permissionStart, TransitionProperties.next).defaultPrevented;
+      return $rootScope.$broadcast(PermTransitionEventNames.permissionStart, PermTransitionProperties.next).defaultPrevented;
     }
 
     return $delegate;
@@ -181,11 +189,11 @@
 
   angular
     .module('permission.ng')
-    .decorator('TransitionEvents', TransitionEvents);
+    .decorator('PermTransitionEvents', PermTransitionEvents);
 
   /**
    * Constant storing event names for ng-route
-   * @name permission.ng.TransitionEventNames
+   * @name permission.ng.PermTransitionEventNames
    *
    * @type {Object.<String,Object>}
    *
@@ -193,7 +201,7 @@
    * @property permissionAccepted {String} Event name called when authorized
    * @property permissionDenied {String} Event name called when unauthorized
    */
-  var TransitionEventNames = {
+  var PermTransitionEventNames = {
     permissionStart: '$routeChangePermissionStart',
     permissionAccepted: '$routeChangePermissionAccepted',
     permissionDenied: '$routeChangePermissionDenied'
@@ -201,6 +209,6 @@
 
   angular
     .module('permission.ng')
-    .value('TransitionEventNames', TransitionEventNames);
+    .value('PermTransitionEventNames', PermTransitionEventNames);
 
 }(window, window.angular));
