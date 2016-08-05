@@ -5,17 +5,17 @@
  * @function
  *
  * @param $q {Object} Angular promise implementation
- * @param PermissionStore {permission.PermissionStore} Permission definition storage
- * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
+ * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
+ * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
  *
- * @return {permission.Role}
+ * @return {Role}
  */
-function RoleFactory($q, PermissionStore, TransitionProperties) {
+function PermRole($q, PermPermissionStore, PermTransitionProperties) {
   'ngInject';
 
   /**
    * Role definition constructor
-   * @class permission.Role
+   * @constructor Role
    *
    * @param roleName {String} Name representing role
    * @param validationFunction {Function|Array<String>} Optional function used to validate if permissions are still
@@ -36,7 +36,7 @@ function RoleFactory($q, PermissionStore, TransitionProperties) {
    */
   Role.prototype.validateRole = function () {
     if (angular.isFunction(this.validationFunction)) {
-      var validationResult = this.validationFunction.call(null, this.roleName, TransitionProperties);
+      var validationResult = this.validationFunction.call(null, this.roleName, PermTransitionProperties);
       if (!angular.isFunction(validationResult.then)) {
         validationResult = wrapInPromise(validationResult, this.roleName);
       }
@@ -46,8 +46,8 @@ function RoleFactory($q, PermissionStore, TransitionProperties) {
 
     if (angular.isArray(this.validationFunction)) {
       var promises = this.validationFunction.map(function (permissionName) {
-        if (PermissionStore.hasPermissionDefinition(permissionName)) {
-          var permission = PermissionStore.getPermissionDefinition(permissionName);
+        if (PermPermissionStore.hasPermissionDefinition(permissionName)) {
+          var permission = PermPermissionStore.getPermissionDefinition(permissionName);
 
           return permission.validatePermission();
         }
@@ -107,4 +107,4 @@ function RoleFactory($q, PermissionStore, TransitionProperties) {
 
 angular
   .module('permission')
-  .factory('Role', RoleFactory);
+  .factory('PermRole', PermRole);

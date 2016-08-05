@@ -4,15 +4,15 @@ describe('permission.ui', function () {
 
     describe('factory: StatePermissionMap', function () {
 
-      var StatePermissionMap;
-      var TransitionProperties;
+      var PermStatePermissionMap;
+      var PermTransitionProperties;
 
       beforeEach(function () {
         module('permission.ui');
 
         inject(function ($injector) {
-          StatePermissionMap = $injector.get('StatePermissionMap');
-          TransitionProperties = $injector.get('TransitionProperties');
+          PermStatePermissionMap = $injector.get('PermStatePermissionMap');
+          PermTransitionProperties = $injector.get('PermTransitionProperties');
         });
       });
 
@@ -30,7 +30,7 @@ describe('permission.ui', function () {
           });
 
           // WHEN
-          var map = new StatePermissionMap(state);
+          var map = new PermStatePermissionMap(state);
 
           // THEN
           expect(map.only).toEqual([['accepted'], ['acceptedChild']]);

@@ -2,11 +2,11 @@
 
 /**
  * Permission definition storage
- * @name permission.PermissionStore
+ * @name permission.PermPermissionStore
  *
- * @param Permission {permission.PermissionFactory} Permission definition factory
+ * @param PermPermission {permission.PermPermission|Function}
  */
-function PermissionStore(Permission) {
+function PermPermissionStore(PermPermission) {
   'ngInject';
 
   /**
@@ -26,22 +26,21 @@ function PermissionStore(Permission) {
 
   /**
    * Allows to define permission on application configuration
-   * @methodOf permission.PermissionStore
+   * @methodOf permission.PermPermissionStore
    *
    * @param permissionName {String} Name of defined permission
    * @param validationFunction {Function} Function used to validate if permission is valid
    */
   function definePermission(permissionName, validationFunction) {
-    var permission = new Permission(permissionName, validationFunction);
-    permissionStore[permissionName] = permission;
+    permissionStore[permissionName] = new PermPermission(permissionName, validationFunction);
   }
 
   /**
    * Allows to define set of permissionNames with shared validation function on application configuration
-   * @methodOf permission.PermissionStore
+   * @methodOf permission.PermPermissionStore
    * @throws {TypeError}
    *
-   * @param permissionNames {Array<String>} Set of permission names
+   * @param permissionNames {Array<Number>} Set of permission names
    * @param validationFunction {Function} Function used to validate if permission is valid
    */
   function defineManyPermissions(permissionNames, validationFunction) {
@@ -56,7 +55,7 @@ function PermissionStore(Permission) {
 
   /**
    * Deletes permission
-   * @methodOf permission.PermissionStore
+   * @methodOf permission.PermPermissionStore
    *
    * @param permissionName {String} Name of defined permission
    */
@@ -66,7 +65,7 @@ function PermissionStore(Permission) {
 
   /**
    * Checks if permission exists
-   * @methodOf permission.PermissionStore
+   * @methodOf permission.PermPermissionStore
    *
    * @param permissionName {String} Name of defined permission
    * @returns {Boolean}
@@ -77,7 +76,7 @@ function PermissionStore(Permission) {
 
   /**
    * Returns permission by it's name
-   * @methodOf permission.PermissionStore
+   * @methodOf permission.PermPermissionStore
    *
    * @returns {permission.Permission} Permissions definition object
    */
@@ -87,7 +86,7 @@ function PermissionStore(Permission) {
 
   /**
    * Returns all permissions
-   * @methodOf permission.PermissionStore
+   * @methodOf permission.PermPermissionStore
    *
    * @returns {Object} Permissions collection
    */
@@ -97,7 +96,7 @@ function PermissionStore(Permission) {
 
   /**
    * Removes all permissions
-   * @methodOf permission.PermissionStore
+   * @methodOf permission.PermPermissionStore
    */
   function clearStore() {
     permissionStore = {};
@@ -106,4 +105,5 @@ function PermissionStore(Permission) {
 
 angular
   .module('permission')
-  .service('PermissionStore', PermissionStore);
+  .service('PermPermissionStore', PermPermissionStore)
+  .service('PermissionStore', PermPermissionStore);

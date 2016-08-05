@@ -2,30 +2,37 @@
 
 /**
  * Service responsible for handling view based authorization
- * @name permission.Authorization
+ * @name permission.PermAuthorization
  *
  * @param $q {Object} Angular promise implementation
  */
-function Authorization($q) {
+function PermAuthorization($q) {
   'ngInject';
 
-  this.authorize = authorize;
+  /**
+   * @deprecated
+   *
+   * This method will be deprecated in favour of authorizeByPermissionMap in 4.0
+   */
+  this.authorize = authorizeByPermissionMap;
+
+  this.authorizeByPermissionMap = authorizeByPermissionMap;
 
   /**
    * Handles authorization based on provided permissions map
-   * @methodOf permission.Authorization
+   * @methodOf permission.PermAuthorization
    *
-   * @param permissionsMap {permission.PermissionMap} Map of permission names
+   * @param map {permission.PermissionMap} Map of permission names
    *
    * @returns {promise} $q.promise object
    */
-  function authorize(permissionsMap) {
-    return authorizePermissionMap(permissionsMap);
+  function authorizeByPermissionMap(map) {
+    return authorizePermissionMap(map);
   }
 
   /**
    * Checks authorization for simple view based access
-   * @methodOf permission.Authorization
+   * @methodOf permission.PermAuthorization
    * @private
    *
    * @param map {permission.PermissionMap} Access rights map
@@ -42,7 +49,7 @@ function Authorization($q) {
 
   /**
    * Resolves flat set of "except" privileges
-   * @methodOf permission.Authorization
+   * @methodOf permission.PermAuthorization
    * @private
    *
    * @param deferred {Object} Promise defer
@@ -64,7 +71,7 @@ function Authorization($q) {
 
   /**
    * Resolves flat set of "only" privileges
-   * @methodOf permission.Authorization
+   * @methodOf permission.PermAuthorization
    * @private
    *
    * @param deferred {Object} Promise defer
@@ -89,4 +96,4 @@ function Authorization($q) {
 
 angular
   .module('permission')
-  .service('Authorization', Authorization);
+  .service('PermAuthorization', PermAuthorization);

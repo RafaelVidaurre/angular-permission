@@ -9,9 +9,9 @@ describe('permission', function () {
       var $compile;
       var $rootScope;
       var $stateProvider;
-      var Authorization;
-      var RoleStore;
-      var PermissionMap;
+      var PermAuthorization;
+      var PermRoleStore;
+      var PermPermissionMap;
 
 
       beforeEach(function () {
@@ -30,67 +30,25 @@ describe('permission', function () {
           $state = $injector.get('$state');
           $compile = $injector.get('$compile');
           $rootScope = $injector.get('$rootScope').$new();
-          Authorization = $injector.get('Authorization');
-          RoleStore = $injector.get('RoleStore');
-          PermissionMap = $injector.get('PermissionMap');
+          PermAuthorization = $injector.get('PermAuthorization');
+          PermRoleStore = $injector.get('PermRoleStore');
+          PermPermissionMap = $injector.get('PermPermissionMap');
         });
       });
 
       // Initialize permissions
       beforeEach(function () {
-        RoleStore.defineRole('USER', function () {
+        PermRoleStore.defineRole('USER', function () {
           return true;
         });
 
-        RoleStore.defineRole('AUTHORIZED', function () {
+        PermRoleStore.defineRole('AUTHORIZED', function () {
           return true;
         });
 
-        RoleStore.defineRole('ADMIN', function () {
+        PermRoleStore.defineRole('ADMIN', function () {
           return false;
         });
-      });
-
-      it('should show element if authorized when permissions are passed as state reference', function () {
-        // GIVEN
-        $stateProvider
-          .state('accepted', {
-            data: {
-              permissions: {
-                only: ['USER']
-              }
-            }
-          });
-
-        var element = angular.element('<div permission permission-sref="\'accepted\'"></div>');
-
-        // WHEN
-        $compile(element)($rootScope);
-        $rootScope.$digest();
-
-        // THEN
-        expect(element.hasClass('ng-hide')).toBeFalsy();
-      });
-
-      it('should hide element if unauthorized when permissions are passed as state reference', function () {
-        // GIVEN
-        $stateProvider
-          .state('rejected', {
-            data: {
-              permissions: {
-                only: ['ADMIN']
-              }
-            }
-          });
-
-        var element = angular.element('<div permission permission-sref="\'rejected\'"></div>');
-
-        // WHEN
-        $compile(element)($rootScope);
-        $rootScope.$digest();
-
-        // THEN
-        expect(element.hasClass('ng-hide')).toBeTruthy();
       });
 
       it('should show element if authorized when permissions are passed as string array', function () {
@@ -207,17 +165,17 @@ describe('permission', function () {
         expect(element.attr('disabled')).toEqual('disabled');
       });
 
-      it('should call authorize method', function () {
+      it('should call authorizeByPermissionMap method', function () {
         // GIVEN
         var element = angular.element('<div permission permission-except="[\'USER\']"></div>');
-        spyOn(Authorization, 'authorize');
+        spyOn(PermAuthorization, 'authorizeByPermissionMap');
 
         // WHEN
         $compile(element)($rootScope);
         $rootScope.$digest();
 
         // THEN
-        expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: undefined,
           except: ['USER'],
           redirectTo: undefined
@@ -232,28 +190,28 @@ describe('permission', function () {
           '<div permission permission-only="\'AUTHORIZED\'"></div>'
         );
 
-        spyOn(Authorization, 'authorize').and.callThrough();
+        spyOn(PermAuthorization, 'authorizeByPermissionMap').and.callThrough();
 
         // WHEN
         $compile(element)($rootScope);
         $rootScope.$digest();
 
         // THEN
-        expect(Authorization.authorize).toHaveBeenCalledTimes(3);
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledTimes(3);
 
-        expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: ['USER'],
           except: undefined,
           redirectTo: undefined
         }));
 
-        expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: ['ADMIN'],
           except: undefined,
           redirectTo: undefined
         }));
 
-        expect(Authorization.authorize).toHaveBeenCalledWith(new PermissionMap({
+        expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: ['AUTHORIZED'],
           except: undefined,
           redirectTo: undefined

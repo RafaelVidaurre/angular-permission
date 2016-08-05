@@ -2,17 +2,17 @@ describe('permission', function () {
   'use strict';
 
   describe('stores', function () {
-    describe('service: PermissionStore', function () {
+    describe('service: PermPermissionStore', function () {
 
-      var PermissionStore;
-      var Permission;
+      var PermPermissionStore;
+      var PermPermission;
 
       beforeEach(function () {
         module('permission');
 
         inject(function ($injector) {
-          PermissionStore = $injector.get('PermissionStore');
-          Permission = $injector.get('Permission');
+          PermPermissionStore = $injector.get('PermPermissionStore');
+          PermPermission = $injector.get('PermPermission');
         });
       });
 
@@ -20,11 +20,11 @@ describe('permission', function () {
         it('should add permission definition to store for correct parameters', function () {
           // GIVEN
           // WHEN
-          PermissionStore.definePermission('user', function () {
+          PermPermissionStore.definePermission('user', function () {
             return true;
           });
           // THEN
-          expect(PermissionStore.hasPermissionDefinition('user')).toBe(true);
+          expect(PermPermissionStore.hasPermissionDefinition('user')).toBe(true);
         });
       });
 
@@ -34,34 +34,34 @@ describe('permission', function () {
           // WHEN
           // THEN
           expect(function () {
-            PermissionStore.defineManyPermissions({}, null);
+            PermPermissionStore.defineManyPermissions({}, null);
           }).toThrow(new TypeError('Parameter "permissionNames" name must be Array'));
         });
 
         it('should add permission definitions to store for correct set of parameters', function () {
           // GIVEN
           // WHEN
-          PermissionStore.defineManyPermissions(['user', 'admin'], function () {
+          PermPermissionStore.defineManyPermissions(['user', 'admin'], function () {
             return true;
           });
 
           // THEN
-          expect(PermissionStore.hasPermissionDefinition('user')).toBe(true);
-          expect(PermissionStore.hasPermissionDefinition('admin')).toBe(true);
+          expect(PermPermissionStore.hasPermissionDefinition('user')).toBe(true);
+          expect(PermPermissionStore.hasPermissionDefinition('admin')).toBe(true);
         });
       });
 
       describe('method: getPermissionDefinition', function () {
         it('should return permission definition object', function () {
           // GIVEN
-          PermissionStore.definePermission('USER', function () {
+          PermPermissionStore.definePermission('USER', function () {
             return true;
           });
           // WHEN
-          var permission = PermissionStore.getPermissionDefinition('USER');
+          var permission = PermPermissionStore.getPermissionDefinition('USER');
 
           // THEN
-          expect(permission instanceof Permission).toBeTruthy();
+          expect(permission instanceof PermPermission).toBeTruthy();
         });
       });
 
@@ -69,44 +69,44 @@ describe('permission', function () {
         it('should check if permission is defined', function () {
           // GIVEN
           // WHEN
-          PermissionStore.definePermission('user', function () {
+          PermPermissionStore.definePermission('user', function () {
             return true;
           });
 
           // THEN
-          expect(PermissionStore.hasPermissionDefinition('user')).toBeTruthy();
-          expect(PermissionStore.hasPermissionDefinition('admin')).toBeFalsy();
+          expect(PermPermissionStore.hasPermissionDefinition('user')).toBeTruthy();
+          expect(PermPermissionStore.hasPermissionDefinition('admin')).toBeFalsy();
         });
       });
 
       describe('method: clearStore', function () {
         it('should remove all permission definitions', function () {
           // GIVEN
-          PermissionStore.defineManyPermissions(['user', 'admin', 'superAdmin'], function () {
+          PermPermissionStore.defineManyPermissions(['user', 'admin', 'superAdmin'], function () {
             return true;
           });
 
           // WHEN
-          PermissionStore.clearStore();
+          PermPermissionStore.clearStore();
 
           // THEN
-          expect(Object.keys(PermissionStore.getStore()).length).toBe(0);
+          expect(Object.keys(PermPermissionStore.getStore()).length).toBe(0);
         });
       });
 
       describe('method: removePermissionDefinition', function () {
         it('should remove definition from store', function () {
           // GIVEN
-          PermissionStore.defineManyPermissions(['user', 'admin'], function () {
+          PermPermissionStore.defineManyPermissions(['user', 'admin'], function () {
             return true;
           });
 
           // WHEN
-          PermissionStore.removePermissionDefinition('user');
+          PermPermissionStore.removePermissionDefinition('user');
 
           // THEN
-          expect(PermissionStore.hasPermissionDefinition('user')).toBeFalsy();
-          expect(PermissionStore.hasPermissionDefinition('admin')).toBeTruthy();
+          expect(PermPermissionStore.hasPermissionDefinition('user')).toBeFalsy();
+          expect(PermPermissionStore.hasPermissionDefinition('admin')).toBeTruthy();
         });
       });
     });

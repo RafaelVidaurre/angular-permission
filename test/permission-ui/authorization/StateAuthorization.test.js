@@ -2,11 +2,11 @@ describe('permission.ui', function () {
   'use strict';
   describe('authorization', function () {
 
-    describe('service: StateAuthorization', function () {
+    describe('service: PermStateAuthorization', function () {
 
-      var PermissionStore;
-      var StatePermissionMap;
-      var StateAuthorization;
+      var PermPermissionStore;
+      var PermStatePermissionMap;
+      var PermStateAuthorization;
 
       beforeEach(function () {
         module('permission.ui');
@@ -14,24 +14,24 @@ describe('permission.ui', function () {
         installPromiseMatchers(); // jshint ignore:line
 
         inject(function ($injector) {
-          StateAuthorization = $injector.get('StateAuthorization');
-          StatePermissionMap = $injector.get('StatePermissionMap');
-          PermissionStore = $injector.get('PermissionStore');
+          PermStateAuthorization = $injector.get('PermStateAuthorization');
+          PermStatePermissionMap = $injector.get('PermStatePermissionMap');
+          PermPermissionStore = $injector.get('PermPermissionStore');
         });
       });
 
       // Initialize permissions
       beforeEach(function () {
-        PermissionStore.definePermission('accepted', function () {
+        PermPermissionStore.definePermission('accepted', function () {
           return true;
         });
 
-        PermissionStore.definePermission('denied', function () {
+        PermPermissionStore.definePermission('denied', function () {
           return false;
         });
       });
 
-      describe('method: authorize', function () {
+      describe('method: authorizeByPermissionMap', function () {
         it('should return resolved promise when "except" permissions are met', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$state']);
@@ -41,8 +41,8 @@ describe('permission.ui', function () {
 
 
           // WHEN
-          var map = new StatePermissionMap(state);
-          var authorizationResult = StateAuthorization.authorize(map);
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -57,8 +57,8 @@ describe('permission.ui', function () {
           });
 
           // WHEN
-          var map = new StatePermissionMap(state);
-          var authorizationResult = StateAuthorization.authorize(map);
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -73,8 +73,8 @@ describe('permission.ui', function () {
           });
 
           // WHEN
-          var map = new StatePermissionMap(state);
-          var authorizationResult = StateAuthorization.authorize(map);
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
 
           // THEN
           expect(authorizationResult).toBePromise();
@@ -89,8 +89,8 @@ describe('permission.ui', function () {
           });
 
           // WHEN
-          var map = new StatePermissionMap(state);
-          var authorizationResult = StateAuthorization.authorize(map);
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
 
           // THEN
           expect(authorizationResult).toBePromise();

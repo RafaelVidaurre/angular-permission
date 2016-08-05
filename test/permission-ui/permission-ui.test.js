@@ -5,10 +5,10 @@ describe('permission.ui', function () {
     var $rootScope;
     var $state;
     var $stateProvider;
-    var PermissionStore;
-    var TransitionEvents;
-    var TransitionProperties;
-    var StateAuthorization;
+    var PermPermissionStore;
+    var PermTransitionEvents;
+    var PermTransitionProperties;
+    var PermStateAuthorization;
 
     beforeEach(function () {
       module('ui.router', function ($injector) {
@@ -20,20 +20,20 @@ describe('permission.ui', function () {
       inject(function ($injector) {
         $state = $injector.get('$state');
         $rootScope = $injector.get('$rootScope');
-        PermissionStore = $injector.get('PermissionStore');
-        TransitionEvents = $injector.get('TransitionEvents');
-        TransitionProperties = $injector.get('TransitionProperties');
-        StateAuthorization = $injector.get('StateAuthorization');
+        PermPermissionStore = $injector.get('PermPermissionStore');
+        PermTransitionEvents = $injector.get('PermTransitionEvents');
+        PermTransitionProperties = $injector.get('PermTransitionProperties');
+        PermStateAuthorization = $injector.get('PermStateAuthorization');
       });
     });
 
     // Initialize permissions
     beforeEach(function () {
-      PermissionStore.definePermission('accepted', function () {
+      PermPermissionStore.definePermission('accepted', function () {
         return true;
       });
 
-      PermissionStore.definePermission('denied', function () {
+      PermPermissionStore.definePermission('denied', function () {
         return false;
       });
     });
@@ -83,11 +83,11 @@ describe('permission.ui', function () {
           $rootScope.$digest();
 
           // THEN
-          expect(TransitionProperties.toState).toBeDefined();
-          expect(TransitionProperties.toParams).toBeDefined();
-          expect(TransitionProperties.fromState).toBeDefined();
-          expect(TransitionProperties.fromParams).toBeDefined();
-          expect(TransitionProperties.options).toBeDefined();
+          expect(PermTransitionProperties.toState).toBeDefined();
+          expect(PermTransitionProperties.toParams).toBeDefined();
+          expect(PermTransitionProperties.fromState).toBeDefined();
+          expect(PermTransitionProperties.fromParams).toBeDefined();
+          expect(PermTransitionProperties.options).toBeDefined();
         });
 
         it('should not set $$isAuthorizationFinished flag when authorization is not finished', function () {
@@ -101,7 +101,7 @@ describe('permission.ui', function () {
           $rootScope.$digest();
 
           // THEN
-          expect(TransitionProperties.toState.$$isAuthorizationFinished).toBeFalsy();
+          expect(PermTransitionProperties.toState.$$isAuthorizationFinished).toBeFalsy();
         });
 
         it('should not start authorizing when $stateChangePermissionStart was prevented', function () {
@@ -110,7 +110,7 @@ describe('permission.ui', function () {
             event.preventDefault();
           });
 
-          spyOn(TransitionEvents, 'broadcastPermissionStartEvent');
+          spyOn(PermTransitionEvents, 'broadcastPermissionStartEvent');
 
           // WHEN
           $state.go('accepted');
@@ -119,7 +119,7 @@ describe('permission.ui', function () {
           // THEN
           expect($state.current.name).toBe('accepted');
 
-          expect(TransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
+          expect(PermTransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
         });
 
         it('should not start authorizing when $stateChangeStart has been prevented', function () {
@@ -128,7 +128,7 @@ describe('permission.ui', function () {
             event.preventDefault();
           });
 
-          spyOn(TransitionEvents, 'broadcastPermissionStartEvent');
+          spyOn(PermTransitionEvents, 'broadcastPermissionStartEvent');
 
           // WHEN
           $state.go('accepted');
@@ -139,13 +139,13 @@ describe('permission.ui', function () {
 
           // THEN
           expect($state.current.name).toBe('home');
-          expect(TransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
+          expect(PermTransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
         });
 
         it('should handle unauthorized state access', function () {
           // GIVEN
-          spyOn(TransitionEvents, 'broadcastPermissionDeniedEvent');
-          spyOn(StateAuthorization, 'authorize').and.callThrough();
+          spyOn(PermTransitionEvents, 'broadcastPermissionDeniedEvent');
+          spyOn(PermStateAuthorization, 'authorizeByPermissionMap').and.callThrough();
 
           // WHEN
           $state.go('denied');
@@ -153,14 +153,14 @@ describe('permission.ui', function () {
 
           // THEN
           expect($state.current.name).toBe('redirected');
-          expect(StateAuthorization.authorize).toHaveBeenCalled();
-          expect(TransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
+          expect(PermStateAuthorization.authorizeByPermissionMap).toHaveBeenCalled();
+          expect(PermTransitionEvents.broadcastPermissionDeniedEvent).toHaveBeenCalled();
         });
 
         it('should handle authorized state access', function () {
           // GIVEN
-          spyOn(TransitionEvents, 'broadcastPermissionAcceptedEvent');
-          spyOn(StateAuthorization, 'authorize').and.callThrough();
+          spyOn(PermTransitionEvents, 'broadcastPermissionAcceptedEvent');
+          spyOn(PermStateAuthorization, 'authorizeByPermissionMap').and.callThrough();
 
           // WHEN
           $state.go('accepted');
@@ -168,8 +168,8 @@ describe('permission.ui', function () {
 
           // THEN
           expect($state.current.name).toBe('accepted');
-          expect(StateAuthorization.authorize).toHaveBeenCalled();
-          expect(TransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
+          expect(PermStateAuthorization.authorizeByPermissionMap).toHaveBeenCalled();
+          expect(PermTransitionEvents.broadcastPermissionAcceptedEvent).toHaveBeenCalled();
         });
 
         it('should honor params and options passed to "transitionTo" or "go" function', function () {

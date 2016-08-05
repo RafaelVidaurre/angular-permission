@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v3.2.1 - 2016-07-07
+ * @version v3.3.0 - 2016-08-05
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -15,13 +15,13 @@
    */
 
   $q.$inject = ['$delegate'];
-  PermissionFactory.$inject = ['$q', 'TransitionProperties'];
-  RoleFactory.$inject = ['$q', 'PermissionStore', 'TransitionProperties'];
-  PermissionStore.$inject = ['Permission'];
-  RoleStore.$inject = ['Role'];
-  PermissionDirective.$inject = ['$log', '$injector', 'Authorization', 'PermissionMap', 'PermissionStrategies'];
-  Authorization.$inject = ['$q'];
-  PermissionMapFactory.$inject = ['$q', 'TransitionProperties', 'RoleStore', 'PermissionStore'];
+  PermPermission.$inject = ['$q', 'PermTransitionProperties'];
+  PermRole.$inject = ['$q', 'PermPermissionStore', 'PermTransitionProperties'];
+  PermPermissionStore.$inject = ['PermPermission'];
+  PermRoleStore.$inject = ['PermRole'];
+  PermissionDirective.$inject = ['$log', '$injector', 'PermPermissionMap', 'PermPermissionStrategies'];
+  PermAuthorization.$inject = ['$q'];
+  PermPermissionMap.$inject = ['$q', 'PermTransitionProperties', 'PermRoleStore', 'PermPermissionStore'];
   var permission = angular.module('permission', []);
 
   if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
@@ -89,14 +89,14 @@
 
   /**
    * Pre-defined available configurable behaviours of directive `permission`
-   * @name permission.PermissionStrategies
+   * @name permission.PermPermissionStrategies
    * @readonly
    *
    * @example
    * <div permission
    *      permission-except="'MANAGER'"
-   *      permission-on-authorized="PermissionStrategies.renderContent"
-   *      permission-on-unauthorized="PermissionStrategies.removeContent">
+   *      permission-on-authorized="PermPermissionStrategies.renderContent"
+   *      permission-on-unauthorized="PermPermissionStrategies.removeContent">
    * </div>
    *
    * @property enableElement {Function}
@@ -104,7 +104,7 @@
    * @property showElement {Function}
    * @property hideElement {Function}
    */
-  var PermissionStrategies = {
+  var PermPermissionStrategies = {
     enableElement: function ($element) {
       $element.removeAttr('disabled');
     },
@@ -121,12 +121,13 @@
 
   angular
     .module('permission')
-    .value('PermissionStrategies', PermissionStrategies);
+    .value('PermPermissionStrategies', PermPermissionStrategies)
+    .value('PermissionStrategies', PermPermissionStrategies);
 
 
   /**
    * Helper object used for storing ui-router/ng-route transition parameters
-   * @name permission.TransitionProperties
+   * @name permission.PermTransitionProperties
    *
    * @type {Object.<String,Object>}
    *
@@ -141,52 +142,52 @@
    * @property current {Object} Current state properties [ng-route]
    * @property next {Object} Next state properties [ng-route]
    */
-  var TransitionProperties = {};
+  var PermTransitionProperties = {};
 
   angular
     .module('permission')
-    .value('TransitionProperties', TransitionProperties);
+    .value('PermTransitionProperties', PermTransitionProperties);
 
   /**
    * Interface responsible for managing and emitting events dependent on router implementation
-   * @name permission.TransitionEvents
+   * @name permission.PermTransitionEvents
    */
-  function TransitionEvents() {
+  function PermTransitionEvents() {
     'ngInject';
 
     this.broadcastPermissionStartEvent = function () {
-      throw new Error('Method broadcastPermissionStartEvent in TransitionEvents interface must be implemented');
+      throw new Error('Method broadcastPermissionStartEvent in PermTransitionEvents interface must be implemented');
     };
 
     this.broadcastPermissionAcceptedEvent = function () {
-      throw new Error('Method broadcastPermissionAcceptedEvent in TransitionEvents interface must be implemented');
+      throw new Error('Method broadcastPermissionAcceptedEvent in PermTransitionEvents interface must be implemented');
     };
 
     this.broadcastPermissionDeniedEvent = function () {
-      throw new Error('Method broadcastPermissionDeniedEvent in TransitionEvents interface must be implemented');
+      throw new Error('Method broadcastPermissionDeniedEvent in PermTransitionEvents interface must be implemented');
     };
   }
 
   angular
     .module('permission')
-    .service('TransitionEvents', TransitionEvents);
+    .service('PermTransitionEvents', PermTransitionEvents);
 
 
   /**
-   * Permission definition factory
+   * PermPermission definition factory
    * @function
    *
    * @param $q {Object} Angular promise implementation
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
+   * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
    *
-   * @return {permission.Permission}
+   * @return {Permission}
    */
-  function PermissionFactory($q, TransitionProperties) {
+  function PermPermission($q, PermTransitionProperties) {
     'ngInject';
 
     /**
-     * Permission definition object constructor
-     * @constructor permission.Permission
+     * PermPermission definition object constructor
+     * @constructor Permission
      *
      * @param permissionName {String} Name repressing permission
      * @param validationFunction {Function} Function used to check if permission is valid
@@ -205,7 +206,7 @@
      * @returns {Promise}
      */
     Permission.prototype.validatePermission = function () {
-      var validationResult = this.validationFunction.call(null, this.permissionName, TransitionProperties);
+      var validationResult = this.validationFunction.call(null, this.permissionName, PermTransitionProperties);
 
       if (!angular.isFunction(validationResult.then)) {
         validationResult = wrapInPromise(validationResult, this.permissionName);
@@ -260,24 +261,24 @@
 
   angular
     .module('permission')
-    .factory('Permission', PermissionFactory);
+    .factory('PermPermission', PermPermission);
 
   /**
    * Role definition factory
    * @function
    *
    * @param $q {Object} Angular promise implementation
-   * @param PermissionStore {permission.PermissionStore} Permission definition storage
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
+   * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
+   * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
    *
-   * @return {permission.Role}
+   * @return {Role}
    */
-  function RoleFactory($q, PermissionStore, TransitionProperties) {
+  function PermRole($q, PermPermissionStore, PermTransitionProperties) {
     'ngInject';
 
     /**
      * Role definition constructor
-     * @class permission.Role
+     * @constructor Role
      *
      * @param roleName {String} Name representing role
      * @param validationFunction {Function|Array<String>} Optional function used to validate if permissions are still
@@ -298,7 +299,7 @@
      */
     Role.prototype.validateRole = function () {
       if (angular.isFunction(this.validationFunction)) {
-        var validationResult = this.validationFunction.call(null, this.roleName, TransitionProperties);
+        var validationResult = this.validationFunction.call(null, this.roleName, PermTransitionProperties);
         if (!angular.isFunction(validationResult.then)) {
           validationResult = wrapInPromise(validationResult, this.roleName);
         }
@@ -308,8 +309,8 @@
 
       if (angular.isArray(this.validationFunction)) {
         var promises = this.validationFunction.map(function (permissionName) {
-          if (PermissionStore.hasPermissionDefinition(permissionName)) {
-            var permission = PermissionStore.getPermissionDefinition(permissionName);
+          if (PermPermissionStore.hasPermissionDefinition(permissionName)) {
+            var permission = PermPermissionStore.getPermissionDefinition(permissionName);
 
             return permission.validatePermission();
           }
@@ -369,15 +370,15 @@
 
   angular
     .module('permission')
-    .factory('Role', RoleFactory);
+    .factory('PermRole', PermRole);
 
   /**
    * Permission definition storage
-   * @name permission.PermissionStore
+   * @name permission.PermPermissionStore
    *
-   * @param Permission {permission.PermissionFactory} Permission definition factory
+   * @param PermPermission {permission.PermPermission|Function}
    */
-  function PermissionStore(Permission) {
+  function PermPermissionStore(PermPermission) {
     'ngInject';
 
     /**
@@ -397,22 +398,21 @@
 
     /**
      * Allows to define permission on application configuration
-     * @methodOf permission.PermissionStore
+     * @methodOf permission.PermPermissionStore
      *
      * @param permissionName {String} Name of defined permission
      * @param validationFunction {Function} Function used to validate if permission is valid
      */
     function definePermission(permissionName, validationFunction) {
-      var permission = new Permission(permissionName, validationFunction);
-      permissionStore[permissionName] = permission;
+      permissionStore[permissionName] = new PermPermission(permissionName, validationFunction);
     }
 
     /**
      * Allows to define set of permissionNames with shared validation function on application configuration
-     * @methodOf permission.PermissionStore
+     * @methodOf permission.PermPermissionStore
      * @throws {TypeError}
      *
-     * @param permissionNames {Array<String>} Set of permission names
+     * @param permissionNames {Array<Number>} Set of permission names
      * @param validationFunction {Function} Function used to validate if permission is valid
      */
     function defineManyPermissions(permissionNames, validationFunction) {
@@ -427,7 +427,7 @@
 
     /**
      * Deletes permission
-     * @methodOf permission.PermissionStore
+     * @methodOf permission.PermPermissionStore
      *
      * @param permissionName {String} Name of defined permission
      */
@@ -437,7 +437,7 @@
 
     /**
      * Checks if permission exists
-     * @methodOf permission.PermissionStore
+     * @methodOf permission.PermPermissionStore
      *
      * @param permissionName {String} Name of defined permission
      * @returns {Boolean}
@@ -448,7 +448,7 @@
 
     /**
      * Returns permission by it's name
-     * @methodOf permission.PermissionStore
+     * @methodOf permission.PermPermissionStore
      *
      * @returns {permission.Permission} Permissions definition object
      */
@@ -458,7 +458,7 @@
 
     /**
      * Returns all permissions
-     * @methodOf permission.PermissionStore
+     * @methodOf permission.PermPermissionStore
      *
      * @returns {Object} Permissions collection
      */
@@ -468,7 +468,7 @@
 
     /**
      * Removes all permissions
-     * @methodOf permission.PermissionStore
+     * @methodOf permission.PermPermissionStore
      */
     function clearStore() {
       permissionStore = {};
@@ -477,15 +477,16 @@
 
   angular
     .module('permission')
-    .service('PermissionStore', PermissionStore);
+    .service('PermPermissionStore', PermPermissionStore)
+    .service('PermissionStore', PermPermissionStore);
 
   /**
    * Role definition storage
-   * @name permission.RoleStore
+   * @name permission.PermRoleStore
    *
-   * @param Role {permission.Role|Function} Role definition constructor
+   * @param PermRole {permission.PermRole} Role definition constructor
    */
-  function RoleStore(Role) {
+  function PermRoleStore(PermRole) {
     'ngInject';
 
     var roleStore = {};
@@ -500,19 +501,19 @@
 
     /**
      * Allows to add single role definition to the store by providing it's name and validation function
-     * @methodOf permission.RoleStore
+     * @methodOf permission.PermRoleStore
      *
      * @param roleName {String} Name of defined role
      * @param [validationFunction] {Function|Array<String>} Function used to validate if role is valid or set of
      *   permission names that has to be owned to have a role
      */
     function defineRole(roleName, validationFunction) {
-      roleStore[roleName] = new Role(roleName, validationFunction);
+      roleStore[roleName] = new PermRole(roleName, validationFunction);
     }
 
     /**
      * Allows to define set of roleNames with shared validation function
-     * @methodOf permission.PermissionStore
+     * @methodOf permission.PermPermissionStore
      * @throws {TypeError}
      *
      * @param roleMap {String, Function|Array<String>} Map of roles with matching validators
@@ -529,7 +530,7 @@
 
     /**
      * Deletes role from store
-     * @method permission.RoleStore
+     * @method permission.PermRoleStore
      *
      * @param roleName {String} Name of defined permission
      */
@@ -539,7 +540,7 @@
 
     /**
      * Checks if role is defined in store
-     * @method permission.RoleStore
+     * @method permission.PermRoleStore
      *
      * @param roleName {String} Name of role
      * @returns {Boolean}
@@ -550,9 +551,9 @@
 
     /**
      * Returns role definition object by it's name
-     * @method permission.RoleStore
+     * @method permission.PermRoleStore
      *
-     * @returns {permission.Role} Role definition object
+     * @returns {permission.PermRole} PermRole definition object
      */
     function getRoleDefinition(roleName) {
       return roleStore[roleName];
@@ -560,7 +561,7 @@
 
     /**
      * Returns all role definitions
-     * @method permission.RoleStore
+     * @method permission.PermRoleStore
      *
      * @returns {Object} Defined roles collection
      */
@@ -570,7 +571,7 @@
 
     /**
      * Removes all role definitions
-     * @method permission.RoleStore
+     * @method permission.PermRoleStore
      */
     function clearStore() {
       roleStore = {};
@@ -579,7 +580,8 @@
 
   angular
     .module('permission')
-    .service('RoleStore', RoleStore);
+    .service('PermRoleStore', PermRoleStore)
+    .service('RoleStore', PermRoleStore);
 
   /**
    * Handles authorization based on provided permissions/roles.
@@ -610,15 +612,14 @@
    * @example
    * <div permission
    *      permission-only="['USER','ADMIN']"
-   *      permission-on-authorized="PermissionStrategies.disableElement"
-   *      permission-on-unauthorized="PermissionStrategies.enableElement">
+   *      permission-on-authorized="PermPermissionStrategies.disableElement"
+   *      permission-on-unauthorized="PermPermissionStrategies.enableElement">
    * </div>
    *
    * @param $log {Object} Logging service
    * @param $injector {Object} Injector instance object
-   * @param Authorization {permission.Authorization} Authorization service
-   * @param PermissionMap {permission.PermissionMap} Map of state access rights
-   * @param PermissionStrategies {permission.PermissionStrategies} Set of pre-defined directive behaviours
+   * @param PermPermissionMap {permission.permPermissionMap|Function} Map of state access rights
+   * @param PermPermissionStrategies {permission.permPermissionStrategies} Set of pre-defined directive behaviours
    *
    * @returns {{
    *   restrict: string,
@@ -633,7 +634,7 @@
    *   controller: controller
    * }} Directive instance
    */
-  function PermissionDirective($log, $injector, Authorization, PermissionMap, PermissionStrategies) {
+  function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionStrategies) {
     'ngInject';
 
     return {
@@ -652,28 +653,33 @@
         $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
           function () {
             try {
-              var permissionMap;
-
               if (isSrefStateDefined()) {
-                var $state = $injector.get('$state');
-                var srefState = $state.get(permission.sref);
+                var PermStateAuthorization = $injector.get('PermStateAuthorization');
 
-                permissionMap = new PermissionMap(srefState.data.permissions);
+                PermStateAuthorization
+                  .authorizeByStateName(permission.sref)
+                  .then(function () {
+                    onAuthorizedAccess();
+                  })
+                  .catch(function () {
+                    onUnauthorizedAccess();
+                  });
               } else {
-                permissionMap = new PermissionMap({
+                var PermAuthorization = $injector.get('PermAuthorization');
+                var permissionMap = new PermPermissionMap({
                   only: permission.only,
                   except: permission.except
                 });
-              }
 
-              Authorization
-                .authorize(permissionMap)
-                .then(function () {
-                  onAuthorizedAccess();
-                })
-                .catch(function () {
-                  onUnauthorizedAccess();
-                });
+                PermAuthorization
+                  .authorizeByPermissionMap(permissionMap)
+                  .then(function () {
+                    onAuthorizedAccess();
+                  })
+                  .catch(function () {
+                    onUnauthorizedAccess();
+                  });
+              }
             } catch (e) {
               onUnauthorizedAccess();
               $log.error(e.message);
@@ -698,7 +704,7 @@
           if (angular.isFunction(permission.onAuthorized)) {
             permission.onAuthorized()($element);
           } else {
-            PermissionStrategies.showElement($element);
+            PermPermissionStrategies.showElement($element);
           }
         }
 
@@ -710,7 +716,7 @@
           if (angular.isFunction(permission.onUnauthorized)) {
             permission.onUnauthorized()($element);
           } else {
-            PermissionStrategies.hideElement($element);
+            PermPermissionStrategies.hideElement($element);
           }
         }
       }]
@@ -724,30 +730,37 @@
 
   /**
    * Service responsible for handling view based authorization
-   * @name permission.Authorization
+   * @name permission.PermAuthorization
    *
    * @param $q {Object} Angular promise implementation
    */
-  function Authorization($q) {
+  function PermAuthorization($q) {
     'ngInject';
 
-    this.authorize = authorize;
+    /**
+     * @deprecated
+     *
+     * This method will be deprecated in favour of authorizeByPermissionMap in 4.0
+     */
+    this.authorize = authorizeByPermissionMap;
+
+    this.authorizeByPermissionMap = authorizeByPermissionMap;
 
     /**
      * Handles authorization based on provided permissions map
-     * @methodOf permission.Authorization
+     * @methodOf permission.PermAuthorization
      *
-     * @param permissionsMap {permission.PermissionMap} Map of permission names
+     * @param map {permission.PermissionMap} Map of permission names
      *
      * @returns {promise} $q.promise object
      */
-    function authorize(permissionsMap) {
-      return authorizePermissionMap(permissionsMap);
+    function authorizeByPermissionMap(map) {
+      return authorizePermissionMap(map);
     }
 
     /**
      * Checks authorization for simple view based access
-     * @methodOf permission.Authorization
+     * @methodOf permission.PermAuthorization
      * @private
      *
      * @param map {permission.PermissionMap} Access rights map
@@ -764,7 +777,7 @@
 
     /**
      * Resolves flat set of "except" privileges
-     * @methodOf permission.Authorization
+     * @methodOf permission.PermAuthorization
      * @private
      *
      * @param deferred {Object} Promise defer
@@ -786,7 +799,7 @@
 
     /**
      * Resolves flat set of "only" privileges
-     * @methodOf permission.Authorization
+     * @methodOf permission.PermAuthorization
      * @private
      *
      * @param deferred {Object} Promise defer
@@ -811,21 +824,21 @@
 
   angular
     .module('permission')
-    .service('Authorization', Authorization);
+    .service('PermAuthorization', PermAuthorization);
 
 
   /**
    * Access rights map factory
-   * @name permission.PermissionMapFactory
+   * @name permission.PermPermissionMap
    *
    * @param $q {Object} Angular promise implementation
-   * @param TransitionProperties {permission.TransitionProperties} Helper storing ui-router transition parameters
-   * @param RoleStore {permission.RoleStore} Role definition storage
-   * @param PermissionStore {permission.PermissionStore} Permission definition storage
+   * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
+   * @param PermRoleStore {permission.PermRoleStore} Role definition storage
+   * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
    *
    * @return {permission.PermissionMap}
    */
-  function PermissionMapFactory($q, TransitionProperties, RoleStore, PermissionStore) {
+  function PermPermissionMap($q, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
     'ngInject';
 
     /**
@@ -887,13 +900,13 @@
     PermissionMap.prototype.resolvePropertyValidity = function (property) {
 
       return property.map(function (privilegeName) {
-        if (RoleStore.hasRoleDefinition(privilegeName)) {
-          var role = RoleStore.getRoleDefinition(privilegeName);
+        if (PermRoleStore.hasRoleDefinition(privilegeName)) {
+          var role = PermRoleStore.getRoleDefinition(privilegeName);
           return role.validateRole();
         }
 
-        if (PermissionStore.hasPermissionDefinition(privilegeName)) {
-          var permission = PermissionStore.getPermissionDefinition(privilegeName);
+        if (PermPermissionStore.hasPermissionDefinition(privilegeName)) {
+          var permission = PermPermissionStore.getPermissionDefinition(privilegeName);
           return permission.validatePermission();
         }
 
@@ -914,7 +927,7 @@
      */
     function resolveFunctionRedirect(redirectFunction, rejectedPermissionName) {
       return $q
-        .when(redirectFunction.call(null, rejectedPermissionName, TransitionProperties))
+        .when(redirectFunction.call(null, rejectedPermissionName, PermTransitionProperties))
         .then(function (redirectState) {
           if (angular.isString(redirectState)) {
             return {
@@ -972,7 +985,7 @@
      * @methodOf permission.PermissionMap
      * @private
      *
-     * @param property {String|Array|Function} Permission map property "only" or "except"
+     * @param property {String|Array|Function} PermPermission map property "only" or "except"
      *
      * @returns {Array<String>} Array of permission "only" or "except" names
      */
@@ -986,7 +999,7 @@
       }
 
       if (angular.isFunction(property)) {
-        return property.call(null, TransitionProperties);
+        return property.call(null, PermTransitionProperties);
       }
 
       return [];
@@ -997,5 +1010,5 @@
 
   angular
     .module('permission')
-    .factory('PermissionMap', PermissionMapFactory);
+    .factory('PermPermissionMap', PermPermissionMap);
 }(window, window.angular));

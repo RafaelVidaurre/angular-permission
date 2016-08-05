@@ -29,15 +29,14 @@
  * @example
  * <div permission
  *      permission-only="['USER','ADMIN']"
- *      permission-on-authorized="PermissionStrategies.disableElement"
- *      permission-on-unauthorized="PermissionStrategies.enableElement">
+ *      permission-on-authorized="PermPermissionStrategies.disableElement"
+ *      permission-on-unauthorized="PermPermissionStrategies.enableElement">
  * </div>
  *
  * @param $log {Object} Logging service
  * @param $injector {Object} Injector instance object
- * @param Authorization {permission.Authorization} Authorization service
- * @param PermissionMap {permission.PermissionMap} Map of state access rights
- * @param PermissionStrategies {permission.PermissionStrategies} Set of pre-defined directive behaviours
+ * @param PermPermissionMap {permission.permPermissionMap|Function} Map of state access rights
+ * @param PermPermissionStrategies {permission.permPermissionStrategies} Set of pre-defined directive behaviours
  *
  * @returns {{
  *   restrict: string,
@@ -52,7 +51,7 @@
  *   controller: controller
  * }} Directive instance
  */
-function PermissionDirective($log, $injector, Authorization, PermissionMap, PermissionStrategies) {
+function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionStrategies) {
   'ngInject';
 
   return {
@@ -71,25 +70,30 @@ function PermissionDirective($log, $injector, Authorization, PermissionMap, Perm
       $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
         function () {
           try {
-            var permissionMap;
-
             if (isSrefStateDefined()) {
-              var $state = $injector.get('$state');
-              var srefState = $state.get(permission.sref);
+              var PermStateAuthorization = $injector.get('PermStateAuthorization');
 
-              permissionMap = new PermissionMap(srefState.data.permissions);
+              PermStateAuthorization
+                .authorizeByStateName(permission.sref)
+                .then(function () {
+                  onAuthorizedAccess();
+                })
+                .catch(function () {
+                  onUnauthorizedAccess();
+                });
             } else {
-              permissionMap = new PermissionMap({only: permission.only, except: permission.except});
-            }
+              var PermAuthorization = $injector.get('PermAuthorization');
+              var permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
 
-            Authorization
-              .authorize(permissionMap)
-              .then(function () {
-                onAuthorizedAccess();
-              })
-              .catch(function () {
-                onUnauthorizedAccess();
-              });
+              PermAuthorization
+                .authorizeByPermissionMap(permissionMap)
+                .then(function () {
+                  onAuthorizedAccess();
+                })
+                .catch(function () {
+                  onUnauthorizedAccess();
+                });
+            }
           } catch (e) {
             onUnauthorizedAccess();
             $log.error(e.message);
@@ -114,7 +118,7 @@ function PermissionDirective($log, $injector, Authorization, PermissionMap, Perm
         if (angular.isFunction(permission.onAuthorized)) {
           permission.onAuthorized()($element);
         } else {
-          PermissionStrategies.showElement($element);
+          PermPermissionStrategies.showElement($element);
         }
       }
 
@@ -126,7 +130,7 @@ function PermissionDirective($log, $injector, Authorization, PermissionMap, Perm
         if (angular.isFunction(permission.onUnauthorized)) {
           permission.onUnauthorized()($element);
         } else {
-          PermissionStrategies.hideElement($element);
+          PermPermissionStrategies.hideElement($element);
         }
       }
     }

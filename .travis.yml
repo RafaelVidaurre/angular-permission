@@ -1,20 +1,20 @@
 language: node_js
-sudo: false
+sudo: required
 cache:
   directories:
-  - node_modules
-  - bower_components
+    - node_modules
+    - bower_components
 node_js:
-- 5.4.0
+  - 5.4.0
 before_install:
-- npm install -g grunt-cli
+  - npm install -g grunt-cli
 install:
-- npm update
+  - npm install
 before_script:
-- npm install -g bower
-- bower install --force
+  - npm install -g bower
+  - bower install --force
 script:
-- grunt build
+  - grunt build
 deploy:
   provider: npm
   email: blazej.krysiak@gmail.com

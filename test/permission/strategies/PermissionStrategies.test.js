@@ -2,12 +2,12 @@ describe('permission', function () {
   'use strict';
 
   describe('strategies', function () {
-    describe('service: PermissionStrategies', function () {
+    describe('service: PermPermissionStrategies', function () {
 
       var $compile;
       var $rootScope;
-      var PermissionStore;
-      var PermissionStrategies;
+      var PermPermissionStore;
+      var PermPermissionStrategies;
 
       beforeEach(function () {
         // Instantiate module
@@ -17,25 +17,25 @@ describe('permission', function () {
         inject(function ($injector) {
           $compile = $injector.get('$compile');
           $rootScope = $injector.get('$rootScope').$new();
-          PermissionStore = $injector.get('PermissionStore');
-          PermissionStrategies = $injector.get('PermissionStrategies');
+          PermPermissionStore = $injector.get('PermPermissionStore');
+          PermPermissionStrategies = $injector.get('PermPermissionStrategies');
         });
       });
 
       // Initialize permissions
       beforeEach(function () {
-        PermissionStore.definePermission('USER', function () {
+        PermPermissionStore.definePermission('USER', function () {
           return true;
         });
 
-        PermissionStore.definePermission('ADMIN', function () {
+        PermPermissionStore.definePermission('ADMIN', function () {
           return false;
         });
       });
 
       it('should disable element when "disableElement" strategy is applied', function () {
         // GIVEN
-        $rootScope.onUnauthorized = PermissionStrategies.disableElement;
+        $rootScope.onUnauthorized = PermPermissionStrategies.disableElement;
         $rootScope.only = ['ADMIN'];
 
         // WHEN
@@ -51,7 +51,7 @@ describe('permission', function () {
 
       it('should enable element when "enableElement" strategy is applied', function () {
         // GIVEN
-        $rootScope.onAuthorized = PermissionStrategies.enableElement;
+        $rootScope.onAuthorized = PermPermissionStrategies.enableElement;
         $rootScope.only = ['USER'];
 
         // WHEN
@@ -67,7 +67,7 @@ describe('permission', function () {
 
       it('should hide element when "hideElement" strategy is applied', function () {
         // GIVEN
-        $rootScope.onUnauthorized = PermissionStrategies.hideElement;
+        $rootScope.onUnauthorized = PermPermissionStrategies.hideElement;
         $rootScope.only = ['ADMIN'];
 
         // WHEN
@@ -83,7 +83,7 @@ describe('permission', function () {
 
       it('should show element when "showElement" strategy is applied', function () {
         // GIVEN
-        $rootScope.onAuthorized = PermissionStrategies.showElement;
+        $rootScope.onAuthorized = PermPermissionStrategies.showElement;
         $rootScope.only = ['USER'];
 
         // WHEN

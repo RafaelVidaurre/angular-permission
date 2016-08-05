@@ -2,11 +2,11 @@ describe('permission', function () {
   'use strict';
 
   describe('authorization', function () {
-    describe('factory: PermissionMap', function () {
+    describe('factory: PermPermissionMap', function () {
 
-      var RoleStore;
-      var PermissionMap;
-      var PermissionStore;
+      var PermRoleStore;
+      var PermPermissionMap;
+      var PermPermissionStore;
 
       beforeEach(function () {
         module('permission');
@@ -14,9 +14,9 @@ describe('permission', function () {
         installPromiseMatchers(); // jshint ignore:line
 
         inject(function ($injector) {
-          RoleStore = $injector.get('RoleStore');
-          PermissionMap = $injector.get('PermissionMap');
-          PermissionStore = $injector.get('PermissionStore');
+          PermRoleStore = $injector.get('PermRoleStore');
+          PermPermissionMap = $injector.get('PermPermissionMap');
+          PermPermissionStore = $injector.get('PermPermissionStore');
         });
       });
 
@@ -26,7 +26,7 @@ describe('permission', function () {
           var mapProperties = {except: 'USER'};
 
           // WHEN
-          var permissionMap = new PermissionMap(mapProperties);
+          var permissionMap = new PermPermissionMap(mapProperties);
 
           // THEN
           expect(permissionMap.except).toEqual(['USER']);
@@ -37,7 +37,7 @@ describe('permission', function () {
           var mapProperties = {except: ['USER']};
 
           // WHEN
-          var permissionMap = new PermissionMap(mapProperties);
+          var permissionMap = new PermPermissionMap(mapProperties);
 
           // THEN
           expect(permissionMap.except).toEqual(['USER']);
@@ -52,7 +52,7 @@ describe('permission', function () {
           };
 
           // WHEN
-          var permissionMap = new PermissionMap(mapProperties);
+          var permissionMap = new PermPermissionMap(mapProperties);
 
           // THEN
           expect(permissionMap.except).toEqual(['USER']);
@@ -67,7 +67,7 @@ describe('permission', function () {
           };
 
           // WHEN
-          var permissionMap = new PermissionMap(mapProperties);
+          var permissionMap = new PermPermissionMap(mapProperties);
 
           // THEN
           expect(permissionMap.except).toEqual([]);
@@ -78,7 +78,7 @@ describe('permission', function () {
         it('should return resolved promise of redirectTo value when passed as string', function () {
           // GIVEN
           var redirectToProperty = 'redirectStateName';
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState();
@@ -91,7 +91,7 @@ describe('permission', function () {
         it('should return resolved promise of redirectTo value when passed as object with default property', function () {
           // GIVEN
           var redirectToProperty = {default: 'redirectStateName'};
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState();
@@ -104,7 +104,7 @@ describe('permission', function () {
         it('should throw error when redirectTo value passed as object has not defined default property', function () {
           // GIVEN
           var redirectToProperty = {};
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           // THEN
@@ -124,7 +124,7 @@ describe('permission', function () {
             },
             default: 'defaultRedirect'
           };
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
@@ -142,7 +142,7 @@ describe('permission', function () {
             },
             default: 'defaultRedirect'
           };
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
@@ -160,7 +160,7 @@ describe('permission', function () {
             },
             default: 'defaultRedirect'
           };
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
@@ -175,7 +175,7 @@ describe('permission', function () {
           var redirectToProperty = function () {
             return 'redirectStateName';
           };
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState();
@@ -190,7 +190,7 @@ describe('permission', function () {
           var redirectToProperty = function () {
             return 'redirectStateName';
           };
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState();
@@ -207,7 +207,7 @@ describe('permission', function () {
               state: 'redirectStateName'
             };
           };
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState();
@@ -222,7 +222,7 @@ describe('permission', function () {
           var redirectToProperty = function () {
             return 2;
           };
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState();
@@ -235,7 +235,7 @@ describe('permission', function () {
         it('should return rejected promise when redirectTo value is neither String, Function, Object nor Promise', function () {
           // GIVEN
           var redirectToProperty = 2;
-          var permissionMap = new PermissionMap({redirectTo: redirectToProperty});
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState();
@@ -249,41 +249,41 @@ describe('permission', function () {
       describe('method: resolvePropertyValidity', function () {
         it('should call validation of existing permissions', function () {
           // GIVEN
-          var map = new PermissionMap();
+          var map = new PermPermissionMap();
           var fakePermission = jasmine.createSpyObj('fakePermission', ['validatePermission']);
 
-          spyOn(PermissionStore, 'hasPermissionDefinition').and.returnValue(true);
-          spyOn(PermissionStore, 'getPermissionDefinition').and.returnValue(fakePermission);
+          spyOn(PermPermissionStore, 'hasPermissionDefinition').and.returnValue(true);
+          spyOn(PermPermissionStore, 'getPermissionDefinition').and.returnValue(fakePermission);
 
           // WHEN
           map.resolvePropertyValidity(['fakePermission']);
 
           //THEN
-          expect(PermissionStore.hasPermissionDefinition).toHaveBeenCalled();
-          expect(PermissionStore.getPermissionDefinition).toHaveBeenCalled();
+          expect(PermPermissionStore.hasPermissionDefinition).toHaveBeenCalled();
+          expect(PermPermissionStore.getPermissionDefinition).toHaveBeenCalled();
           expect(fakePermission.validatePermission).toHaveBeenCalled();
         });
 
         it('should call validation of existing roles', function () {
           // GIVEN
-          var map = new PermissionMap();
+          var map = new PermPermissionMap();
           var fakeRole = jasmine.createSpyObj('fakeRole', ['validateRole']);
 
-          spyOn(RoleStore, 'hasRoleDefinition').and.returnValue(true);
-          spyOn(RoleStore, 'getRoleDefinition').and.returnValue(fakeRole);
+          spyOn(PermRoleStore, 'hasRoleDefinition').and.returnValue(true);
+          spyOn(PermRoleStore, 'getRoleDefinition').and.returnValue(fakeRole);
 
           // WHEN
           map.resolvePropertyValidity(['fakeRole']);
 
           //THEN
-          expect(RoleStore.hasRoleDefinition).toHaveBeenCalled();
-          expect(RoleStore.getRoleDefinition).toHaveBeenCalled();
+          expect(PermRoleStore.hasRoleDefinition).toHaveBeenCalled();
+          expect(PermRoleStore.getRoleDefinition).toHaveBeenCalled();
           expect(fakeRole.validateRole).toHaveBeenCalled();
         });
 
         it('should return rejected promise when neither role nor permission definition found', function () {
           // GIVEN
-          var map = new PermissionMap();
+          var map = new PermPermissionMap();
 
           // WHEN
           var result = map.resolvePropertyValidity(['fakeRole']);
