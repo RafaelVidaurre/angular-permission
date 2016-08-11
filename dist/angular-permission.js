@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v3.3.0 - 2016-08-05
+ * @version v3.3.0 - 2016-08-11
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -477,8 +477,8 @@
 
   angular
     .module('permission')
-    .service('PermPermissionStore', PermPermissionStore)
-    .service('PermissionStore', PermPermissionStore);
+    .service('PermPermissionStore', PermPermissionStore);
+
 
   /**
    * Role definition storage
@@ -580,8 +580,7 @@
 
   angular
     .module('permission')
-    .service('PermRoleStore', PermRoleStore)
-    .service('RoleStore', PermRoleStore);
+    .service('PermRoleStore', PermRoleStore);
 
   /**
    * Handles authorization based on provided permissions/roles.
