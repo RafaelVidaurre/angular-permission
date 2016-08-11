@@ -105,5 +105,4 @@ function PermPermissionStore(PermPermission) {
 
 angular
   .module('permission')
-  .service('PermPermissionStore', PermPermissionStore)
-  .service('PermissionStore', PermPermissionStore);
+  .service('PermPermissionStore', PermPermissionStore);

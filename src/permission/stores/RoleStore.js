@@ -100,5 +100,4 @@ function PermRoleStore(PermRole) {
 
 angular
   .module('permission')
-  .service('PermRoleStore', PermRoleStore)
-  .service('RoleStore', PermRoleStore);
+  .service('PermRoleStore', PermRoleStore);
