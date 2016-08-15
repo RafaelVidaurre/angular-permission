@@ -11,7 +11,7 @@ Permission
 ![Coveralls](https://img.shields.io/coveralls/Narzerus/angular-permission.svg?style=flat-square)
 
 
-**Important! Build are currently failing due to problem with outdated embedded version of PhantomJS on Travis.**
+**Important! Builds are currently failing due to problem with outdated embedded version of PhantomJS on Travis.**
 
 Permission helps you gain control of your routes, by using simple concepts for you to decide who can access them.
 We've seen plenty of big fat tutorials on access control implementation, and they can be quite overwhelming or inconsistent. 
