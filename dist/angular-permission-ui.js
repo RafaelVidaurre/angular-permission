@@ -1,7 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v4.0.0 - 2016-08-11
+ * @version v4.0.1 - 2016-08-15
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -26,7 +26,7 @@
   function config($stateProvider) {
     'ngInject';
 
-    $stateProvider.decorator('parent', function (state, parentFn) {
+    $stateProvider.decorator('$state', function (state) {
       /**
        * Property containing full state object definition
        *
@@ -35,11 +35,11 @@
        *
        * @returns {Object}
        */
-      state.self.$$state = function () {
+      state.self.$$permissionState = function () {
         return state;
       };
 
-      return parentFn(state);
+      return state;
     });
   }
 
@@ -452,7 +452,7 @@
      * @extends permission.PermPermissionMap
      */
     function StatePermissionMap(state) {
-      var toStateObject = state.$$state();
+      var toStateObject = state.$$permissionState();
       var toStatePath = toStateObject.path;
 
       angular.forEach(toStatePath, function (state) {
