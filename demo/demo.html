@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+
+	<link href="demo.css" type="text/css" rel="stylesheet">
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.8/angular.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.js"></script>
+	<script src="../dist/angular-permission.js"></script>
+	<script src="../dist/angular-permission-ui.js"></script>
+	<script src="demo.js"></script>
+</head>
+<body ng-app="app" ng-controller="appController as ctrl">
+<aside ui-view="nav"></aside>
+<main ui-view="main"></main>
+
+<script type="text/ng-template" id="nav.html">
+	<ul>
+		<li class="authorize" permission permission-except="'AUTHORIZED'">
+			<a ng-click="ctrl.authorize()"><i class="material-icons">lock</i></a>
+		</li>
+
+		<li ui-sref-active="active" class="authorize" permission permission-only="'AUTHORIZED'">
+			<a ng-click="ctrl.authorize()"><i class="material-icons">lock_open</i></a>
+		</li>
+
+		<li ui-sref-active="active">
+			<a ui-sref="app.map"><i class="material-icons">map</i></a>
+		</li>
+
+		<li ui-sref-active="active" permission permission-only="'AUTHORIZED'">
+			<a ui-sref="app.work"><i class="material-icons">work</i></a>
+		</li>
+
+		<li permission permission-only="'AUTHORIZED'">
+
+			<a ng-click="ctrl.toggleMenu()">
+				<i ng-if="!ctrl.conf.isCollapsed" class="material-icons">keyboard_arrow_down</i>
+				<i ng-if="ctrl.conf.isCollapsed" class="material-icons">keyboard_arrow_up</i>
+			</a>
+
+			<ul ng-hide="!ctrl.conf.isCollapsed">
+				<li ui-sref-active="active">
+					<a ui-sref="app.location.pin"><i class="material-icons">beenhere</i></a>
+				</li>
+				<li ui-sref-active="active">
+					<a ui-sref="app.location.memory"><i class="material-icons">memory</i></a>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</script>
+
+<script type="text/ng-template" id="main.html">
+	<header class="clearfix">
+		<span>angular-permission</span>
+		<h1>Example</h1>
+		<nav>
+			<a href="#" class="icon-arrow-left"><i class="material-icons">arrow_back</i></a>
+			<a href="#"><i class="material-icons">language</i></a>
+		</nav>
+	</header>
+	<article ui-view="article"></article>
+</script>
+
+
+<script type="text/ng-template" id="map.html">
+	<img src="http://lorempixel.com/g/1000/400"/>
+
+	<p>Thirty families choose every year a magistrate, who was anciently called the Syphogrant, but is now called the
+		Philarch; and over every ten Syphogrants, with the families subject to them, there is another magistrate, who was
+		anciently called the Tranibore,
+		but of late the Archphilarch. All the Syphogrants, who are in number two hundred, choose the Prince out of a list of
+		four who are named by the people of the four divisions of the city; but they take an oath, before they proceed to an
+		election, that
+		they will choose him whom they think most fit for the office: they give him their voices secretly, so that it is not
+		known for whom every one gives his suffrage. The Prince is for life, unless he is removed upon suspicion of some
+		design to enslave
+		the people. The Tranibors are new chosen every year, but yet they are, for the most part, continued; all their other
+		magistrates are only annual. The Tranibors meet every third day, and oftener if necessary, and consult with the
+		Prince either concerning
+		the affairs of the State in general, or such private differences as may arise sometimes among the people, though
+		that falls out but seldom. There are always two Syphogrants called into the council chamber, and these are changed
+		every day. It is
+		a fundamental rule of their government, that no conclusion can be made in anything that relates to the public till
+		it has been first debated three several days in their council. It is death for any to meet and consult concerning
+		the State, unless
+		it be either in their ordinary council, or in the assembly of the whole body of the people.</p>
+
+	<p>These things have been so provided among them that the Prince and the Tranibors may not conspire together to change
+		the government and enslave the people; and therefore when anything of great importance is set on foot, it is sent to
+		the Syphogrants,
+		who, after they have communicated it to the families that belong to their divisions, and have considered it among
+		themselves, make report to the senate; and, upon great occasions, the matter is referred to the council of the whole
+		island. One rule
+		observed in their council is, never to debate a thing on the same day in which it is first proposed; for that is
+		always referred to the next meeting, that so men may not rashly and in the heat of discourse engage themselves too
+		soon, which might
+		bias them so much that, instead of consulting the good of the public, they might rather study to support their first
+		opinions, and by a perverse and preposterous sort of shame hazard their country rather than endanger their own
+		reputation, or venture
+		the being suspected to have wanted foresight in the expedients that they at first proposed; and therefore, to
+		prevent this, they take care that they may rather be deliberate than sudden in their motions.</p>
+</script>
+
+<script type="text/ng-template" id="work.html">
+	<img src="http://lorempixel.com/g/1000/401"/>
+
+	<p>Agriculture is that which is so universally understood among them that no person, either man or woman, is ignorant
+		of it; they are instructed in it from their childhood, partly by what they learn at school, and partly by practice,
+		they being led out
+		often into the fields about the town, where they not only see others at work but are likewise exercised in it
+		themselves. Besides agriculture, which is so common to them all, every man has some peculiar trade to which he
+		applies himself; such as
+		the manufacture of wool or flax, masonry, smith’s work, or carpenter’s work; for there is no sort of trade that is
+		in great esteem among them. Throughout the island they wear the same sort of clothes, without any other distinction
+		except what is
+		necessary to distinguish the two sexes and the married and unmarried. The fashion never alters, and as it is neither
+		disagreeable nor uneasy, so it is suited to the climate, and calculated both for their summers and winters. Every
+		family makes their
+		own clothes; but all among them, women as well as men, learn one or other of the trades formerly mentioned. Women,
+		for the most part, deal in wool and flax, which suit best with their weakness, leaving the ruder trades to the men.
+		The same trade
+		generally passes down from father to son, inclinations often following descent: but if any man’s genius lies another
+		way he is, by adoption, translated into a family that deals in the trade to which he is inclined; and when that is
+		to be done, care
+		is taken, not only by his father, but by the magistrate, that he may be put to a discreet and good man: and if,
+		after a person has learned one trade, he desires to acquire another, that is also allowed, and is managed in the
+		same manner as the former.
+		When he has learned both, he follows that which he likes best, unless the public has more occasion for the
+		other.</p>
+</script>
+
+<script type="text/ng-template" id="pin.html">
+	<img src="http://lorempixel.com/g/1000/402"/>
+
+	<p>"Advance, ye mates! Cross your lances full before me. Well done! Let me touch the axis." So saying, with extended
+		arm, he grasped the three level, radiating lances at their crossed centre; while so doing, suddenly and nervously
+		twitched them; meanwhile,
+		glancing intently from Starbuck to Stubb; from Stubb to Flask. It seemed as though, by some nameless, interior
+		volition, he would fain have shocked into them the same fiery emotion accumulated within the Leyden jar of his own
+		magnetic life. The
+		three mates quailed before his strong, sustained, and mystic aspect. Stubb and Flask looked sideways from him; the
+		honest eye of Starbuck fell downright.</p>
+
+	<p>"In vain!" cried Ahab; "but, maybe, 'tis well. For did ye three but once take the full-forced shock, then mine own
+		electric thing, THAT had perhaps expired from out me. Perchance, too, it would have dropped ye dead. Perchance ye
+		need it not. Down
+		lances! And now, ye mates, I do appoint ye three cupbearers to my three pagan kinsmen there&mdash;yon three most
+		honourable gentlemen and noblemen, my valiant harpooneers. Disdain the task? What, when the great Pope washes the
+		feet of beggars, using
+		his tiara for ewer? Oh, my sweet cardinals! your own condescension, THAT shall bend ye to it. I do not order ye; ye
+		will it. Cut your seizings and draw the poles, ye harpooneers!"</p>
+
+	<p>Silently obeying the order, the three harpooneers now stood with the detached iron part of their harpoons, some
+		three feet long, held, barbs up, before him.</p>
+</script>
+
+<script type="text/ng-template" id="memory.html">
+	<img src="http://lorempixel.com/g/1000/403"/>
+
+	<p>So soon as this figure had been first descried, Stubb had exclaimed&mdash;"That's he! that's he!&mdash;the
+		long-togged scaramouch the Town-Ho's company told us of!" Stubb here alluded to a strange story told of the
+		Jeroboam, and a certain man among
+		her crew, some time previous when the Pequod spoke the Town-Ho. According to this account and what was subsequently
+		learned, it seemed that the scaramouch in question had gained a wonderful ascendency over almost everybody in the
+		Jeroboam. His story
+		was this:</p>
+
+	<p>He had been originally nurtured among the crazy society of Neskyeuna Shakers, where he had been a great prophet; in
+		their cracked, secret meetings having several times descended from heaven by the way of a trap-door, announcing the
+		speedy opening
+		of the seventh vial, which he carried in his vest-pocket; but, which, instead of containing gunpowder, was supposed
+		to be charged with laudanum. A strange, apostolic whim having seized him, he had left Neskyeuna for Nantucket,
+		where, with that cunning
+		peculiar to craziness, he assumed a steady, common-sense exterior, and offered himself as a green-hand candidate for
+		the Jeroboam's whaling voyage. They engaged him; but straightway upon the ship's getting out of sight of land, his
+		insanity broke
+		out in a freshet. He announced himself as the archangel Gabriel, and commanded the captain to jump overboard. He
+		published his manifesto, whereby he set himself forth as the deliverer of the isles of the sea and vicar-general of
+		all Oceanica. The
+		unflinching earnestness with which he declared these things;&mdash;the dark, daring play of his sleepless, excited
+		imagination, and all the preternatural terrors of real delirium, united to invest this Gabriel in the minds of the
+		majority of the
+		ignorant crew, with an atmosphere of sacredness. Moreover, they were afraid of him. As such a man, however, was not
+		of much practical use in the ship, especially as he refused to work except when he pleased, the incredulous captain
+		would fain have
+		been rid of him; but apprised that that individual's intention was to land him in the first convenient port, the
+		archangel forthwith opened all his seals and vials&mdash;devoting the ship and all hands to unconditional perdition,
+		in case this intention
+		was carried out. So strongly did he work upon his disciples among the crew, that at last in a body they went to the
+		captain and told him if Gabriel was sent from the ship, not a man of them would remain. He was therefore forced to
+		relinquish his
+		plan. Nor would they permit Gabriel to be any way maltreated, say or do what he would; so that it came to pass that
+		Gabriel had the complete freedom of the ship. The consequence of all this was, that the archangel cared little or
+		nothing for the
+		captain and mates; and since the epidemic had broken out, he carried a higher hand than ever; declaring that the
+		plague, as he called it, was at his sole command; nor should it be stayed but according to his good pleasure. The
+		sailors, mostly poor
+		devils, cringed, and some of them fawned before him; in obedience to his instructions, sometimes rendering him
+		personal homage, as to a god. Such things may seem incredible; but, however wondrous, they are true. Nor is the
+		history of fanatics half
+		so striking in respect to the measureless self-deception of the fanatic himself, as his measureless power of
+		deceiving and bedevilling so many others. But it is time to return to the Pequod.</p>
+
+	<p>"I fear not thy epidemic, man," said Ahab from the bulwarks, to Captain Mayhew, who stood in the boat's stern;
+		"come on board."</p>
+
+	<p>But now Gabriel started to his feet.</p>
+</script>
+
+</body>
+</html>

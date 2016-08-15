@@ -30,6 +30,7 @@
 	"**/.*",
 	"config",
 	"test",
+	"demo",
 	"src",
 	"Gruntfile.js",
 	"index.js",
