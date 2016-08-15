@@ -34,8 +34,8 @@ describe('permission.ui', function () {
       describe('method: authorizeByPermissionMap', function () {
         it('should return resolved promise when "except" permissions are met', function () {
           // GIVEN
-          var state = jasmine.createSpyObj('state', ['$$state']);
-          state.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
             return {path: [{data: {permissions: {except: ['denied']}}}]};
           });
 
@@ -51,8 +51,8 @@ describe('permission.ui', function () {
 
         it('should return rejected promise when "except" permissions are not met', function () {
           // GIVEN
-          var state = jasmine.createSpyObj('state', ['$$state']);
-          state.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
             return {path: [{data: {permissions: {except: ['accepted']}}}]};
           });
 
@@ -67,8 +67,8 @@ describe('permission.ui', function () {
 
         it('should return resolved promise when "only" permissions are met', function () {
           // GIVEN
-          var state = jasmine.createSpyObj('state', ['$$state']);
-          state.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
             return {path: [{data: {permissions: {only: ['accepted']}}}]};
           });
 
@@ -83,8 +83,8 @@ describe('permission.ui', function () {
 
         it('should return rejected promise when "only" permissions are not met', function () {
           // GIVEN
-          var state = jasmine.createSpyObj('state', ['$$state']);
-          state.$$state.and.callFake(function () {
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
             return {path: [{data: {permissions: {only: ['denied']}}}]};
           });
 

@@ -19,7 +19,7 @@ function PermStatePermissionMap(PermPermissionMap) {
    * @extends permission.PermPermissionMap
    */
   function StatePermissionMap(state) {
-    var toStateObject = state.$$state();
+    var toStateObject = state.$$permissionState();
     var toStatePath = toStateObject.path;
 
     angular.forEach(toStatePath, function (state) {

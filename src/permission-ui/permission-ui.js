@@ -10,7 +10,7 @@
 function config($stateProvider) {
   'ngInject';
 
-  $stateProvider.decorator('parent', function (state, parentFn) {
+  $stateProvider.decorator('$state', function (state) {
     /**
      * Property containing full state object definition
      *
@@ -19,11 +19,11 @@ function config($stateProvider) {
      *
      * @returns {Object}
      */
-    state.self.$$state = function () {
+    state.self.$$permissionState = function () {
       return state;
     };
 
-    return parentFn(state);
+    return state;
   });
 }
 

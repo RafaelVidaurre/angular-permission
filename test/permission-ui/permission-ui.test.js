@@ -69,7 +69,7 @@ describe('permission.ui', function () {
         // GIVEN
         // WHEN
         // THEN
-        expect($state.current.$$state).toBeDefined();
+        expect($state.current.$$permissionState).toBeDefined();
         expect($state.current.$$isAuthorizationFinished).toBeDefined();
       });
     });
