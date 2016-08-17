@@ -25,6 +25,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'node_modules/phantomjs-polyfill/bind-polyfill.js',
       'node_modules/jasmine-promise-matchers/dist/jasmine-promise-matchers.js',
       'bower_components/angular/angular.js',
       'bower_components/angular-mocks/angular-mocks.js',
@@ -52,7 +53,7 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: [
-      'PhantomJS'
+      'PhantomJS2'
     ],
 
     reporters: ['mocha', 'coverage'],
@@ -64,7 +65,7 @@ module.exports = function(config) {
 
     // Which plugins to enable
     plugins: [
-      'karma-phantomjs-launcher',
+      'karma-phantomjs2-launcher',
       'karma-mocha-reporter',
       'karma-jasmine',
       'karma-coverage'
