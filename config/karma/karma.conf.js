@@ -53,7 +53,7 @@ module.exports = function(config) {
     // - PhantomJS
     // - IE (only Windows)
     browsers: [
-      'PhantomJS2'
+      'PhantomJS'
     ],
 
     reporters: ['mocha', 'coverage'],
@@ -65,7 +65,7 @@ module.exports = function(config) {
 
     // Which plugins to enable
     plugins: [
-      'karma-phantomjs2-launcher',
+      'karma-phantomjs-launcher',
       'karma-mocha-reporter',
       'karma-jasmine',
       'karma-coverage'
