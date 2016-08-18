@@ -2,6 +2,7 @@ describe('permission.ng', function () {
   'use strict';
   describe('module', function () {
 
+    var $route;
     var $rootScope;
     var $location;
     var $routeProvider;
@@ -18,6 +19,7 @@ describe('permission.ng', function () {
       module('permission.ng');
 
       inject(function ($injector) {
+        $route = $injector.get('$route');
         $location = $injector.get('$location');
         $rootScope = $injector.get('$rootScope');
         PermPermissionStore = $injector.get('PermPermissionStore');

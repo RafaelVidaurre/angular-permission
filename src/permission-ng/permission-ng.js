@@ -8,9 +8,9 @@
  * @param $rootScope {Object}
  * @param $location {Object}
  * @param PermTransitionProperties {permission.PermTransitionProperties}
- * @param PermTransitionEvents {permission.PermAuthorization}
+ * @param PermTransitionEvents {permission.ng.PermTransitionEvents}
  * @param PermAuthorization {permission.PermAuthorization}
- * @param PermPermissionMap {permission.PermPermissionMap}
+ * @param PermPermissionMap {permission.PermPermissionMap|Function}
  */
 function run($rootScope, $location, PermTransitionProperties, PermTransitionEvents, PermAuthorization, PermPermissionMap) {
   'ngInject';
@@ -19,9 +19,9 @@ function run($rootScope, $location, PermTransitionProperties, PermTransitionEven
    * State transition interceptor
    */
   $rootScope.$on('$routeChangeStart', function (event, next, current) {
+    setTransitionProperties();
 
     if (areSetRoutePermissions() && !PermTransitionEvents.areEventsDefaultPrevented()) {
-      setTransitionProperties();
 
       PermTransitionEvents.broadcastPermissionStartEvent();
 
