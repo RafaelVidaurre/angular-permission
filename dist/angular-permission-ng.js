@@ -1,7 +1,7 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v4.0.2 - 2016-08-15
+ * @version v4.0.3 - 2016-08-18
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -18,9 +18,9 @@
    * @param $rootScope {Object}
    * @param $location {Object}
    * @param PermTransitionProperties {permission.PermTransitionProperties}
-   * @param PermTransitionEvents {permission.PermAuthorization}
+   * @param PermTransitionEvents {permission.ng.PermTransitionEvents}
    * @param PermAuthorization {permission.PermAuthorization}
-   * @param PermPermissionMap {permission.PermPermissionMap}
+   * @param PermPermissionMap {permission.PermPermissionMap|Function}
    */
   run.$inject = ['$rootScope', '$location', 'PermTransitionProperties', 'PermTransitionEvents', 'PermAuthorization', 'PermPermissionMap'];
   PermTransitionEvents.$inject = ['$delegate', '$rootScope', 'PermTransitionProperties', 'PermTransitionEventNames'];
@@ -32,9 +32,9 @@
      * State transition interceptor
      */
     $rootScope.$on('$routeChangeStart', function (event, next, current) {
+      setTransitionProperties();
 
       if (areSetRoutePermissions() && !PermTransitionEvents.areEventsDefaultPrevented()) {
-        setTransitionProperties();
 
         PermTransitionEvents.broadcastPermissionStartEvent();
 
