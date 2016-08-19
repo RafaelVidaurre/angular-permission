@@ -7,6 +7,7 @@ Permission
 
 ![Bower](https://img.shields.io/bower/v/angular-permission.svg?style=flat-square)
 ![npm](https://img.shields.io/npm/v/angular-permission.svg?style=flat-square)
+![jspm](https://img.shields.io/github/release/Narzerus/angular-permission.svg?label=jspm&style=flat-square)
 ![Travis](https://img.shields.io/travis/Narzerus/angular-permission.svg?style=flat-square)
 ![Coveralls](https://img.shields.io/coveralls/Narzerus/angular-permission.svg?style=flat-square)
 
