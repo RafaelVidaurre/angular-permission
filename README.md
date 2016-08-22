@@ -1,4 +1,4 @@
-![angular-permission-banner](https://i.imgsafe.org/b7d74af6f9.jpg)
+![angular-permission-banner](https://i.imgsafe.org/b839736863.jpg)
 
 Permission
 ============================
