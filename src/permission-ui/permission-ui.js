@@ -50,6 +50,7 @@ function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents,
       if (!PermTransitionEvents.areEventsDefaultPrevented()) {
         PermTransitionEvents.broadcastPermissionStartEvent();
 
+        $state.transition = {};
         event.preventDefault();
         var statePermissionMap = new PermStatePermissionMap(PermTransitionProperties.toState);
 
