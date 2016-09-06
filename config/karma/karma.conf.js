@@ -34,7 +34,7 @@ module.exports = function(config) {
       'src/permission-ui/permission-ui.js',
       'src/permission-ng/permission-ng.js',
       'src/**/*.js',
-      'test/**/*.test.js'
+      'test/unit/**/*.test.js'
     ],
 
     // list of files / patterns to exclude

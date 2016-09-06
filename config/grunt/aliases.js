@@ -2,7 +2,7 @@ module.exports = function () {
   'use strict';
 
   return {
-    build: [
+    'build': [
       'jshint',
       'karma',
       'coveralls',
@@ -12,8 +12,15 @@ module.exports = function () {
       'beautifier',
       'uglify'
     ],
-    test: [
+    'test': [
+      'test:unit',
+      'test:e2e'
+    ],
+    'test:unit': [
       'karma'
+    ],
+    'test:e2e': [
+      'protractor'
     ]
   };
 };
