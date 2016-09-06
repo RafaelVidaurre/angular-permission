@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v4.0.4 - 2016-09-05
+ * @version v4.0.5 - 2016-09-06
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -735,13 +735,6 @@
    */
   function PermAuthorization($q) {
     'ngInject';
-
-    /**
-     * @deprecated
-     *
-     * This method will be deprecated in favour of authorizeByPermissionMap in 4.0
-     */
-    this.authorize = authorizeByPermissionMap;
 
     this.authorizeByPermissionMap = authorizeByPermissionMap;
 
