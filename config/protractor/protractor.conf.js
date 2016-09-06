@@ -14,7 +14,9 @@ exports.config = {
   seleniumAddress: 'http://127.0.0.1:4444/wd/hub',
 
   capabilities: {
-    'tunnel-identifier' : process.env.TRAVIS_JOB_NUMBER
+    'browserName': 'chrome',
+    'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
+    'platform': 'ANY'
   },
 
   // Use native drivers to connect
