@@ -4,16 +4,13 @@ module.exports = function () {
   return {
     'build': [
       'jshint',
+      'test:unit',
+      'coveralls',
       'clean',
       'concat',
       'ngAnnotate',
       'beautifier',
       'uglify',
-      'test',
-      'coveralls'
-    ],
-    'test': [
-      'test:unit',
       'test:e2e'
     ],
     'test:unit': [
