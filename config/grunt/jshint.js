@@ -10,7 +10,7 @@ module.exports = function () {
       src: ['src/**/*.js']
     },
     test: {
-      src: ['<%= paths.test %>']
+      src: ['<%= paths.test %>/unit/']
     }
   };
 };
