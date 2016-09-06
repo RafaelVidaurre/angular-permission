@@ -4,7 +4,7 @@ module.exports = function () {
   return {
     'build': [
       'jshint',
-      'karma',
+      'test',
       'coveralls',
       'clean',
       'concat',
