@@ -9,14 +9,12 @@ exports.config = {
   // 2. seleniumAddress - to connect to a Selenium server which is already
   //    running.
   // 3. sauceUser/sauceKey - to use remote Selenium servers via SauceLabs.
-
-  // The location of the selenium standalone server .jar file.
-  seleniumAddress: 'http://127.0.0.1:4444/wd/hub',
+  sauceUser: process.env.SAUCE_USERNAME,
+  sauceKey: process.env.SAUCE_ACCESS_KEY,
 
   capabilities: {
-    'browserName': 'chrome',
     'tunnel-identifier': process.env.TRAVIS_JOB_NUMBER,
-    'platform': 'ANY'
+    'build': process.env.TRAVIS_BUILD_NUMBER
   },
 
   // Use native drivers to connect
