@@ -37,6 +37,7 @@ module.exports = function (grunt) {
         src: 'src',
         dist: 'dist',
         test: 'test',
+        config: 'config',
         coverage: 'coverage'
       }
     }

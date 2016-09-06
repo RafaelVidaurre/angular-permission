@@ -2,21 +2,30 @@ module.exports = function () {
   'use strict';
 
   return {
-    options: {
-      separator: '\n' +
-      '\n',
-      process: function (src) {
-        return src
-          .replace(/(^|\n)[ \t]*'use strict';?\s*/g, '$1');
+    index: {
+      options: {
+        banner: '<%= meta["banner"] %>',
+        stripBanners: true
       },
-      footer: '\n}(window, window.angular));'
+      files: {
+        'index.js': [
+          'index.js'
+        ]
+      }
     },
     permission: {
       options: {
         banner: '<%= meta["banner"] %>' +
         '(function (window, angular, undefined) {\n' +
         '\'use strict\';' +
-        '\n\n'
+        '\n\n',
+        separator: '\n' +
+        '\n',
+        process: function (src) {
+          return src
+            .replace(/(^|\n)[ \t]*'use strict';?\s*/g, '$1');
+        },
+        footer: '\n}(window, window.angular));'
       },
       files: {
         '<%= paths.dist %>/<%= pkg.name %>.js': [
@@ -40,7 +49,14 @@ module.exports = function () {
         banner: '<%= meta["banner-ui"] %>' +
         '(function (window, angular, undefined) {\n' +
         '\'use strict\';' +
-        '\n\n'
+        '\n\n',
+        separator: '\n' +
+        '\n',
+        process: function (src) {
+          return src
+            .replace(/(^|\n)[ \t]*'use strict';?\s*/g, '$1');
+        },
+        footer: '\n}(window, window.angular));'
       },
       files: {
         '<%= paths.dist %>/<%= pkg.name %>-ui.js': [
@@ -57,7 +73,14 @@ module.exports = function () {
         banner: '<%= meta["banner-ng"] %>' +
         '(function (window, angular, undefined) {\n' +
         '\'use strict\';' +
-        '\n\n'
+        '\n\n',
+        separator: '\n' +
+        '\n',
+        process: function (src) {
+          return src
+            .replace(/(^|\n)[ \t]*'use strict';?\s*/g, '$1');
+        },
+        footer: '\n}(window, window.angular));'
       },
       files: {
         '<%= paths.dist %>/<%= pkg.name %>-ng.js': [
