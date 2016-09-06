@@ -11,13 +11,6 @@
 function PermStateAuthorization($q, $state, PermStatePermissionMap) {
   'ngInject';
 
-  /**
-   * @deprecated
-   *
-   * This method will be deprecated in favour of authorizeByPermissionMap in 4.0
-   */
-  this.authorize = authorizeByPermissionMap;
-
   this.authorizeByPermissionMap = authorizeByPermissionMap;
   this.authorizeByStateName = authorizeByStateName;
 

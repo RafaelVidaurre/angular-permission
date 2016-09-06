@@ -9,13 +9,6 @@
 function PermAuthorization($q) {
   'ngInject';
 
-  /**
-   * @deprecated
-   *
-   * This method will be deprecated in favour of authorizeByPermissionMap in 4.0
-   */
-  this.authorize = authorizeByPermissionMap;
-
   this.authorizeByPermissionMap = authorizeByPermissionMap;
 
   /**
