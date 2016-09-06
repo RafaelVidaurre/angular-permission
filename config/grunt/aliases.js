@@ -4,13 +4,13 @@ module.exports = function () {
   return {
     'build': [
       'jshint',
-      'test',
-      'coveralls',
       'clean',
       'concat',
       'ngAnnotate',
       'beautifier',
-      'uglify'
+      'uglify',
+      'test',
+      'coveralls'
     ],
     'test': [
       'test:unit',
@@ -20,6 +20,7 @@ module.exports = function () {
       'karma'
     ],
     'test:e2e': [
+      'connect',
       'protractor'
     ]
   };

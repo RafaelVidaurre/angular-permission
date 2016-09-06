@@ -18,7 +18,7 @@
 <script type="text/ng-template" id="nav.html">
 	<ul>
 		<li class="authorize" permission permission-except="'AUTHORIZED'">
-			<a ng-click="ctrl.authorize()"><i class="material-icons">lock</i></a>
+			<a id="authorize" ng-click="ctrl.authorize()"><i class="material-icons">lock</i></a>
 		</li>
 
 		<li ui-sref-active="active" class="authorize" permission permission-only="'AUTHORIZED'">
@@ -30,19 +30,19 @@
 		</li>
 
 		<li ui-sref-active="active" permission permission-only="'AUTHORIZED'">
-			<a ui-sref="app.work"><i class="material-icons">work</i></a>
+			<a id="work" ui-sref="app.work"><i class="material-icons">work</i></a>
 		</li>
 
 		<li permission permission-only="'AUTHORIZED'">
 
-			<a ng-click="ctrl.toggleMenu()">
+			<a id="toggle-menu"  ng-click="ctrl.toggleMenu()">
 				<i ng-if="!ctrl.conf.isCollapsed" class="material-icons">keyboard_arrow_down</i>
 				<i ng-if="ctrl.conf.isCollapsed" class="material-icons">keyboard_arrow_up</i>
 			</a>
 
 			<ul ng-hide="!ctrl.conf.isCollapsed">
 				<li ui-sref-active="active">
-					<a ui-sref="app.location.pin"><i class="material-icons">beenhere</i></a>
+					<a id="pin" ui-sref="app.location.pin"><i class="material-icons">beenhere</i></a>
 				</li>
 				<li ui-sref-active="active">
 					<a ui-sref="app.location.memory"><i class="material-icons">memory</i></a>
