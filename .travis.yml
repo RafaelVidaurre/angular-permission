@@ -16,10 +16,7 @@ before_script:
 script:
   - grunt build
 addons:
-  sauce_connect:
-    username: masterspambot
-  jwt:
-    secure: o0AuB2xpLrNaTyg26Xi6g81ZyE3dVvsNA18sHLAmkmdtVI0t88CH6W5lAXO/+NO5cieR2x8qvRY6tYpeC03o2OC3AeSzuL6CC4Sy27RS9KArdJfmJgirVv/3JuxjSMyqyXTUonDmEuZcwX7CNmTXG3fOnGbTuofj0st1mezSTwk=
+  sauce_connect: true
 deploy:
   provider: npm
   email: blazej.krysiak@gmail.com
