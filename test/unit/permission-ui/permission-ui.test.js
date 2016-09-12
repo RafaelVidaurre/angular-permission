@@ -193,9 +193,10 @@ describe('permission.ui', function () {
           $rootScope.$apply();
 
           // THEN
-          expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
+          expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {
             location: true, inherit: true, relative: true, notify: false, reload: false, $retry: false
-          });
+          }, {param: 'param'}
+          );
         });
       });
     });
