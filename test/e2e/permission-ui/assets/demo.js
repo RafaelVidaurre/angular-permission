@@ -6,7 +6,7 @@ var app = angular
   ]);
 
 app
-  .config(function($stateProvider, $urlRouterProvider) {
+  .config(function ($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('app', {
         abstract: true,
@@ -39,7 +39,7 @@ app
         data: {
           permissions: {
             only: ['AUTHORIZED'],
-            redirectTo: function() {
+            redirectTo: function () {
               return {
                 state: 'app.map',
                 options: {
@@ -57,7 +57,7 @@ app
         data: {
           permissions: {
             only: ['AUTHORIZED'],
-            redirectTo: function() {
+            redirectTo: function () {
               return {
                 state: 'app.map',
                 options: {
@@ -88,14 +88,14 @@ app
       });
 
 
-    $urlRouterProvider.otherwise(function($injector) {
+    $urlRouterProvider.otherwise(function ($injector) {
       var $state = $injector.get('$state');
       $state.go('app.map');
     });
   })
 
-  .run(function(PermRoleStore, appConf) {
-    PermRoleStore.defineRole('AUTHORIZED', function() {
+  .run(function (PermRoleStore, appConf) {
+    PermRoleStore.defineRole('AUTHORIZED', function () {
       return appConf.isAuthorized;
     });
   })
@@ -105,7 +105,7 @@ app
     isCollapsed: false
   })
 
-  .controller('appController', function($state, appConf) {
+  .controller('appController', function ($state, appConf) {
     // variables
     this.conf = appConf;
 
