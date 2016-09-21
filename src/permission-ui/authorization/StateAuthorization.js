@@ -2,6 +2,7 @@
 
 /**
  * Service responsible for handling inheritance-enabled state-based authorization in ui-router
+ * @extends permission.PermPermissionMap
  * @name permission.ui.PermStateAuthorization
  *
  * @param $q {Object} Angular promise implementation
@@ -70,7 +71,7 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
 
     $q.all(exceptPromises)
       .then(function (rejectedPermissions) {
-        deferred.reject(rejectedPermissions);
+        deferred.reject(rejectedPermissions[0]);
       })
       .catch(function () {
         resolveOnlyStatePermissionMap(deferred, map);
@@ -119,7 +120,13 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
 
     return privilegesNames.map(function (statePrivileges) {
       var resolvedStatePrivileges = map.resolvePropertyValidity(statePrivileges);
-      return $q.any(resolvedStatePrivileges);
+      return $q.any(resolvedStatePrivileges)
+        .then(function (resolvedPermissions) {
+          if (angular.isArray(resolvedPermissions)) {
+            return resolvedPermissions[0];
+          }
+          return resolvedPermissions;
+        });
     });
   }
 }

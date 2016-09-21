@@ -23,104 +23,112 @@ describe('permission', function () {
 
       describe('method: authorizeByPermissionMap', function () {
         beforeEach(function () {
-          PermPermissionStore.definePermission('USER', function () {
+          PermPermissionStore.definePermission('editPosts', function () {
             return true;
           });
 
-          PermPermissionStore.definePermission('ADMIN', function () {
+          PermPermissionStore.definePermission('editUsers', function () {
             return false;
           });
 
-          PermRoleStore.defineRole('ACCOUNTANT', ['USER']);
-          PermRoleStore.defineRole('ADMIN_ACCOUNTANT', ['ADMIN']);
+          PermRoleStore.defineRole('USER', ['editPosts']);
+          PermRoleStore.defineRole('ADMIN', ['editUsers']);
         });
 
         it('should resolve promise when "only" matches permissions', function () {
           // GIVEN
-          var permissionMap = new PermPermissionMap({only: ['USER']});
+          var permissionMap = new PermPermissionMap({only: ['editPosts']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeResolved();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeResolvedWith('editPosts');
         });
 
         it('should resolve promise when "only" matches roles', function () {
           // GIVEN
-          var permissionMap = new PermPermissionMap({only: ['ACCOUNTANT']});
+          var permissionMap = new PermPermissionMap({only: ['USER']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeResolved();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeResolved();
         });
 
         it('should reject promise when "only" mismatches permissions', function () {
           // GIVEN
-          var permissionMap = new PermPermissionMap({only: ['ADMIN']});
+          var permissionMap = new PermPermissionMap({only: ['editUsers']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeRejected();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejectedWith('editUsers');
         });
 
         it('should reject promise when "only" mismatches roles', function () {
           // GIVEN
-          var permissionMap = new PermPermissionMap({only: ['ADMIN_ACCOUNTANT']});
+          var permissionMap = new PermPermissionMap({only: ['ADMIN']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeRejected();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejectedWith('editUsers');
         });
 
         it('should resolve promise when "except" mismatches permissions', function () {
           // GIVEN
-          var permissionMap = new PermPermissionMap({except: ['ADMIN']});
+          var permissionMap = new PermPermissionMap({except: ['editUsers']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeResolved();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeResolved();
         });
 
         it('should resolve promise when "except" mismatches roles', function () {
           // GIVEN
-          var permissionMap = new PermPermissionMap({except: ['ADMIN_ACCOUNTANT']});
+          var permissionMap = new PermPermissionMap({except: ['ADMIN']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeResolved();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeResolved();
         });
 
         it('should reject promise when "except" matches permissions', function () {
           // GIVEN
-          var permissionMap = new PermPermissionMap({except: ['USER']});
+          var permissionMap = new PermPermissionMap({except: ['editPosts']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeRejected();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejectedWith('editPosts');
         });
 
         it('should reject promise when "except" matches roles', function () {
           // GIVEN
-          var permissionMap = new PermPermissionMap({except: ['ACCOUNTANT']});
+          var permissionMap = new PermPermissionMap({except: ['USER']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeRejected();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejected();
         });
 
         it('should reject promise when permission/role is undefined', function () {
@@ -128,10 +136,11 @@ describe('permission', function () {
           var permissionMap = new PermPermissionMap({only: ['SUPER_ADMIN']});
 
           // WHEN
-          var promise = PermAuthorization.authorizeByPermissionMap(permissionMap);
+          var authorizationResult = PermAuthorization.authorizeByPermissionMap(permissionMap);
 
           // THEN
-          expect(promise).toBeRejected();
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejected('SUPER_ADMIN');
         });
       });
     });

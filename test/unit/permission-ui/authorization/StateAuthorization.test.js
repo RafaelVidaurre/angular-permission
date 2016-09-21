@@ -7,6 +7,7 @@ describe('permission.ui', function () {
       var PermPermissionStore;
       var PermStatePermissionMap;
       var PermStateAuthorization;
+      var PermRoleStore;
 
       beforeEach(function () {
         module('permission.ui');
@@ -17,18 +18,22 @@ describe('permission.ui', function () {
           PermStateAuthorization = $injector.get('PermStateAuthorization');
           PermStatePermissionMap = $injector.get('PermStatePermissionMap');
           PermPermissionStore = $injector.get('PermPermissionStore');
+          PermRoleStore = $injector.get('PermRoleStore');
         });
       });
 
       // Initialize permissions
       beforeEach(function () {
-        PermPermissionStore.definePermission('accepted', function () {
+        PermPermissionStore.definePermission('editPosts', function () {
           return true;
         });
 
-        PermPermissionStore.definePermission('denied', function () {
+        PermPermissionStore.definePermission('editUsers', function () {
           return false;
         });
+
+        PermRoleStore.defineRole('USER', ['editPosts']);
+        PermRoleStore.defineRole('ADMIN', ['editUsers']);
       });
 
       describe('method: authorizeByPermissionMap', function () {
@@ -36,7 +41,7 @@ describe('permission.ui', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$permissionState']);
           state.$$permissionState.and.callFake(function () {
-            return {path: [{data: {permissions: {except: ['denied']}}}]};
+            return {path: [{data: {permissions: {except: ['editUsers']}}}]};
           });
 
 
@@ -53,7 +58,7 @@ describe('permission.ui', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$permissionState']);
           state.$$permissionState.and.callFake(function () {
-            return {path: [{data: {permissions: {except: ['accepted']}}}]};
+            return {path: [{data: {permissions: {except: ['editPosts']}}}]};
           });
 
           // WHEN
@@ -62,14 +67,14 @@ describe('permission.ui', function () {
 
           // THEN
           expect(authorizationResult).toBePromise();
-          expect(authorizationResult).toBeRejected();
+          expect(authorizationResult).toBeRejectedWith('editPosts', jasmine.any(Object));
         });
 
         it('should return resolved promise when "only" permissions are met', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$permissionState']);
           state.$$permissionState.and.callFake(function () {
-            return {path: [{data: {permissions: {only: ['accepted']}}}]};
+            return {path: [{data: {permissions: {only: ['editPosts']}}}]};
           });
 
           // WHEN
@@ -85,7 +90,7 @@ describe('permission.ui', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$permissionState']);
           state.$$permissionState.and.callFake(function () {
-            return {path: [{data: {permissions: {only: ['denied']}}}]};
+            return {path: [{data: {permissions: {only: ['editUsers']}}}]};
           });
 
           // WHEN
@@ -94,7 +99,23 @@ describe('permission.ui', function () {
 
           // THEN
           expect(authorizationResult).toBePromise();
-          expect(authorizationResult).toBeRejected();
+          expect(authorizationResult).toBeRejectedWith('editUsers', jasmine.any(Object));
+        });
+
+        it('should properly handle combination of "except" and "only" roles', function () {
+          // GIVEN
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
+            return {path: [{data: {permissions: {only: ['ADMIN'], except: ['USER']}}}]};
+          });
+
+          // WHEN
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
+
+          // THEN
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejectedWith('editPosts', jasmine.any(Object));
         });
       });
     });

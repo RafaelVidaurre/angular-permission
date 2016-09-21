@@ -53,15 +53,11 @@ function PermPermission($q, PermTransitionProperties) {
    * @return {Promise}
    */
   function wrapInPromise(result, permissionName) {
-    var dfd = $q.defer();
-
     if (result) {
-      dfd.resolve(permissionName);
-    } else {
-      dfd.reject(permissionName);
+      return $q.resolve(permissionName);
     }
 
-    return dfd.promise;
+    return $q.reject(permissionName);
   }
 
   /**

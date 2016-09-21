@@ -5,13 +5,14 @@
  * @name permission.PermPermissionMap
  *
  * @param $q {Object} Angular promise implementation
+ * @param $log {Object} Angular logging utility
  * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
  * @param PermRoleStore {permission.PermRoleStore} Role definition storage
  * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
  *
  * @return {permission.PermissionMap}
  */
-function PermPermissionMap($q, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
+function PermPermissionMap($q, $log, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
   'ngInject';
 
   /**
@@ -66,7 +67,7 @@ function PermPermissionMap($q, PermTransitionProperties, PermRoleStore, PermPerm
    * Resolves weather permissions set for "only" or "except" property are valid
    * @methodOf permission.PermissionMap
    *
-   * @param property {String|Array|Function} "only" or "except" map property
+   * @param property {Array} "only" or "except" map property
    *
    * @return {Array<Promise>}
    */
@@ -83,6 +84,7 @@ function PermPermissionMap($q, PermTransitionProperties, PermRoleStore, PermPerm
         return permission.validatePermission();
       }
 
+      $log.warn('Permission or role ' + privilegeName + ' was not defined.');
       return $q.reject(privilegeName);
     });
   };

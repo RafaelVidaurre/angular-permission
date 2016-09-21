@@ -70,15 +70,11 @@ function PermRole($q, PermPermissionStore, PermTransitionProperties) {
    * @return {Promise}
    */
   function wrapInPromise(result, roleName) {
-    var dfd = $q.defer();
-
     if (result) {
-      dfd.resolve(roleName);
-    } else {
-      dfd.reject(roleName);
+      return $q.resolve(roleName);
     }
 
-    return dfd.promise;
+    return $q.reject(roleName);
   }
 
   /**
