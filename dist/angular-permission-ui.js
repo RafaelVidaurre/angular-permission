@@ -1,7 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v4.0.5 - 2016-09-06
+ * @version v4.0.6 - 2016-09-21
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -301,6 +301,7 @@
 
   /**
    * Service responsible for handling inheritance-enabled state-based authorization in ui-router
+   * @extends permission.PermPermissionMap
    * @name permission.ui.PermStateAuthorization
    *
    * @param $q {Object} Angular promise implementation
@@ -369,7 +370,7 @@
 
       $q.all(exceptPromises)
         .then(function (rejectedPermissions) {
-          deferred.reject(rejectedPermissions);
+          deferred.reject(rejectedPermissions[0]);
         })
         .catch(function () {
           resolveOnlyStatePermissionMap(deferred, map);
@@ -418,7 +419,13 @@
 
       return privilegesNames.map(function (statePrivileges) {
         var resolvedStatePrivileges = map.resolvePropertyValidity(statePrivileges);
-        return $q.any(resolvedStatePrivileges);
+        return $q.any(resolvedStatePrivileges)
+          .then(function (resolvedPermissions) {
+            if (angular.isArray(resolvedPermissions)) {
+              return resolvedPermissions[0];
+            }
+            return resolvedPermissions;
+          });
       });
     }
   }

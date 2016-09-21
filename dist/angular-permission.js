@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v4.0.5 - 2016-09-06
+ * @version v4.0.6 - 2016-09-21
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -21,7 +21,7 @@
   PermRoleStore.$inject = ['PermRole'];
   PermissionDirective.$inject = ['$log', '$injector', 'PermPermissionMap', 'PermPermissionStrategies'];
   PermAuthorization.$inject = ['$q'];
-  PermPermissionMap.$inject = ['$q', 'PermTransitionProperties', 'PermRoleStore', 'PermPermissionStore'];
+  PermPermissionMap.$inject = ['$q', '$log', 'PermTransitionProperties', 'PermRoleStore', 'PermPermissionStore'];
   var permission = angular.module('permission', []);
 
   if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
@@ -226,15 +226,11 @@
      * @return {Promise}
      */
     function wrapInPromise(result, permissionName) {
-      var dfd = $q.defer();
-
       if (result) {
-        dfd.resolve(permissionName);
-      } else {
-        dfd.reject(permissionName);
+        return $q.resolve(permissionName);
       }
 
-      return dfd.promise;
+      return $q.reject(permissionName);
     }
 
     /**
@@ -333,15 +329,11 @@
      * @return {Promise}
      */
     function wrapInPromise(result, roleName) {
-      var dfd = $q.defer();
-
       if (result) {
-        dfd.resolve(roleName);
-      } else {
-        dfd.reject(roleName);
+        return $q.resolve(roleName);
       }
 
-      return dfd.promise;
+      return $q.reject(roleName);
     }
 
     /**
@@ -824,13 +816,14 @@
    * @name permission.PermPermissionMap
    *
    * @param $q {Object} Angular promise implementation
+   * @param $log {Object} Angular logging utility
    * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
    * @param PermRoleStore {permission.PermRoleStore} Role definition storage
    * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
    *
    * @return {permission.PermissionMap}
    */
-  function PermPermissionMap($q, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
+  function PermPermissionMap($q, $log, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
     'ngInject';
 
     /**
@@ -885,7 +878,7 @@
      * Resolves weather permissions set for "only" or "except" property are valid
      * @methodOf permission.PermissionMap
      *
-     * @param property {String|Array|Function} "only" or "except" map property
+     * @param property {Array} "only" or "except" map property
      *
      * @return {Array<Promise>}
      */
@@ -902,6 +895,7 @@
           return permission.validatePermission();
         }
 
+        $log.warn('Permission or role ' + privilegeName + ' was not defined.');
         return $q.reject(privilegeName);
       });
     };
