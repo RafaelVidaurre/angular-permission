@@ -27,10 +27,14 @@ exports.config = {
     '../../test/e2e/**/*.e2e.js'
   ],
 
+  onPrepare: function() {
+    var SpecReporter = require('jasmine-spec-reporter');
+    // add jasmine spec reporter
+    jasmine.getEnv().addReporter(new SpecReporter({displayStacktrace: 'all'}));
+  },
+
   jasmineNodeOpts: {
     showColors: true,
-    isVerbose: true,
-    realtimeFailure: true,
-    includeStackTrace: true
+    print: function() {}
   }
 };
