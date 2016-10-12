@@ -6,6 +6,7 @@ describe('permission', function () {
 
       var $q;
       var PermPermission;
+      var PermTransitionProperties;
 
       beforeEach(function () {
         module('permission');
@@ -15,6 +16,7 @@ describe('permission', function () {
         inject(function ($injector) {
           $q = $injector.get('$q');
           PermPermission = $injector.get('PermPermission');
+          PermTransitionProperties = $injector.get('PermTransitionProperties');
         });
       });
 
@@ -36,7 +38,7 @@ describe('permission', function () {
           // THEN
           expect(function () {
             new PermPermission('valid-name', undefined);
-          }).toThrow(new TypeError('Parameter "validationFunction" must be Function'));
+          }).toThrow(new TypeError('Parameter "validationFunction" must be Function or an injectable Function using explicit annotation'));
         });
 
         it('should return new permission definition instance for correct parameters', function () {
@@ -51,12 +53,30 @@ describe('permission', function () {
 
           // THEN
           expect(permission.permissionName).toBe(permissionName);
-          expect(permission.validationFunction).toBe(validationFunction);
+          expect(permission.validationFunction).toBeDefined();
         });
       });
 
       describe('method: validatePermission', function () {
-        it('should call validation function and return results in promise', function () {
+        it('should inject validation function and return results in promise', function () {
+          var permissionName = 'USER';
+          var validationFunction = jasmine.createSpy('validationFunction')
+              .and.callFake(function () {
+                return $q.resolve();
+              });
+          var injectableValidationFunction = ['$q', 'transitionProperties', 'PermPermission', 'permissionName', validationFunction];
+          var permission = new PermPermission(permissionName, injectableValidationFunction);
+
+          // WHEN
+          var validationResult = permission.validatePermission();
+
+          // THEN
+          expect(validationFunction).toHaveBeenCalledWith($q, PermTransitionProperties, PermPermission, permissionName);
+          expect(validationResult).toBePromise();
+          expect(validationResult).toBeResolved();
+        });
+
+        it('should call validation function directly and return results in promise', function () {
           var permissionName = 'USER';
           var validationFunction = jasmine.createSpy('validationFunction')
             .and.callFake(function () {
@@ -68,7 +88,7 @@ describe('permission', function () {
           var validationResult = permission.validatePermission();
 
           // THEN
-          expect(validationFunction).toHaveBeenCalledWith(permissionName, jasmine.any(Object));
+          expect(validationFunction).toHaveBeenCalledWith(permissionName, PermTransitionProperties);
           expect(validationResult).toBePromise();
           expect(validationResult).toBeResolved();
         });
@@ -85,7 +105,7 @@ describe('permission', function () {
           var validationResult = permission.validatePermission();
 
           // THEN
-          expect(validationFunction).toHaveBeenCalledWith(permissionName, jasmine.any(Object));
+          expect(validationFunction).toHaveBeenCalledWith(permissionName, PermTransitionProperties);
           expect(validationResult).toBePromise();
           expect(validationResult).toBeResolved();
         });
@@ -102,7 +122,7 @@ describe('permission', function () {
           var validationResult = permission.validatePermission();
 
           // THEN
-          expect(validationFunction).toHaveBeenCalledWith(permissionName, jasmine.any(Object));
+          expect(validationFunction).toHaveBeenCalledWith(permissionName, PermTransitionProperties);
           expect(validationResult).toBePromise();
           expect(validationResult).toBeRejected();
         });

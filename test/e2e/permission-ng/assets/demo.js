@@ -17,14 +17,14 @@ app
         data: {
           permissions: {
             only: ['AUTHORIZED'],
-            redirectTo: function () {
-              return {
+            redirectTo: ['$q', function ($q) {
+              return $q.resolve({
                 state: 'app.map',
                 options: {
                   reload: true
                 }
-              };
-            }
+              });
+            }]
           }
         }
       })
@@ -68,10 +68,10 @@ app
       });
   })
 
-  .run(function (PermRoleStore, appConf) {
-    PermRoleStore.defineRole('AUTHORIZED', function () {
+  .run(function (PermRoleStore) {
+    PermRoleStore.defineRole('AUTHORIZED', ['appConf', function (appConf) {
       return appConf.isAuthorized;
-    });
+    }]);
   })
 
   .value('appConf', {

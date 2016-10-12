@@ -6,6 +6,7 @@ describe('permission', function () {
 
       var PermRole;
       var PermPermissionStore;
+      var PermTransitionProperties;
 
       beforeEach(function () {
         module('permission');
@@ -15,6 +16,7 @@ describe('permission', function () {
         inject(function ($injector) {
           PermRole = $injector.get('PermRole');
           PermPermissionStore = $injector.get('PermPermissionStore');
+          PermTransitionProperties = $injector.get('PermTransitionProperties');
         });
       });
 
@@ -49,39 +51,54 @@ describe('permission', function () {
 
           // THEN
           expect(role.roleName).toBe(permissionName);
-          expect(role.validationFunction).toBe(permissionNames);
+          expect(role.validationFunction).toBeDefined();
         });
       });
 
       describe('method: validateRole', function () {
-        it('should call directly validationFunction when no permissions were provided', function () {
+        it('should inject validationFunction when no permissions were provided', function () {
           // GIVEN
-          var role = new PermRole('ACCOUNTANT', function () {
+          var validationFunction = jasmine.createSpy('validationFunction').and.callFake(function () {
             return true;
           });
-          spyOn(role, 'validationFunction').and.callThrough();
+          var injectableValidationFunction = ['PermRole', 'transitionProperties', 'PermPermissionStore', 'roleName', validationFunction];
+          var role = new PermRole('ACCOUNTANT', injectableValidationFunction);
 
           // WHEN
           role.validateRole();
 
           // THEN
-          expect(role.validationFunction).toHaveBeenCalled();
+          expect(validationFunction).toHaveBeenCalledWith(PermRole, PermTransitionProperties, PermPermissionStore, role.roleName);
+        });
+
+        it('should call directly validationFunction when no permissions were provided', function () {
+          // GIVEN
+          var validationFunction = jasmine.createSpy('validationFunction').and.callFake(function () {
+            return true;
+          });
+          var role = new PermRole('ACCOUNTANT', validationFunction);
+
+
+          // WHEN
+          role.validateRole();
+
+          // THEN
+          expect(validationFunction).toHaveBeenCalled();
         });
 
         it('should call validationFunction through permission definitions when provided', function () {
           // GIVEN
-          PermPermissionStore.definePermission('USER', function () {
+          var validationFunction = jasmine.createSpy('validationFunction').and.callFake(function () {
             return true;
           });
+          PermPermissionStore.definePermission('USER', validationFunction);
           var role = new PermRole('ACCOUNTANT', ['USER']);
-          var userDefinition = PermPermissionStore.getPermissionDefinition('USER');
-          spyOn(userDefinition, 'validationFunction').and.callThrough();
 
           // WHEN
           role.validateRole();
 
           // THEN
-          expect(userDefinition.validationFunction).toHaveBeenCalled();
+          expect(validationFunction).toHaveBeenCalled();
         });
 
 
@@ -97,7 +114,7 @@ describe('permission', function () {
           var validationResult = permission.validateRole();
 
           // THEN
-          expect(validationFunction).toHaveBeenCalledWith(roleName, jasmine.any(Object));
+          expect(validationFunction).toHaveBeenCalledWith(roleName, PermTransitionProperties);
           expect(validationResult).toBePromise();
           expect(validationResult).toBeResolved();
         });
@@ -114,7 +131,7 @@ describe('permission', function () {
           var validationResult = permission.validateRole();
 
           // THEN
-          expect(validationFunction).toHaveBeenCalledWith(permissionName, jasmine.any(Object));
+          expect(validationFunction).toHaveBeenCalledWith(permissionName, PermTransitionProperties);
           expect(validationResult).toBePromise();
           expect(validationResult).toBeRejected();
         });
