@@ -6,6 +6,7 @@
  *
  * @param $q {Object} Angular promise implementation
  * @param $log {Object} Angular logging utility
+ * @param $injector {Object} Dependency injection instance
  * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
  * @param PermRoleStore {permission.PermRoleStore} Role definition storage
  * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage

@@ -5,6 +5,7 @@
  * @function
  *
  * @param $q {Object} Angular promise implementation
+ * @param $injector {Object} Dependency injection instance
  * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
  * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
  *
@@ -121,7 +122,7 @@ function PermRole($q, $injector, PermPermissionStore, PermTransitionProperties) 
    * @return {Function}
    */
   function preparePermissionEvaluation(permissions) {
-    return function() {
+    return function () {
       var promises = permissions.map(function (permissionName) {
         if (PermPermissionStore.hasPermissionDefinition(permissionName)) {
           var permission = PermPermissionStore.getPermissionDefinition(permissionName);

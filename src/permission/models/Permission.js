@@ -5,6 +5,7 @@
  * @function
  *
  * @param $q {Object} Angular promise implementation
+ * @param $injector {Object} Dependency injection instance
  * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
  *
  * @return {Permission}
