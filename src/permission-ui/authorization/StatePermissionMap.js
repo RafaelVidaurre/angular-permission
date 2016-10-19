@@ -55,7 +55,11 @@ function PermStatePermissionMap(PermPermissionMap) {
    * @returns {boolean}
    */
   function areSetStatePermissions(state) {
-    return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
+    try {
+      return !!state.data.permissions;
+    } catch (e) {
+      return false;
+    }
   }
 
   return StatePermissionMap;

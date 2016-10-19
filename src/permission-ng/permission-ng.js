@@ -37,7 +37,11 @@ function run($rootScope, $location, PermTransitionProperties, PermTransitionEven
      * @returns {boolean}
      */
     function areSetRoutePermissions() {
-      return angular.isDefined(next.$$route.data) && angular.isDefined(next.$$route.data.permissions);
+      try {
+        return !!next.$$route.data.permissions;
+      } catch (e) {
+        return false;
+      }
     }
 
     /**
