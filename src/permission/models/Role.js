@@ -10,7 +10,7 @@
  *
  * @return {Role}
  */
-function PermRole($q, PermPermissionStore, PermTransitionProperties) {
+function PermRole($q, $injector, PermPermissionStore, PermTransitionProperties) {
   'ngInject';
 
   /**
@@ -25,7 +25,7 @@ function PermRole($q, PermPermissionStore, PermTransitionProperties) {
     validateConstructor(roleName, validationFunction);
 
     this.roleName = roleName;
-    this.validationFunction = validationFunction;
+    this.validationFunction = annotateValidationFunction(validationFunction);
   }
 
   /**
@@ -35,28 +35,17 @@ function PermRole($q, PermPermissionStore, PermTransitionProperties) {
    * @returns {Promise} $q.promise object
    */
   Role.prototype.validateRole = function () {
-    if (angular.isFunction(this.validationFunction)) {
-      var validationResult = this.validationFunction.call(null, this.roleName, PermTransitionProperties);
-      if (!angular.isFunction(validationResult.then)) {
-        validationResult = wrapInPromise(validationResult, this.roleName);
-      }
+    var validationLocals = {
+      roleName: this.roleName,
+      transitionProperties: PermTransitionProperties
+    };
+    var validationResult = $injector.invoke(this.validationFunction, null, validationLocals);
 
-      return validationResult;
+    if (!angular.isFunction(validationResult.then)) {
+      validationResult = wrapInPromise(validationResult, this.roleName);
     }
 
-    if (angular.isArray(this.validationFunction)) {
-      var promises = this.validationFunction.map(function (permissionName) {
-        if (PermPermissionStore.hasPermissionDefinition(permissionName)) {
-          var permission = PermPermissionStore.getPermissionDefinition(permissionName);
-
-          return permission.validatePermission();
-        }
-
-        return $q.reject(permissionName);
-      });
-
-      return $q.all(promises);
-    }
+    return validationResult;
   };
 
   /**
@@ -96,6 +85,55 @@ function PermRole($q, PermPermissionStore, PermTransitionProperties) {
     if (!angular.isArray(validationFunction) && !angular.isFunction(validationFunction)) {
       throw new TypeError('Parameter "validationFunction" must be array or function');
     }
+  }
+
+
+  /**
+   * Ensures the validation is injectable using explicit annotation.
+   * Wraps a non-injectable function for backwards compatibility
+   * @methodOf permission.Role
+   * @private
+   *
+   * @param validationFunction {Function|Array} Function to wrap with injectable if needed
+   *
+   * @return {Function} Explicitly injectable function
+   */
+  function annotateValidationFunction(validationFunction) {
+    // Test if the validation function is just an array of permission names
+    if (angular.isArray(validationFunction) && !angular.isFunction(validationFunction[validationFunction.length - 1])) {
+      validationFunction = preparePermissionEvaluation(validationFunction);
+    } else if (!angular.isArray(validationFunction.$inject || validationFunction)) {
+      // The function is not explicitly annotated, so assume using old-style parameters
+      // and manually prepare for injection using our known old API parameters
+      validationFunction = ['roleName', 'transitionProperties', validationFunction];
+    }
+
+    return validationFunction;
+  }
+
+  /**
+   * Creates an injectable function that evaluates a set of permissions in place of a role validation function
+   * @methodOf permission.Role
+   * @private
+   *
+   * @param permissions {Array<String>} List of permissions to evaluate
+   *
+   * @return {Function}
+   */
+  function preparePermissionEvaluation(permissions) {
+    return function() {
+      var promises = permissions.map(function (permissionName) {
+        if (PermPermissionStore.hasPermissionDefinition(permissionName)) {
+          var permission = PermPermissionStore.getPermissionDefinition(permissionName);
+
+          return permission.validatePermission();
+        }
+
+        return $q.reject(permissionName);
+      });
+
+      return $q.all(promises);
+    };
   }
 
   return Role;

@@ -9,7 +9,7 @@
  *
  * @return {Permission}
  */
-function PermPermission($q, PermTransitionProperties) {
+function PermPermission($q, $injector, PermTransitionProperties) {
   'ngInject';
 
   /**
@@ -23,7 +23,7 @@ function PermPermission($q, PermTransitionProperties) {
     validateConstructor(permissionName, validationFunction);
 
     this.permissionName = permissionName;
-    this.validationFunction = validationFunction;
+    this.validationFunction = annotateValidationFunction(validationFunction);
   }
 
   /**
@@ -33,7 +33,11 @@ function PermPermission($q, PermTransitionProperties) {
    * @returns {Promise}
    */
   Permission.prototype.validatePermission = function () {
-    var validationResult = this.validationFunction.call(null, this.permissionName, PermTransitionProperties);
+    var validationLocals = {
+      permissionName: this.permissionName,
+      transitionProperties: PermTransitionProperties
+    };
+    var validationResult = $injector.invoke(this.validationFunction, null, validationLocals);
 
     if (!angular.isFunction(validationResult.then)) {
       validationResult = wrapInPromise(validationResult, this.permissionName);
@@ -74,9 +78,29 @@ function PermPermission($q, PermTransitionProperties) {
     if (!angular.isString(permissionName)) {
       throw new TypeError('Parameter "permissionName" name must be String');
     }
-    if (!angular.isFunction(validationFunction)) {
-      throw new TypeError('Parameter "validationFunction" must be Function');
+    if (!angular.isFunction(validationFunction) && !angular.isArray(validationFunction)) {
+      throw new TypeError('Parameter "validationFunction" must be Function or an injectable Function using explicit annotation');
     }
+  }
+
+  /**
+   * Ensures the validation is injectable using explicit annotation.
+   * Wraps a non-injectable function for backwards compatibility
+   * @methodOf permission.Permission
+   * @private
+   *
+   * @param validationFunction {Function} Function to wrap with injectable if needed
+   *
+   * @return {Function} Explicitly injectable function
+   */
+  function annotateValidationFunction(validationFunction) {
+    if (!angular.isArray(validationFunction.$inject || validationFunction)) {
+      // The function is not explicitly annotated, so assume using old-style parameters
+      // and manually prepare for injection using our known old API parameters
+      validationFunction = ['permissionName', 'transitionProperties', validationFunction];
+    }
+
+    return validationFunction;
   }
 
   return Permission;

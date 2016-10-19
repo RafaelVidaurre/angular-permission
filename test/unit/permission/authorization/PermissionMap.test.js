@@ -7,6 +7,7 @@ describe('permission', function () {
       var PermRoleStore;
       var PermPermissionMap;
       var PermPermissionStore;
+      var PermTransitionProperties;
 
       beforeEach(function () {
         module('permission');
@@ -17,6 +18,7 @@ describe('permission', function () {
           PermRoleStore = $injector.get('PermRoleStore');
           PermPermissionMap = $injector.get('PermPermissionMap');
           PermPermissionStore = $injector.get('PermPermissionStore');
+          PermTransitionProperties = $injector.get('PermTransitionProperties');
         });
       });
 
@@ -113,6 +115,27 @@ describe('permission', function () {
           }).toThrow(new ReferenceError('When used "redirectTo" as object, property "default" must be defined'));
         });
 
+        it('should return resolved promise of redirectTo value when passed as object with an injectable function value property', function () {
+          // GIVEN
+          var adminRedirectTo = jasmine.createSpy('adminRedirectTo').and.returnValue('adminRedirect');
+          var redirectToProperty = {
+            /**
+             * @return {string}
+             */
+            ADMIN: ['PermRoleStore', 'rejectedPermission', adminRedirectTo],
+            default: 'defaultRedirect'
+          };
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
+
+          // WHEN
+          var redirectStateName = permissionMap.resolveRedirectState('ADMIN');
+
+          // THEN
+          expect(redirectStateName).toBePromise();
+          expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
+          expect(adminRedirectTo).toHaveBeenCalledWith(PermRoleStore, 'ADMIN');
+        });
+
         it('should return resolved promise of redirectTo value when passed as object with function value property', function () {
           // GIVEN
           var redirectToProperty = {
@@ -170,34 +193,33 @@ describe('permission', function () {
           expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
         });
 
-        it('should return resolved promise of redirectTo value when passed as function returning string', function () {
+        it('should return resolved promise of redirectTo value when passed as an injectable function returning string', function () {
           // GIVEN
-          var redirectToProperty = function () {
-            return 'redirectStateName';
-          };
+          var redirectToFunction = jasmine.createSpy('redirectTo').and.returnValue('redirectStateName');
+          var redirectToProperty = ['transitionProperties', 'PermPermissionMap', 'rejectedPermission', redirectToFunction];
           var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
-          var redirectStateName = permissionMap.resolveRedirectState();
+          var redirectStateName = permissionMap.resolveRedirectState('unauthorizedPermission');
 
           // THEN
           expect(redirectStateName).toBePromise();
           expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
+          expect(redirectToFunction).toHaveBeenCalledWith(PermTransitionProperties, PermPermissionMap, 'unauthorizedPermission');
         });
 
         it('should return resolved promise of redirectTo value when passed as function returning string', function () {
           // GIVEN
-          var redirectToProperty = function () {
-            return 'redirectStateName';
-          };
+          var redirectToProperty = jasmine.createSpy('redirectToProperty').and.returnValue('redirectStateName');
           var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
-          var redirectStateName = permissionMap.resolveRedirectState();
+          var redirectStateName = permissionMap.resolveRedirectState('unauthorizedPermission');
 
           // THEN
           expect(redirectStateName).toBePromise();
           expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
+          expect(redirectToProperty).toHaveBeenCalledWith('unauthorizedPermission', PermTransitionProperties);
         });
 
         it('should return resolved promise of redirectTo value when passed as function returning object', function () {
