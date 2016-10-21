@@ -93,9 +93,7 @@ describe('permission.ui', function () {
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionStart',
             jasmine.any(Object), jasmine.any(Object), jasmine.any(Object)
           );
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangeStart',
-            jasmine.any(Object), jasmine.any(Object), jasmine.any(Object), jasmine.any(Object), jasmine.any(Object)
-          );
+
           expect(result).toEqual(jasmine.any(Boolean));
         });
       });

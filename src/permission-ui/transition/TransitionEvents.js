@@ -27,7 +27,7 @@ function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, P
    * @returns {boolean}
    */
   function areEventsDefaultPrevented() {
-    return isStateChangePermissionStartDefaultPrevented() || isStateChangeStartDefaultPrevented();
+    return isStateChangePermissionStartDefaultPrevented();
   }
 
   /**
@@ -80,20 +80,6 @@ function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, P
   function isStateChangePermissionStartDefaultPrevented() {
     return $rootScope.$broadcast(PermTransitionEventNames.permissionStart,
       PermTransitionProperties.toState, PermTransitionProperties.toParams,
-      PermTransitionProperties.options).defaultPrevented;
-  }
-
-  /**
-   * Checks if event $stateChangeStart hasn't been disabled by default
-   * @methodOf permission.ui.PermTransitionEvents
-   * @private
-   *
-   * @returns {boolean}
-   */
-  function isStateChangeStartDefaultPrevented() {
-    return $rootScope.$broadcast('$stateChangeStart',
-      PermTransitionProperties.toState, PermTransitionProperties.toParams,
-      PermTransitionProperties.fromState, PermTransitionProperties.fromParams,
       PermTransitionProperties.options).defaultPrevented;
   }
 

@@ -122,26 +122,6 @@ describe('permission.ui', function () {
           expect(PermTransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
         });
 
-        it('should not start authorizing when $stateChangeStart has been prevented', function () {
-          // GIVEN
-          $rootScope.$on('$stateChangeStart', function (event) {
-            event.preventDefault();
-          });
-
-          spyOn(PermTransitionEvents, 'broadcastPermissionStartEvent');
-
-          // WHEN
-          $state.go('accepted');
-          $rootScope.$digest();
-
-          $state.go('denied');
-          $rootScope.$digest();
-
-          // THEN
-          expect($state.current.name).toBe('home');
-          expect(PermTransitionEvents.broadcastPermissionStartEvent).not.toHaveBeenCalled();
-        });
-
         it('should handle unauthorized state access', function () {
           // GIVEN
           spyOn(PermTransitionEvents, 'broadcastPermissionDeniedEvent');
