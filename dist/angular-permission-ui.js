@@ -1,7 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v4.1.0 - 2016-10-19
+ * @version v4.1.1 - 2016-10-21
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -201,7 +201,7 @@
      * @returns {boolean}
      */
     function areEventsDefaultPrevented() {
-      return isStateChangePermissionStartDefaultPrevented() || isStateChangeStartDefaultPrevented();
+      return isStateChangePermissionStartDefaultPrevented();
     }
 
     /**
@@ -254,20 +254,6 @@
     function isStateChangePermissionStartDefaultPrevented() {
       return $rootScope.$broadcast(PermTransitionEventNames.permissionStart,
         PermTransitionProperties.toState, PermTransitionProperties.toParams,
-        PermTransitionProperties.options).defaultPrevented;
-    }
-
-    /**
-     * Checks if event $stateChangeStart hasn't been disabled by default
-     * @methodOf permission.ui.PermTransitionEvents
-     * @private
-     *
-     * @returns {boolean}
-     */
-    function isStateChangeStartDefaultPrevented() {
-      return $rootScope.$broadcast('$stateChangeStart',
-        PermTransitionProperties.toState, PermTransitionProperties.toParams,
-        PermTransitionProperties.fromState, PermTransitionProperties.fromParams,
         PermTransitionProperties.options).defaultPrevented;
     }
 
@@ -483,13 +469,18 @@
 
     /**
      * Checks if state has set permissions
+     * We check for hasOwnProperty, because ui-router lets the `data` property inherit from its parent
      * @methodOf permission.ui.StatePermissionMap
      * @private
      *
      * @returns {boolean}
      */
     function areSetStatePermissions(state) {
-      return angular.isDefined(state.data) && angular.isDefined(state.data.permissions);
+      try {
+        return Object.prototype.hasOwnProperty.call(state.data, 'permissions');
+      } catch (e) {
+        return false;
+      }
     }
 
     return StatePermissionMap;

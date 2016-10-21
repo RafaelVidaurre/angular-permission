@@ -1,7 +1,7 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v4.1.0 - 2016-10-19
+ * @version v4.1.1 - 2016-10-21
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -50,7 +50,11 @@
        * @returns {boolean}
        */
       function areSetRoutePermissions() {
-        return angular.isDefined(next.$$route.data) && angular.isDefined(next.$$route.data.permissions);
+        try {
+          return !!next.$$route.data.permissions;
+        } catch (e) {
+          return false;
+        }
       }
 
       /**
