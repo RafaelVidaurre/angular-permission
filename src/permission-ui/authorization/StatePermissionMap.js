@@ -49,6 +49,7 @@ function PermStatePermissionMap(PermPermissionMap) {
 
   /**
    * Checks if state has set permissions
+   * We check for hasOwnProperty, because ui-router lets the `data` property inherit from its parent
    * @methodOf permission.ui.StatePermissionMap
    * @private
    *
@@ -56,8 +57,7 @@ function PermStatePermissionMap(PermPermissionMap) {
    */
   function areSetStatePermissions(state) {
     try {
-      // We check for hasOwnProperty here because ui-router lets the `data` property inherit from its parent
-      return Object.prototype.hasOwnProperty.call(state.data, 'permissions') && !!state.data.permissions;
+      return Object.prototype.hasOwnProperty.call(state.data, 'permissions');
     } catch (e) {
       return false;
     }
