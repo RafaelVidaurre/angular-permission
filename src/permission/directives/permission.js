@@ -16,7 +16,7 @@
  *      permission-only="['USER','ADMIN']"
  *      permission-except="'MANAGER'">
  * </div>
- * <div permission permission-sref="app.login"></div>
+ * <div permission permission-sref="'app.login'"></div>
  *
  * By default directive will show/hide elements if provided permissions matches.
  * You can override this behaviour by passing `permission-on-authorized` and `permission-on-unauthorized`
