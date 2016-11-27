@@ -46,8 +46,12 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
    * @return {Promise}
    */
   PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName) {
-    if (angular.isFunction(this.redirectTo) || angular.isArray(this.redirectTo)) {
+    if (angular.isArray(this.redirectTo)) {
       return resolveFunctionRedirect(this.redirectTo, rejectedPermissionName);
+    }
+
+    if (angular.isFunction(this.redirectTo)) {
+      return resolveFunctionRedirect(['rejectedPermission', 'transitionProperties', this.redirectTo], rejectedPermissionName);
     }
 
     if (angular.isObject(this.redirectTo)) {
@@ -55,9 +59,7 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
     }
 
     if (angular.isString(this.redirectTo)) {
-      return $q.resolve({
-        state: this.redirectTo
-      });
+      return resolveObjectRedirect({default: {state: this.redirectTo}}, rejectedPermissionName);
     }
 
     // If redirectTo state is not defined stay where you are
@@ -102,10 +104,6 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
    * @return {Promise}
    */
   function resolveFunctionRedirect(redirectFunction, rejectedPermissionName) {
-    if (!angular.isArray(redirectFunction.$inject || redirectFunction)) {
-      redirectFunction = ['rejectedPermission', 'transitionProperties', redirectFunction];
-    }
-
     return $q
       .when($injector.invoke(redirectFunction, null, {
         rejectedPermission: rejectedPermissionName,
