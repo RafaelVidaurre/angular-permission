@@ -20,19 +20,6 @@ function PermAuthorization($q) {
    * @returns {promise} $q.promise object
    */
   function authorizeByPermissionMap(map) {
-    return authorizePermissionMap(map);
-  }
-
-  /**
-   * Checks authorization for simple view based access
-   * @methodOf permission.PermAuthorization
-   * @private
-   *
-   * @param map {permission.PermissionMap} Access rights map
-   *
-   * @returns {promise} $q.promise object
-   */
-  function authorizePermissionMap(map) {
     var deferred = $q.defer();
 
     resolveExceptPrivilegeMap(deferred, map);
