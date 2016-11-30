@@ -43,7 +43,10 @@ function PermStatePermissionMap(PermPermissionMap) {
     if (permissionMap.except.length) {
       this.except = this.except.concat([permissionMap.except]);
     }
-    this.redirectTo = permissionMap.redirectTo;
+
+    if (angular.isDefined(permissionMap.redirectTo)) {
+      this.redirectTo = angular.extend({}, this.redirectTo, permissionMap.redirectTo);
+    }
   };
 
 

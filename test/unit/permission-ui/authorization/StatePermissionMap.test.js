@@ -21,9 +21,25 @@ describe('permission.ui', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$permissionState']);
           state.$$permissionState.and.callFake(function () {
-            var parent = {permissions: {only: ['accepted'], except: ['denied']}};
+            var parent = {
+              permissions: {
+                only: ['accepted'],
+                except: ['denied'],
+                redirectTo: {
+                  accepted: 'deniedState',
+                  default: 'defaultState'
+                }
+              }
+            };
             var child = Object.create(parent);
-            child.permissions = {only: ['acceptedChild'], except: ['deniedChild']};
+            child.permissions = {
+              only: ['acceptedChild'],
+              except: ['deniedChild'],
+              redirectTo: {
+                acceptedChild: 'deniedChildState',
+                default: 'defaultState'
+              }
+            };
 
             return {
               path: [
@@ -39,10 +55,14 @@ describe('permission.ui', function () {
           // THEN
           expect(map.only).toEqual([['acceptedChild'], ['accepted']]);
           expect(map.except).toEqual([['deniedChild'], ['denied']]);
-          expect(map.redirectTo).not.toBeDefined();
+          expect(map.redirectTo).toEqual({
+            'accepted': jasmine.any(Function),
+            'acceptedChild': jasmine.any(Function)
+            , 'default': jasmine.any(Function)
+          });
         });
 
-        it('should not duplicate parent state inheritance if childs dont have permissions', function () {
+        it('should not duplicate parent state inheritance if child does not have permissions', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$permissionState']);
           state.$$permissionState.and.callFake(function () {
@@ -74,4 +94,5 @@ describe('permission.ui', function () {
       });
     });
   });
-});
+})
+;
