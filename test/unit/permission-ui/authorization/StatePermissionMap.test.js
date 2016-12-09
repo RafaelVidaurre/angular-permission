@@ -57,8 +57,8 @@ describe('permission.ui', function () {
           expect(map.except).toEqual([['deniedChild'], ['denied']]);
           expect(map.redirectTo).toEqual({
             'accepted': jasmine.any(Function),
-            'acceptedChild': jasmine.any(Function)
-            , 'default': jasmine.any(Function)
+            'acceptedChild': jasmine.any(Function),
+            'default': jasmine.any(Function)
           });
         });
 
