@@ -17,7 +17,7 @@ describe('permission.ui', function () {
       });
 
       describe('method: constructor', function () {
-        it('should build map including permissions inherited from parent states', function () {
+        it('should build map including permissions and redirection rules inherited from parent states', function () {
           // GIVEN
           var state = jasmine.createSpyObj('state', ['$$permissionState']);
           state.$$permissionState.and.callFake(function () {
