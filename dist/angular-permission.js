@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v4.1.2 - 2016-11-06
+ * @version v5.0.0 - 2016-12-09
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -654,7 +654,7 @@
    *      permission-only="['USER','ADMIN']"
    *      permission-except="'MANAGER'">
    * </div>
-   * <div permission permission-sref="app.login"></div>
+   * <div permission permission-sref="'app.login'"></div>
    *
    * By default directive will show/hide elements if provided permissions matches.
    * You can override this behaviour by passing `permission-on-authorized` and `permission-on-unauthorized`
@@ -803,19 +803,6 @@
      * @returns {promise} $q.promise object
      */
     function authorizeByPermissionMap(map) {
-      return authorizePermissionMap(map);
-    }
-
-    /**
-     * Checks authorization for simple view based access
-     * @methodOf permission.PermAuthorization
-     * @private
-     *
-     * @param map {permission.PermissionMap} Access rights map
-     *
-     * @returns {promise} $q.promise object
-     */
-    function authorizePermissionMap(map) {
       var deferred = $q.defer();
 
       resolveExceptPrivilegeMap(deferred, map);
@@ -909,7 +896,7 @@
 
       this.only = normalizeMapProperty(permissionMap.only);
       this.except = normalizeMapProperty(permissionMap.except);
-      this.redirectTo = permissionMap.redirectTo;
+      this.redirectTo = normalizeRedirectToProperty(permissionMap.redirectTo);
     }
 
     /**
@@ -921,22 +908,15 @@
      * @return {Promise}
      */
     PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName) {
-      if (angular.isFunction(this.redirectTo) || angular.isArray(this.redirectTo)) {
-        return resolveFunctionRedirect(this.redirectTo, rejectedPermissionName);
+
+      var redirectState = this.redirectTo[rejectedPermissionName] || this.redirectTo['default'];
+
+      // If redirectTo definition is not found stay where you are
+      if (!angular.isDefined(redirectState)) {
+        return $q.reject();
       }
 
-      if (angular.isObject(this.redirectTo)) {
-        return resolveObjectRedirect(this.redirectTo, rejectedPermissionName);
-      }
-
-      if (angular.isString(this.redirectTo)) {
-        return $q.resolve({
-          state: this.redirectTo
-        });
-      }
-
-      // If redirectTo state is not defined stay where you are
-      return $q.reject();
+      return resolveRedirectState(redirectState, rejectedPermissionName);
     };
 
     /**
@@ -976,11 +956,7 @@
      *
      * @return {Promise}
      */
-    function resolveFunctionRedirect(redirectFunction, rejectedPermissionName) {
-      if (!angular.isArray(redirectFunction.$inject || redirectFunction)) {
-        redirectFunction = ['rejectedPermission', 'transitionProperties', redirectFunction];
-      }
-
+    function resolveRedirectState(redirectFunction, rejectedPermissionName) {
       return $q
         .when($injector.invoke(redirectFunction, null, {
           rejectedPermission: rejectedPermissionName,
@@ -999,43 +975,6 @@
 
           return $q.reject();
         });
-    }
-
-    /**
-     * Handles object based redirection for rejected permissions
-     * @methodOf permission.PermissionMap
-     *
-     * @throws {ReferenceError}
-     *
-     * @param redirectObject {Object} Redirection function
-     * @param permission {String} Rejected permission
-     *
-     * @return {Promise}
-     */
-    function resolveObjectRedirect(redirectObject, permission) {
-      if (!angular.isDefined(redirectObject['default'])) {
-        throw new ReferenceError('When used "redirectTo" as object, property "default" must be defined');
-      }
-
-      var redirectState = redirectObject[permission];
-
-      if (!angular.isDefined(redirectState)) {
-        redirectState = redirectObject['default'];
-      }
-
-      if (angular.isFunction(redirectState) || angular.isArray(redirectState)) {
-        return resolveFunctionRedirect(redirectState, permission);
-      }
-
-      if (angular.isObject(redirectState)) {
-        return $q.resolve(redirectState);
-      }
-
-      if (angular.isString(redirectState)) {
-        return $q.resolve({
-          state: redirectState
-        });
-      }
     }
 
     /**
@@ -1061,6 +1000,73 @@
       }
 
       return [];
+    }
+
+    /**
+     * Convert user provided input into key value dictionary with permission/role name as a key and injectable resolver
+     * function as a value
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param redirectToProperty {String|Function|Array|Object} PermPermission map property "redirectTo"
+     *
+     * @returns {Object<String, Object>} Redirection dictionary object
+     */
+    function normalizeRedirectToProperty(redirectToProperty) {
+      if (angular.isString(redirectToProperty)) {
+        return {
+          default: ['rejectedPermission', 'transitionProperties', function () {
+            return {
+              state: redirectToProperty
+            };
+          }]
+        };
+      }
+
+      if (angular.isObject(redirectToProperty)) {
+        if (!angular.isDefined(redirectToProperty['default'])) {
+          throw new ReferenceError('When used "redirectTo" as object, property "default" must be defined');
+        }
+
+        var redirectionMap = {};
+
+        angular.forEach(redirectToProperty, function (redirection, permission) {
+          if (angular.isArray(redirection) || angular.isArray(redirection.$inject)) {
+            redirectionMap[permission] = redirection;
+          }
+
+          if (angular.isFunction(redirection)) {
+            redirectionMap[permission] = redirection;
+            redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+          }
+
+          if (angular.isObject(redirection)) {
+            redirectionMap[permission] = function () {
+              return redirection;
+            };
+            redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+          }
+
+          if (angular.isString(redirection)) {
+            redirectionMap[permission] = function () {
+              return {
+                state: redirection
+              };
+            };
+            redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+          }
+        });
+
+        return redirectionMap;
+      }
+
+      if (angular.isFunction(redirectToProperty)) {
+        return {
+          default: ['rejectedPermission', 'transitionProperties', redirectToProperty]
+        };
+      }
+
+      return redirectToProperty;
     }
 
     return PermissionMap;

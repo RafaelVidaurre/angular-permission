@@ -1,7 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v4.1.2 - 2016-11-06
+ * @version v5.0.0 - 2016-12-09
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -200,7 +200,7 @@
      * @returns {boolean}
      */
     function areEventsDefaultPrevented() {
-      return isStateChangePermissionStartDefaultPrevented();
+      return isStateChangePermissionStartDefaultPrevented() || isStateChangeStartDefaultPrevented();
     }
 
     /**
@@ -253,6 +253,20 @@
     function isStateChangePermissionStartDefaultPrevented() {
       return $rootScope.$broadcast(PermTransitionEventNames.permissionStart,
         PermTransitionProperties.toState, PermTransitionProperties.toParams,
+        PermTransitionProperties.options).defaultPrevented;
+    }
+
+    /**
+     * Checks if event $stateChangeStart hasn't been disabled by default
+     * @methodOf permission.ui.PermTransitionEvents
+     * @private
+     *
+     * @returns {boolean}
+     */
+    function isStateChangeStartDefaultPrevented() {
+      return $rootScope.$broadcast('$stateChangeStart',
+        PermTransitionProperties.toState, PermTransitionProperties.toParams,
+        PermTransitionProperties.fromState, PermTransitionProperties.fromParams,
         PermTransitionProperties.options).defaultPrevented;
     }
 
@@ -462,7 +476,10 @@
       if (permissionMap.except.length) {
         this.except = this.except.concat([permissionMap.except]);
       }
-      this.redirectTo = permissionMap.redirectTo;
+
+      if (angular.isDefined(permissionMap.redirectTo)) {
+        this.redirectTo = angular.extend({}, this.redirectTo, permissionMap.redirectTo);
+      }
     };
 
 
