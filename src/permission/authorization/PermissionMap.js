@@ -154,7 +154,7 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
     if (angular.isString(redirectToProperty)) {
       return {
         default: ['rejectedPermission', 'transitionProperties', function () {
-          return {state: redirectToProperty}
+          return {state: redirectToProperty};
         }]
       };
     }
