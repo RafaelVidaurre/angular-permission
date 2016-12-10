@@ -64,8 +64,13 @@ function state($delegate, $q, $rootScope, PermTransitionProperties, PermTransiti
 
     setTransitionProperties();
 
-    // Maintain UI-Router behavior when $stateChangeStart or $stateChangePermissionStart is cancelled
-    if (PermTransitionEvents.areEventsDefaultPrevented()) {
+    // Maintain UI-Router behavior when $stateChangeStart is cancelled
+    if (PermTransitionEvents.isStateChangeStartDefaultPrevented()) {
+      return $q.reject(new Error('transition cancelled'));
+    }
+
+    // Delegate directly to UI-Router when $stateChangePermissionStart is cancelled
+    if (PermTransitionEvents.isStateChangePermissionStartDefaultPrevented()) {
       return delegateTransitionTo();
     }
     

@@ -14,20 +14,11 @@
 function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, PermTransitionEventNames) {
   'ngInject';
 
-  $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
+  $delegate.isStateChangeStartDefaultPrevented = isStateChangeStartDefaultPrevented;
+  $delegate.isStateChangePermissionStartDefaultPrevented = isStateChangePermissionStartDefaultPrevented;
   $delegate.broadcastPermissionStartEvent = broadcastPermissionStartEvent;
   $delegate.broadcastPermissionAcceptedEvent = broadcastPermissionAcceptedEvent;
   $delegate.broadcastPermissionDeniedEvent = broadcastPermissionDeniedEvent;
-
-  /**
-   * Checks if state events are not prevented by default
-   * @methodOf permission.ui.PermTransitionEvents
-   *
-   * @returns {boolean}
-   */
-  function areEventsDefaultPrevented() {
-    return isStateChangePermissionStartDefaultPrevented() || isStateChangeStartDefaultPrevented();
-  }
 
   /**
    * Broadcasts "$stateChangePermissionStart" event from $rootScope
@@ -62,7 +53,6 @@ function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, P
   /**
    * Checks if event $stateChangePermissionStart hasn't been disabled by default
    * @methodOf permission.ui.PermTransitionEvents
-   * @private
    *
    * @returns {boolean}
    */
@@ -75,7 +65,6 @@ function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, P
   /**
    * Checks if event $stateChangeStart hasn't been disabled by default
    * @methodOf permission.ui.PermTransitionEvents
-   * @private
    *
    * @returns {boolean}
    */
