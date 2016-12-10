@@ -15,7 +15,6 @@ function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, P
   'ngInject';
 
   $delegate.areEventsDefaultPrevented = areEventsDefaultPrevented;
-  $delegate.broadcastStateChangeSuccessEvent = broadcastStateChangeSuccessEvent;
   $delegate.broadcastPermissionStartEvent = broadcastPermissionStartEvent;
   $delegate.broadcastPermissionAcceptedEvent = broadcastPermissionAcceptedEvent;
   $delegate.broadcastPermissionDeniedEvent = broadcastPermissionDeniedEvent;
@@ -58,16 +57,6 @@ function PermTransitionEvents($delegate, $rootScope, PermTransitionProperties, P
     $rootScope.$broadcast(PermTransitionEventNames.permissionDenies,
       PermTransitionProperties.toState, PermTransitionProperties.toParams,
       PermTransitionProperties.options);
-  }
-
-  /**
-   * Broadcasts "$stateChangeSuccess" event from $rootScope
-   * @methodOf permission.ui.PermTransitionEvents
-   */
-  function broadcastStateChangeSuccessEvent() {
-    $rootScope.$broadcast('$stateChangeSuccess',
-      PermTransitionProperties.toState, PermTransitionProperties.toParams,
-      PermTransitionProperties.fromState, PermTransitionProperties.fromParams);
   }
 
   /**

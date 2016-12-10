@@ -63,21 +63,6 @@ describe('permission.ui', function () {
         });
       });
 
-      describe('method: broadcastStateChangeSuccessEvent', function () {
-        it('should broadcast "$stateChangeSuccess" event', function () {
-          // GIVEN
-          spyOn($rootScope, '$broadcast');
-
-          // WHEN
-          PermTransitionEvents.broadcastStateChangeSuccessEvent();
-
-          // THEN
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangeSuccess',
-            jasmine.any(Object), jasmine.any(Object), jasmine.any(Object), jasmine.any(Object)
-          );
-        });
-      });
-
       describe('method: areEventsDefaultPrevented', function () {
         it('should check if none of events prevents authorization', function () {
           // GIVEN
