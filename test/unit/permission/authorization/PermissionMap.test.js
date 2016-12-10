@@ -74,9 +74,7 @@ describe('permission', function () {
           // THEN
           expect(permissionMap.except).toEqual([]);
         });
-      });
 
-      describe('method: resolveRedirectState', function () {
         it('should return resolved promise of redirectTo value when passed as string', function () {
           // GIVEN
           var redirectToProperty = 'redirectStateName';
@@ -153,7 +151,26 @@ describe('permission', function () {
           expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
         });
 
-        it('should return resolved promise of redirectTo value when passed as object with object value property', function () {
+        it('should return resolved promise of redirectTo value when passed as single rule object', function () {
+          // GIVEN
+          var redirectToProperty = {
+            state: 'adminRedirect',
+            params: {
+              paramOne: 'one',
+              paramTwo: 'two'
+            }
+          };
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
+
+          // WHEN
+          var redirectStateName = permissionMap.resolveRedirectState('default');
+
+          // THEN
+          expect(redirectStateName).toBePromise();
+          expect(redirectStateName).toBeResolvedWith(redirectToProperty);
+        });
+
+        it('should return resolved promise of redirectTo value when passed as multiple rule dictionary object', function () {
           // GIVEN
           var redirectToProperty = {
             ADMIN: {
@@ -168,7 +185,7 @@ describe('permission', function () {
 
           // THEN
           expect(redirectStateName).toBePromise();
-          expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
+          expect(redirectStateName).toBeResolvedWith(redirectToProperty.ADMIN);
         });
 
         it('should return resolved promise of redirectTo value when passed as object with string value property', function () {
@@ -186,7 +203,7 @@ describe('permission', function () {
 
           // THEN
           expect(redirectStateName).toBePromise();
-          expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
+          expect(redirectStateName).toBeResolvedWith(redirectToProperty.ADMIN);
         });
 
         it('should return resolved promise of redirectTo value when passed as an injectable function returning string', function () {
