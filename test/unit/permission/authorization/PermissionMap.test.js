@@ -127,7 +127,7 @@ describe('permission', function () {
           // THEN
           expect(redirectStateName).toBePromise();
           expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
-          expect(adminRedirectTo).toHaveBeenCalledWith('ADMIN', jasmine.any(Object));
+          expect(adminRedirectTo).toHaveBeenCalledWith(PermRoleStore, 'ADMIN');
         });
 
         it('should return resolved promise of redirectTo value when passed as object with function value property', function () {
@@ -218,7 +218,7 @@ describe('permission', function () {
           // THEN
           expect(redirectStateName).toBePromise();
           expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
-          expect(redirectToFunction).toHaveBeenCalledWith('unauthorizedPermission', jasmine.any(Object));
+          expect(redirectToFunction).toHaveBeenCalledWith(jasmine.any(Object), PermPermissionMap, 'unauthorizedPermission');
         });
 
         it('should return resolved promise of redirectTo value when passed as function returning string', function () {
