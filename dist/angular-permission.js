@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v5.0.0 - 2016-12-09
+ * @version v5.1.0 - 2016-12-10
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -894,8 +894,8 @@
       // Suppress not defined object errors
       permissionMap = permissionMap || {};
 
-      this.only = normalizeMapProperty(permissionMap.only);
-      this.except = normalizeMapProperty(permissionMap.except);
+      this.only = normalizeOnlyAndExceptProperty(permissionMap.only);
+      this.except = normalizeOnlyAndExceptProperty(permissionMap.except);
       this.redirectTo = normalizeRedirectToProperty(permissionMap.redirectTo);
     }
 
@@ -986,7 +986,7 @@
      *
      * @returns {Array<String>} Array of permission "only" or "except" names
      */
-    function normalizeMapProperty(property) {
+    function normalizeOnlyAndExceptProperty(property) {
       if (angular.isString(property)) {
         return [property];
       }
@@ -1008,65 +1008,173 @@
      * @methodOf permission.PermissionMap
      * @private
      *
-     * @param redirectToProperty {String|Function|Array|Object} PermPermission map property "redirectTo"
+     * @param redirectTo {String|Function|Array|Object} PermPermission map property "redirectTo"
      *
      * @returns {Object<String, Object>} Redirection dictionary object
      */
-    function normalizeRedirectToProperty(redirectToProperty) {
-      if (angular.isString(redirectToProperty)) {
-        return {
-          default: ['rejectedPermission', 'transitionProperties', function () {
-            return {
-              state: redirectToProperty
-            };
-          }]
-        };
+    function normalizeRedirectToProperty(redirectTo) {
+      if (angular.isString(redirectTo)) {
+        return normalizeStringRedirectionRule(redirectTo);
       }
 
-      if (angular.isObject(redirectToProperty)) {
-        if (!angular.isDefined(redirectToProperty['default'])) {
-          throw new ReferenceError('When used "redirectTo" as object, property "default" must be defined');
+      if (angular.isObject(redirectTo)) {
+        if (isObjectSingleRedirectionRule(redirectTo)) {
+          return normalizeObjectSingleRedirectionRule(redirectTo);
         }
 
-        var redirectionMap = {};
+        if (isObjectMultipleRedirectionRule(redirectTo)) {
+          return normalizeObjectMultipleRedirectionRule(redirectTo);
+        }
 
-        angular.forEach(redirectToProperty, function (redirection, permission) {
-          if (angular.isArray(redirection) || angular.isArray(redirection.$inject)) {
-            redirectionMap[permission] = redirection;
-          }
-
-          if (angular.isFunction(redirection)) {
-            redirectionMap[permission] = redirection;
-            redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
-          }
-
-          if (angular.isObject(redirection)) {
-            redirectionMap[permission] = function () {
-              return redirection;
-            };
-            redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
-          }
-
-          if (angular.isString(redirection)) {
-            redirectionMap[permission] = function () {
-              return {
-                state: redirection
-              };
-            };
-            redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
-          }
-        });
-
-        return redirectionMap;
+        throw new ReferenceError('When used "redirectTo" as object, property "default" must be defined');
       }
 
-      if (angular.isFunction(redirectToProperty)) {
+      if (angular.isFunction(redirectTo)) {
+        return normalizeFunctionRedirectionRule(redirectTo);
+      }
+
+      return redirectTo;
+    }
+
+    /**
+     * Convert string redirection rule into single-element redirection dictionary
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param redirectTo {String} PermPermission map property "redirectTo"
+     *
+     * @returns {Object<String, Object>} Redirection dictionary object
+     */
+    function normalizeStringRedirectionRule(redirectTo) {
+      var redirectionMap = {};
+
+      redirectionMap.default = function () {
         return {
-          default: ['rejectedPermission', 'transitionProperties', redirectToProperty]
+          state: redirectTo
         };
-      }
+      };
+      redirectionMap.default.$inject = ['rejectedPermission', 'transitionProperties'];
 
-      return redirectToProperty;
+      return redirectionMap;
+    }
+
+    /**
+     * Checks if redirection object is single rule type
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param redirectTo {Object} PermPermission map property "redirectTo"
+     *
+     * @returns {boolean}
+     */
+    function isObjectSingleRedirectionRule(redirectTo) {
+      return angular.isDefined(redirectTo.state);
+    }
+
+    /**
+     * Convert single redirection rule object into single-element redirection dictionary
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param redirectTo {Object} PermPermission map property "redirectTo"
+     *
+     * @returns {Object<String, Object>} Redirection dictionary object
+     */
+    function normalizeObjectSingleRedirectionRule(redirectTo) {
+      var redirectionMap = {};
+
+      redirectionMap.default = function () {
+        return redirectTo;
+      };
+      redirectionMap.default.$inject = ['rejectedPermission', 'transitionProperties'];
+
+      return redirectionMap;
+    }
+
+    /**
+     * Checks if redirectionRule object is multiple rule set
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param redirectTo {Object} PermPermission map property "redirectTo"
+     *
+     * @returns {boolean}
+     */
+    function isObjectMultipleRedirectionRule(redirectTo) {
+      return angular.isDefined(redirectTo.default);
+    }
+
+    /**
+     * Convert multiple redirection rule object into redirection dictionary
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param redirectTo {Object} PermPermission map property "redirectTo"
+     *
+     * @returns {Object<String, Object>} Redirection dictionary object
+     */
+    function normalizeObjectMultipleRedirectionRule(redirectTo) {
+      var redirectionMap = {};
+
+      angular.forEach(redirectTo, function (redirection, permission) {
+        if (isInjectable(redirection)) {
+          redirectionMap[permission] = redirection;
+        }
+
+        if (angular.isFunction(redirection)) {
+          redirectionMap[permission] = redirection;
+          redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+        }
+
+        if (angular.isObject(redirection)) {
+          redirectionMap[permission] = function () {
+            return redirection;
+          };
+          redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+        }
+
+        if (angular.isString(redirection)) {
+          redirectionMap[permission] = function () {
+            return {
+              state: redirection
+            };
+          };
+          redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+        }
+      });
+
+      return redirectionMap;
+    }
+
+    /**
+     * Checks if property is injectable
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param property {Array|Object}
+     *
+     * @returns {boolean}
+     */
+    function isInjectable(property) {
+      return angular.isArray(property) || angular.isArray(property.$inject);
+    }
+
+    /**
+     * Convert function redirection rule into redirection dictionary
+     * @methodOf permission.PermissionMap
+     * @private
+     *
+     * @param redirectTo {Function} PermPermission map property "redirectTo"
+     *
+     * @returns {Object<String, Object>} Redirection dictionary object
+     */
+    function normalizeFunctionRedirectionRule(redirectTo) {
+      var redirectionMap = {};
+
+      redirectionMap.default = redirectTo;
+      redirectionMap.default.$inject = ['rejectedPermission', 'transitionProperties'];
+
+      return redirectionMap;
     }
 
     return PermissionMap;

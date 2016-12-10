@@ -1,6 +1,6 @@
 {
   "name": "angular-permission",
-  "version": "5.0.0",
+  "version": "5.1.0",
   "description": "Fully featured role and permission based access control for your angular applications",
   "author": {
     "name": "Rafael Vidaurre",
