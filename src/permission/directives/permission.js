@@ -72,9 +72,10 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
           try {
             if (isSrefStateDefined()) {
               var PermStateAuthorization = $injector.get('PermStateAuthorization');
+              var $state = $injector.get('$state');
 
               PermStateAuthorization
-                .authorizeByStateName(permission.sref)
+                .authorizeByState($state.get(permission.sref))
                 .then(function () {
                   onAuthorizedAccess();
                 })
