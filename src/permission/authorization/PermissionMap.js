@@ -284,7 +284,7 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
    * @returns {boolean}
    */
   function isInjectable(property) {
-    return angular.isArray(property) || angular.isArray(property.$inject);
+    return property && (angular.isArray(property) || angular.isArray(property.$inject));
   }
 
   /**
