@@ -256,15 +256,11 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
       } else if (angular.isFunction(redirection)) {
         redirectionMap[permission] = redirection;
         redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
-      }
-
-      if (angular.isObject(redirection)) {
+      } else if (angular.isObject(redirection)) {
         redirectionMap[permission] = function () {
           return redirection;
         };
-      }
-
-      if (angular.isString(redirection)) {
+      } else if (angular.isString(redirection)) {
         redirectionMap[permission] = function () {
           return {state: redirection};
         };
