@@ -46,13 +46,13 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
    * @return {Promise}
    */
   PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName) {
-
-    var redirectState = this.redirectTo[rejectedPermissionName] || this.redirectTo['default'];
-
+    
     // If redirectTo definition is not found stay where you are
-    if (!angular.isDefined(redirectState)) {
+    if (!angular.isDefined(this.redirectTo)) {
       return $q.reject();
     }
+
+    var redirectState = this.redirectTo[rejectedPermissionName] || this.redirectTo['default'];
 
     return resolveRedirectState(redirectState, rejectedPermissionName);
   };
