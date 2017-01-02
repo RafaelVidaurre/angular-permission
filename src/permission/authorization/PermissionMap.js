@@ -46,7 +46,7 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
    * @return {Promise}
    */
   PermissionMap.prototype.resolveRedirectState = function (rejectedPermissionName) {
-    
+
     // If redirectTo definition is not found stay where you are
     if (!angular.isDefined(this.redirectTo)) {
       return $q.reject();
@@ -151,6 +151,10 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
    * @returns {Object<String, Object>} Redirection dictionary object
    */
   function normalizeRedirectToProperty(redirectTo) {
+    if (!angular.isDefined(redirectTo)) {
+      return;
+    }
+
     if (angular.isString(redirectTo)) {
       return normalizeStringRedirectionRule(redirectTo);
     }
@@ -163,15 +167,14 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
       if (isObjectMultipleRedirectionRule(redirectTo)) {
         return normalizeObjectMultipleRedirectionRule(redirectTo);
       }
-
-      throw new ReferenceError('When used "redirectTo" as object, property "default" must be defined');
     }
 
     if (angular.isFunction(redirectTo)) {
       return normalizeFunctionRedirectionRule(redirectTo);
     }
 
-    return redirectTo;
+    throw new ReferenceError('Property "redirectTo" must be String, Function, Array or Object');
+
   }
 
   /**

@@ -106,8 +106,8 @@ describe('permission', function () {
           // WHEN
           // THEN
           expect(function () {
-            new PermPermissionMap({redirectTo: {}});
-          }).toThrow(new ReferenceError('When used "redirectTo" as object, property "default" must be defined'));
+            new PermPermissionMap({redirectTo: 2});
+          }).toThrow(new ReferenceError('Property "redirectTo" must be String, Function, Array or Object'));
         });
 
         it('should return resolved promise of redirectTo value when passed as object with an injectable function value property', function () {
@@ -257,19 +257,6 @@ describe('permission', function () {
           var redirectToProperty = function () {
             return 2;
           };
-          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
-
-          // WHEN
-          var redirectStateName = permissionMap.resolveRedirectState();
-
-          // THEN
-          expect(redirectStateName).toBePromise();
-          expect(redirectStateName).toBeRejected();
-        });
-
-        it('should return rejected promise when redirectTo value is neither String, Function, Object nor Promise', function () {
-          // GIVEN
-          var redirectToProperty = 2;
           var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
