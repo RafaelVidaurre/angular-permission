@@ -112,13 +112,16 @@ describe('permission', function () {
 
         it('should return resolved promise of redirectTo value when passed as object with an injectable function value property', function () {
           // GIVEN
-          var adminRedirectTo = jasmine.createSpy('adminRedirectTo').and.returnValue('adminRedirect');
-          adminRedirectTo.$inject = ['PermRoleStore', 'rejectedPermission'];
-
           var redirectToProperty = {
-            ADMIN: adminRedirectTo,
+            ADMIN: function () {
+              return 'adminRedirect';
+            },
             default: 'defaultRedirect'
           };
+          redirectToProperty.ADMIN.$inject = ['PermRoleStore', 'rejectedPermission'];
+
+          spyOn(redirectToProperty, 'ADMIN').and.callThrough();
+
           var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
@@ -127,7 +130,7 @@ describe('permission', function () {
           // THEN
           expect(redirectStateName).toBePromise();
           expect(redirectStateName).toBeResolvedWith({state: 'adminRedirect'});
-          expect(adminRedirectTo).toHaveBeenCalledWith('ADMIN', jasmine.any(Object));
+          expect(redirectToProperty.ADMIN).toHaveBeenCalledWith(PermRoleStore, 'ADMIN');
         });
 
         it('should return resolved promise of redirectTo value when passed as object with function value property', function () {
@@ -208,9 +211,9 @@ describe('permission', function () {
 
         it('should return resolved promise of redirectTo value when passed as an injectable function returning string', function () {
           // GIVEN
-          var redirectToFunction = jasmine.createSpy('redirectTo').and.returnValue('redirectStateName');
-          redirectToFunction.$inject = ['transitionProperties', 'PermPermissionMap', 'rejectedPermission'];
-          var permissionMap = new PermPermissionMap({redirectTo: redirectToFunction});
+          var redirectToProperty = jasmine.createSpy('redirectTo').and.returnValue('redirectStateName');
+          redirectToProperty.$inject = ['transitionProperties', 'PermPermissionMap', 'rejectedPermission'];
+          var permissionMap = new PermPermissionMap({redirectTo: redirectToProperty});
 
           // WHEN
           var redirectStateName = permissionMap.resolveRedirectState('unauthorizedPermission');
@@ -218,7 +221,7 @@ describe('permission', function () {
           // THEN
           expect(redirectStateName).toBePromise();
           expect(redirectStateName).toBeResolvedWith({state: 'redirectStateName'});
-          expect(redirectToFunction).toHaveBeenCalledWith('unauthorizedPermission', jasmine.any(Object));
+          expect(redirectToProperty).toHaveBeenCalledWith(jasmine.any(Object), PermPermissionMap, 'unauthorizedPermission');
         });
 
         it('should return resolved promise of redirectTo value when passed as function returning string', function () {

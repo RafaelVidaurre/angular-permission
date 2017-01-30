@@ -32,6 +32,7 @@ describe('permission.ui', function () {
               }
             };
             var child = Object.create(parent);
+
             child.permissions = {
               only: ['acceptedChild'],
               except: ['deniedChild'],

@@ -155,8 +155,8 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
       return;
     }
 
-    if (angular.isString(redirectTo)) {
-      return normalizeStringRedirectionRule(redirectTo);
+    if (isInjectable(redirectTo) || angular.isFunction(redirectTo)) {
+      return normalizeFunctionRedirectionRule(redirectTo);
     }
 
     if (angular.isObject(redirectTo)) {
@@ -164,17 +164,14 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
         return normalizeObjectSingleRedirectionRule(redirectTo);
       }
 
-      if (isObjectMultipleRedirectionRule(redirectTo)) {
-        return normalizeObjectMultipleRedirectionRule(redirectTo);
-      }
+      return normalizeObjectMultipleRedirectionRule(redirectTo);
     }
 
-    if (angular.isFunction(redirectTo)) {
-      return normalizeFunctionRedirectionRule(redirectTo);
+    if (angular.isString(redirectTo)) {
+      return normalizeStringRedirectionRule(redirectTo);
     }
 
     throw new ReferenceError('Property "redirectTo" must be String, Function, Array or Object');
-
   }
 
   /**
@@ -225,22 +222,8 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
     redirectionMap.default = function () {
       return redirectTo;
     };
-    redirectionMap.default.$inject = ['rejectedPermission', 'transitionProperties'];
 
     return redirectionMap;
-  }
-
-  /**
-   * Checks if redirectionRule object is multiple rule set
-   * @methodOf permission.PermissionMap
-   * @private
-   *
-   * @param redirectTo {Object} PermPermission map property "redirectTo"
-   *
-   * @returns {boolean}
-   */
-  function isObjectMultipleRedirectionRule(redirectTo) {
-    return angular.isDefined(redirectTo.default);
   }
 
   /**
@@ -258,25 +241,25 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
     angular.forEach(redirectTo, function (redirection, permission) {
       if (isInjectable(redirection)) {
         redirectionMap[permission] = redirection;
-      }
-
-      if (angular.isFunction(redirection)) {
-        redirectionMap[permission] = redirection;
-        redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+      } else {
+        if (angular.isFunction(redirection)) {
+          redirectionMap[permission] = redirection;
+          redirectionMap[permission].$inject = [];
+        }
       }
 
       if (angular.isObject(redirection)) {
         redirectionMap[permission] = function () {
           return redirection;
         };
-        redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+        redirectionMap[permission].$inject = [];
       }
 
       if (angular.isString(redirection)) {
         redirectionMap[permission] = function () {
           return {state: redirection};
         };
-        redirectionMap[permission].$inject = ['rejectedPermission', 'transitionProperties'];
+        redirectionMap[permission].$inject = [];
       }
     });
 
@@ -293,7 +276,7 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
    * @returns {boolean}
    */
   function isInjectable(property) {
-    return angular.isArray(property) || angular.isArray(property.$inject);
+    return angular.isArray(property) || (angular.isFunction(property) && angular.isArray(property.$inject));
   }
 
   /**
@@ -309,7 +292,10 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
     var redirectionMap = {};
 
     redirectionMap.default = redirectTo;
-    redirectionMap.default.$inject = ['rejectedPermission', 'transitionProperties'];
+
+    if (!angular.isDefined(redirectTo.$inject)) {
+      redirectionMap.default.$inject = ['rejectedPermission', 'transitionProperties'];
+    }
 
     return redirectionMap;
   }
