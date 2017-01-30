@@ -169,13 +169,11 @@ describe('permission.ui', function () {
             });
 
           // WHEN
-          $state.go('acceptedWithParamsAndOptions', {param: 'param'}, {relative: true});
+          $state.go('acceptedWithParamsAndOptions', {}, {});
           $rootScope.$apply();
 
           // THEN
-          expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
-            location: true, inherit: true, relative: true, notify: false, reload: false, $retry: false
-          });
+          expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {}, {});
         });
       });
     });
