@@ -35,7 +35,6 @@ function PermAuthorization($q) {
    * @param deferred {Object} Promise defer
    * @param map {permission.PermissionMap} Access rights map
    *
-   * @returns {Promise} $q.promise object
    */
   function resolveExceptPrivilegeMap(deferred, map) {
     var exceptPromises = map.resolvePropertyValidity(map.except);
