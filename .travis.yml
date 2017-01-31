@@ -25,4 +25,4 @@ deploy:
   on:
     tags: true
     repo: Narzerus/angular-permission
-    branch: master
+    branch: ng1
