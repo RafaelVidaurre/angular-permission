@@ -70,7 +70,6 @@ describe('permission.ui', function () {
         // WHEN
         // THEN
         expect($state.current.$$permissionState).toBeDefined();
-        expect($state.current.$$isAuthorizationFinished).toBeDefined();
       });
     });
 
@@ -154,7 +153,7 @@ describe('permission.ui', function () {
 
         it('should honor params and options passed to "transitionTo" or "go" function', function () {
           // GIVEN
-          spyOn($state, 'go').and.callThrough();
+          spyOn($state, '$$transitionTo').and.callThrough();
 
           $stateProvider
             .state('acceptedWithParamsAndOptions', {
@@ -169,12 +168,12 @@ describe('permission.ui', function () {
             });
 
           // WHEN
-          $state.go('acceptedWithParamsAndOptions', {param: 'param'}, {relative: true});
+          $state.go('acceptedWithParamsAndOptions', {param: 'param'}, {relative: true, location: false});
           $rootScope.$apply();
 
           // THEN
-          expect($state.go).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
-            location: true, inherit: true, relative: true, notify: false, reload: false, $retry: false
+          expect($state.$$transitionTo).toHaveBeenCalledWith('acceptedWithParamsAndOptions', {param: 'param'}, {
+            location: false, inherit: true, relative: true, notify: true, reload: false, $retry: false
           });
         });
       });

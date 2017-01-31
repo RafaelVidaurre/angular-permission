@@ -30,45 +30,68 @@ function config($stateProvider) {
 }
 
 /**
+ * @param $delegate {Object} The $state decorator delegate
+ * @param $q {Object}
  * @param $rootScope {Object}
- * @param $state {Object}
  * @param PermTransitionProperties {permission.PermTransitionProperties}
  * @param PermTransitionEvents {permission.ui.PermTransitionEvents}
  * @param PermStateAuthorization {permission.ui.PermStateAuthorization}
  * @param PermStatePermissionMap {permission.ui.PermStatePermissionMap}
  */
-function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents, PermStateAuthorization, PermStatePermissionMap) {
+function state($delegate, $q, $rootScope, PermTransitionProperties, PermTransitionEvents, PermStateAuthorization, PermStatePermissionMap) {
   'ngInject';
 
-  /**
-   * State transition interceptor
-   */
-  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
+  var $state = $delegate;
+  // Expose only for testing purposes
+  $state.$$transitionTo = $state.transitionTo;
 
-    if (!isAuthorizationFinished()) {
-      setStateAuthorizationStatus(true);
-      setTransitionProperties();
+  $state.transitionTo = function(to, toParams, options) {
+    // Similar param normalization as in $state.transitionTo
+    toParams = toParams || {};
+    options = angular.extend({
+      location: true, inherit: false, relative: null, notify: true, reload: false, $retry: false
+    }, options || {});
+    var toState, fromState = $state.current, fromParams = $state.params;
+    var name = angular.isString(to) ? to : to.name;
 
-      if (!PermTransitionEvents.areEventsDefaultPrevented()) {
-        PermTransitionEvents.broadcastPermissionStartEvent();
+    if (!options.relative && isRelative(name)) {
+      throw new Error('No reference point given for path \''  + name + '\'');
+    }
 
-        event.preventDefault();
-        var statePermissionMap = new PermStatePermissionMap(PermTransitionProperties.toState);
+    toState = $state.get(name, options.relative);
 
-        PermStateAuthorization
-          .authorizeByPermissionMap(statePermissionMap)
-          .then(function () {
-            handleAuthorizedState();
-          })
-          .catch(function (rejectedPermission) {
-            handleUnauthorizedState(rejectedPermission, statePermissionMap);
-          })
-          .finally(function () {
-            setStateAuthorizationStatus(false);
-          });
-      } else {
-        setStateAuthorizationStatus(false);
-      }
+    if (!toState) {
+      throw new Error('Unfound state \'' + name + '\'');
+    }
+
+    setTransitionProperties();
+
+    // Maintain UI-Router behavior when $stateChangeStart is cancelled
+    if (PermTransitionEvents.isStateChangeStartDefaultPrevented()) {
+      return $q.reject(new Error('transition cancelled'));
+    }
+
+    // Delegate directly to UI-Router when $stateChangePermissionStart is cancelled
+    if (PermTransitionEvents.isStateChangePermissionStartDefaultPrevented()) {
+      return delegateTransitionTo();
+    }
+    
+    var statePermissionMap = new PermStatePermissionMap(PermTransitionProperties.toState);
+
+    return PermStateAuthorization
+      .authorizeByPermissionMap(statePermissionMap)
+      .then(handleAuthorizedState, handleUnauthorizedState(statePermissionMap));
+
+    /**
+     * True if the stateName is a relative name, to an parent state
+     * @method
+     * @private
+
+     * @param status {string} Name of state
+     * @returns {boolean}
+     */
+    function isRelative(stateName) {
+      return stateName.indexOf('.') === 0 || stateName.indexOf('^') === 0;
     }
 
     /**
@@ -85,25 +108,15 @@ function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents,
     }
 
     /**
-     * Sets internal state `$$finishedAuthorization` variable to prevent looping
+     * Performs $state.transitionTo with parameters
      * @method
      * @private
-     *
-     * @param status {boolean} When true authorization has been already preceded
+     * 
+     * @returns {Promise}
      */
-    function setStateAuthorizationStatus(status) {
-      angular.extend(toState, {'$$isAuthorizationFinished': status});
-    }
-
-    /**
-     * Checks if state has been already checked for authorization
-     * @method
-     * @private
-     *
-     * @returns {boolean}
-     */
-    function isAuthorizationFinished() {
-      return toState.$$isAuthorizationFinished;
+    function delegateTransitionTo() {
+      return $state.$$transitionTo(PermTransitionProperties.toState.name, 
+        PermTransitionProperties.toParams, PermTransitionProperties.options);
     }
 
     /**
@@ -114,14 +127,7 @@ function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents,
     function handleAuthorizedState() {
       PermTransitionEvents.broadcastPermissionAcceptedEvent();
 
-      // Overwrite notify option to broadcast it later
-      var transitionOptions = angular.extend({}, PermTransitionProperties.options, {notify: false, location: true});
-
-      $state
-        .go(PermTransitionProperties.toState.name, PermTransitionProperties.toParams, transitionOptions)
-        .then(function () {
-          PermTransitionEvents.broadcastStateChangeSuccessEvent();
-        });
+      return delegateTransitionTo();
     }
 
     /**
@@ -129,25 +135,29 @@ function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents,
      * @method
      * @private
      *
-     * @param rejectedPermission {String} Rejected access right
      * @param statePermissionMap {permission.ui.PermPermissionMap} State permission map
+     * @returns {Function} A function that accepts the rejectedPermission access right
      */
-    function handleUnauthorizedState(rejectedPermission, statePermissionMap) {
-      PermTransitionEvents.broadcastPermissionDeniedEvent();
+    function handleUnauthorizedState(statePermissionMap) {
+      return function(rejectedPermission) {
+        PermTransitionEvents.broadcastPermissionDeniedEvent();
 
-      statePermissionMap
-        .resolveRedirectState(rejectedPermission)
-        .then(function (redirect) {
-          $state.go(redirect.state, redirect.params, redirect.options);
-        });
+        return statePermissionMap
+          .resolveRedirectState(rejectedPermission)
+          .then(function (redirect) {
+            return $state.go(redirect.state, redirect.params, redirect.options);
+          });
+      };
     }
-  });
+  };
+
+  return $state;
 }
 
 var uiPermission = angular
   .module('permission.ui', ['permission', 'ui.router'])
   .config(config)
-  .run(run);
+  .decorator('$state', state);
 
 if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
   module.exports = uiPermission.name;

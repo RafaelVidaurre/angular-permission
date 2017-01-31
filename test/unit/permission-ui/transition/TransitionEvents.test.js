@@ -63,39 +63,36 @@ describe('permission.ui', function () {
         });
       });
 
-      describe('method: broadcastStateChangeSuccessEvent', function () {
-        it('should broadcast "$stateChangeSuccess" event', function () {
+      describe('method: isStateChangeStartDefaultPrevented', function () {
+        it('should check if $stateChangeStart event prevents authorization', function () {
           // GIVEN
-          spyOn($rootScope, '$broadcast');
+          spyOn($rootScope, '$broadcast').and.callThrough();
+          PermTransitionProperties.toState = {};
 
-          // WHEN
-          PermTransitionEvents.broadcastStateChangeSuccessEvent();
+          // WHE
+          var result = PermTransitionEvents.isStateChangeStartDefaultPrevented();
 
           // THEN
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangeSuccess',
-            jasmine.any(Object), jasmine.any(Object), jasmine.any(Object), jasmine.any(Object)
+          expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangeStart',
+            jasmine.any(Object), jasmine.any(Object), jasmine.any(Object), jasmine.any(Object), jasmine.any(Object)
           );
+
+          expect(result).toEqual(jasmine.any(Boolean));
         });
       });
 
-      describe('method: areEventsDefaultPrevented', function () {
-        it('should check if none of events prevents authorization', function () {
+      describe('method: isStateChangePermissionStartDefaultPrevented', function () {
+        it('should check if $stateChangePermissionStart event prevents authorization', function () {
           // GIVEN
           spyOn($rootScope, '$broadcast').and.callThrough();
-          PermTransitionProperties.toState = {
-            $$isAuthorizationFinished: true
-          };
+          PermTransitionProperties.toState = {};
 
           // WHEN
-          var result = PermTransitionEvents.areEventsDefaultPrevented();
+          var result = PermTransitionEvents.isStateChangePermissionStartDefaultPrevented();
 
           // THEN
           expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangePermissionStart',
             jasmine.any(Object), jasmine.any(Object), jasmine.any(Object)
-          );
-
-          expect($rootScope.$broadcast).toHaveBeenCalledWith('$stateChangeStart',
-            jasmine.any(Object), jasmine.any(Object), jasmine.any(Object), jasmine.any(Object), jasmine.any(Object)
           );
 
           expect(result).toEqual(jasmine.any(Boolean));
