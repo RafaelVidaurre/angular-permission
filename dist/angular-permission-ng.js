@@ -1,7 +1,7 @@
 /**
  * angular-permission-ng
  * Extension module of angular-permission for access control within angular-route
- * @version v5.1.0 - 2017-01-30
+ * @version v5.1.1 - 2017-01-31
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
