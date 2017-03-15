@@ -64,7 +64,7 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
       onUnauthorized: '&?permissionOnUnauthorized'
     },
     controllerAs: 'permission',
-    controller: function ($scope, $element) {
+    controller: function ($scope, $element, permissionConfig) {
       var permission = this;
 
       $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
@@ -118,7 +118,8 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
         if (angular.isFunction(permission.onAuthorized)) {
           permission.onAuthorized()($element);
         } else {
-          PermPermissionStrategies.showElement($element);
+          var onAuthorizedMethodName = permissionConfig.defaultOnAuthorizedMethod;
+          PermPermissionStrategies[onAuthorizedMethodName]($element);
         }
       }
 
@@ -130,7 +131,8 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
         if (angular.isFunction(permission.onUnauthorized)) {
           permission.onUnauthorized()($element);
         } else {
-          PermPermissionStrategies.hideElement($element);
+          var onUnauthorizedMethodName = permissionConfig.defaultOnUnauthorizedMethod;
+          PermPermissionStrategies[onUnauthorizedMethodName]($element);
         }
       }
     }
