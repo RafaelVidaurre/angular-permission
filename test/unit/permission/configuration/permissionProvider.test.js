@@ -2,16 +2,16 @@ describe('permission', function () {
   'use strict';
 
   describe('configuration', function () {
-    describe('provider: permissionConfig', function () {
-      var permissionConfigProvider;
+    describe('provider: $permission', function () {
+      var $permissionProvider;
 
       beforeEach(function () {
         module('permission');
       });
 
       beforeEach(function () {
-        module(['permissionConfigProvider', function (_permissionConfigProvider) {
-          permissionConfigProvider = _permissionConfigProvider;
+        module(['$permissionProvider', function (_permissionProvider) {
+          $permissionProvider = _permissionProvider;
         }]);
       });
 
@@ -22,7 +22,7 @@ describe('permission', function () {
           // GIVEN
           // WHEN
           //THEN
-          expect(permissionConfigProvider.$get().defaultOnAuthorizedMethod).toBe('showElement');
+          expect($permissionProvider.$get().defaultOnAuthorizedMethod).toBe('showElement');
         });
 
         it('should set custom default authorized method when provided', function () {
@@ -30,10 +30,10 @@ describe('permission', function () {
           var onAuthorizedMethodName = 'customOnAuthorizedMethod';
 
           // WHEN
-          permissionConfigProvider.setDefaultOnAuthorizedMethod(onAuthorizedMethodName);
+          $permissionProvider.setDefaultOnAuthorizedMethod(onAuthorizedMethodName);
 
           //THEN
-          expect(permissionConfigProvider.$get().defaultOnAuthorizedMethod).toBe(onAuthorizedMethodName);
+          expect($permissionProvider.$get().defaultOnAuthorizedMethod).toBe(onAuthorizedMethodName);
         });
       });
 
@@ -42,7 +42,7 @@ describe('permission', function () {
           // GIVEN
           // WHEN
           //THEN
-          expect(permissionConfigProvider.$get().defaultOnUnauthorizedMethod).toBe('hideElement');
+          expect($permissionProvider.$get().defaultOnUnauthorizedMethod).toBe('hideElement');
         });
 
         it('should set custom default unauthorized method when provided', function () {
@@ -50,10 +50,10 @@ describe('permission', function () {
           var onUnauthorizedMethodName = 'customOnUnauthorizedMethod';
 
           // WHEN
-          permissionConfigProvider.setDefaultOnUnauthorizedMethod(onUnauthorizedMethodName);
+          $permissionProvider.setDefaultOnUnauthorizedMethod(onUnauthorizedMethodName);
 
           //defaultOnUnauthorizedMethod
-          expect(permissionConfigProvider.$get().defaultOnUnauthorizedMethod).toBe(onUnauthorizedMethodName);
+          expect($permissionProvider.$get().defaultOnUnauthorizedMethod).toBe(onUnauthorizedMethodName);
         });
       });
     });

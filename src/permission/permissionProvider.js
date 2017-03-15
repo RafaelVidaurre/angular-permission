@@ -3,9 +3,9 @@
 /**
  * Permission module configuration provider
  *
- * @name permission.permissionConfigProvider
+ * @name permission.permissionProvider
  */
-function permissionConfig() {
+function $permission() {
   'ngInject';
 
   var defaultOnAuthorizedMethod = 'showElement';
@@ -13,6 +13,7 @@ function permissionConfig() {
 
   /**
    * Methods allowing to alter default directive onAuthorized behaviour in permission directive
+   * @methodOf permission.permissionProvider
    *
    * @param onAuthorizedMethod {String} One of permission.PermPermissionStrategies method names
    */
@@ -22,6 +23,7 @@ function permissionConfig() {
 
   /**
    * Methods allowing to alter default directive onUnauthorized behaviour in permission directive
+   * @methodOf permission.permissionProvider
    *
    * @param onUnauthorizedMethod {String} One of permission.PermPermissionStrategies method names
    */
@@ -40,4 +42,4 @@ function permissionConfig() {
 
 angular
   .module('permission')
-  .provider('permissionConfig', permissionConfig);
+  .provider('$permission', $permission);
