@@ -8,8 +8,8 @@
 function permissionConfig() {
   'ngInject';
 
-  this.defaultOnAuthorizedMethod = 'showElement';
-  this.defaultOnUnauthorizedMethod = 'hideElement';
+  var defaultOnAuthorizedMethod = 'showElement';
+  var defaultOnUnauthorizedMethod = 'hideElement';
 
   /**
    * Methods allowing to alter default directive onAuthorized behaviour in permission directive
@@ -17,7 +17,7 @@ function permissionConfig() {
    * @param onAuthorizedMethod {String} One of permission.PermPermissionStrategies method names
    */
   this.setDefaultOnAuthorizedMethod = function (onAuthorizedMethod) {
-    this.defaultOnAuthorizedMethod = onAuthorizedMethod;
+    defaultOnAuthorizedMethod = onAuthorizedMethod;
   };
 
   /**
@@ -26,12 +26,15 @@ function permissionConfig() {
    * @param onUnauthorizedMethod {String} One of permission.PermPermissionStrategies method names
    */
   this.setDefaultOnUnauthorizedMethod = function (onUnauthorizedMethod) {
-    this.defaultOnUnauthorizedMethod = onUnauthorizedMethod;
+    defaultOnUnauthorizedMethod = onUnauthorizedMethod;
   };
 
   this.$get = function () {
-    return this;
-  }
+    return {
+      defaultOnAuthorizedMethod: defaultOnAuthorizedMethod,
+      defaultOnUnauthorizedMethod: defaultOnUnauthorizedMethod
+    };
+  };
 }
 
 angular
