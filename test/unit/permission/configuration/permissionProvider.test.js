@@ -56,6 +56,24 @@ describe('permission', function () {
           expect($permissionProvider.$get().defaultOnUnauthorizedMethod).toBe(onUnauthorizedMethodName);
         });
       });
+
+      describe('method: suppressUndefinedPermissionWarning', function () {
+        it('should not suppress warnings by default', function () {
+          // GIVEN
+          // WHEN
+          //THEN
+          expect($permissionProvider.$get().suppressUndefinedPermissionWarning).toBe(false);
+        });
+
+        it('should suppress warnings when set to true', function () {
+          // GIVEN
+          // WHEN
+          $permissionProvider.suppressUndefinedPermissionWarning(true);
+
+          //defaultOnUnauthorizedMethod
+          expect($permissionProvider.$get().suppressUndefinedPermissionWarning).toBe(true);
+        });
+      });
     });
   });
 });

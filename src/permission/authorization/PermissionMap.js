@@ -7,13 +7,14 @@
  * @param $q {Object} Angular promise implementation
  * @param $log {Object} Angular logging utility
  * @param $injector {Object} Dependency injection instance
+ * @param $permission {Object} Permission module configuration object
  * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
  * @param PermRoleStore {permission.PermRoleStore} Role definition storage
  * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
  *
  * @return {permission.PermissionMap}
  */
-function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
+function PermPermissionMap($q, $log, $injector, $permission, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
   'ngInject';
 
   /**
@@ -78,7 +79,9 @@ function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRo
         return permission.validatePermission();
       }
 
-      $log.warn('Permission or role ' + privilegeName + ' was not defined.');
+      if (!$permission.suppressUndefinedPermissionWarning) {
+        $log.warn('Permission or role ' + privilegeName + ' was not defined.');
+      }
       return $q.reject(privilegeName);
     });
   };

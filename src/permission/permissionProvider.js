@@ -10,6 +10,7 @@ function $permission() {
 
   var defaultOnAuthorizedMethod = 'showElement';
   var defaultOnUnauthorizedMethod = 'hideElement';
+  var suppressUndefinedPermissionWarning = false;
 
   /**
    * Methods allowing to alter default directive onAuthorized behaviour in permission directive
@@ -32,10 +33,22 @@ function $permission() {
   };
 
 
+  /**
+   * When set to true hides permission warning for undefined roles and permissions
+   * @methodOf permission.permissionProvider
+   *
+   * @param value {Boolean}
+   */
+  this.suppressUndefinedPermissionWarning = function (value) { // jshint ignore:line
+    suppressUndefinedPermissionWarning = value;
+  };
+
+
   this.$get = function () {   // jshint ignore:line
     return {
       defaultOnAuthorizedMethod: defaultOnAuthorizedMethod,
-      defaultOnUnauthorizedMethod: defaultOnUnauthorizedMethod
+      defaultOnUnauthorizedMethod: defaultOnUnauthorizedMethod,
+      suppressUndefinedPermissionWarning: suppressUndefinedPermissionWarning
     };
   };
 }
