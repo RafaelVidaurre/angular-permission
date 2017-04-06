@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v5.2.2 - 2017-03-15
+ * @version v5.2.3 - 2017-04-06
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -21,7 +21,7 @@
   PermRoleStore.$inject = ['PermRole'];
   PermissionDirective.$inject = ['$log', '$injector', 'PermPermissionMap', 'PermPermissionStrategies'];
   PermAuthorization.$inject = ['$q'];
-  PermPermissionMap.$inject = ['$q', '$log', '$injector', 'PermTransitionProperties', 'PermRoleStore', 'PermPermissionStore'];
+  PermPermissionMap.$inject = ['$q', '$log', '$injector', '$permission', 'PermTransitionProperties', 'PermRoleStore', 'PermPermissionStore'];
   var permission = angular.module('permission', []);
 
   /* istanbul ignore if  */
@@ -39,6 +39,7 @@
 
     var defaultOnAuthorizedMethod = 'showElement';
     var defaultOnUnauthorizedMethod = 'hideElement';
+    var suppressUndefinedPermissionWarning = false;
 
     /**
      * Methods allowing to alter default directive onAuthorized behaviour in permission directive
@@ -61,10 +62,22 @@
     };
 
 
+    /**
+     * When set to true hides permission warning for undefined roles and permissions
+     * @methodOf permission.permissionProvider
+     *
+     * @param value {Boolean}
+     */
+    this.suppressUndefinedPermissionWarning = function (value) { // jshint ignore:line
+      suppressUndefinedPermissionWarning = value;
+    };
+
+
     this.$get = function () { // jshint ignore:line
       return {
         defaultOnAuthorizedMethod: defaultOnAuthorizedMethod,
-        defaultOnUnauthorizedMethod: defaultOnUnauthorizedMethod
+        defaultOnUnauthorizedMethod: defaultOnUnauthorizedMethod,
+        suppressUndefinedPermissionWarning: suppressUndefinedPermissionWarning
       };
     };
   }
@@ -915,13 +928,14 @@
    * @param $q {Object} Angular promise implementation
    * @param $log {Object} Angular logging utility
    * @param $injector {Object} Dependency injection instance
+   * @param $permission {Object} Permission module configuration object
    * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
    * @param PermRoleStore {permission.PermRoleStore} Role definition storage
    * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
    *
    * @return {permission.PermissionMap}
    */
-  function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
+  function PermPermissionMap($q, $log, $injector, $permission, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
     'ngInject';
 
     /**
@@ -986,7 +1000,9 @@
           return permission.validatePermission();
         }
 
-        $log.warn('Permission or role ' + privilegeName + ' was not defined.');
+        if (!$permission.suppressUndefinedPermissionWarning) {
+          $log.warn('Permission or role ' + privilegeName + ' was not defined.');
+        }
         return $q.reject(privilegeName);
       });
     };
