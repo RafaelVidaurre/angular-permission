@@ -266,6 +266,8 @@
      * @returns {boolean}
      */
     function isStateChangeStartDefaultPrevented() {
+      //  to check if event was done by permission library
+      PermTransitionProperties.options.checkedByPermission = true;
       return $rootScope.$broadcast('$stateChangeStart',
         PermTransitionProperties.toState, PermTransitionProperties.toParams,
         PermTransitionProperties.fromState, PermTransitionProperties.fromParams,
