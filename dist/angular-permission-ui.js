@@ -1,7 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v5.2.3 - 2017-04-06
+ * @version v5.3.0 - 2017-05-05
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -18,7 +18,7 @@
    * @param $stateProvider {Object}
    */
   config.$inject = ['$stateProvider'];
-  run.$inject = ['$rootScope', '$state', 'PermTransitionProperties', 'PermTransitionEvents', 'PermStateAuthorization', 'PermStatePermissionMap'];
+  run.$inject = ['$injector', '$rootScope', '$state', 'PermTransitionProperties', 'PermTransitionEvents', 'PermStateAuthorization', 'PermStatePermissionMap'];
   PermTransitionEvents.$inject = ['$delegate', '$rootScope', 'PermTransitionProperties', 'PermTransitionEventNames'];
   PermStateAuthorization.$inject = ['$q', '$state', 'PermStatePermissionMap'];
   PermStatePermissionMap.$inject = ['PermPermissionMap'];
@@ -46,6 +46,7 @@
   }
 
   /**
+   * @param $injector {Object}
    * @param $rootScope {Object}
    * @param $state {Object}
    * @param PermTransitionProperties {permission.PermTransitionProperties}
@@ -53,14 +54,56 @@
    * @param PermStateAuthorization {permission.ui.PermStateAuthorization}
    * @param PermStatePermissionMap {permission.ui.PermStatePermissionMap}
    */
-  function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents, PermStateAuthorization, PermStatePermissionMap) {
+  function run($injector, $rootScope, $state, PermTransitionProperties, PermTransitionEvents, PermStateAuthorization, PermStatePermissionMap) {
     'ngInject';
 
-    /**
-     * State transition interceptor
-     */
-    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
+    // For ui-router 1.x use $transitions web hook
+    if ($injector.has('$transitions')) {
+      var $transitions = $injector.get('$transitions');
+      $transitions.onBefore({}, handleOnBeforeWebHook);
+      // For ui-router 0.x use old-style eventing
+    } else {
+      $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
+        handleStateChangeStartEvent(event, toState, toParams, fromState, fromParams, options);
+      });
+    }
 
+    /**
+     * State transition web hook
+     * @param transition {Object}
+     */
+    function handleOnBeforeWebHook(transition) {
+      setTransitionProperties(transition);
+      var statePermissionMap = new PermStatePermissionMap(PermTransitionProperties.toState);
+
+      return PermStateAuthorization
+        .authorizeByPermissionMap(statePermissionMap)
+        .catch(function (rejectedPermission) {
+          return statePermissionMap
+            .resolveRedirectState(rejectedPermission)
+            .then(function (redirect) {
+              $state.go(redirect.state, redirect.params, redirect.options);
+            });
+        });
+
+      /**
+       * Updates values of `PermTransitionProperties` holder object
+       * @method
+       * @private
+       */
+      function setTransitionProperties(transition) {
+        PermTransitionProperties.toState = transition.to();
+        PermTransitionProperties.toParams = transition.params('to');
+        PermTransitionProperties.fromState = transition.from();
+        PermTransitionProperties.fromParams = transition.params('from');
+        PermTransitionProperties.options = transition.options();
+      }
+    }
+
+    /**
+     * State transition event interceptor
+     */
+    function handleStateChangeStartEvent(event, toState, toParams, fromState, fromParams, options) {
       if (!isAuthorizationFinished()) {
         setStateAuthorizationStatus(true);
         setTransitionProperties();
@@ -86,6 +129,7 @@
           setStateAuthorizationStatus(false);
         }
       }
+
 
       /**
        * Updates values of `PermTransitionProperties` holder object
@@ -162,7 +206,7 @@
             $state.go(redirect.state, redirect.params, redirect.options);
           });
       }
-    });
+    }
   }
 
   var uiPermission = angular
@@ -438,10 +482,11 @@
   /**
    * State Access rights map factory
    * @function
+   * @name permission.ui.PermStatePermissionMap
    *
    * @param PermPermissionMap {permission.PermPermissionMap|Function}
    *
-   * @return {permission.ui.StatePermissionMap}
+   * @return {permission.ui.PermStatePermissionMap}
    */
   function PermStatePermissionMap(PermPermissionMap) {
     'ngInject';
@@ -450,7 +495,7 @@
 
     /**
      * Constructs map instructing authorization service how to handle authorizing
-     * @constructor permission.ui.StatePermissionMap
+     * @constructor permission.ui.PermStatePermissionMap
      * @extends permission.PermPermissionMap
      */
     function StatePermissionMap(state) {
