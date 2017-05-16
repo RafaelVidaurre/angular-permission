@@ -29,6 +29,7 @@ function config($stateProvider) {
 }
 
 /**
+ * @param $injector {Object}
  * @param $rootScope {Object}
  * @param $state {Object}
  * @param PermTransitionProperties {permission.PermTransitionProperties}
@@ -36,14 +37,56 @@ function config($stateProvider) {
  * @param PermStateAuthorization {permission.ui.PermStateAuthorization}
  * @param PermStatePermissionMap {permission.ui.PermStatePermissionMap}
  */
-function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents, PermStateAuthorization, PermStatePermissionMap) {
+function run($injector, $rootScope, $state, PermTransitionProperties, PermTransitionEvents, PermStateAuthorization, PermStatePermissionMap) {
   'ngInject';
 
-  /**
-   * State transition interceptor
-   */
-  $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
+  // For ui-router 1.x use $transitions web hook
+  if ($injector.has('$transitions')) {
+    var $transitions = $injector.get('$transitions');
+    $transitions.onBefore({}, handleOnBeforeWebHook);
+    // For ui-router 0.x use old-style eventing
+  } else {
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
+      handleStateChangeStartEvent(event, toState, toParams, fromState, fromParams, options);
+    });
+  }
 
+  /**
+   * State transition web hook
+   * @param transition {Object}
+   */
+  function handleOnBeforeWebHook(transition) {
+    setTransitionProperties(transition);
+    var statePermissionMap = new PermStatePermissionMap(PermTransitionProperties.toState);
+
+    return PermStateAuthorization
+      .authorizeByPermissionMap(statePermissionMap)
+      .catch(function (rejectedPermission) {
+        return statePermissionMap
+          .resolveRedirectState(rejectedPermission)
+          .then(function (redirect) {
+            $state.go(redirect.state, redirect.params, redirect.options);
+          });
+      });
+
+    /**
+     * Updates values of `PermTransitionProperties` holder object
+     * @method
+     * @private
+     */
+    function setTransitionProperties(transition) {
+      PermTransitionProperties.toState = transition.to();
+      PermTransitionProperties.toParams = transition.params('to');
+      PermTransitionProperties.fromState = transition.from();
+      PermTransitionProperties.fromParams = transition.params('from');
+      PermTransitionProperties.options = transition.options();
+    }
+  }
+
+  /**
+   * State transition event interceptor
+   */
+  function handleStateChangeStartEvent(event, toState, toParams, fromState, fromParams, options) {
     if (!isAuthorizationFinished()) {
       setStateAuthorizationStatus(true);
       setTransitionProperties();
@@ -69,6 +112,7 @@ function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents,
         setStateAuthorizationStatus(false);
       }
     }
+
 
     /**
      * Updates values of `PermTransitionProperties` holder object
@@ -140,7 +184,7 @@ function run($rootScope, $state, PermTransitionProperties, PermTransitionEvents,
           $state.go(redirect.state, redirect.params, redirect.options);
         });
     }
-  });
+  }
 }
 
 var uiPermission = angular

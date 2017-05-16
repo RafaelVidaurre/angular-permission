@@ -30,6 +30,7 @@ module.exports = function () {
       files: {
         '<%= paths.dist %>/<%= pkg.name %>.js': [
           '<%= paths.src %>/permission/permission.js',
+          '<%= paths.src %>/permission/permissionProvider.js',
           '<%= paths.src %>/permission/decorators/$q.js',
           '<%= paths.src %>/permission/strategies/PermissionStrategies.js',
           '<%= paths.src %>/permission/transition/TransitionProperties.js',

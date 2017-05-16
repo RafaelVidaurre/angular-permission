@@ -3,10 +3,11 @@
 /**
  * State Access rights map factory
  * @function
+ * @name permission.ui.PermStatePermissionMap
  *
  * @param PermPermissionMap {permission.PermPermissionMap|Function}
  *
- * @return {permission.ui.StatePermissionMap}
+ * @return {permission.ui.PermStatePermissionMap}
  */
 function PermStatePermissionMap(PermPermissionMap) {
   'ngInject';
@@ -15,7 +16,7 @@ function PermStatePermissionMap(PermPermissionMap) {
 
   /**
    * Constructs map instructing authorization service how to handle authorizing
-   * @constructor permission.ui.StatePermissionMap
+   * @constructor permission.ui.PermStatePermissionMap
    * @extends permission.PermPermissionMap
    */
   function StatePermissionMap(state) {

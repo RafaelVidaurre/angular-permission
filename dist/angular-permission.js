@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v5.1.1 - 2017-01-31
+ * @version v5.3.0 - 2017-05-05
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -21,12 +21,70 @@
   PermRoleStore.$inject = ['PermRole'];
   PermissionDirective.$inject = ['$log', '$injector', 'PermPermissionMap', 'PermPermissionStrategies'];
   PermAuthorization.$inject = ['$q'];
-  PermPermissionMap.$inject = ['$q', '$log', '$injector', 'PermTransitionProperties', 'PermRoleStore', 'PermPermissionStore'];
+  PermPermissionMap.$inject = ['$q', '$log', '$injector', '$permission', 'PermTransitionProperties', 'PermRoleStore', 'PermPermissionStore'];
   var permission = angular.module('permission', []);
 
+  /* istanbul ignore if  */
   if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
     module.exports = permission.name;
   }
+
+  /**
+   * Permission module configuration provider
+   *
+   * @name permission.permissionProvider
+   */
+  function $permission() {
+    'ngInject';
+
+    var defaultOnAuthorizedMethod = 'showElement';
+    var defaultOnUnauthorizedMethod = 'hideElement';
+    var suppressUndefinedPermissionWarning = false;
+
+    /**
+     * Methods allowing to alter default directive onAuthorized behaviour in permission directive
+     * @methodOf permission.permissionProvider
+     *
+     * @param onAuthorizedMethod {String} One of permission.PermPermissionStrategies method names
+     */
+    this.setDefaultOnAuthorizedMethod = function (onAuthorizedMethod) { // jshint ignore:line
+      defaultOnAuthorizedMethod = onAuthorizedMethod;
+    };
+
+    /**
+     * Methods allowing to alter default directive onUnauthorized behaviour in permission directive
+     * @methodOf permission.permissionProvider
+     *
+     * @param onUnauthorizedMethod {String} One of permission.PermPermissionStrategies method names
+     */
+    this.setDefaultOnUnauthorizedMethod = function (onUnauthorizedMethod) { // jshint ignore:line
+      defaultOnUnauthorizedMethod = onUnauthorizedMethod;
+    };
+
+
+    /**
+     * When set to true hides permission warning for undefined roles and permissions
+     * @methodOf permission.permissionProvider
+     *
+     * @param value {Boolean}
+     */
+    this.suppressUndefinedPermissionWarning = function (value) { // jshint ignore:line
+      suppressUndefinedPermissionWarning = value;
+    };
+
+
+    this.$get = function () { // jshint ignore:line
+      return {
+        defaultOnAuthorizedMethod: defaultOnAuthorizedMethod,
+        defaultOnUnauthorizedMethod: defaultOnUnauthorizedMethod,
+        suppressUndefinedPermissionWarning: suppressUndefinedPermissionWarning
+      };
+    };
+  }
+
+  angular
+    .module('permission')
+    .provider('$permission', $permission);
 
   /**
    * Extends $q implementation by A+ *any* method
@@ -702,7 +760,7 @@
         onUnauthorized: '&?permissionOnUnauthorized'
       },
       controllerAs: 'permission',
-      controller: ['$scope', '$element', function ($scope, $element) {
+      controller: ['$scope', '$element', '$permission', function ($scope, $element, $permission) {
         var permission = this;
 
         $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
@@ -759,7 +817,8 @@
           if (angular.isFunction(permission.onAuthorized)) {
             permission.onAuthorized()($element);
           } else {
-            PermPermissionStrategies.showElement($element);
+            var onAuthorizedMethodName = $permission.defaultOnAuthorizedMethod;
+            PermPermissionStrategies[onAuthorizedMethodName]($element);
           }
         }
 
@@ -771,7 +830,8 @@
           if (angular.isFunction(permission.onUnauthorized)) {
             permission.onUnauthorized()($element);
           } else {
-            PermPermissionStrategies.hideElement($element);
+            var onUnauthorizedMethodName = $permission.defaultOnUnauthorizedMethod;
+            PermPermissionStrategies[onUnauthorizedMethodName]($element);
           }
         }
       }]
@@ -868,13 +928,14 @@
    * @param $q {Object} Angular promise implementation
    * @param $log {Object} Angular logging utility
    * @param $injector {Object} Dependency injection instance
+   * @param $permission {Object} Permission module configuration object
    * @param PermTransitionProperties {permission.PermTransitionProperties} Helper storing ui-router transition parameters
    * @param PermRoleStore {permission.PermRoleStore} Role definition storage
    * @param PermPermissionStore {permission.PermPermissionStore} Permission definition storage
    *
    * @return {permission.PermissionMap}
    */
-  function PermPermissionMap($q, $log, $injector, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
+  function PermPermissionMap($q, $log, $injector, $permission, PermTransitionProperties, PermRoleStore, PermPermissionStore) {
     'ngInject';
 
     /**
@@ -939,7 +1000,9 @@
           return permission.validatePermission();
         }
 
-        $log.warn('Permission or role ' + privilegeName + ' was not defined.');
+        if (!$permission.suppressUndefinedPermissionWarning) {
+          $log.warn('Permission or role ' + privilegeName + ' was not defined.');
+        }
         return $q.reject(privilegeName);
       });
     };
