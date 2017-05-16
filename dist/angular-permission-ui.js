@@ -1,7 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v5.3.0 - 2017-05-05
+ * @version v5.3.1 - 2017-05-16
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -26,7 +26,8 @@
   function config($stateProvider) {
     'ngInject';
 
-    function $state($delegate) {
+    $stateProvider.decorator('$delegate', function ($delegate) {
+
       /**
        * Property containing full state object definition
        *
@@ -40,9 +41,7 @@
       };
 
       return $delegate;
-    }
-
-    $stateProvider.decorator('$state', $state);
+    });
   }
 
   /**
