@@ -42,6 +42,6 @@ describe('permission.ng', function() {
     element(by.id('authorize')).click();
     element(by.id('work')).click();
 
-    expect(browser.getLocationAbsUrl()).toBe('/work');
+    expect(browser.getLocationAbsUrl()).toBe('/#work');
   });
 });
