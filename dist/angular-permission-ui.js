@@ -1,7 +1,7 @@
 /**
  * angular-permission-ui
  * Extension module of angular-permission for access control within ui-router
- * @version v5.3.1 - 2017-05-16
+ * @version v5.3.2 - 2017-05-29
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -81,7 +81,7 @@
           return statePermissionMap
             .resolveRedirectState(rejectedPermission)
             .then(function (redirect) {
-              $state.go(redirect.state, redirect.params, redirect.options);
+              return transition.router.stateService.target(redirect.state, redirect.params, redirect.options);
             });
         });
 
