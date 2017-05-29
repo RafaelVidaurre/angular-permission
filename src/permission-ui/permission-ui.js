@@ -65,7 +65,7 @@ function run($injector, $rootScope, $state, PermTransitionProperties, PermTransi
         return statePermissionMap
           .resolveRedirectState(rejectedPermission)
           .then(function (redirect) {
-            $state.go(redirect.state, redirect.params, redirect.options);
+            return transition.router.stateService.target(redirect.state, redirect.params, redirect.options);
           });
       });
 
