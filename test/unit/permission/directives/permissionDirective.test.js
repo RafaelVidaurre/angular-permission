@@ -114,6 +114,28 @@ describe('permission', function () {
         expect(element.hasClass('ng-hide')).toBeTruthy();
       });
 
+      it('should hide element when the event is triggered', function () {
+        // GIVEN
+        var element = angular.element('<div permission permission-event="\'permission:reload\'" permission-only="only"></div>');
+        $rootScope.only = ['USER'];
+        spyOn($rootScope, '$broadcast').and.callThrough();
+
+        // WHEN
+        $compile(element)($rootScope);
+        $rootScope.$digest();
+
+        // THEN
+        expect(element.hasClass('ng-hide')).toBeFalsy();
+
+        PermRoleStore.defineRole('USER', function () {
+          return false;
+        });
+        $rootScope.$broadcast('permission:reload');
+        $rootScope.$digest();
+
+        expect(element.hasClass('ng-hide')).toBeTruthy();
+      });
+
       it('should watch for changes in "permission-only" and "permission-except" attributes', function () {
         // GIVEN
         var element = angular.element('<div permission permission-only="only"></div>');
