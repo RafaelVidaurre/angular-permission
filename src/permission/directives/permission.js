@@ -44,6 +44,7 @@
  *     sref: string
  *     only: string,
  *     except: string,
+ *     event: string,
  *     onAuthorized: function,
  *     onUnauthorized: function
  *   },
@@ -60,6 +61,7 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
       sref: '=?permissionSref',
       only: '=?permissionOnly',
       except: '=?permissionExcept',
+      event: '=?permissionEvent',
       onAuthorized: '&?permissionOnAuthorized',
       onUnauthorized: '&?permissionOnUnauthorized'
     },
@@ -67,38 +69,51 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
     controller: function ($scope, $element, $permission) {
       var permission = this;
 
-      $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
-        function () {
-          try {
-            if (isSrefStateDefined()) {
-              var PermStateAuthorization = $injector.get('PermStateAuthorization');
+      if (permission.event) {
+        permission.stopEvent = $scope.$on(permission.event, checkPermission);
+      }
+      $scope.$watchGroup(['permission.only', 'permission.except', 'sref', 'event'],
+        checkPermission);
 
-              PermStateAuthorization
-                .authorizeByStateName(permission.sref)
-                .then(function () {
-                  onAuthorizedAccess();
-                })
-                .catch(function () {
-                  onUnauthorizedAccess();
-                });
-            } else {
-              var PermAuthorization = $injector.get('PermAuthorization');
-              var permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
+      function checkPermission() {
+        if (typeof permission.stopEvent === 'function') {
+          permission.stopEvent();
+          delete permission.stopEvent;
+        }
+        if (permission.event) {
+          permission.stopEvent = $scope.$on(permission.event, checkPermission);
+        }
+        try {
+          if (isSrefStateDefined()) {
+            var PermStateAuthorization = $injector.get('PermStateAuthorization');
 
-              PermAuthorization
-                .authorizeByPermissionMap(permissionMap)
-                .then(function () {
-                  onAuthorizedAccess();
-                })
-                .catch(function () {
-                  onUnauthorizedAccess();
-                });
-            }
-          } catch (e) {
-            onUnauthorizedAccess();
-            $log.error(e.message);
+            PermStateAuthorization
+              .authorizeByStateName(permission.sref)
+              .then(function () {
+                onAuthorizedAccess();
+              })
+              .catch(function () {
+                onUnauthorizedAccess();
+              });
+          } else {
+            var PermAuthorization = $injector.get('PermAuthorization');
+            var permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
+
+            PermAuthorization
+              .authorizeByPermissionMap(permissionMap)
+              .then(function () {
+                onAuthorizedAccess();
+              })
+              .catch(function () {
+                onUnauthorizedAccess();
+              });
           }
-        });
+        } catch (e) {
+          onUnauthorizedAccess();
+          $log.error(e.message);
+        }
+      }
+
 
       /**
        * Returns true when permissions should be checked based on state name
@@ -135,6 +150,12 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
           PermPermissionStrategies[onUnauthorizedMethodName]($element);
         }
       }
+
+      $scope.$on('$destroy', function () {
+        if (typeof permission.stopEvent === 'function') {
+          permission.stopEvent();
+        }
+      });
     }
   };
 }

@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v5.3.2 - 2017-05-29
+ * @version v5.3.3 - 2017-07-17
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -740,6 +740,7 @@
    *     sref: string
    *     only: string,
    *     except: string,
+   *     event: string,
    *     onAuthorized: function,
    *     onUnauthorized: function
    *   },
@@ -756,6 +757,7 @@
         sref: '=?permissionSref',
         only: '=?permissionOnly',
         except: '=?permissionExcept',
+        event: '=?permissionEvent',
         onAuthorized: '&?permissionOnAuthorized',
         onUnauthorized: '&?permissionOnUnauthorized'
       },
@@ -763,41 +765,54 @@
       controller: ['$scope', '$element', '$permission', function ($scope, $element, $permission) {
         var permission = this;
 
-        $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
-          function () {
-            try {
-              if (isSrefStateDefined()) {
-                var PermStateAuthorization = $injector.get('PermStateAuthorization');
+        if (permission.event) {
+          permission.stopEvent = $scope.$on(permission.event, checkPermission);
+        }
+        $scope.$watchGroup(['permission.only', 'permission.except', 'sref', 'event'],
+          checkPermission);
 
-                PermStateAuthorization
-                  .authorizeByStateName(permission.sref)
-                  .then(function () {
-                    onAuthorizedAccess();
-                  })
-                  .catch(function () {
-                    onUnauthorizedAccess();
-                  });
-              } else {
-                var PermAuthorization = $injector.get('PermAuthorization');
-                var permissionMap = new PermPermissionMap({
-                  only: permission.only,
-                  except: permission.except
+        function checkPermission() {
+          if (typeof permission.stopEvent === 'function') {
+            permission.stopEvent();
+            delete permission.stopEvent;
+          }
+          if (permission.event) {
+            permission.stopEvent = $scope.$on(permission.event, checkPermission);
+          }
+          try {
+            if (isSrefStateDefined()) {
+              var PermStateAuthorization = $injector.get('PermStateAuthorization');
+
+              PermStateAuthorization
+                .authorizeByStateName(permission.sref)
+                .then(function () {
+                  onAuthorizedAccess();
+                })
+                .catch(function () {
+                  onUnauthorizedAccess();
                 });
+            } else {
+              var PermAuthorization = $injector.get('PermAuthorization');
+              var permissionMap = new PermPermissionMap({
+                only: permission.only,
+                except: permission.except
+              });
 
-                PermAuthorization
-                  .authorizeByPermissionMap(permissionMap)
-                  .then(function () {
-                    onAuthorizedAccess();
-                  })
-                  .catch(function () {
-                    onUnauthorizedAccess();
-                  });
-              }
-            } catch (e) {
-              onUnauthorizedAccess();
-              $log.error(e.message);
+              PermAuthorization
+                .authorizeByPermissionMap(permissionMap)
+                .then(function () {
+                  onAuthorizedAccess();
+                })
+                .catch(function () {
+                  onUnauthorizedAccess();
+                });
             }
-          });
+          } catch (e) {
+            onUnauthorizedAccess();
+            $log.error(e.message);
+          }
+        }
+
 
         /**
          * Returns true when permissions should be checked based on state name
@@ -834,6 +849,12 @@
             PermPermissionStrategies[onUnauthorizedMethodName]($element);
           }
         }
+
+        $scope.$on('$destroy', function () {
+          if (typeof permission.stopEvent === 'function') {
+            permission.stopEvent();
+          }
+        });
       }]
     };
   }
