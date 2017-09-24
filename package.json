@@ -41,7 +41,7 @@
   },
   "peerDependencies": {
     "angular-route": ">=1.4.8",
-    "angular-ui-router": "*"
+    "@uirouter/angularjs": "*"
   },
   "devDependencies": {
     "grunt": "^1.0.0",
