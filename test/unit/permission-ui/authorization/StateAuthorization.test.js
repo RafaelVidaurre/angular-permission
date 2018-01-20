@@ -32,6 +32,14 @@ describe('permission.ui', function () {
           return false;
         });
 
+        PermPermissionStore.definePermission('editTopic', function () {
+          return false;
+        });
+
+        PermPermissionStore.definePermission('deleteUser', function () {
+          return true;
+        });
+
         PermRoleStore.defineRole('USER', ['editPosts']);
         PermRoleStore.defineRole('ADMIN', ['editUsers']);
       });
@@ -43,7 +51,6 @@ describe('permission.ui', function () {
           state.$$permissionState.and.callFake(function () {
             return {path: [{data: {permissions: {except: ['editUsers']}}}]};
           });
-
 
           // WHEN
           var map = new PermStatePermissionMap(state);
@@ -117,6 +124,102 @@ describe('permission.ui', function () {
           expect(authorizationResult).toBePromise();
           expect(authorizationResult).toBeRejectedWith('editPosts', jasmine.any(Object));
         });
+
+        it('should return resolved promise when a parent and a child state\'s "except" permissions are met', function () {
+          // GIVEN
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
+            return {path: [
+              {data: {permissions: {except: ['editUsers']}}},
+              {data: {permissions: {except: ['editTopic']}}}
+            ]};
+          });
+
+          // WHEN
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
+
+          // THEN
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeResolved();
+        });
+
+        it('should return rejected promise when a parent state\'s "except" permissions are not met', function () {
+          // GIVEN
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
+            return {path: [
+              {data: {permissions: {except: ['editPosts', 'editUsers']}}},
+              {data: {permissions: {}}}
+            ]};
+          });
+
+          // WHEN
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
+
+          // THEN
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejectedWith('editPosts', jasmine.any(Object));
+        });
+
+        it('should return rejected promise when a parent state\'s "except" permissions are met and child state\'s "except" permissions are not met', function () {
+          // GIVEN
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
+            return {path: [
+              {data: {permissions: {except: ['editUsers']}}},
+              {data: {permissions: {except: ['editPosts']}}}
+            ]};
+          });
+
+          // WHEN
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
+
+          // THEN
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejectedWith('editPosts', jasmine.any(Object));
+        });
+
+        it('should return rejected promise when a parent state\'s "except" permissions are not met and child state\'s "except" permissions are met', function () {
+          // GIVEN
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
+            return {path: [
+              {data: {permissions: {except: ['editPosts']}}},
+              {data: {permissions: {except: ['editUsers']}}}
+            ]};
+          });
+
+          // WHEN
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
+
+          // THEN
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejectedWith('editPosts', jasmine.any(Object));
+        });
+
+        it('should return rejected promise when a parent state\'s "except" permissions are not met and child state\'s "except" permissions are not met', function () {
+          // GIVEN
+          var state = jasmine.createSpyObj('state', ['$$permissionState']);
+          state.$$permissionState.and.callFake(function () {
+            return {path: [
+              {data: {permissions: {except: ['editPosts']}}},
+              {data: {permissions: {except: ['deleteUser']}}}
+            ]};
+          });
+
+          // WHEN
+          var map = new PermStatePermissionMap(state);
+          var authorizationResult = PermStateAuthorization.authorizeByPermissionMap(map);
+
+          // THEN
+          expect(authorizationResult).toBePromise();
+          expect(authorizationResult).toBeRejectedWith('editPosts', jasmine.any(Object));
+        });
+
       });
     });
   });

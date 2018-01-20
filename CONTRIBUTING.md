@@ -10,7 +10,7 @@ When creating an issue please include:
 
 Want to submit a Pull Request?
 ============================
-1. Create a branch from the `ng1`/`ng2` branch accordingly to used angular version
+1. Create a branch from the `development` branch
 2. Implement your new feature
-3. Submit a pull request to be merged in the `ng1`/`ng2` branch
+3. Submit a pull request to be merged in the `development` branch
 

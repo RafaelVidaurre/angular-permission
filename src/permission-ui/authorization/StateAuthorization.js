@@ -69,12 +69,18 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
   function resolveExceptStatePermissionMap(deferred, map) {
     var exceptPromises = resolveStatePermissionMap(map.except, map);
 
-    $q.all(exceptPromises)
-      .then(function (rejectedPermissions) {
-        deferred.reject(rejectedPermissions[0]);
-      })
-      .catch(function () {
+    // Reverse the promises, so if any "except" privileges are not met, the promise rejects
+    $q.all(reversePromises(exceptPromises))
+      .then(function () {
         resolveOnlyStatePermissionMap(deferred, map);
+      })
+      .catch(function (rejectedPermissions) {
+
+        if (!angular.isArray(rejectedPermissions)) {
+          rejectedPermissions = [rejectedPermissions];
+        }
+
+        deferred.reject(rejectedPermissions[0]);
       });
   }
 
@@ -127,6 +133,23 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
           }
           return resolvedPermissions;
         });
+    });
+  }
+
+  /**
+   * Creates an Array of Promises that resolve when rejected, and reject when resolved
+   * @methodOf permission.ui.PermStateAuthorization
+   * @private
+   *
+   * @param promises {Array} Array of promises
+   *
+   * @returns {Array<Promise>} Promise collection
+   */
+  function reversePromises (promises) {
+    return promises.map(function (promise) {
+      var d = $q.defer();
+      promise.then(d.reject, d.resolve);
+      return d.promise;
     });
   }
 }

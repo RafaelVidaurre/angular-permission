@@ -23,5 +23,5 @@ deploy:
     secure: XF7TJRCaz5+otwBHl07ppHsWBYpwJ6sEw4PxzAvkljBcqsZv826nOECQjNaFT0CtfnwwpQ+rZhpl1sdB9BhndmbGgkjyXNGAa1rLzDnWGruh7FR80mpZ43LmEDNzgQcJqS70hj2uWcosRnveVhkllsVK3uf6gKTsl4TnBGWYPaU=
   on:
     tags: true
-    repo: Narzerus/angular-permission
+    repo: RafaelVidaurre/angular-permission
     branch: master
