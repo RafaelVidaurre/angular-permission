@@ -33,10 +33,10 @@ function PermPermission($q, $injector, PermTransitionProperties) {
    *
    * @returns {Promise}
    */
-  Permission.prototype.validatePermission = function () {
+  Permission.prototype.validatePermission = function (transitionProperties) {
     var validationLocals = {
       permissionName: this.permissionName,
-      transitionProperties: PermTransitionProperties
+      transitionProperties: transitionProperties||PermTransitionProperties
     };
     var validationResult = $injector.invoke(this.validationFunction, null, validationLocals);
 

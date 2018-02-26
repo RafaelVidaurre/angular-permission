@@ -58,6 +58,7 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
     restrict: 'A',
     bindToController: {
       sref: '=?permissionSref',
+      srefOptions: '=?permissionSrefOptions',
       only: '=?permissionOnly',
       except: '=?permissionExcept',
       onAuthorized: '&?permissionOnAuthorized',
@@ -67,14 +68,16 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
     controller: function ($scope, $element, $permission) {
       var permission = this;
 
-      $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
+      $scope.$watchGroup(['permission.only', 'permission.except', 'sref','permissionSrefOptions'],
         function () {
           try {
             if (isSrefStateDefined()) {
               var PermStateAuthorization = $injector.get('PermStateAuthorization');
 
               PermStateAuthorization
-                .authorizeByStateName(permission.sref)
+                .authorizeByStateName(permission.sref, {
+					toParams: $scope.$eval(permission.srefOptions)
+				})
                 .then(function () {
                   onAuthorizedAccess();
                 })
