@@ -754,7 +754,7 @@
       restrict: 'A',
       bindToController: {
         sref: '=?permissionSref',
-        srefOptions: '=?permissionSrefOptions',
+        options: '=?permissionOptions',
         only: '=?permissionOnly',
         except: '=?permissionExcept',
         onAuthorized: '&?permissionOnAuthorized',
@@ -764,16 +764,22 @@
       controller: ['$scope', '$element', '$permission', function ($scope, $element, $permission) {
         var permission = this;
 
-        $scope.$watchGroup(['permission.only', 'permission.except', 'sref', 'permissionSrefOptions'],
+        $scope.$watchGroup(['permission.only', 'permission.except', 'sref', 'permissionOptions'],
           function () {
             try {
+              var options;
+              if (permission.options) {
+                options = $scope.$eval(permission.options);
+              }
+              var authorizeBy;
               if (isSrefStateDefined()) {
                 var PermStateAuthorization = $injector.get('PermStateAuthorization');
-
-                PermStateAuthorization
-                  .authorizeByStateName(permission.sref, {
-                    toParams: $scope.$eval(permission.srefOptions)
-                  })
+                if (options) {
+                  authorizeBy = PermStateAuthorization.authorizeByStateName(permission.sref, options);
+                } else {
+                  authorizeBy = PermStateAuthorization.authorizeByStateName(permission.sref);
+                }
+                authorizeBy
                   .then(function () {
                     onAuthorizedAccess();
                   })
@@ -786,9 +792,12 @@
                   only: permission.only,
                   except: permission.except
                 });
-
-                PermAuthorization
-                  .authorizeByPermissionMap(permissionMap)
+                if (options) {
+                  authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap, options); //TODO add tests to increase coverage and clean code the if is unneeded
+                } else {
+                  authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap);
+                }
+                authorizeBy
                   .then(function () {
                     onAuthorizedAccess();
                   })

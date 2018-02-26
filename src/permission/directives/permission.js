@@ -58,7 +58,7 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
     restrict: 'A',
     bindToController: {
       sref: '=?permissionSref',
-      srefOptions: '=?permissionSrefOptions',
+      options: '=?permissionOptions',
       only: '=?permissionOnly',
       except: '=?permissionExcept',
       onAuthorized: '&?permissionOnAuthorized',
@@ -68,34 +68,43 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
     controller: function ($scope, $element, $permission) {
       var permission = this;
 
-      $scope.$watchGroup(['permission.only', 'permission.except', 'sref','permissionSrefOptions'],
+      $scope.$watchGroup(['permission.only', 'permission.except', 'sref','permissionOptions'],
         function () {
           try {
+            var options;
+            if (permission.options){
+              options=$scope.$eval(permission.options);
+            }
+            var authorizeBy;
             if (isSrefStateDefined()) {
               var PermStateAuthorization = $injector.get('PermStateAuthorization');
-
-              PermStateAuthorization
-                .authorizeByStateName(permission.sref, {
-					toParams: $scope.$eval(permission.srefOptions)
-				})
-                .then(function () {
-                  onAuthorizedAccess();
-                })
-                .catch(function () {
-                  onUnauthorizedAccess();
-                });
+              if (options){
+				  authorizeBy=PermStateAuthorization.authorizeByStateName(permission.sref, options);
+              }else{
+				  authorizeBy=PermStateAuthorization.authorizeByStateName(permission.sref);
+              }
+              authorizeBy
+                  .then(function () {
+                    onAuthorizedAccess();
+                  })
+                  .catch(function () {
+                    onUnauthorizedAccess();
+                  });
             } else {
               var PermAuthorization = $injector.get('PermAuthorization');
               var permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
-
-              PermAuthorization
-                .authorizeByPermissionMap(permissionMap)
-                .then(function () {
-                  onAuthorizedAccess();
-                })
-                .catch(function () {
-                  onUnauthorizedAccess();
-                });
+				if (options){
+					authorizeBy=PermAuthorization.authorizeByPermissionMap(permissionMap,options);//TODO wait feedback to clean up the code
+				}else {
+					authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap);
+				}
+				authorizeBy
+                    .then(function () {
+                      onAuthorizedAccess();
+                    })
+                    .catch(function () {
+                      onUnauthorizedAccess();
+                    });
             }
           } catch (e) {
             onUnauthorizedAccess();

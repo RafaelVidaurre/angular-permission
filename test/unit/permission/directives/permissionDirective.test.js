@@ -181,6 +181,22 @@ describe('permission', function () {
           redirectTo: undefined
         }));
       });
+      it('should call authorizeByPermissionMap method', function () {
+        // GIVEN
+        var element = angular.element('<div permission permission-except="[\'USER\']" permission-options="{params:2}"></div>');
+        spyOn(PermAuthorization, 'authorizeByPermissionMap');
+
+        // WHEN
+        $compile(element)($rootScope);
+		$rootScope.$digest();
+
+		// THEN
+		expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
+            only: undefined,
+            except: ['USER'],
+            redirectTo: undefined
+		},{params:2}));
+      });
 
       it('should resolve multiple authorization calls properly', function () {
         // GIVEN
