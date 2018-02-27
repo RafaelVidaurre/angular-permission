@@ -767,12 +767,13 @@
         $scope.$watchGroup(['permission.only', 'permission.except', 'sref', 'permissionOptions'],
           function () {
             try {
+              var options=angular.copy(permission.options);
               if (angular.isString(permission.options)){
-                permission.options=$scope.$eval(permission.options);
+                options=$scope.$eval(options);
               }
               if (isSrefStateDefined()) {
                 var PermStateAuthorization = $injector.get('PermStateAuthorization');
-                PermStateAuthorization.authorizeByStateName(permission.sref,permission.options)
+                PermStateAuthorization.authorizeByStateName(permission.sref,options)
                   .then(function () {
                     onAuthorizedAccess();
                   })
