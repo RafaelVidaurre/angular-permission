@@ -71,19 +71,9 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
       $scope.$watchGroup(['permission.only', 'permission.except', 'sref','permissionOptions'],
         function () {
           try {
-            var options;
-            if (permission.options){
-              options=$scope.$eval(permission.options);
-            }
-            var authorizeBy;
             if (isSrefStateDefined()) {
               var PermStateAuthorization = $injector.get('PermStateAuthorization');
-              if (options){
-				  authorizeBy=PermStateAuthorization.authorizeByStateName(permission.sref, options);
-              }else{
-				  authorizeBy=PermStateAuthorization.authorizeByStateName(permission.sref);
-              }
-              authorizeBy
+                PermStateAuthorization.authorizeByStateName(permission.sref, $scope.$eval(permission.options))
                   .then(function () {
                     onAuthorizedAccess();
                   })
@@ -93,12 +83,9 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
             } else {
               var PermAuthorization = $injector.get('PermAuthorization');
               var permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
-				if (options){
-					authorizeBy=PermAuthorization.authorizeByPermissionMap(permissionMap,options);//TODO wait feedback to clean up the code
-				}else {
-					authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap);
-				}
-				authorizeBy
+
+              PermAuthorization
+                  .authorizeByPermissionMap(permissionMap,$scope.$eval(permission.options))
                     .then(function () {
                       onAuthorizedAccess();
                     })

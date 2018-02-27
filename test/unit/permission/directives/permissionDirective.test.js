@@ -49,6 +49,7 @@ describe('permission', function () {
         PermRoleStore.defineRole('ADMIN', function () {
           return false;
         });
+
       });
 
       it('should show element if authorized when permissions are passed as string array', function () {
@@ -179,23 +180,7 @@ describe('permission', function () {
           only: undefined,
           except: ['USER'],
           redirectTo: undefined
-        }));
-      });
-      it('should call authorizeByPermissionMap method', function () {
-        // GIVEN
-        var element = angular.element('<div permission permission-except="[\'USER\']" permission-options="{params:2}"></div>');
-        spyOn(PermAuthorization, 'authorizeByPermissionMap');
-
-        // WHEN
-        $compile(element)($rootScope);
-		$rootScope.$digest();
-
-		// THEN
-		expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
-            only: undefined,
-            except: ['USER'],
-            redirectTo: undefined
-		},{params:2}));
+        }),undefined);
       });
 
       it('should resolve multiple authorization calls properly', function () {
@@ -219,19 +204,19 @@ describe('permission', function () {
           only: ['USER'],
           except: undefined,
           redirectTo: undefined
-        }));
+        }),undefined);
 
         expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: ['ADMIN'],
           except: undefined,
           redirectTo: undefined
-        }));
+        }),undefined);
 
         expect(PermAuthorization.authorizeByPermissionMap).toHaveBeenCalledWith(new PermPermissionMap({
           only: ['AUTHORIZED'],
           except: undefined,
           redirectTo: undefined
-        }));
+        }),undefined);
 
         expect(angular.element(element[0]).hasClass('ng-hide')).toBeTruthy();
         expect(angular.element(element[1]).hasClass('ng-hide')).toBeFalsy();

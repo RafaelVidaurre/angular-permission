@@ -767,15 +767,11 @@
         $scope.$watchGroup(['permission.only', 'permission.except', 'sref', 'permissionOptions'],
           function () {
             try {
-              var options;
-              if (permission.options) {
-                options = $scope.$eval(permission.options);
-              }
               var authorizeBy;
               if (isSrefStateDefined()) {
                 var PermStateAuthorization = $injector.get('PermStateAuthorization');
-                if (options) {
-                  authorizeBy = PermStateAuthorization.authorizeByStateName(permission.sref, options);
+                if (permission.options) {
+                  authorizeBy = PermStateAuthorization.authorizeByStateName(permission.sref, $scope.$eval(permission.options));
                 } else {
                   authorizeBy = PermStateAuthorization.authorizeByStateName(permission.sref);
                 }
@@ -792,8 +788,8 @@
                   only: permission.only,
                   except: permission.except
                 });
-                if (options) {
-                  authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap, options); //TODO add tests to increase coverage and clean code the if is unneeded
+                if (permission.options) {
+                  authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap, $scope.$eval(permission.options)); //TODO wait feedback to clean up the code
                 } else {
                   authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap);
                 }
