@@ -66,17 +66,17 @@ function PermPermissionMap($q, $log, $injector, $permission, PermTransitionPrope
    *
    * @return {Array<Promise>}
    */
-  PermissionMap.prototype.resolvePropertyValidity = function (property) {
+  PermissionMap.prototype.resolvePropertyValidity = function (property,options) {
 
     return property.map(function (privilegeName) {
       if (PermRoleStore.hasRoleDefinition(privilegeName)) {
         var role = PermRoleStore.getRoleDefinition(privilegeName);
-        return role.validateRole();
+        return role.validateRole(options);
       }
 
       if (PermPermissionStore.hasPermissionDefinition(privilegeName)) {
         var permission = PermPermissionStore.getPermissionDefinition(privilegeName);
-        return permission.validatePermission();
+        return permission.validatePermission(options);
       }
 
       if (!$permission.suppressUndefinedPermissionWarning) {

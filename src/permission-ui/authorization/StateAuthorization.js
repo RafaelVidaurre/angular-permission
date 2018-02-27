@@ -23,8 +23,8 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
    *
    * @return {promise}
    */
-  function authorizeByPermissionMap(statePermissionMap) {
-    return authorizeStatePermissionMap(statePermissionMap);
+  function authorizeByPermissionMap(statePermissionMap,options) {
+    return authorizeStatePermissionMap(statePermissionMap,options);
   }
 
   /**
@@ -34,11 +34,11 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
    * @param stateName {String}
    * @returns {promise}
    */
-  function authorizeByStateName(stateName) {
+  function authorizeByStateName(stateName,options) {
     var srefState = $state.get(stateName);
-    var permissionMap = new PermStatePermissionMap(srefState);
+    var permissionMap = new PermStatePermissionMap(srefState,options);
 
-    return authorizeByPermissionMap(permissionMap);
+    return authorizeByPermissionMap(permissionMap,options);
   }
 
   /**
@@ -50,10 +50,10 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
    *
    * @returns {promise} $q.promise object
    */
-  function authorizeStatePermissionMap(map) {
+  function authorizeStatePermissionMap(map,options) {
     var deferred = $q.defer();
 
-    resolveExceptStatePermissionMap(deferred, map);
+    resolveExceptStatePermissionMap(deferred, map,options);
 
     return deferred.promise;
   }
@@ -66,13 +66,13 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
    * @param deferred {Object} Promise defer
    * @param map {permission.ui.StatePermissionMap} State access rights map
    */
-  function resolveExceptStatePermissionMap(deferred, map) {
-    var exceptPromises = resolveStatePermissionMap(map.except, map);
+  function resolveExceptStatePermissionMap(deferred, map,options) {
+    var exceptPromises = resolveStatePermissionMap(map.except, map,options);
 
     // Reverse the promises, so if any "except" privileges are not met, the promise rejects
     $q.all(reversePromises(exceptPromises))
       .then(function () {
-        resolveOnlyStatePermissionMap(deferred, map);
+        resolveOnlyStatePermissionMap(deferred, map,options);
       })
       .catch(function (rejectedPermissions) {
 
@@ -92,13 +92,13 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
    * @param deferred {Object} Promise defer
    * @param map {permission.ui.StatePermissionMap} State access rights map
    */
-  function resolveOnlyStatePermissionMap(deferred, map) {
+  function resolveOnlyStatePermissionMap(deferred, map,options) {
     if (!map.only.length) {
       deferred.resolve();
       return;
     }
 
-    var onlyPromises = resolveStatePermissionMap(map.only, map);
+    var onlyPromises = resolveStatePermissionMap(map.only, map,options);
 
     $q.all(onlyPromises)
       .then(function (resolvedPermissions) {
@@ -119,13 +119,13 @@ function PermStateAuthorization($q, $state, PermStatePermissionMap) {
    *
    * @returns {Array<Promise>} Promise collection
    */
-  function resolveStatePermissionMap(privilegesNames, map) {
+  function resolveStatePermissionMap(privilegesNames, map,options) {
     if (!privilegesNames.length) {
       return [$q.reject()];
     }
 
     return privilegesNames.map(function (statePrivileges) {
-      var resolvedStatePrivileges = map.resolvePropertyValidity(statePrivileges);
+      var resolvedStatePrivileges = map.resolvePropertyValidity(statePrivileges,options);
       return $q.any(resolvedStatePrivileges)
         .then(function (resolvedPermissions) {
           if (angular.isArray(resolvedPermissions)) {

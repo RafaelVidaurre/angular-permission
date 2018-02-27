@@ -58,6 +58,7 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
     restrict: 'A',
     bindToController: {
       sref: '=?permissionSref',
+      options: '=?permissionOptions',
       only: '=?permissionOnly',
       except: '=?permissionExcept',
       onAuthorized: '&?permissionOnAuthorized',
@@ -67,32 +68,30 @@ function PermissionDirective($log, $injector, PermPermissionMap, PermPermissionS
     controller: function ($scope, $element, $permission) {
       var permission = this;
 
-      $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
+      $scope.$watchGroup(['permission.only', 'permission.except', 'sref','permissionOptions'],
         function () {
           try {
             if (isSrefStateDefined()) {
               var PermStateAuthorization = $injector.get('PermStateAuthorization');
-
-              PermStateAuthorization
-                .authorizeByStateName(permission.sref)
-                .then(function () {
-                  onAuthorizedAccess();
-                })
-                .catch(function () {
-                  onUnauthorizedAccess();
-                });
+                PermStateAuthorization.authorizeByStateName(permission.sref, $scope.$eval(permission.options))
+                  .then(function () {
+                    onAuthorizedAccess();
+                  })
+                  .catch(function () {
+                    onUnauthorizedAccess();
+                  });
             } else {
               var PermAuthorization = $injector.get('PermAuthorization');
               var permissionMap = new PermPermissionMap({only: permission.only, except: permission.except});
 
               PermAuthorization
-                .authorizeByPermissionMap(permissionMap)
-                .then(function () {
-                  onAuthorizedAccess();
-                })
-                .catch(function () {
-                  onUnauthorizedAccess();
-                });
+                  .authorizeByPermissionMap(permissionMap,$scope.$eval(permission.options))
+                    .then(function () {
+                      onAuthorizedAccess();
+                    })
+                    .catch(function () {
+                      onUnauthorizedAccess();
+                    });
             }
           } catch (e) {
             onUnauthorizedAccess();

@@ -35,10 +35,10 @@ function PermRole($q, $injector, PermPermissionStore, PermTransitionProperties) 
    *
    * @returns {Promise} $q.promise object
    */
-  Role.prototype.validateRole = function () {
+  Role.prototype.validateRole = function (transitionProperties) {
     var validationLocals = {
       roleName: this.roleName,
-      transitionProperties: PermTransitionProperties
+      transitionProperties: transitionProperties||PermTransitionProperties
     };
     var validationResult = $injector.invoke(this.validationFunction, null, validationLocals);
 
@@ -121,13 +121,13 @@ function PermRole($q, $injector, PermPermissionStore, PermTransitionProperties) 
    *
    * @return {Function}
    */
-  function preparePermissionEvaluation(permissions) {
+  function preparePermissionEvaluation(permissions,options) {
     return function () {
       var promises = permissions.map(function (permissionName) {
         if (PermPermissionStore.hasPermissionDefinition(permissionName)) {
           var permission = PermPermissionStore.getPermissionDefinition(permissionName);
 
-          return permission.validatePermission();
+          return permission.validatePermission(options);
         }
 
         return $q.reject(permissionName);

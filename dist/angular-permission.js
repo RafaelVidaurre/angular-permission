@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v5.3.2 - 2017-05-29
+ * @version v5.3.2 - 2018-02-27
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -264,10 +264,10 @@
      *
      * @returns {Promise}
      */
-    Permission.prototype.validatePermission = function () {
+    Permission.prototype.validatePermission = function (transitionProperties) {
       var validationLocals = {
         permissionName: this.permissionName,
-        transitionProperties: PermTransitionProperties
+        transitionProperties: transitionProperties || PermTransitionProperties
       };
       var validationResult = $injector.invoke(this.validationFunction, null, validationLocals);
 
@@ -377,10 +377,10 @@
      *
      * @returns {Promise} $q.promise object
      */
-    Role.prototype.validateRole = function () {
+    Role.prototype.validateRole = function (transitionProperties) {
       var validationLocals = {
         roleName: this.roleName,
-        transitionProperties: PermTransitionProperties
+        transitionProperties: transitionProperties || PermTransitionProperties
       };
       var validationResult = $injector.invoke(this.validationFunction, null, validationLocals);
 
@@ -463,13 +463,13 @@
      *
      * @return {Function}
      */
-    function preparePermissionEvaluation(permissions) {
+    function preparePermissionEvaluation(permissions, options) {
       return function () {
         var promises = permissions.map(function (permissionName) {
           if (PermPermissionStore.hasPermissionDefinition(permissionName)) {
             var permission = PermPermissionStore.getPermissionDefinition(permissionName);
 
-            return permission.validatePermission();
+            return permission.validatePermission(options);
           }
 
           return $q.reject(permissionName);
@@ -754,6 +754,7 @@
       restrict: 'A',
       bindToController: {
         sref: '=?permissionSref',
+        options: '=?permissionOptions',
         only: '=?permissionOnly',
         except: '=?permissionExcept',
         onAuthorized: '&?permissionOnAuthorized',
@@ -763,14 +764,16 @@
       controller: ['$scope', '$element', '$permission', function ($scope, $element, $permission) {
         var permission = this;
 
-        $scope.$watchGroup(['permission.only', 'permission.except', 'sref'],
+        $scope.$watchGroup(['permission.only', 'permission.except', 'sref', 'permissionOptions'],
           function () {
             try {
+              var options=angular.copy(permission.options);
+              if (angular.isString(permission.options)){
+                options=$scope.$eval(options);
+              }
               if (isSrefStateDefined()) {
                 var PermStateAuthorization = $injector.get('PermStateAuthorization');
-
-                PermStateAuthorization
-                  .authorizeByStateName(permission.sref)
+                PermStateAuthorization.authorizeByStateName(permission.sref,options)
                   .then(function () {
                     onAuthorizedAccess();
                   })
@@ -785,7 +788,7 @@
                 });
 
                 PermAuthorization
-                  .authorizeByPermissionMap(permissionMap)
+                  .authorizeByPermissionMap(permissionMap, permission.options)
                   .then(function () {
                     onAuthorizedAccess();
                   })
@@ -862,10 +865,10 @@
      *
      * @returns {promise} $q.promise object
      */
-    function authorizeByPermissionMap(map) {
+    function authorizeByPermissionMap(map, options) {
       var deferred = $q.defer();
 
-      resolveExceptPrivilegeMap(deferred, map);
+      resolveExceptPrivilegeMap(deferred, map, options);
 
       return deferred.promise;
     }
@@ -879,15 +882,15 @@
      * @param map {permission.PermissionMap} Access rights map
      *
      */
-    function resolveExceptPrivilegeMap(deferred, map) {
-      var exceptPromises = map.resolvePropertyValidity(map.except);
+    function resolveExceptPrivilegeMap(deferred, map, options) {
+      var exceptPromises = map.resolvePropertyValidity(map.except, options);
 
       $q.any(exceptPromises)
         .then(function (rejectedPermissions) {
           deferred.reject(rejectedPermissions);
         })
         .catch(function () {
-          resolveOnlyPermissionMap(deferred, map);
+          resolveOnlyPermissionMap(deferred, map, options);
         });
     }
 
@@ -899,13 +902,13 @@
      * @param deferred {Object} Promise defer
      * @param map {permission.PermissionMap} Access rights map
      */
-    function resolveOnlyPermissionMap(deferred, map) {
+    function resolveOnlyPermissionMap(deferred, map, options) {
       if (!map.only.length) {
         deferred.resolve();
         return;
       }
 
-      var onlyPromises = map.resolvePropertyValidity(map.only);
+      var onlyPromises = map.resolvePropertyValidity(map.only, options);
       $q.any(onlyPromises)
         .then(function (resolvedPermissions) {
           deferred.resolve(resolvedPermissions);
@@ -987,17 +990,17 @@
      *
      * @return {Array<Promise>}
      */
-    PermissionMap.prototype.resolvePropertyValidity = function (property) {
+    PermissionMap.prototype.resolvePropertyValidity = function (property, options) {
 
       return property.map(function (privilegeName) {
         if (PermRoleStore.hasRoleDefinition(privilegeName)) {
           var role = PermRoleStore.getRoleDefinition(privilegeName);
-          return role.validateRole();
+          return role.validateRole(options);
         }
 
         if (PermPermissionStore.hasPermissionDefinition(privilegeName)) {
           var permission = PermPermissionStore.getPermissionDefinition(privilegeName);
-          return permission.validatePermission();
+          return permission.validatePermission(options);
         }
 
         if (!$permission.suppressUndefinedPermissionWarning) {

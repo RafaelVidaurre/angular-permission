@@ -19,10 +19,10 @@ function PermAuthorization($q) {
    *
    * @returns {promise} $q.promise object
    */
-  function authorizeByPermissionMap(map) {
+  function authorizeByPermissionMap(map,options) {
     var deferred = $q.defer();
 
-    resolveExceptPrivilegeMap(deferred, map);
+    resolveExceptPrivilegeMap(deferred, map,options);
 
     return deferred.promise;
   }
@@ -36,15 +36,15 @@ function PermAuthorization($q) {
    * @param map {permission.PermissionMap} Access rights map
    *
    */
-  function resolveExceptPrivilegeMap(deferred, map) {
-    var exceptPromises = map.resolvePropertyValidity(map.except);
+  function resolveExceptPrivilegeMap(deferred, map,options) {
+    var exceptPromises = map.resolvePropertyValidity(map.except,options);
 
     $q.any(exceptPromises)
       .then(function (rejectedPermissions) {
         deferred.reject(rejectedPermissions);
       })
       .catch(function () {
-        resolveOnlyPermissionMap(deferred, map);
+        resolveOnlyPermissionMap(deferred, map,options);
       });
   }
 
@@ -56,13 +56,13 @@ function PermAuthorization($q) {
    * @param deferred {Object} Promise defer
    * @param map {permission.PermissionMap} Access rights map
    */
-  function resolveOnlyPermissionMap(deferred, map) {
+  function resolveOnlyPermissionMap(deferred, map,options) {
     if (!map.only.length) {
       deferred.resolve();
       return;
     }
 
-    var onlyPromises = map.resolvePropertyValidity(map.only);
+    var onlyPromises = map.resolvePropertyValidity(map.only,options);
     $q.any(onlyPromises)
       .then(function (resolvedPermissions) {
         deferred.resolve(resolvedPermissions);
