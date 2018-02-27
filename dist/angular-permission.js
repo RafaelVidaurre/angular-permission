@@ -1,7 +1,7 @@
 /**
  * angular-permission
  * Fully featured role and permission based access control for your angular applications
- * @version v5.3.2 - 2018-02-26
+ * @version v5.3.2 - 2018-02-27
  * @link https://github.com/Narzerus/angular-permission
  * @author Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com), Blazej Krysiak <blazej.krysiak@gmail.com>
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -767,15 +767,9 @@
         $scope.$watchGroup(['permission.only', 'permission.except', 'sref', 'permissionOptions'],
           function () {
             try {
-              var authorizeBy;
               if (isSrefStateDefined()) {
                 var PermStateAuthorization = $injector.get('PermStateAuthorization');
-                if (permission.options) {
-                  authorizeBy = PermStateAuthorization.authorizeByStateName(permission.sref, $scope.$eval(permission.options));
-                } else {
-                  authorizeBy = PermStateAuthorization.authorizeByStateName(permission.sref);
-                }
-                authorizeBy
+                PermStateAuthorization.authorizeByStateName(permission.sref, $scope.$eval(permission.options))
                   .then(function () {
                     onAuthorizedAccess();
                   })
@@ -788,12 +782,9 @@
                   only: permission.only,
                   except: permission.except
                 });
-                if (permission.options) {
-                  authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap, $scope.$eval(permission.options)); //TODO wait feedback to clean up the code
-                } else {
-                  authorizeBy = PermAuthorization.authorizeByPermissionMap(permissionMap);
-                }
-                authorizeBy
+
+                PermAuthorization
+                  .authorizeByPermissionMap(permissionMap, $scope.$eval(permission.options))
                   .then(function () {
                     onAuthorizedAccess();
                   })
