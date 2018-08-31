@@ -4,8 +4,8 @@
   "description": "Fully featured role and permission based access control for your angular applications",
   "author": {
     "name": "Rafael Vidaurre",
-    "email": "narzerus@gmail.com",
-    "url": "http://www.rafaelvidaurre.com"
+    "email": "rafael@vidaurre.io",
+    "url": "http://vidaurre.io"
   },
   "contributors": [
     {
@@ -16,7 +16,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Narzerus/angular-permission.git"
+    "url": "https://github.com/RafaelVidaurre/angular-permission.git"
   },
   "keywords": [
     "angular",
@@ -33,9 +33,9 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Narzerus/angular-permission/issues"
+    "url": "https://github.com/RafaelVidaurre/angular-permission/issues"
   },
-  "homepage": "https://github.com/Narzerus/angular-permission",
+  "homepage": "https://github.com/RafaelVidaurre/angular-permission",
   "dependencies": {
     "angular": ">=1.4.8"
   },
