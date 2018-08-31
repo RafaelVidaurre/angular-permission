@@ -1,6 +1,6 @@
 {
   "name": "angular-permission",
-  "version": "5.3.2",
+  "version": "6.0.0",
   "description": "Fully featured role and permission based access control for your angular applications",
   "author": {
     "name": "Rafael Vidaurre",
@@ -41,7 +41,7 @@
   },
   "peerDependencies": {
     "angular-route": ">=1.4.8",
-    "angular-ui-router": "*"
+    "@uirouter/angularjs": "*"
   },
   "devDependencies": {
     "grunt": "^1.0.0",
