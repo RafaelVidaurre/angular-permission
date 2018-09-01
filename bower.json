@@ -2,7 +2,7 @@
   "name": "angular-permission",
   "version": "5.3.2",
   "authors": [
-	"Rafael Vidaurre <narzerus@gmail.com> (http://www.rafaelvidaurre.com)",
+	"Rafael Vidaurre <rafael@vidaurre.io> (http://vidaurre.io)",
 	"Blazej Krysiak <blazej.krysiak@gmail.com>"
   ],
   "description": "Fully featured role and permission based access control for your angular applications",
@@ -25,7 +25,7 @@
 	"route"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Narzerus/angular-permission",
+  "homepage": "https://github.com/RafaelVidaurre/angular-permission",
   "ignore": [
 	"**/.*",
 	"config",
