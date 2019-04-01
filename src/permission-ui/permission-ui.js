@@ -158,7 +158,7 @@ function run($injector, $rootScope, $state, PermTransitionProperties, PermTransi
       PermTransitionEvents.broadcastPermissionAcceptedEvent();
 
       // Overwrite notify option to broadcast it later
-      var transitionOptions = angular.extend({}, PermTransitionProperties.options, {notify: false, location: true});
+      var transitionOptions = angular.extend({}, PermTransitionProperties.options, {notify: false, location: PermTransitionProperties.options.location ? PermTransitionProperties.options.location : true});
 
       $state
         .go(PermTransitionProperties.toState.name, PermTransitionProperties.toParams, transitionOptions)
